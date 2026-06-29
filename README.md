@@ -22,7 +22,7 @@ Open `prototype/command-center.html` in any modern browser (best on a laptop; it
 
 Switch **My deals ↔ My team** to move altitude. For a guided way in, the **Take the tour** button under the phone walks the morning one step at a time: it steps through the trust ledger, the altitude toggle, the focus card, the Dynamic Island, the team SLA breach, the tab bar, the orchestration funnel, and the AI-states legend, driving the app into each state as it explains it, including the busier morning that reveals the Fair-Housing and security guardrail cards. Every action is live too: adjudicate the Marsh conflict, open the voice outbox, or override an agent and watch it offer to learn.
 
-The whole thing is one HTML file with CSS and a little vanilla JavaScript, plus three onboarding photos in `assets/`. Motion is CSS only and honors reduced motion. There is no build step and nothing to install.
+The whole thing is one self-contained HTML file: CSS, a little vanilla JavaScript, and the three onboarding photos embedded inline as data URIs, so it renders the same whether you open it from a server, straight off disk, or anywhere you move it. Motion is CSS only and honors reduced motion. There is no build step, nothing to install, and nothing external to fetch.
 
 ## The thinking (`docs/`)
 

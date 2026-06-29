@@ -12,8 +12,8 @@
     --canvas:#0A0B10; --p1:#15171F; --p2:#1C1E29; --p3:#131420;
     --ink:#F1F3FA; --body:#BCC1D2; --muted:#828AA0; --subtle:#5C6378;
     --hair:rgba(255,255,255,.07); --hair-2:rgba(255,255,255,.04);
-    --accent:#AEC2F6;          /* periwinkle: the AI, the calm, the interactive */
-    --accent-soft:rgba(174,194,246,.14);
+    --accent:#15C07A;          /* emerald: the AI, the calm, the interactive */
+    --accent-soft:rgba(21,192,122,.14);
     --sand:#E7C79C;            /* warm sand: what needs a human */
     --sand-soft:rgba(231,199,156,.13);
     --display:'Host Grotesk', 'Inter', system-ui, sans-serif;
@@ -29,7 +29,7 @@
     font-family:var(--sans); font-size:16px; line-height:1.6;
     -webkit-font-smoothing:antialiased;
     background-image:
-      radial-gradient(1100px 620px at 78% -8%, rgba(174,194,246,.10), transparent 60%),
+      radial-gradient(1100px 620px at 78% -8%, rgba(21,192,122,.10), transparent 60%),
       radial-gradient(900px 520px at 6% 4%, rgba(231,199,156,.05), transparent 55%);
     background-attachment:fixed;
   }
@@ -60,11 +60,11 @@
   .hero-globe{position:absolute; top:24px; right:-140px; width:420px; height:420px; z-index:0; opacity:.5; pointer-events:none}
   .hero-globe canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
   .hg-fallback{position:absolute; inset:0; border-radius:50%;
-    background:radial-gradient(circle at 36% 30%, rgba(203,214,251,.26), transparent 50%), radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 80%);
-    box-shadow:inset -14px -18px 50px rgba(0,0,0,.7), inset 10px 12px 38px rgba(174,194,246,.10), 0 0 70px rgba(174,194,246,.07)}
-  .hg-fallback::before, .hg-fallback::after{content:""; position:absolute; inset:0; border-radius:50%; border:1px solid rgba(174,194,246,.12)}
+    background:radial-gradient(circle at 36% 30%, rgba(70,221,155,.26), transparent 50%), radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 80%);
+    box-shadow:inset -14px -18px 50px rgba(0,0,0,.7), inset 10px 12px 38px rgba(21,192,122,.10), 0 0 70px rgba(21,192,122,.07)}
+  .hg-fallback::before, .hg-fallback::after{content:""; position:absolute; inset:0; border-radius:50%; border:1px solid rgba(21,192,122,.12)}
   .hg-fallback::before{transform:scaleX(.46)}
-  .hg-fallback::after{transform:scaleY(.9); border-color:rgba(174,194,246,.06)}
+  .hg-fallback::after{transform:scaleY(.9); border-color:rgba(21,192,122,.06)}
   @media(max-width:760px){ .hero-globe{width:270px; height:270px; right:-104px; top:2px; opacity:.36} }
   header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
     font-size:clamp(38px,6vw,64px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0; max-width:18ch}
@@ -89,7 +89,7 @@
   .film{background:linear-gradient(178deg,var(--p2),var(--p3)); border:1px solid var(--hair);
     border-radius:14px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05);
     transition:transform .2s cubic-bezier(.16,1,.3,1), border-color .2s ease}
-  .film:hover{transform:translateY(-3px); border-color:rgba(174,194,246,.28)}
+  .film:hover{transform:translateY(-3px); border-color:rgba(21,192,122,.28)}
   .film:first-child{grid-column:1 / -1}            /* the overview film leads, full width */
   .film video{width:100%; aspect-ratio:16/9; object-fit:cover; background:var(--p3); border-bottom:1px solid var(--hair)}
   .film .cap{padding:14px 16px 16px}
@@ -117,7 +117,7 @@
   .drow .dfile{font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--accent); grid-column:1 / -1}
   .drow .dfile:hover{text-decoration:underline}
   .pill{font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; padding:4px 9px; border-radius:999px; white-space:nowrap; justify-self:end}
-  .pill.req{color:var(--accent); background:var(--accent-soft); border:1px solid rgba(174,194,246,.3)}
+  .pill.req{color:var(--accent); background:var(--accent-soft); border:1px solid rgba(21,192,122,.3)}
   .pill.opt{color:var(--sand); background:var(--sand-soft); border:1px solid rgba(231,199,156,.3)}
   .pill.sup{color:var(--muted); background:var(--hair-2); border:1px solid var(--hair)}
   .dgroup{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--muted); margin:22px 0 12px}
@@ -128,7 +128,7 @@
     border-radius:var(--r); padding:22px 24px; box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05);
     transition:transform .18s ease, border-color .18s ease; position:relative}
   .lcard + .lcard{margin-top:13px}
-  .lcard:hover{transform:translateY(-3px); border-color:rgba(174,194,246,.3)}
+  .lcard:hover{transform:translateY(-3px); border-color:rgba(21,192,122,.3)}
   .lcard .k{font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; color:var(--muted)}
   .lcard .t{font-family:var(--display); font-weight:600; color:var(--ink); font-size:20px; margin:9px 0 0; letter-spacing:-.015em}
   .lcard .d{font-size:14.5px; color:var(--body); margin:8px 0 0; line-height:1.55; max-width:70ch}
@@ -233,7 +233,7 @@
         <div class="n">03</div>
         <div class="bb">
           <div class="bt">What changed</div>
-          <div class="bd">I started dark. A reviewer called dark "AI slop," so I detoured to warm, editorial light to earn calm by daylight. That detour was honest, but it gave up the atmosphere the product wanted. So I came back to a disciplined dark: a chosen periwinkle on near-black, with <span class="sand">warm sand reserved for what needs a human</span>. Then I adopted a stronger wireframe and re-skinned it to this exact system.</div>
+          <div class="bd">I started dark. A reviewer called dark "AI slop," so I detoured to warm, editorial light to earn calm by daylight. That detour was honest, but it gave up the atmosphere the product wanted. So I came back to a disciplined dark: a chosen emerald on near-black, with <span class="sand">warm sand reserved for what needs a human</span>. Then I adopted a stronger wireframe and re-skinned it to this exact system.</div>
         </div>
       </div>
       <div class="beat land">
@@ -353,7 +353,7 @@
     createGlobe(cv, {
       devicePixelRatio:2, width:560, height:560, phi:4.0, theta:0.28, dark:1, diffuse:1.2,
       mapSamples:16000, mapBrightness:7.0,
-      baseColor:[0.20,0.22,0.32], markerColor:[0.68,0.76,0.96], glowColor:[0.10,0.12,0.20],
+      baseColor:[0.17,0.19,0.24], markerColor:[0.95,0.97,1.0], glowColor:[0.55,0.58,0.66],
       markers:[{location:[30.27,-97.74],size:0.07},{location:[29.76,-95.37],size:0.06},{location:[32.78,-96.80],size:0.06},{location:[40.71,-74.00],size:0.05},{location:[34.05,-118.24],size:0.05}],
       onRender:function(s){ s.phi = phi; if(spin) phi += 0.003; }
     });
