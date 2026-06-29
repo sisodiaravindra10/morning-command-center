@@ -74,14 +74,17 @@
   .shead p{margin:0; color:var(--muted); font-size:14.5px; max-width:56ch}
 
   /* ---- films grid ---- */
-  .films{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .films{display:grid; grid-template-columns:1fr 1fr; gap:14px}
   .film{background:linear-gradient(178deg,var(--p2),var(--p3)); border:1px solid var(--hair);
-    border-radius:14px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05)}
-  .film video{width:100%; aspect-ratio:9/16; object-fit:cover; background:var(--p3); border-bottom:1px solid var(--hair)}
-  .film .cap{padding:13px 15px 15px}
+    border-radius:14px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05);
+    transition:transform .2s cubic-bezier(.16,1,.3,1), border-color .2s ease}
+  .film:hover{transform:translateY(-3px); border-color:rgba(174,194,246,.28)}
+  .film:first-child{grid-column:1 / -1}            /* the overview film leads, full width */
+  .film video{width:100%; aspect-ratio:16/9; object-fit:cover; background:var(--p3); border-bottom:1px solid var(--hair)}
+  .film .cap{padding:14px 16px 16px}
   .film .ct{font-family:var(--display); font-weight:500; color:var(--ink); font-size:15.5px; letter-spacing:-.01em}
   .film .cm{font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--muted); margin-top:6px}
-  @media(max-width:760px){ .films{grid-template-columns:1fr} .film video{aspect-ratio:16/10} }
+  @media(max-width:760px){ .films{grid-template-columns:1fr} .film:first-child{grid-column:auto} }
 
   /* ---- the narrative beats ---- */
   .beats{display:grid; gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--r); overflow:hidden}
@@ -178,8 +181,8 @@
           <source src="films/ai-states.mp4" type="video/mp4" />
         </video>
         <div class="cap">
-          <div class="ct">The four AI states</div>
-          <div class="cm">confident, uncertain, wrong, silent</div>
+          <div class="ct">The five AI states</div>
+          <div class="cm">thinking, confident, uncertain, silent, wrong</div>
         </div>
       </div>
       <div class="film">
@@ -295,8 +298,8 @@
     <a class="lcard" href="prototype/command-center.html">
       <div class="k">optional · the interactive prototype</div>
       <div class="t">The morning command center</div>
-      <div class="d">One self-contained file that opens straight into the Today triage: the trust ledger, one focus card at a time, your own deals and your team's risk ranked together, the voice outbox you review before it sends, and the Fair-Housing tripwire. Switch My deals and My team to change altitude, Calm and Heavy to see the morning adapt.</div>
-      <div class="note">motion is CSS only and honors reduced motion · best on a laptop, it renders a phone</div>
+      <div class="d">One self-contained file. It opens on a faded globe banner with Leo's overnight read, then the Today triage: the trust ledger, one focus card at a time, your own deals and your team's risk ranked together, the voice outbox you review before it sends, and the Fair-Housing tripwire. Switch My deals and My team to change altitude, or take the guided tour to walk the morning one beat at a time.</div>
+      <div class="note">a real WebGL globe over a static fallback · motion is CSS only and honors reduced motion · best on a laptop, it renders a phone</div>
       <span class="go">open the prototype &rarr;</span>
     </a>
   </section>
