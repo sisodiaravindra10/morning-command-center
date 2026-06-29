@@ -145,7 +145,7 @@ const Gate: React.FC = () => {
 const Surfaced: React.FC = () => {
   const frame = useCurrentFrame();
   const cards = [
-    {t: 'Crestview, gone quiet', s: 'a soft nudge, 62% sure'},
+    {t: 'Crestview, gone quiet', s: 'a soft nudge, leaning yes'},
     {t: 'Marsh deal disputed', s: 'three systems disagree'},
     {t: 'A line that reads as steering', s: 'held and rewritten'},
   ];

@@ -168,7 +168,7 @@ const Triage: React.FC = () => {
             <div style={{display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28}}>
               <ConfWave />
               <Body size={21} color={C.body} style={{fontFamily: FONT.mono, letterSpacing: '0.02em'}}>
-                <b style={{color: C.accentHi}}>62% sure</b> a soft nudge helps
+                <b style={{color: C.accentHi}}>leaning yes</b> a soft nudge helps
               </Body>
             </div>
             <div style={{display: 'flex', gap: 14}}>

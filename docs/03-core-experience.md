@@ -46,7 +46,7 @@ Below the ledger sits the altitude toggle, My deals or My team, and under it the
 
 On a calm morning, two items need her judgment, ranked by stake across both altitudes, not by which deal is whose:
 
-1. The Crestview deal has gone quiet, four days, no reply. It is $635K in Westlake, warm and then silent after the inspection report. Leo is "62% sure" a soft nudge helps and offers two reads, send a low-pressure nudge or hold and keep watching, with the recommended option marked. Judgment returns to her.
+1. The Crestview deal has gone quiet, four days, no reply. It is $635K in Westlake, warm and then silent after the inspection report. Leo is "leaning yes" a soft nudge helps and offers two reads, send a low-pressure nudge or hold and keep watching, with the recommended option marked. Judgment returns to her.
 2. Three messages are drafted but need her actual voice. Leo routes them to her not by channel but because each one needs her tone: a counter-offer, a grieving seller, and one of Jenna's replies that came out off-brand. She can open the outbox to send each as herself, or approve all as drafted.
 
 Under the two judgment items sits the resting state of the guardrails, "Guardrails: all clear," naming the four that are watching: security, fair-housing, sync, and handoff. Below that a no-action FYI, "Bennett pack ready to sign," resolved overnight and surfaced as information, not a decision. Each card shows a small colored dot and one line of why. Tapping any item opens its sheet: which agent did the work, what it checked, the source. Every claim is reachable.
@@ -55,7 +55,7 @@ On a heavy morning the same two items stay, and four exception-handler cards esc
 
 1. Security anomaly. Leo paused a 3 AM bulk export on Marcus's account, 412 client records heading to an unrecognized device in another state, and locked the session, then asks, "Was I right?" It took the safe, reversible action first. On "It was actually Marcus," the false positive becomes a teach-loop, a rule Leo learns, not a recurring nag.
 2. Fair-Housing tripwire. Leo almost sent an outreach line that reads as steering, caught it, held it, and rewrote it. The sheet shows the held draft struck through and the compliant rewrite beside it, with the original logged for audit. The classifier's verdict is the interaction. This is the responsible-AI centerpiece.
-3. Source-of-truth reconciler. MLS, the CRM (Follow Up Boss), and dotloop disagree on the Marsh deal's status, Pending, Active, and an unsigned addendum. Leo is "78% sure" dotloop is current and offers to write back to all three, with a shimmer running across the three logos on accept.
+3. Source-of-truth reconciler. MLS, the CRM (Follow Up Boss), and dotloop disagree on the Marsh deal's status, Pending, Active, and an unsigned addendum. Leo is "fairly sure" dotloop is current and offers to write back to all three, with a shimmer running across the three logos on accept.
 4. Handoff coverage. Sofia is out till Monday. Leo rerouted nine deals automatically and flags the two that need Dana's call, the $820K Hawthorne listing and a mid-counter, because those are relationships, not just records.
 
 That is the triage. Two decisions on a calm morning, a handful more on a heavy one, then she can put the phone down.
@@ -73,7 +73,7 @@ At the foot of Today, under the label "Review activity," is the account of the w
 The hard part of an AI product is not what it does when it is right. It is how it talks across all of its moods. The legend names one voice in five states, Thinking, Uncertain, Confident, Silent, and Wrong or corrected. Each state has a structural home so the canvas reads as a state at a glance, and each owns a quiet treatment, a small dot, a thin rule, or a chip, never a full fill.
 
 - Thinking. Leo is working, shown as a calm breathing dot, never a blocking spinner. "Market-Watch is reading 14 comps."
-- Uncertain. Leo has a doubt and wants her call. This ranks higher in the triage and shows its confidence and what it could not check before she acts. It lives on the Crestview deal-risk card ("62% sure a nudge helps") and on the counter-offer in the voice outbox, described below.
+- Uncertain. Leo has a doubt and wants her call. This ranks higher in the triage and shows its confidence and what it could not check before she acts. It lives on the Crestview deal-risk card ("leaning yes a nudge helps") and on the counter-offer in the voice outbox, described below.
 - Confident. Leo handled it and is sure. "Done. Here's what changed." This lives in the review-activity log, where the work that did not need her is logged rather than surfaced, and in every confident action, which resolves with a single send and an 8-second undo ring. Confidence is never arrogance.
 - Wrong / corrected. Leo made a mistake and owns it. This is reachable through the undo window on every confident send, and a correction never disappears quietly: the original line is shown struck and amended so the mistake stays visible, logged, and learned from. The Fair-Housing save is the clearest example, Leo caught its own draft before it sent.
 - Silent. Leo had nothing worth raising, the default for roughly 90% of the night's work. This is the review-activity log on Today. Silence is a designed, visible result, not an absence, and that is the point of giving it a number.

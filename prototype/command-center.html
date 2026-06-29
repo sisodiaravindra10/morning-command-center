@@ -674,6 +674,20 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 @keyframes obDrift{from{transform:scale(1.004)}to{transform:scale(1.05)}}
 /* the active glass-tab label tracks the accent smoothly */
 .tab .tl{transition:color var(--dur-med) var(--ease-out)}
+
+/* ============================================================
+   Declutter the Today home: the few things that need you lead;
+   the overnight proof recedes into a quiet, borderless list below
+   a clear break, instead of four competing boxes. (triage, not dashboard)
+   ============================================================ */
+.allclear,.fyi,.glance,.handled{border:0;background:none;border-radius:0}
+[data-altblock="me"] > .allclear{margin-top:20px;border-top:1px solid var(--line);padding:17px 2px 13px}
+.fyi,.glance,.handled{border-top:1px solid var(--line-soft)}
+.fyi{padding:14px 2px}
+.glance-head,.handled-head{padding:14px 2px}
+.allclear .ac-t,.fyi .fyi-t{color:var(--ink-muted)}
+.allclear .ac-sub,.fyi .fyi-go,.glance-head .gl-t{color:var(--ink-subtle)}
+/* the focus card keeps its raised treatment, so it now clearly leads the quieter list */
 </style>
 </head>
 <body>
@@ -771,7 +785,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
                 <div class="agent-tag"><span class="tdot"></span>Reconciler agent</div>
                 <h3>Three systems disagree on the Marsh deal's status.</h3>
                 <p class="ctx">MLS <b>Pending</b>, CRM <b>Active</b>, dotloop has an <b>unsigned addendum</b>. I think dotloop is current.</p>
-                <div class="conf"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> <b>78% sure</b> dotloop is the truth</div>
+                <div class="conf"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> <b>fairly sure</b> dotloop is the truth</div>
                 <div class="actions">
                   <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Marsh deal reconciled","sub":"MLS, CRM &amp; dotloop now all read Under contract","undo":true}'>Trust dotloop · fix all 3</button>
                   <button class="btn btn-ghost btn-sm" data-sheet="reconciler">Review</button>
@@ -798,7 +812,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
                 <div class="agent-tag"><span class="tdot"></span>Deal-risk agent</div>
                 <h3>The Crestview deal has gone quiet, 4 days, no reply.</h3>
                 <p class="ctx">$635K · Westlake. Warm, then silent after the inspection report.</p>
-                <div class="conf"><span class="wave" aria-hidden="true"><span style="height:5px"></span><span style="height:9px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:11px"></span></span> <b>62% sure</b> a soft nudge helps</div>
+                <div class="conf"><span class="wave" aria-hidden="true"><span style="height:5px"></span><span style="height:9px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:11px"></span></span> <b>leaning yes</b>, a soft nudge helps</div>
                 <div class="actions">
                   <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Soft nudge queued to the Crestview buyers","sub":"No-pressure check-in · goes out 9:05 AM","undo":true}'>Send the nudge</button>
                   <button class="btn btn-ghost btn-sm" data-sheet="mehta">Change</button>
@@ -1153,15 +1167,15 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
         <div class="rsys"><span class="rlogo" data-sys>FUB</span><span class="rname">CRM · Follow Up Boss<span class="rst">auto-set by a stage rule</span></span><span class="rstate stale">Active</span></div>
         <div class="rsys" style="border-bottom:0"><span class="rlogo" data-sys>DL</span><span class="rname">dotloop<span class="rst">addendum uploaded 2h ago, unsigned</span></span><span class="rstate truth">Under contract</span></div>
       </div>
-      <div class="conf" style="margin:14px 0 10px"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> I'm <b>78% sure</b> dotloop is current, it's the freshest + a real document</div>
+      <div class="conf" style="margin:14px 0 10px"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> I'm <b>fairly sure</b> dotloop is current, it's the freshest and a real document</div>
       <button class="btn btn-amber btn-full" id="recon-accept">Trust dotloop · write back to all 3</button>
       <button class="takeover" style="margin-top:10px" data-toast='{"msg":"Opened the three records","sub":"Decide field-by-field"}'>Let me decide each field</button>`},
 
     mehta:{ag:'Deal-risk agent · 06:14',title:'The Crestview deal · $635K',body:`
       <div class="paper"><div class="pey">◆ my read</div>
         <p>The Crestview buyers were warm, two viewings, asked about parking and the school zone. Then the inspection report landed and they went quiet. <span class="hl">Four days, no reply.</span></p>
-        <p>I've seen this 38 times in your pipeline. A gentle nudge recovers it ~<b>62%</b> of the time; the other 38% read a nudge as pressure and walk.</p>
-        <p class="cite">· Confidence 62% · 38 similar inspection-stage exits</p></div>
+        <p>I've seen this 38 times in your pipeline. A gentle nudge recovers most of them; about one in three read a nudge as pressure and walk.</p>
+        <p class="cite">· Confidence: leaning yes · 38 similar inspection-stage exits</p></div>
       <div class="section-label" style="margin:0 0 10px">Your call</div>
       <div class="opt">
         <button class="opt-card reco" data-toast='{"msg":"Soft nudge queued to the Crestview buyers","sub":"No-pressure check-in · goes out 9:05 AM","undo":true}'><div class="ot">Send a soft nudge <span class="tag">agent leans here</span></div><div class="od">Warm, low-pressure, references the school zone they liked, not the report.</div></button>
@@ -1339,9 +1353,9 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 
   /* ---------- spec popover ---------- */
   const SPECS={
-    uncertain:{n:1,title:'The uncertainty hand-up',trigger:'Deal-risk agent detects a 4-day silence post-inspection.',says:'"I’m 62% sure a nudge helps, two reads, your call."',why:'Surfacing its own doubt + two options returns judgment to the human. Chosen over a confident auto-nudge that risks the 38% who walk.'},
+    uncertain:{n:1,title:'The uncertainty hand-up',trigger:'Deal-risk agent detects a 4-day silence post-inspection.',says:'"I’m leaning yes on a nudge, two reads, your call."',why:'Surfacing its own doubt + two options returns judgment to the human. Chosen over a confident auto-nudge that risks the third who walk.'},
     fairhousing:{n:2,title:'Fair-Housing tripwire (wrong → save)',trigger:'AI-drafted outreach hits a protected-class / steering phrase.',says:'"I almost sent this, held it, rewrote it." + audit log.',why:'Agents speak at scale, so they can steer at scale. The classifier verdict IS the interaction. Red used once. The corrected item is the demo’s emotional centerpiece.'},
-    reconciler:{n:3,title:'Source-of-truth reconciler',trigger:'MLS, CRM & dotloop disagree on a deal’s state.',says:'"I think dotloop is current (78%), fix all three?"',why:'No CRM adjudicates a conflict between systems. On Accept it write-backs with a shimmer across the three logos, uncertain → confident → silent.'},
+    reconciler:{n:3,title:'Source-of-truth reconciler',trigger:'MLS, CRM & dotloop disagree on a deal’s state.',says:'"I think dotloop is current, fairly sure, fix all three?"',why:'No CRM adjudicates a conflict between systems. On Accept it write-backs with a shimmer across the three logos, uncertain → confident → silent.'},
     confident:{n:4,title:'Confident, but reversible',trigger:'Doc-prep finishes the closing pack overnight.',says:'"Done. Here’s what changed." + an 8-second Undo ring.',why:'Confidence without an escape hatch reads as arrogance. The Undo makes "act on my behalf" safe to trust.'},
     silent:{n:5,title:'Silent → reveal + who-approved',trigger:'~90% of agent work completes with no decision.',says:'One line: "47 handled · 8.5h saved." Each carries a provenance stamp.',why:'The hardest microinteraction is the one that doesn’t happen. Trust is the count + the ability to ask "what authorized this?"'},
     voice:{n:6,title:'Voice-required outbox',trigger:'Comms agents draft messages that need the lead’s tone.',says:'"3 drafted, a counter, a grieving seller, a sub-agent’s off-brand reply."',why:'Routing by needs-your-voice (not by channel) is the differentiator. Includes a sub-agent item, the manage altitude.'},

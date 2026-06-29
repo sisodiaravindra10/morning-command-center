@@ -153,7 +153,7 @@ A sample of how individual signals sort:
 |---|---|---|---|---|---|
 | 142 Oak St buyer countered at $590K, response due today | Negotiation Prep | High | Medium (2 comps unverified) | No (a counter is a commitment) | **NEEDS YOU** |
 | A hot lead has waited 3h 12m on Marcus, who is in a showing | Pipeline Pulse + routing | High | High | Reaching out is reversible, losing the lead is not | **NEEDS YOU** |
-| Crestview deal has gone quiet 4 days, nudge or hold | Pipeline Pulse | High | Medium (62% a soft nudge helps) | Reaching out is reversible | **NEEDS YOU** |
+| Crestview deal has gone quiet 4 days, nudge or hold | Pipeline Pulse | High | Medium (leaning yes a soft nudge helps) | Reaching out is reversible | **NEEDS YOU** |
 | AiRM lead replies sent and logged overnight | Lead Qualification | Low | High | Yes | HANDLED |
 | 6 near-misses Leo could have pinged on, chose not to | various | Low | High | Yes | HANDLED |
 | Routine status updates, comps refreshed, a tour confirmed | various | Low | High | Yes | HANDLED |
@@ -166,7 +166,7 @@ A sample of how individual signals sort:
 
 - The counter-offer opens in the voice outbox (high stake): Leo drafted $612K, showed the $605K to $618K range and the unknowns, and sent nothing. She reviews it and taps "Send as me."
 - The SLA breach is a routing call (high stake, time-critical): a hot lead has waited 3h 12m on Marcus, who is in a showing. Leo proposes routing it to Priya, who is healthy and replies fastest, with the context attached. Dana confirms and keeps the take-it-back option.
-- The Crestview deal opens the deal-risk nudge (uncertain): the buyers went quiet four days after the inspection, and Leo is 62% sure a soft nudge helps, so it offers two options instead of guessing. Dana picks one.
+- The Crestview deal opens the deal-risk nudge (uncertain): the buyers went quiet four days after the inspection, and Leo is leaning yes a soft nudge helps, so it offers two options instead of guessing. Dana picks one.
 
 Then she puts the phone down. The screen did the triage. She made three calls and kept every irreversible one in her own hands.
 
