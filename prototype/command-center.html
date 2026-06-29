@@ -43,25 +43,7 @@ ul{list-style:none}
 html,body{height:100%}
 body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #17191F 0%, var(--canvas) 55%),var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:30px 16px 60px;gap:20px}
 
-/* ---- presenter chrome ---- */
-.presenter{width:100%;max-width:900px;display:flex;flex-direction:column;gap:16px}
-.ph-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.ph-title h1{font-family:var(--serif);font-weight:500;font-size:24px;letter-spacing:-.01em;line-height:1.1}
-.ph-title h1 span{color:var(--ink-subtle);font-size:15px}
-.ph-title p{color:var(--ink-muted);font-size:13.5px;margin-top:6px;max-width:52ch;line-height:1.55}
-.ph-title p b{color:var(--ink-muted);font-weight:600}
-.ph-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.ctl-group{display:flex;align-items:center;gap:8px}
-.ctl-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:none;color:var(--ink-subtle)}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--p1)}
-.seg button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:none;padding:7px 12px;color:var(--ink-subtle);transition:color var(--dur-fast),background var(--dur-fast)}
-.seg button+button{border-left:1px solid var(--line)}
-.seg button[aria-pressed=true]{background:var(--ink);color:var(--canvas)}
-.seg.amber button[aria-pressed=true]{background:var(--signal);color:var(--signal-ink)}
-.ph-screens{display:flex;gap:6px;flex-wrap:wrap}
-.ph-screens button{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle);border:1px dashed var(--line);border-radius:var(--r);padding:6px 10px;transition:color var(--dur-fast),border-color var(--dur-fast)}
-.ph-screens button:hover{color:var(--ink)}
-.ph-screens button.cur{color:var(--signal);border-color:var(--signal-line);border-style:solid}
+/* presenter chrome removed: the stage is now just the phone mockup and the guided tour */
 
 /* ---- device ---- */
 .device{width:390px;height:844px;flex:0 0 auto;position:relative;background:var(--canvas);border-radius:46px;box-shadow:0 0 0 11px #1b1c20,0 0 0 13px #2a2c31,0 40px 90px -30px rgba(0,0,0,.9);overflow:hidden}
@@ -455,8 +437,7 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .spec-pop dd{color:var(--ink-muted);line-height:1.45}.spec-pop dd b{color:var(--ink);font-weight:600}
 .spec-pop .x{position:absolute;top:10px;right:11px;color:var(--ink-subtle);font-family:var(--mono);font-size:13px}
 
-.caption{max-width:600px;text-align:center;color:var(--ink-subtle);font-size:12px;line-height:1.6}
-.caption b{color:var(--ink-muted);font-weight:600}.caption code{font-family:var(--mono);color:var(--signal-hi);font-size:11px}
+/* caption removed with the presenter chrome */
 
 /* ============================================================
    CRAFT LAYER · depth · type · entrance choreography · live AI-state motion
@@ -576,37 +557,93 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
     transform:translateY(-2px);
   }
 }
+
+/* ============================================================
+   ONBOARDING (3-step, image-led) + LIVE DYNAMIC ISLAND
+   Photo sits in the top zone and fades into a clean dark text
+   zone, so type is never set over a busy image. CSS-only paging.
+   ============================================================ */
+#onboarding{position:absolute;inset:0;z-index:90;background:var(--canvas);display:flex;flex-direction:column;overflow:hidden}
+#onboarding.gone{opacity:0;pointer-events:none;transition:opacity .5s var(--ease-out)}
+.ob-track{display:flex;flex:1;width:300%;height:100%;transition:transform var(--dur-slow) var(--ease-out)}
+#onboarding[data-ob="1"] .ob-track{transform:translateX(-33.3333%)}
+#onboarding[data-ob="2"] .ob-track{transform:translateX(-66.6667%)}
+.ob-slide{position:relative;width:33.3333%;flex:0 0 33.3333%;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.ob-bg{position:absolute;top:0;left:0;right:0;height:62%;background-size:cover;background-position:center}
+.ob-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,16,.14) 0%,rgba(10,11,16,0) 34%,rgba(10,11,16,.6) 76%,var(--canvas) 100%)}
+.ob-1 .ob-bg{background-image:url('assets/onboard-1.jpg');background-position:center 28%}
+.ob-2 .ob-bg{background-image:url('assets/onboard-2.jpg')}
+.ob-3 .ob-bg{background-image:url('assets/onboard-3.jpg');background-position:center 42%}
+.ob-body{position:relative;z-index:2;padding:0 26px 16px}
+.ob-logo{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.ob-logo .orb{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));box-shadow:0 0 16px -2px rgba(174,194,246,.6)}
+.ob-logo .wm{font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.ob-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-subtle);margin-bottom:9px}
+.ob-h{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.08;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
+.ob-h em{font-style:normal;color:var(--signal-hi)}
+.ob-3 .ob-h em{color:var(--danger)}
+.ob-sub{font-size:14px;color:var(--ink-muted);line-height:1.5;margin-top:11px;max-width:31ch}
+.ob-foot{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:14px 26px calc(20px + env(safe-area-inset-bottom))}
+.ob-dots{display:flex;gap:7px;flex:1}
+.ob-dots i{width:7px;height:7px;border-radius:50%;background:var(--p4);transition:width var(--dur-med) var(--ease-out),background var(--dur-med)}
+#onboarding[data-ob="0"] .ob-dots i:nth-child(1),
+#onboarding[data-ob="1"] .ob-dots i:nth-child(2),
+#onboarding[data-ob="2"] .ob-dots i:nth-child(3){width:20px;border-radius:4px;background:var(--signal)}
+.ob-skip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-subtle)}
+.ob-skip:hover{color:var(--ink)}
+.ob-next{font-family:var(--font);font-weight:600;font-size:13px;color:var(--signal-ink);background:linear-gradient(180deg,var(--signal-hi),var(--signal));border-radius:var(--r);padding:10px 18px;box-shadow:0 8px 20px -10px rgba(174,194,246,.6)}
+.ob-next:active{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){#onboarding{display:none}}
+
+/* the status pill becomes a live Dynamic Island: it morphs to carry a Leo notice */
+.island{display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;z-index:30;
+  transition:width var(--dur-med) var(--ease-snap),height var(--dur-med) var(--ease-snap),border-radius var(--dur-med) var(--ease-snap)}
+.island .isl-content{display:flex;align-items:center;gap:9px;width:100%;padding:0 13px;opacity:0;transform:scale(.88);transition:opacity .16s var(--ease-out),transform .2s var(--ease-out)}
+.island.alert{width:322px;max-width:calc(100% - 26px);height:42px;border-radius:21px}
+.island.alert .isl-content{opacity:1;transform:none;transition:opacity .26s var(--ease-out) .12s,transform .3s var(--ease-out) .12s}
+.island .isl-dot{width:8px;height:8px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 3px var(--signal-wash);flex:0 0 auto;animation:breathe 1.9s var(--ease-io) infinite}
+.island .isl-text{flex:1;min-width:0;font-size:11.5px;color:#E7EAF4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.island .isl-text b{font-weight:600;color:#fff}
+.island .isl-chev{flex:0 0 auto;color:var(--ink-subtle);font-size:13px;line-height:1}
+
+/* ============================================================
+   STAGE (just the mockup) + a single "Take the tour" entry,
+   and the guided tour: a spotlight plus a one-step-at-a-time card.
+   ============================================================ */
+.stage-top{display:flex;align-items:center;gap:9px;color:var(--ink-subtle);font-family:var(--mono);font-size:11px;letter-spacing:.12em}
+.stage-top .st-orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));box-shadow:0 0 14px -2px rgba(174,194,246,.6);flex:0 0 auto}
+.tour-cta{display:inline-flex;align-items:center;gap:9px;font-family:var(--font);font-size:13.5px;font-weight:600;color:var(--ink);background:linear-gradient(178deg,#1C1E29,#131420);border:1px solid var(--signal-line);border-radius:999px;padding:11px 21px;box-shadow:0 10px 26px -14px rgba(174,194,246,.5),inset 0 1px 0 rgba(255,255,255,.06);transition:transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast)}
+.tour-cta:hover{transform:translateY(-2px);border-color:var(--signal)}
+.tour-cta .tc-cta-dot{width:8px;height:8px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 3px var(--signal-wash);animation:breathe 1.9s var(--ease-io) infinite}
+/* tour overlay (inside the phone) */
+.tour{position:absolute;inset:0;z-index:82;pointer-events:none;opacity:0;transition:opacity .25s var(--ease-out)}
+.tour.show{opacity:1;pointer-events:auto}
+.tour-spot{position:absolute;left:0;top:0;width:0;height:0;border-radius:12px;box-shadow:0 0 0 9999px rgba(7,8,12,.74);outline:2px solid var(--signal);outline-offset:0;opacity:0;pointer-events:none;
+  transition:left .42s var(--ease-out),top .42s var(--ease-out),width .42s var(--ease-out),height .42s var(--ease-out),opacity .25s}
+.tour-card{position:absolute;left:14px;right:14px;bottom:18px;background:linear-gradient(178deg,#1C1E29,#131420);border:1px solid var(--signal-line);border-radius:var(--r-md);padding:15px 16px;box-shadow:0 24px 52px -18px rgba(0,0,0,.82),inset 0 1px 0 rgba(255,255,255,.06)}
+.tour-card.at-top{top:54px;bottom:auto}
+.tc-step{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--signal-hi);margin-bottom:7px}
+.tc-title{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.012em;margin-bottom:5px;color:var(--ink)}
+.tc-desc{font-size:13px;line-height:1.5;color:var(--ink-muted)}
+.tc-desc b{color:var(--ink);font-weight:600}
+.tc-foot{display:flex;align-items:center;gap:8px;margin-top:14px}
+.tc-skip{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle);margin-right:auto}
+.tc-skip:hover{color:var(--ink)}
+.tc-prev{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-muted);padding:7px 12px;border:1px solid var(--line);border-radius:var(--r)}
+.tc-prev:hover{border-color:var(--ink-subtle);color:var(--ink)}
+.tc-next{font-family:var(--font);font-weight:600;font-size:12.5px;color:var(--signal-ink);background:linear-gradient(180deg,var(--signal-hi),var(--signal));border-radius:var(--r);padding:8px 16px;box-shadow:0 6px 16px -8px rgba(174,194,246,.6)}
+.tc-next:active,.tc-prev:active{transform:scale(.97)}
 </style>
 </head>
 <body>
 
-<header class="presenter">
-  <div class="ph-top">
-    <div class="ph-title">
-      <h1>Real <span>· morning command center · team lead</span></h1>
-      <p>The first screen <b>Dana</b> opens each morning. Leo and its 100+ agents work overnight; the screen shows what needs a human and confirms what didn't. <b>Agents propose, the human disposes.</b> Mobile-first · one periwinkle signal accent, warm sand for what needs you · dashboard at top, triage below.</p>
-    </div>
-    <div class="ph-controls">
-      <div class="ctl-group"><span class="ctl-label">Theme</span>
-        <div class="seg" id="theme-seg"><button data-mode="signal" aria-pressed="true">Signal</button><button data-mode="pulse" aria-pressed="false">Pulse</button></div></div>
-      <div class="ctl-group"><span class="ctl-label">Spec</span>
-        <div class="seg amber" id="spec-seg"><button data-spec="off" aria-pressed="true">Off</button><button data-spec="on" aria-pressed="false">Annotate</button></div></div>
-      <div class="ctl-group"><span class="ctl-label">Morning</span>
-        <div class="seg" id="morning-seg"><button data-morning="calm" aria-pressed="true">Calm</button><button data-morning="heavy" aria-pressed="false">Heavy</button></div></div>
-    </div>
-  </div>
-  <nav class="ph-screens" id="screen-jump" aria-label="Jump to screen">
-    <button data-go="today" class="cur">Today</button>
-    <button data-go="day">Day · timeline</button>
-    <button data-go="team">Team</button>
-    <button data-go="leads">Leads</button>
-    <button data-go="legend">AI states</button>
-    <button data-go="orch">Orchestration</button>
-  </nav>
+<header class="stage-top">
+  <span class="st-orb"></span>
+  <span class="st-wm">Real &middot; morning command center</span>
 </header>
 
 <div class="device" role="application" aria-label="Real mobile app">
-  <div class="island" aria-hidden="true"></div>
+  <div class="island" id="island" aria-live="polite"><div class="isl-content"><span class="isl-dot"></span><span class="isl-text"></span><span class="isl-chev">&rsaquo;</span></div></div>
   <div class="app">
     <div class="statusbar"><span>6:52</span><span class="right">
       <svg width="17" height="12" viewBox="0 0 17 12" fill="var(--ink)" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1"/></svg>
@@ -925,7 +962,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
           <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-silent"></span></span></div><div><div class="lt">Silent</div><div class="ld">The default for ~90% of work. Collapsed into "47 handled." Earns trust by not interrupting.</div></div></div>
           <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-wrong"></span></span></div><div><div class="lt">Wrong / corrected</div><div class="ld">Owns the miss, you correct it, it visibly learns and logs for audit. Caught a Fair-Housing risk before sending.</div></div></div>
         </div>
-        <p class="ctx" style="padding:0 4px;color:var(--ink-subtle)">Turn on <b style="color:var(--signal-hi)">Annotate</b> (top right) to read the microinteraction spec pinned on the live screens.</p>
+        <p class="ctx" style="padding:0 4px;color:var(--ink-subtle)">Every status dot in the app speaks in one of these five states. The guided tour shows each one where it lives.</p>
       </section>
 
       <!-- ================= ORCHESTRATION ================= -->
@@ -986,9 +1023,60 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 
     <div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
   </div>
+
+  <!-- 3-step onboarding: image-led, the photo fades into a clean dark text zone -->
+  <div id="onboarding" data-ob="0" role="dialog" aria-label="Welcome to the morning command center">
+    <div class="ob-track">
+      <section class="ob-slide ob-1">
+        <div class="ob-bg"></div>
+        <div class="ob-body">
+          <div class="ob-logo"><span class="orb"></span><span class="wm">Leo</span></div>
+          <div class="ob-eyebrow">Real &middot; morning command center</div>
+          <h2 class="ob-h">A hundred agents, working through the <em>night</em>.</h2>
+          <p class="ob-sub">Listing research, document prep, negotiation, scheduling. Leo runs them while you sleep.</p>
+        </div>
+      </section>
+      <section class="ob-slide ob-2">
+        <div class="ob-bg"></div>
+        <div class="ob-body">
+          <div class="ob-eyebrow">by morning</div>
+          <h2 class="ob-h">The noise, quietly <em>sorted</em>.</h2>
+          <p class="ob-sub">The handled, the watched, and the few that need a human, separated before you wake.</p>
+        </div>
+      </section>
+      <section class="ob-slide ob-3">
+        <div class="ob-bg"></div>
+        <div class="ob-body">
+          <div class="ob-eyebrow">your morning</div>
+          <h2 class="ob-h">You see only what needs <em>you</em>.</h2>
+          <p class="ob-sub">One calm triage across your deals and your team, ranked by what is at stake.</p>
+        </div>
+      </section>
+    </div>
+    <div class="ob-foot">
+      <div class="ob-dots"><i></i><i></i><i></i></div>
+      <button class="ob-skip" id="ob-skip">Skip</button>
+      <button class="ob-next" id="ob-next">Next</button>
+    </div>
+  </div>
+
+  <!-- guided tour: spotlight + a card, one step at a time -->
+  <div class="tour" id="tour" aria-hidden="true">
+    <div class="tour-spot" id="tour-spot"></div>
+    <div class="tour-card" id="tour-card" role="dialog" aria-label="Guided tour">
+      <div class="tc-step" id="tc-step"></div>
+      <h3 class="tc-title" id="tc-title"></h3>
+      <p class="tc-desc" id="tc-desc"></p>
+      <div class="tc-foot">
+        <button class="tc-skip" id="tc-skip">End tour</button>
+        <button class="tc-prev" id="tc-prev">Back</button>
+        <button class="tc-next" id="tc-next">Next</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<p class="caption">One connected app. <b>Dashboard at top</b> → triage below · toggle <b>Signal ↔ Pulse</b> (calm vs stats-dense) · switch <b>My deals ↔ My team</b> · tap the <b>pause</b> glyph for blast-radius · open <code>Annotate</code> to read the 9 microinteraction specs. Every action is live, adjudicate the Marsh conflict, open the voice outbox, override an agent and watch it offer to <b>learn</b>.</p>
+<button class="tour-cta" id="tour-start"><span class="tc-cta-dot"></span>Take the tour</button>
 
 <script>
 (function(){
@@ -1103,13 +1191,13 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
     root.dataset.screen=name;
     scroll.scrollTop=0;}
   $$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.go)));
-  $('#screen-jump').addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.go);});
+  {const _sj=$('#screen-jump');if(_sj)_sj.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.go);});}
   $('#orch-btn').addEventListener('click',()=>go('orch'));
   $('#pause-btn').addEventListener('click',()=>sheetOpen('pause'));
 
   /* ---------- theme + spec ---------- */
-  $('#theme-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.mode=b.dataset.mode;$$('#theme-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));syncGlance();});
-  $('#spec-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});
+  {const _tm=$('#theme-seg');if(_tm)_tm.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.mode=b.dataset.mode;$$('#theme-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));syncGlance();});}
+  {const _sp=$('#spec-seg');if(_sp)_sp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});}
 
   /* ---------- altitude ---------- */
   $('#altitude').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.altitude=b.dataset.alt;
@@ -1131,10 +1219,10 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
   function disposeCard(card){if(!card)return;card.classList.add('gone');setTimeout(()=>{card.style.display='none';layoutTriage();},240);}
 
   /* ---------- morning scenario (calm default / heavy) ---------- */
-  $('#morning-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.morning=b.dataset.morning;
+  {const _ms=$('#morning-seg');if(_ms)_ms.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.morning=b.dataset.morning;
     $$('#morning-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));
     $$('.tcard.exc',triage).forEach(c=>{c.style.display='';c.classList.remove('gone');});
-    layoutTriage();$('#scroll').scrollTo({top:0,behavior:'smooth'});});
+    layoutTriage();$('#scroll').scrollTo({top:0,behavior:'smooth'});});}
 
   /* ---------- dashboard glance (collapsed; Pulse auto-expands) ---------- */
   const glance=$('#glance');
@@ -1224,6 +1312,66 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
   /* ---------- orchestration cloud ---------- */
   const fc=$('#f-cloud');if(fc){let h='';for(let i=0;i<60;i++){h+=(i%17===0)?'<i class="live"></i>':'<i></i>';}fc.innerHTML=h;}
   layoutTriage();syncGlance();
+
+  /* ---------- onboarding (3-step, image-led opening) ---------- */
+  const ob=$('#onboarding'),obNext=$('#ob-next');let obIdx=0;const OB_N=3;
+  function obGo(i){obIdx=Math.max(0,Math.min(OB_N-1,i));ob.dataset.ob=obIdx;if(obNext)obNext.textContent=(obIdx===OB_N-1)?'Get started':'Next';}
+  function obFinish(){if(!ob)return;ob.classList.add('gone');setTimeout(()=>{ob.style.display='none';},520);setTimeout(()=>islandAlert(),1000);}
+  function obReplay(){if(!ob)return;ob.style.display='flex';ob.classList.remove('gone');obGo(0);}
+  if(obNext)obNext.addEventListener('click',()=>{(obIdx>=OB_N-1)?obFinish():obGo(obIdx+1);});
+  if($('#ob-skip'))$('#ob-skip').addEventListener('click',obFinish);
+  if(rm&&ob)ob.style.display='none';
+
+  /* ---------- live Dynamic Island: Leo as a system-level presence ---------- */
+  const island=$('#island'),islText=island&&island.querySelector('.isl-text');let islTimer=null,islSeq=0;
+  const ISL=[
+    '<b>Leo</b> &middot; new lead at 88 Linden, pre-approved',
+    "<b>Leo</b> &middot; Marcus's lead has waited 3h 12m",
+    '<b>Leo</b> &middot; Oak St counter sent, watching for a reply',
+    "<b>Leo</b> &middot; 47 handled overnight, you're clear"
+  ];
+  function islandAlert(msg){if(!island)return;islText.innerHTML=msg||ISL[islSeq++%ISL.length];island.classList.add('alert');
+    clearTimeout(islTimer);islTimer=setTimeout(()=>island.classList.remove('alert'),4200);}
+  if(island)island.addEventListener('click',()=>island.classList.contains('alert')?island.classList.remove('alert'):islandAlert());
+  if($('#ob-replay'))$('#ob-replay').addEventListener('click',obReplay);
+  if($('#leo-alert'))$('#leo-alert').addEventListener('click',()=>islandAlert());
+
+  /* ---------- guided tour: one step at a time ---------- */
+  const device=$('.device'),tour=$('#tour'),tspot=$('#tour-spot'),tcard=$('#tour-card');
+  function setAlt(a){root.dataset.altitude=a;$$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.alt===a));$$('[data-altblock]').forEach(x=>x.style.display=(x.dataset.altblock===a)?'flex':'none');}
+  function tReset(){const o=$('#onboarding');if(o)o.style.display='none';sheetClose();go('today');setAlt('me');root.dataset.morning='calm';$$('.tcard.exc',triage).forEach(c=>{c.style.display='';c.classList.remove('gone');});layoutTriage();$('#scroll').scrollTop=0;}
+  function tHeavy(){go('today');setAlt('me');root.dataset.morning='heavy';$$('.tcard.exc',triage).forEach(c=>{c.style.display='';c.classList.remove('gone');});layoutTriage();$('#scroll').scrollTop=0;}
+  const TOUR=[
+    {sel:'#ledger',t:'Leo proves the night first',d:'47 handled overnight, before anything asks for you. The count is the proof of restraint.',before:tReset},
+    {sel:'#altitude',t:'One list, two altitudes',d:'Your own deals and the team’s, ranked together. Altitude is a quiet badge, never a separate screen.'},
+    {sel:'#triage .tcard.focus',t:'The few that need judgment',d:'One focus card at a time. Leo says how sure it is in plain words and a range, never a fake percent.'},
+    {sel:'#island',t:'Leo, at the system level',d:'The status pill morphs into a live notice, one thing at a time, then settles back.',before:()=>islandAlert('<b>Leo</b> &middot; new lead at 88 Linden, pre-approved')},
+    {sel:'#triage [data-card="fairhousing"]',t:'It catches itself',d:'On a busier morning the guardrails surface. Here Leo held an outreach line that read as steering, and rewrote it.',before:tHeavy},
+    {sel:'#scroll .card',t:'Your team, ranked alongside',d:'A hot lead has waited 3h 12m on Marcus. Reassign, or route it to whoever replies fastest.',before:()=>{go('today');setAlt('team');$('#scroll').scrollTop=0;}},
+    {sel:'.tabbar',t:'The rest, a tap away',d:'Day, Team, and Leads. The morning lives on Today; the depth is one tap down.',before:tReset},
+    {sel:'.funnel',t:'A hundred become the few',d:'Every agent filtered by confidence, stakes, and whether it needs your voice, down to the few that reached you.',before:()=>go('orch')},
+    {sel:'.legend',t:'Five ways Leo speaks',d:'Thinking, confident, uncertain, silent, and wrong. Calm, honest, and always reversible.',before:()=>go('legend')},
+    {sel:null,t:'That is the morning',d:'Less, ranked, and honest about what it is sure of. Everything here is live, so tap anything.',before:tReset}
+  ];
+  let tIdx=0;
+  function tPosition(s){const dr=device.getBoundingClientRect();const el=s.sel?$(s.sel):null;
+    if(el){const r=el.getBoundingClientRect();tspot.style.opacity='1';
+      tspot.style.left=(r.left-dr.left-6)+'px';tspot.style.top=(r.top-dr.top-6)+'px';
+      tspot.style.width=(r.width+12)+'px';tspot.style.height=(r.height+12)+'px';
+      tcard.classList.toggle('at-top',(r.top-dr.top+r.height/2)>dr.height*0.52);
+    }else{tspot.style.opacity='0';tspot.style.width='0';tspot.style.height='0';tcard.classList.remove('at-top');}}
+  function tStep(i){tIdx=(i+TOUR.length)%TOUR.length;const s=TOUR[tIdx];if(s.before)s.before();
+    $('#tc-step').textContent='Step '+(tIdx+1)+' of '+TOUR.length;
+    $('#tc-title').textContent=s.t;$('#tc-desc').innerHTML=s.d;
+    $('#tc-next').textContent=(tIdx===TOUR.length-1)?'Done':'Next';
+    $('#tc-prev').style.visibility=(tIdx===0)?'hidden':'visible';
+    setTimeout(()=>tPosition(s),rm?0:380);}
+  function tStart(){tReset();tour.classList.add('show');tour.setAttribute('aria-hidden','false');tStep(0);}
+  function tEnd(){tour.classList.remove('show');tour.setAttribute('aria-hidden','true');tspot.style.opacity='0';tReset();}
+  if($('#tour-start'))$('#tour-start').addEventListener('click',tStart);
+  $('#tc-next').addEventListener('click',()=>{(tIdx>=TOUR.length-1)?tEnd():tStep(tIdx+1);});
+  $('#tc-prev').addEventListener('click',()=>tStep(tIdx-1));
+  $('#tc-skip').addEventListener('click',tEnd);
 })();
 </script>
 </body>

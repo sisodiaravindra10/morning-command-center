@@ -1,8 +1,8 @@
 # Microinteraction and notification spec
 
-Fewer interactions, each one carrying real meaning. The prototype annotates nine signature microinteractions, and one notification model sits underneath all of them. Together they cover the AI states the morning command center is graded on: thinking, confident, uncertain, wrong, and silent. Turn on Annotate in the prototype to read each spec pinned on the live screen. Every one of these is built in the prototype (prototype/command-center.html).
+Fewer interactions, each one carrying real meaning. The prototype carries nine signature microinteractions, and one notification model sits underneath all of them. Together they cover the AI states the morning command center is graded on: thinking, confident, uncertain, wrong, and silent. The guided tour in the prototype walks each one in context, driving the app into the matching state as it explains it. Every one of these is built in the prototype (prototype/command-center.html).
 
-The nine, in the order the prototype numbers them: the uncertainty hand-up, the Fair-Housing tripwire, the source-of-truth reconciler, confident but reversible (the 8-second undo ring), silent then reveal with who-approved, the voice-required outbox, the security anomaly that acted then asks, round-robin lead routing, and the agent-coaching nudge. The sections below walk each one, preceded by the morning assembly that opens the day.
+The nine, in the order the prototype numbers them: the uncertainty hand-up, the Fair-Housing tripwire, the source-of-truth reconciler, confident but reversible (the 8-second undo ring), silent then reveal with who-approved, the voice-required outbox, the security anomaly that acted then asks, round-robin lead routing, and the agent-coaching nudge. The sections below walk each one, preceded by the opening beats that run before them: the three-step onboarding, the Dynamic Island notice, and then the command center assembling.
 
 ## Motion grammar
 
@@ -11,7 +11,7 @@ The same rules apply everywhere, so the surface feels like one calm system inste
 - CSS only. Animate `transform` and `opacity`, nothing else. No layout-driven motion, no JavaScript timelines.
 - Ease-out on entrances. The curve is `cubic-bezier(.16, 1, .3, 1)`. Never `linear`.
 - Durations sit between 100ms and 500ms. Quick state changes are near 120ms to 200ms, the morning assembly is the longest single beat and stays under 500ms per element.
-- `prefers-reduced-motion` is authored first, not bolted on. When it is on, motion becomes a plain cross-fade in `opacity` and every position shift is removed. Nothing breathes, nothing slides, the information arrives instantly. You can toggle this live in the prototype.
+- `prefers-reduced-motion` is authored first, not bolted on. When it is on, motion becomes a plain cross-fade in `opacity` and every position shift is removed. Nothing breathes, nothing slides, the information arrives instantly. The prototype honors the system setting live, so turning reduced motion on at the OS level changes the prototype with no reload.
 - Motion only happens when something changed that matters: a state, a confidence read, an arrival. Everything else holds still. Stillness is the default, movement is a signal.
 - Confidence is always shown twice, in color and in type weight, so it reads at a glance and survives color-blindness.
 
@@ -23,13 +23,31 @@ The whole point of the morning command center is that the screen decides what ma
 2. A notification is a decision, not a status line. Every push carries one stake and one action. Never "you have 12 updates."
 3. Calm, dark, honest. A push uses the same dark system as the app: Leo's voice in Host Grotesk, one line of plain metadata (the clock or the stake), one or two actions. No badge-count piles, no red dots for things that are merely new. The few pushes that do clear the tier (a hot lead that has waited too long on a teammate, a held compliance risk) open straight to the relevant card, with no app loading state and no second tap.
 
+### The opening onboarding (three image-led slides)
+
+Before the command center, a three-step onboarding plays once on open. It is the only framing the product allows itself, and it states the promise the morning then keeps.
+
+- Trigger: the app opens, so the onboarding plays once on load. Under `prefers-reduced-motion` it is skipped entirely and the app lands straight on Today. The guided tour re-walks the morning on demand.
+- What it communicates: the arc the product runs on, in three lines. (1) "A hundred agents, working through the night." (2) "The noise, quietly sorted." (3) "You see only what needs you." So: the agents work overnight, the noise is sorted by morning, and only what needs a human surfaces.
+- The motion: three slides sit on one horizontal track and page on `transform` (a `translateX` slide of one third per step), driven by a Next button, not by free swiping. Each slide is a full-bleed architectural photo filling the top portion that fades down a gradient into a clean dark text zone, so the headline and sub are never set over a busy image. The headline is Host Grotesk with a single accent word, periwinkle on the first two slides and warm sand on the third. Progress dots track the step (the active dot widens into a periwinkle pill), a Skip sits alongside, and the Next button becomes "Get started" on the last slide. On finish (Skip or "Get started") the overlay fades out on `opacity`. Under reduced motion the whole overlay is absent, so there is no slide and no fade.
+- Why: this is the one place a small amount of narrative earns its keep, because it sets up the trust contract the rest of the surface depends on. Image-led, one accent word, and a clean type zone keep it on-system and calm rather than a marketing splash; paging by an explicit Next (not autoplay) leaves Dana in control of the pace; and skipping it under reduced motion keeps the promise that nothing is gated behind movement.
+
+### The Dynamic Island morph: Leo as a system-level presence (the first beat)
+
+The status pill is not decorative. It is a live Dynamic Island that morphs to carry Leo's notices, and its first firing is the morning's opening beat, right after onboarding finishes.
+
+- Trigger: it fires once automatically about a second after the onboarding overlay clears, delivering the morning's first notice. After that it cycles through a few Leo states on tap, and the guided tour fires the morph again as one of its steps.
+- What it communicates: that Leo is a system-level presence watching in the background, surfacing one thing at a time. The first notice is the morning's opening fact, a breathing periwinkle dot beside a line such as "Leo, new lead at 88 Linden, pre-approved." Tapping cycles the other Leo states: the lead waiting too long on a teammate ("Marcus's lead has waited 3h 12m"), the counter that went out ("Oak St counter sent, watching for a reply"), and the overnight handled count ("47 handled overnight, you're clear").
+- The motion: the pill morphs open into a notification capsule, a coordinated `width`, `height`, and `border-radius` transition on `--ease-snap`, while the notice content (the breathing dot, the line, a chevron) fades and scales in just behind the shape so the capsule reads as growing to hold the message. It holds for about four seconds, then the same three properties reverse and it collapses back to the pill. A tap while it is open dismisses it early; a tap while it is closed opens it to the next state.
+- Why: a Dynamic Island morph is the strongest single microinteraction here, so it is spent on the one job that justifies it, making Leo feel like a calm presence at the system level rather than a card in a feed. The morph is chosen over a banner or a toast because it speaks from the place an iOS user already reads system notices, carries exactly one stake at a time, and returns to a quiet pill the instant it is done, the same restraint the rest of the surface keeps. Animating `border-radius` alongside width and height is the deliberate exception to the transform-and-opacity rule: it is what sells the shape change as one fluid object, and it is confined to this one element. It still honors reduced motion by collapsing to a near-instant state change.
+
 ### The morning's first beat: the command center assembling
 
-This is the first microinteraction of the day, the moment the app opens.
+Once the island notice clears, the command center assembles. This is the first beat inside Today itself.
 
-- Trigger: the app opens to the Today morning command center. There is no lock screen, no push to tap, no loading state in between.
+- Trigger: the app is on the Today morning command center, after onboarding and the opening island notice. There is no lock screen, no push to tap, no loading state in between.
 - What it communicates: "the triage is already done, and here is the proof of how much I held back."
-- The motion: the cards rise into place, the `.assemble` micro-motion, anchored by the trust ledger at the very top, which reads exactly: "47 handled overnight · 2 need you · 1 corrected." The ledger sets the tone before any single card does: most of the work is already finished, and only a small, ranked few are asking for Dana. The top focus card of the triage leads. Under reduced-motion, the cards fade in together with no rise.
+- The motion: the cards rise into place on a short `nth-child` stagger, anchored by the trust ledger near the top, which reads exactly: "47 handled overnight · 2 need you · 1 corrected." The ledger sets the tone before any single card does: most of the work is already finished, and only a small, ranked few are asking for Dana. The top focus card of the triage leads. Under reduced-motion, the cards fade in together with no rise.
 - Why: the first thing Dana feels is that the work was underway while she slept and that the screen has already done the triage. That is the product promise delivered in the first two seconds, by restraint made visible, before she has read a single word of any card.
 
 ### Quiet by default
@@ -40,7 +58,7 @@ If Leo handled something on its own, there is no notification at all. It shows u
 
 ### 1. The morning assembly (thinking, on open)
 
-- Trigger: the app opens.
+- Trigger: Today arrives, after the onboarding and the opening island notice.
 - What it communicates: "the triage is already done, and here is what is still being checked."
 - The motion: the serif greeting sets first. Then the three items that need Dana rise into place in a short stagger, each entering on `transform` and `opacity` about 70ms after the one before it. The quiet ledger line fades in last. If a skill is still resolving, a named skeleton shows in its place, sized to the card it will become and labeled in plain text: "Negotiation Prep, re-checking 14 comps for 142 Oak St." There is no spinner anywhere. Under reduced-motion, the greeting and the items fade in together with no rise and no stagger.
 - Why: the calm, ordered arrival is the product. The order is the priority made physical: the human voice first, then the few things that matter, then the proof of restraint. A named skeleton turns load time into trust ("I can see what it is doing") where a spinner would only hide the work. A progress bar is rejected too, because it implies a known duration the system does not have.

@@ -4,6 +4,8 @@ The prototype (prototype/command-center.html) is the source of truth. It holds t
 
 Figma's job here is breadth. The prototype shows how one path feels in motion. Figma shows the whole product at once: every screen, every AI state, and every component variant on a single page, so a reviewer can read the morning command center as one system and an engineer or another designer can pick up any screen cold.
 
+A note on the live prototype. It is phone-only: just the mockup, a small "Real, morning command center" wordmark above it, and a single "Take the tour" button below. A guided tour does the walking through, a spotlight ring plus a step card that steps through the product one beat at a time and drives the app into each state as it explains it. Any earlier presenter scaffolding (theme and density toggles, demo buttons, a jump-to-screen nav) was a build aid for stepping through states by hand, not part of the product, and the guided tour replaces it. The frames below still cover the heavy morning and both density modes, because Figma's job is to show the full system at once even where the live prototype reveals a state through the tour rather than a toggle.
+
 A note on theme. The genre default for an AI product is a generic dark canvas with glow, and that reads as slop. The system answers it not with light but with a disciplined dark: a chosen periwinkle-on-near-black palette, no glow, and a warm sand reserved for what needs a human. There is one theme, no color-mode toggle to build. Periwinkle means calm, handled, the AI, or interactive; warm sand means it needs you. Color always carries meaning, never decoration.
 
 ---
@@ -80,9 +82,18 @@ Set up three text-style families. Voice is load-bearing: it tells the reader who
 
 ## 2. The frames to build, in order
 
-One device frame: 390 x 844, the canvas from the prototype. Corner radius 46 on the device shell, a small dynamic island pinned top-center (static and decorative, a pill shape, not an interactive notification), and a status bar reading 6:52. Lay the frames left to right on one page so the whole product reads as a row. One focus per frame is the rule: each screen states its single job in the first fold, then gives the rest to paper.
+One device frame: 390 x 844, the canvas from the prototype. Corner radius 46 on the device shell, a Dynamic Island pinned top-center, and a status bar reading 6:52. The island is live, not decorative: draw both its states, the resting pill and the morphed notification capsule (the wider, taller, rounded form carrying a breathing periwinkle dot and a Leo line, e.g. "Leo, new lead at 88 Linden, pre-approved"), and bind them as a component variant. Lay the frames left to right on one page so the whole product reads as a row. One focus per frame is the rule: each screen states its single job in the first fold, then gives the rest to paper.
 
-Spend the craft budget top-down. Today is the hero and gets the highest finish. Everything after it is built to be correct and on-system, not to out-shine Today. The frames below match the screens the prototype actually ships, in the order the morning runs: the app opens straight to the Today command center, which assembles itself, leads with the trust ledger, and surfaces the triage. There is no lock screen and no push-notification opening to build; the morning's first beat is the command center coming together.
+Spend the craft budget top-down. Today is the hero and gets the highest finish. Everything after it is built to be correct and on-system, not to out-shine Today. The frames below match the screens the prototype actually ships, in the order the morning runs: a three-step onboarding opens first (Frame 0), then the Today command center assembles itself, leads with the trust ledger, and surfaces the triage. There is no lock screen and no push-notification opening to build. The morning's first beat is the Dynamic Island morphing open to carry Leo's first notice right after onboarding, and the command center then coming together behind it.
+
+### Frame 0, the onboarding (three slides)
+The image-led opening that plays once before Today. Build it as three slide frames (or one frame with three slide states), each 390 x 844, in order:
+
+1. Slide 1: a dark, swirling architectural photo filling the top portion and fading down into a clean dark text band. A small Leo logo lockup and a "Real · morning command center" eyebrow, then the Host Grotesk headline "A hundred agents, working through the night" with "night" in periwinkle, and a sub "Listing research, document prep, negotiation, scheduling. Leo runs them while you sleep." Progress dots (first active), a Skip, and a Next.
+2. Slide 2: a light, faceted photo in the top zone. Eyebrow "by morning", headline "The noise, quietly sorted" with "sorted" in periwinkle, sub "The handled, the watched, and the few that need a human, separated before you wake." Dots (second active), Skip, Next.
+3. Slide 3: an orange, angular photo in the top zone. Eyebrow "your morning", headline "You see only what needs you" with "you" in warm sand (`danger`), sub "One calm triage across your deals and your team, ranked by what is at stake." Dots (third active), Skip, and the Next button now reading "Get started".
+
+The accent word is periwinkle on the first two slides and warm sand on the third; the photo always sits in the top zone and fades into the dark text zone so type is never over a busy image. Annotate the paging as a `translateX` slide driven by Next (section 5) and note that under reduced motion the onboarding is skipped and the app opens on Frame 1. The photos live at prototype/assets/onboard-1.jpg, onboard-2.jpg, onboard-3.jpg.
 
 ### Frame 1, Today, the command center, calm (the hero)
 This is the front door and the whole argument, and the default calm morning. Build it to the highest craft. Top to bottom:
@@ -102,7 +113,7 @@ Above the triage, build the handoff cover chip as a labeled element: "Handoff: S
 Build a second copy of Today annotated with the morning-assembly stagger (section 5) so the order of arrival is legible without motion: number the layers 1 (greeting and ledger), 2 (the triage), 3 (the guardrails and FYI), 4 (the glance), 5 (review activity). The order is the priority made physical.
 
 ### Frame 2, Today, the heavy morning
-The same command center on a heavy morning, switched by the presenter "Calm ↔ Heavy" toggle. Build it as a variant of Frame 1 with the four exception-handler cards escalated into the triage above the calm two, each as a focus-or-row triage card with an agent tag and a severity dot:
+The same command center on a heavy morning. In the live prototype this busier state is revealed by the guided tour as one of its steps, surfacing the security and Fair-Housing cards; in Figma, build it as a variant of Frame 1 with the four exception-handler cards escalated into the triage above the calm two, each as a focus-or-row triage card with an agent tag and a severity dot:
 
 1. Security anomaly (acted-then-uncertain, red dot): "I paused a 3 AM bulk export on Marcus's account and locked the session." 412 client records, an unrecognized device, "Was I right?" Actions "Keep it locked" and "Details", plus a teach line "It was actually Marcus, teach me". The safe reversible action came first, then the question; the false positive becomes a teach-loop, not a recurring nag.
 2. Fair-Housing tripwire (wrong then save, red dot): "I almost sent an outreach line that reads as steering." Leo held the draft and rewrote it. Actions "Approve safe version" and "See change". The classifier verdict is the interaction; this is the responsible-AI centerpiece.
@@ -144,7 +155,7 @@ The "How Leo speaks" screen, one voice and five states, the dedicated legend the
 4. Silent. The default for about 90% of work, collapsed into "47 handled." Earns trust by not interrupting.
 5. Wrong or corrected. Owns the miss, Dana corrects it, it visibly learns and logs for audit (the Fair-Housing save).
 
-Add the note that turning on "Annotate" in the presenter chrome pins the nine microinteraction specs onto the live screens.
+Add the note that the live prototype walks the nine microinteraction specs through its guided tour, driving the app into each state as it explains it.
 
 ### Frame 8, Orchestration, the funnel
 The "how Leo's 100+ become 4" screen. A funnel card: a cloud of 100+ agent dots (a few live), the cap "100+ agents working", an arrow, the filter gate "confidence × stakes × needs-your-voice", an arrow, then four surfaced chips and the cap "4 surfaced to you" in amber. Below it, two explainer cards: "The rule, in one line" (an agent earns a pixel only when it is uncertain, the stakes are high, or it needs your voice; everything else is silent, watching, or routed to a teammate) and "Accountability for the silence" (every silently-handled action carries a tappable provenance stamp, and any correction tightens that policy). The signal hierarchy is enforced by the orchestrator, not by Dana scrolling.
@@ -190,7 +201,7 @@ A row: a deal or agent name and a sparkline. Variants: `state` = healthy (a mute
 A small orb glyph and a `display/voice` line. Reused inside the voice outbox (the drafted counter, "We can hold at $612K with a 30-day close") and the coaching sheet (the human-to-human draft), both set in Host Grotesk on the `p2` bubble or the read-band paper. The reconciler's "78% sure dotloop is current" sureness line is the exception: it is the mono confidence read, not the display voice. Keep the drafted-message lines Host Grotesk; the sureness read stays mono.
 
 ### Bottom nav, `component: bottom-nav`
-Four tabs: Today, Day, Team, Leads, in a frosted bar with a 1px top hairline and no rounded corners. There is no sliding indicator pill; the active tab simply recolors. Build the active state as a variant `active` = today / day / team / leads so each breadth frame shows the correct tab lit (active = ink label and periwinkle icon stroke; idle = ink-subtle). Today and Team carry a small badge count. Four tabs, not five or more, so the bar stays calm and one-handed. A presenter "jump" nav above the device also exposes the AI states legend and Orchestration.
+Four tabs: Today, Day, Team, Leads, in a frosted bar with a 1px top hairline and no rounded corners. There is no sliding indicator pill; the active tab simply recolors. Build the active state as a variant `active` = today / day / team / leads so each breadth frame shows the correct tab lit (active = ink label and periwinkle icon stroke; idle = ink-subtle). Today and Team carry a small badge count. Four tabs, not five or more, so the bar stays calm and one-handed. The AI states legend and Orchestration sit off the tab bar; in the live prototype the guided tour steps to each of them in turn.
 
 ### Buttons, `component: btn`
 Variants: `kind` = primary (`btn-amber`, a periwinkle `signal` fill, `signal-ink` dark label, a soft periwinkle glow) / ghost (transparent, `ink-muted` text, hairline border) / danger (a `danger` fill, for the defensive security action and pause-all only). `width` = full / sm (for the two-up action rows). `r` (8). The rule from the system: exactly one filled primary action per screen, everything else ghost. State `pressed` = scale 0.985 (note it; Figma cannot animate it, but the handoff should say so).
@@ -217,7 +228,7 @@ Work in this sequence so the library exists before the frames that depend on it,
 1. Variables and text styles (section 1). Nothing else starts until tokens are bound.
 2. Atoms: orb, dot, the confidence wave, badges, buttons, the mono meta styles.
 3. The triage card (all variants, row and focus shapes). It is the product's signature object, so get it right early.
-4. Frame 1, Today calm, the hero, built to the highest craft. Build the assembly-order annotated copy alongside it.
+4. Frame 1, Today calm, the hero, built to the highest craft. Build the assembly-order annotated copy alongside it, and build Frame 0, the three onboarding slides, at the same finish since it is the opening and shares Today's craft level.
 5. The remaining bespoke components: the range bar, the undo ring, the pulse sparkline, the leo-says block, the bottom nav with its recoloring active tab, the cover and resting chips, the sheet template.
 6. Frame 2, Today heavy, as the variant of Frame 1 with the four exception-handler cards.
 7. The focus-card sheets: Frame 3 (the reconciler, the sheet template) and Frame 4 (the voice outbox), with their resolved variants.
@@ -229,8 +240,10 @@ Work in this sequence so the library exists before the frames that depend on it,
 
 ## 5. Motion notes for handoff
 
-Figma is static, so annotate the motion as redline notes rather than trying to fake it. The prototype annotates nine signature microinteractions (turn on "Annotate" to read them pinned on the live screens); these carry the workflow, so describe each on its frame.
+Figma is static, so annotate the motion as redline notes rather than trying to fake it. The prototype carries nine signature microinteractions, walked one beat at a time by its guided tour; these carry the workflow, so describe each on its frame.
 
+- Onboarding paging (Frame 0, on open): the three slides sit on one track and page on `transform`, a `translateX` step of one third per slide driven by the Next button (not free swiping); Next becomes "Get started" on the last slide and the overlay then fades out on opacity. Under reduced motion the onboarding is skipped and the app opens on Frame 1.
+- Dynamic Island morph (the first beat, after onboarding): the resting pill morphs into the wider notification capsule on a coordinated `width`, `height`, and `border-radius` transition (the `--ease-snap` curve), the notice content fading and scaling in behind the shape; it holds about four seconds, then reverses to the pill. This is the one place `border-radius` is animated alongside size, confined to this element. It fires once automatically after onboarding, then cycles a few Leo states on tap.
 - Morning assembly (Today, on open): the active screen's children rise on a roughly 40 to 50ms per-step stagger built from `:nth-child` selectors (greeting and ledger first, then the triage, then the guardrails and FYI, then the glance and review activity), and the triage cards carry their own stagger. Entrances are translateY of about 10px plus opacity on the `--ease-out` curve, cubic-bezier(.22,1,.36,1), at the `--dur-slow` 360ms duration. There is no `.assemble` class or `d1` to `d7` delay classes. The order (human voice, then the few things, then the proof of restraint) is the priority made physical.
 - Silence made visible, not audible: the Crestview deal that has gone quiet surfaces as its own deal-risk card with the amber needs-you treatment, while the team-pulse wave glyphs read each rep's activity. Quiet is shown on the surface, never sounded as a beep.
 - The counter handback (the voice outbox): on "Send as me", the bubble resolves to the sent state, then the 8-second undo ring drains.

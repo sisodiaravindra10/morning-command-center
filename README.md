@@ -9,7 +9,7 @@ The fastest way in is **[index.html](index.html)**, the visual front door that l
 
 ## Start with the prototype
 
-Open `prototype/command-center.html` in any modern browser (best on a laptop; it renders a phone). There is no lock screen and nothing to tap through. It opens the way a real morning does, straight into the Today command center:
+Open `prototype/command-center.html` in any modern browser (best on a laptop; it renders a phone). A three-step welcome sets the morning (a hundred agents overnight, the noise sorted, only what needs you), then it opens into the Today command center. The status pill is a live Dynamic Island that morphs to carry Leo's notices, starting with the new lead the moment you arrive. The command center itself:
 
 1. The cards rise in. Anchored at the top is the trust ledger, which reads "47 handled overnight · 2 need you · 1 corrected." That is the first beat: proof the night was handled before anything asks for you.
 2. Below it, the triage. One focus card at a time, the rest collapsed, ranked by what is at stake across your own deals and your team's.
@@ -19,9 +19,9 @@ Open `prototype/command-center.html` in any modern browser (best on a laptop; it
    - **Your team's risk, ranked alongside:** an SLA breach (a hot lead has waited 3h 12m on Marcus, in a showing) with reassign or round-robin routing in one tap.
    - **The Fair-Housing tripwire:** Leo almost sent an outreach line that reads as steering, held it, and rewrote it. The responsible-AI moment, surfaced as its own card.
 
-Switch **My deals ↔ My team** to move altitude, and the presenter **Calm ↔ Heavy** toggle to see how the morning adapts. Every action is live: adjudicate the Marsh conflict, open the voice outbox, or override an agent and watch it offer to learn.
+Switch **My deals ↔ My team** to move altitude. For a guided way in, the **Take the tour** button under the phone walks the morning one step at a time: it steps through the trust ledger, the altitude toggle, the focus card, the Dynamic Island, the team SLA breach, the tab bar, the orchestration funnel, and the AI-states legend, driving the app into each state as it explains it, including the busier morning that reveals the Fair-Housing and security guardrail cards. Every action is live too: adjudicate the Marsh conflict, open the voice outbox, or override an agent and watch it offer to learn.
 
-The whole thing is one self-contained file: HTML, CSS, and a little vanilla JavaScript. Motion is CSS only and honors reduced motion. There is no build step and nothing to install.
+The whole thing is one HTML file with CSS and a little vanilla JavaScript, plus three onboarding photos in `assets/`. Motion is CSS only and honors reduced motion. There is no build step and nothing to install.
 
 ## The thinking (`docs/`)
 

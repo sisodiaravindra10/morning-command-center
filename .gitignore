@@ -13,3 +13,4 @@ films/out/
 # OS / editor
 .DS_Store
 *.log
+.vercel
