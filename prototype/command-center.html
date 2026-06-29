@@ -688,6 +688,49 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .allclear .ac-t,.fyi .fyi-t{color:var(--ink-muted)}
 .allclear .ac-sub,.fyi .fyi-go,.glance-head .gl-t{color:var(--ink-subtle)}
 /* the focus card keeps its raised treatment, so it now clearly leads the quieter list */
+
+/* ============================================================
+   GLOBE BANNER (Today): a faded world as a calm visual header,
+   Leo's live read alongside. Sticky; the sheet scrolls over it.
+   ============================================================ */
+.banner{position:sticky;top:0;z-index:0;height:236px;margin:-14px -18px 0;padding:22px 20px 0;overflow:hidden}
+.banner-data{position:relative;z-index:2;max-width:60%}
+.bd-leo{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-subtle);margin-bottom:14px}
+.bd-orb{width:7px;height:7px;border-radius:50%;background:var(--signal);animation:bdBreathe 3.6s var(--ease-io) infinite}
+@keyframes bdBreathe{0%,100%{opacity:.65;box-shadow:0 0 0 3px rgba(174,194,246,.10)}50%{opacity:1;box-shadow:0 0 0 5px rgba(174,194,246,.04)}}
+.bd-big{font-family:var(--serif);font-size:37px;font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1}
+.bd-line{font-size:13px;color:var(--ink-muted);margin-top:6px}
+.bd-tick{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--signal-hi);margin-top:14px;max-width:90%}
+.bd-pdot{width:5px;height:5px;border-radius:50%;background:var(--signal);flex:0 0 auto;box-shadow:0 0 8px var(--signal)}
+.bd-as{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--ink-subtle);margin-top:10px}
+/* the globe, bleeding off the right edge, faded into the dark */
+.globe-stage{position:absolute;z-index:1;top:48%;right:-82px;transform:translateY(-50%);width:288px;height:288px;opacity:.6;pointer-events:none}
+.globe-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.globe-fallback{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 36% 30%, rgba(203,214,251,.30), transparent 50%),radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 79%);
+  box-shadow:inset -14px -18px 46px rgba(0,0,0,.7), inset 10px 12px 34px rgba(174,194,246,.10), 0 0 60px rgba(174,194,246,.09)}
+.globe-fallback::before,.globe-fallback::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(174,194,246,.13)}
+.globe-fallback::before{transform:scaleX(.46)}
+.globe-fallback::after{transform:scaleY(.9);border-color:rgba(174,194,246,.07)}
+.globe-fallback i{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--signal);box-shadow:0 0 9px var(--signal)}
+.globe-fallback i:nth-child(1){top:33%;left:41%}
+.globe-fallback i:nth-child(2){top:53%;left:31%}
+.globe-fallback i:nth-child(3){top:46%;left:55%}
+/* fade the banner's lower edge into the canvas, behind the rising sheet */
+.banner-fade{position:absolute;z-index:2;left:0;right:0;bottom:0;height:74px;background:linear-gradient(to bottom, transparent, var(--canvas));pointer-events:none}
+/* the opaque sheet that scrolls up over the banner */
+.today-sheet{position:relative;z-index:1;background:var(--canvas);border-radius:20px 20px 0 0;margin:-42px -18px 0;padding:6px 18px 0;display:flex;flex-direction:column;gap:12px;box-shadow:0 -18px 30px -10px rgba(10,11,16,.9)}
+
+/* sleeker altitude toggle: a glass segmented control with a gliding pill */
+.altitude{position:relative;display:flex;margin:0;padding:4px;border:1px solid rgba(174,194,246,.16);border-radius:999px;background:rgba(20,22,30,.55);backdrop-filter:blur(10px) saturate(150%);-webkit-backdrop-filter:blur(10px) saturate(150%);overflow:hidden}
+.alt-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);z-index:0;border-radius:999px;background:linear-gradient(180deg,rgba(174,194,246,.24),rgba(174,194,246,.10));border:1px solid rgba(174,194,246,.30);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 2px 8px -2px rgba(0,0,0,.5);transition:transform .44s var(--ease-snap)}
+html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
+.altitude button{position:relative;z-index:1;flex:1;background:none;border:0;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:none;padding:8px 0;color:var(--ink-subtle);display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:color var(--dur-med) var(--ease-out)}
+.altitude button+button{border-left:0}
+.altitude button[aria-pressed=true]{background:none;color:var(--ink)}
+.altitude .cnt{font-size:10px;color:var(--ink-subtle)}
+.altitude button[aria-pressed=true] .cnt{color:var(--signal-hi)}
+@media (prefers-reduced-motion: reduce){.bd-orb{animation:none}.alt-ind{transition:none}}
 </style>
 </head>
 <body>
@@ -728,15 +771,36 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
       <span class="cgo">open</span>
     </div>
 
-    <div class="altitude" id="altitude" role="tablist" aria-label="Altitude">
-      <button data-alt="me" aria-pressed="true" role="tab">My deals <span class="cnt">· 4</span></button>
-      <button data-alt="team" aria-pressed="false" role="tab">My team <span class="cnt">· 3</span></button>
-    </div>
-
     <main class="scroll" id="scroll">
 
       <!-- ================= TODAY ================= -->
       <section class="screen is-active" data-screen="today">
+
+        <!-- GLOBE BANNER: a faded, slowly-rotating world (cobe on a hosted browser; a
+             static CSS globe behind it otherwise). Sticky, so the sheet scrolls over it. -->
+        <div class="banner" id="globe-banner">
+          <div class="globe-stage" aria-hidden="true">
+            <div class="globe-fallback"><i></i><i></i><i></i></div>
+            <canvas id="globe" class="globe-canvas" width="600" height="600"></canvas>
+          </div>
+          <div class="banner-data">
+            <div class="bd-leo"><span class="bd-orb"></span>Leo, on watch overnight</div>
+            <div class="bd-big">$14.2M</div>
+            <div class="bd-line">pipeline, 22 live across 6 metros</div>
+            <div class="bd-tick"><span class="bd-pdot"></span>North Hills warming, 3 new leads before dawn</div>
+            <div class="bd-as">100+ agents active &middot; as of 6:52am</div>
+          </div>
+          <div class="banner-fade" aria-hidden="true"></div>
+        </div>
+
+        <!-- the sheet rises and scrolls over the banner -->
+        <div class="today-sheet">
+
+        <div class="altitude" id="altitude" role="tablist" aria-label="Altitude">
+          <span class="alt-ind" aria-hidden="true"></span>
+          <button data-alt="me" aria-pressed="true" role="tab">My deals <span class="cnt">· 4</span></button>
+          <button data-alt="team" aria-pressed="false" role="tab">My team <span class="cnt">· 3</span></button>
+        </div>
 
         <!-- ME ALTITUDE -->
         <div data-altblock="me" style="display:flex;flex-direction:column;gap:12px">
@@ -946,6 +1010,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
           </div>
           <button class="btn btn-ghost btn-full" data-report style="margin-top:2px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg> Download team report</button>
         </div>
+        </div><!-- /today-sheet -->
       </section>
 
       <!-- ================= DAY ================= -->
@@ -1430,6 +1495,38 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
   $('#tc-next').addEventListener('click',()=>{(tIdx>=TOUR.length-1)?tEnd():tStep(tIdx+1);});
   $('#tc-prev').addEventListener('click',()=>tStep(tIdx-1));
   $('#tc-skip').addEventListener('click',tEnd);
+})();
+</script>
+<!-- Globe banner: a real WebGL globe (cobe), dark + periwinkle to match the system.
+     Renders on a hosted browser; if WebGL or the module is unavailable, the static
+     CSS globe behind it stays. Progressive enhancement, content never depends on it. -->
+<script type="module">
+(async function(){
+  var cv = document.getElementById('globe');
+  if(!cv) return;
+  try{
+    var createGlobe = (await import('https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm')).default;
+    var phi = 4.2;
+    createGlobe(cv, {
+      devicePixelRatio: 2, width: 600, height: 600,
+      phi: 4.2, theta: 0.26, dark: 1, diffuse: 1.2,
+      mapSamples: 17000, mapBrightness: 7.2,
+      baseColor: [0.20, 0.22, 0.32],
+      markerColor: [0.68, 0.76, 0.96],
+      glowColor: [0.10, 0.12, 0.20],
+      markers: [
+        { location: [30.27, -97.74], size: 0.08 },
+        { location: [29.42, -98.49], size: 0.06 },
+        { location: [29.76, -95.37], size: 0.07 },
+        { location: [32.78, -96.80], size: 0.07 },
+        { location: [40.71, -74.00], size: 0.05 },
+        { location: [34.05, -118.24], size: 0.05 }
+      ],
+      onRender: function(state){ state.phi = phi; phi += 0.0036; }
+    });
+  }catch(e){
+    cv.style.display = 'none'; /* keep the static CSS globe behind */
+  }
 })();
 </script>
 </body>
