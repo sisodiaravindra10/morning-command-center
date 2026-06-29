@@ -11,9 +11,10 @@ The fastest way in is **[index.html](index.html)**, the visual front door that l
 
 Open `prototype/command-center.html` in any modern browser (best on a laptop; it renders a phone). A three-step welcome sets the morning (a hundred agents overnight, the noise sorted, only what needs you), then it opens into the Today command center. The status pill is a live Dynamic Island that morphs to carry Leo's notices, starting with the new lead the moment you arrive. The command center itself:
 
-1. The cards rise in. Anchored at the top is the trust ledger, which reads "47 handled overnight · 2 need you · 1 corrected." That is the first beat: proof the night was handled before anything asks for you.
-2. Below it, the triage. One focus card at a time, the rest collapsed, ranked by what is at stake across your own deals and your team's.
-3. The few things that need judgment, in order:
+1. A calm visual header opens it. The top of Today is a globe banner: a faded, slowly rotating periwinkle world (a real WebGL globe over a static fallback, so it reads either way) with Leo's live portfolio read alongside, "$14.2M pipeline, 22 live across 6 metros." The banner stays pinned as the triage scrolls up over it.
+2. The cards rise in. Anchored at the top is the trust ledger, which reads "47 handled overnight · 2 need you · 1 corrected." That is the first beat: proof the night was handled before anything asks for you.
+3. Below it, the triage. One focus card at a time, the rest collapsed, ranked by what is at stake across your own deals and your team's.
+4. The few things that need judgment, in order:
    - **A deal-risk nudge on one of your own deals:** the Crestview deal has gone quiet four days. Leo is "62% sure" a soft nudge helps and offers two reads, send it or hold.
    - **A voice-required outbox:** three messages drafted but needing your actual voice, including Leo's counter on Oak St ("hold at $612K with a 30-day close") that you review before it sends. Nothing leaves until you tap "Send as me."
    - **Your team's risk, ranked alongside:** an SLA breach (a hot lead has waited 3h 12m on Marcus, in a showing) with reassign or round-robin routing in one tap.

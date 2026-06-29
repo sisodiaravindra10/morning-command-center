@@ -50,6 +50,24 @@ Once the island notice clears, the command center assembles. This is the first b
 - The motion: the cards rise into place on a short `nth-child` stagger, anchored by the trust ledger near the top, which reads exactly: "47 handled overnight · 2 need you · 1 corrected." The ledger sets the tone before any single card does: most of the work is already finished, and only a small, ranked few are asking for Dana. The top focus card of the triage leads. Under reduced-motion, the cards fade in together with no rise.
 - Why: the first thing Dana feels is that the work was underway while she slept and that the screen has already done the triage. That is the product promise delivered in the first two seconds, by restraint made visible, before she has read a single word of any card.
 
+### The globe banner and the triage scrolling over it
+
+The morning opens on a calm visual header, and the triage rises over it as Dana scrolls.
+
+- Trigger: Today is on screen; the banner is present from the first beat, and the behavior plays on scroll.
+- What it communicates: "here is the whole portfolio at a glance, and the work that needs you rises over it." The banner is Leo's live geographic read, a faded periwinkle-tinted world with the pipeline figure, the metro count, and a ticker line, distinct from the trust ledger above.
+- The motion: the globe is a slowly, continuously rotating WebGL sphere, dark and calm, bleeding off the right edge. It is a progressive enhancement: a static CSS globe sits behind it, so the banner reads correctly even if the live one never loads, and no content depends on it. The banner is pinned while the triage below, held in an opaque sheet, scrolls smoothly up over it on the native scroll, so the globe stays put as the cards rise over it. Under reduced motion the globe holds still and the scroll-over is just the plain scroll, with nothing gated behind the rotation.
+- Why: a single quiet header carries the portfolio-wide context without competing with the triage, and pinning it so the cards rise over it keeps the focus on what needs Dana while the calm view stays in the background. The rotation never being a dependency, with a static fallback behind it, keeps the promise that nothing is gated behind motion or a CDN render.
+
+### The altitude toggle's gliding pill
+
+The altitude switch is a glass segmented control with an indicator that slides between the two segments.
+
+- Trigger: Dana taps My deals or My team, the toggle that sits just under the globe banner, inside the scrolling sheet.
+- What it communicates: "this is the same one list, seen from a different altitude," not a jump to a separate place.
+- The motion: a rounded glass pill, translucent with a blurred ground, holds the two segments. A periwinkle indicator pill glides between them on `transform` when the altitude changes, the active label lifting to read over the pill while the other settles to a quieter ink. The list behind it re-ranks to the chosen altitude. Under reduced motion the pill jumps to its new segment with no glide.
+- Why: a sliding indicator reads as one control changing state rather than two destinations, which is the whole argument for altitude being a badge, not a tab. The glass treatment is reserved for the small controls that float (this toggle and the bottom nav), never for content surfaces, so it stays a quiet signal of "this is a control" rather than decoration.
+
 ### Quiet by default
 
 If Leo handled something on its own, there is no notification at all. It shows up only in the trust ledger and the review-activity log inside the morning view. The absence of a buzz is itself a designed, trustworthy signal: silence means handled, not asleep.

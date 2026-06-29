@@ -1507,6 +1507,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   try{
     var createGlobe = (await import('https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm')).default;
     var phi = 4.2;
+    var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     createGlobe(cv, {
       devicePixelRatio: 2, width: 600, height: 600,
       phi: 4.2, theta: 0.26, dark: 1, diffuse: 1.2,
@@ -1522,7 +1523,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
         { location: [40.71, -74.00], size: 0.05 },
         { location: [34.05, -118.24], size: 0.05 }
       ],
-      onRender: function(state){ state.phi = phi; phi += 0.0036; }
+      onRender: function(state){ state.phi = phi; if(spin) phi += 0.0036; }
     });
   }catch(e){
     cv.style.display = 'none'; /* keep the static CSS globe behind */
