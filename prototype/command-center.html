@@ -657,6 +657,23 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 5px 16px -6px rgba(174,194,246,.5);
   transition:transform .44s var(--ease-snap),width .44s var(--ease-snap),opacity .28s var(--ease-out)}
 @media (prefers-reduced-motion:reduce){.tab-ind{transition:opacity .001ms}}
+
+/* ============================================================
+   /impeccable polish: craft lifts on the new surfaces (onboarding,
+   tour, navbar) + 44px touch targets. Additive, system-aligned, RM-safe.
+   ============================================================ */
+/* 44px minimum hit area on the onboarding + tour controls */
+.ob-skip,.ob-next,.tc-skip,.tc-prev,.tc-next{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+/* tour spotlight: a soft periwinkle halo so the eye lands on the highlight, not just a dim edge */
+.tour-spot{box-shadow:0 0 24px 3px rgba(174,194,246,.42),0 0 0 9999px rgba(7,8,12,.72)}
+/* tour card: a gentle rise as the tour opens (once, on start) */
+.tour.show .tour-card{animation:tcRise .42s var(--ease-out)}
+@keyframes tcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* onboarding: a slow, barely-there drift so the photo feels alive, the one place atmosphere is earned */
+@media (prefers-reduced-motion:no-preference){.ob-bg{animation:obDrift 19s ease-in-out infinite alternate}}
+@keyframes obDrift{from{transform:scale(1.004)}to{transform:scale(1.05)}}
+/* the active glass-tab label tracks the accent smoothly */
+.tab .tl{transition:color var(--dur-med) var(--ease-out)}
 </style>
 </head>
 <body>
