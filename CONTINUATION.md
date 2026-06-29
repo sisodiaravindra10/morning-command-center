@@ -75,7 +75,28 @@ Git), so Vercel's own infra deploys the latest commit. Do not burn cycles retryi
 
 ---
 
-# ACTIVE REDESIGN BACKLOG (from 2026-06-30, NOT yet built)
+# ACTIVE REDESIGN BACKLOG (from 2026-06-30)
+
+## PROGRESS (updated 2026-06-30 — latest commit `d4abfb8`, all pushed)
+
+DONE + committed + verified in preview:
+- **#1 periwinkle monotony fixed.** `--good` is now sage-teal `#8FBAA4` (was near-periwinkle), so every good/done/clear/healthy state differs from the AI accent. The trust KPI cards differentiate by meaning: handled=teal, need-you=warm-sand (tinted, pops), corrected=periwinkle. The "Needs you" chip (`.chip.needs`) is now warm sand.
+- **#2/#3 readability + toggle.** The altitude toggle is Inter + heavier with clear active/inactive contrast (was thin mono).
+- **#4 section label removed** ("Needs your judgment / 2 to clear · one at a time").
+- **#5 focus card DECLUTTERED (the swipe-stack part is still TODO).** Bigger 17px headline as the focal point; Leo's confidence + recommendation is now a distinct periwinkle-washed "Leo's take" band (the `.conf` rule); better hierarchy.
+- **#6 CTA standardized.** Every triage card is now `Approve` (primary) + `Details` (secondary), one verb across all (was a different CTA each). Approve currently runs the existing dispose+toast; rewire it to open the working drawer (below).
+- **#8 guardrails line readable.** "Guardrails clear" title + Inter subtitle + teal dot (was a wrapping mono string).
+
+STILL TO BUILD, in order:
+1. **#7 the "Leo working" drawer (NEXT — the centerpiece).** On Approve, a bottom drawer slides up with Leo's steps as a live timeline (CSS-driven sequence, no rAF) + Stop/Undo, then disposes the card. Wiring notes: the Approve buttons have `data-dispose data-toast='{...}'`; the click handler at ~line 1432 currently does `toast()` + `disposeCard()` — rewire to `openWork(card, opts)`. `disposeCard()` is ~line 1407; restore (undo) = `card.style.display=''` + remove `.gone` + `layoutTriage()`. Add `data-work='{"title","steps":[...],"result"}'` per card for tailored steps; fall back to deriving title/result from `data-toast`. The scrim is `#scrim`; sheets use `#sheet-host`. Recommendation already chosen (A: working drawer + swipe, B's see-details as secondary — see below).
+2. **#5b the swipe card stack** — triage as a Tinder 3-card stack (front active, two peeking behind at lower opacity/scale).
+3. **#9 the dashboard glance** — fix-or-cut (currently broken/hidden; header KPIs may cover it).
+4. **#10 review-activity** → a single "view past actions" button opening a history view.
+5. **#11 the globe → region detail view.**
+
+The original detailed brief for each item (unchanged) follows.
+
+---
 
 The user gave this as a batch with screenshots. Implement in the prototype, verify in preview.
 
