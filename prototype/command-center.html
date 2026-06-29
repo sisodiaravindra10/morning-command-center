@@ -633,6 +633,30 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .tc-prev:hover{border-color:var(--ink-subtle);color:var(--ink)}
 .tc-next{font-family:var(--font);font-weight:600;font-size:12.5px;color:var(--signal-ink);background:linear-gradient(180deg,var(--signal-hi),var(--signal));border-radius:var(--r);padding:8px 16px;box-shadow:0 6px 16px -8px rgba(174,194,246,.6)}
 .tc-next:active,.tc-prev:active{transform:scale(.97)}
+
+/* ============================================================
+   Liquid glass bottom navbar (Apple-style): a floating, translucent,
+   refractive capsule, a bright top edge, and a glass pill that glides
+   under the active tab. Content scrolls beneath it.
+   ============================================================ */
+.scroll{padding-bottom:98px}
+.tabbar{position:absolute;left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:35;
+  gap:2px;padding:7px;border:1px solid rgba(255,255,255,.14);border-top:1px solid rgba(255,255,255,.16);
+  border-radius:30px;background:rgba(22,24,32,.5);
+  -webkit-backdrop-filter:blur(26px) saturate(185%);backdrop-filter:blur(26px) saturate(185%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.05),0 18px 42px -14px rgba(0,0,0,.72),0 3px 10px -5px rgba(0,0,0,.55);
+  overflow:visible}
+.tabbar::before{content:"";position:absolute;inset:0;border-radius:30px;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,0) 46%)}
+.tab{position:relative;z-index:2;border-radius:23px}
+.tab[aria-selected=true]{color:var(--signal-hi)}
+.tab[aria-selected=true] svg{filter:drop-shadow(0 0 5px rgba(174,194,246,.45))}
+.tab-ind{position:absolute;top:7px;bottom:7px;left:0;width:0;z-index:1;border-radius:23px;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,rgba(174,194,246,.26),rgba(174,194,246,.12));
+  border:1px solid rgba(174,194,246,.34);
+  -webkit-backdrop-filter:blur(8px) saturate(160%);backdrop-filter:blur(8px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 5px 16px -6px rgba(174,194,246,.5);
+  transition:transform .44s var(--ease-snap),width .44s var(--ease-snap),opacity .28s var(--ease-out)}
+@media (prefers-reduced-motion:reduce){.tab-ind{transition:opacity .001ms}}
 </style>
 </head>
 <body>
@@ -984,6 +1008,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
     </main>
 
     <nav class="tabbar" role="tablist" aria-label="Sections">
+      <span class="tab-ind" id="tab-ind" aria-hidden="true"></span>
       <button class="tab" data-go="today" aria-selected="true"><span class="badge">4</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h10M4 18h7" stroke-linecap="round"/></svg><span class="tl">Today</span></button>
       <button class="tab" data-go="day" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2" stroke-linecap="round"/></svg><span class="tl">Day</span></button>
       <button class="tab" data-go="team" aria-selected="false"><span class="badge">3</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="9" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 7a3 3 0 0 1 0 5.5M15.5 19a5.5 5.5 0 0 0-1.6-3.9" stroke-linecap="round"/></svg><span class="tl">Team</span></button>
@@ -1184,11 +1209,13 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 
   /* ---------- navigation ---------- */
   const scroll=$('#scroll');
+  function syncNav(){const ind=$('#tab-ind');if(!ind)return;const a=$('.tab[aria-selected="true"]');if(!a){ind.style.opacity='0';return;}ind.style.opacity='1';ind.style.width=a.offsetWidth+'px';ind.style.transform='translateX('+a.offsetLeft+'px)';}
+  window.addEventListener('resize',syncNav);
   function go(name){$$('.screen').forEach(s=>s.classList.toggle('is-active',s.dataset.screen===name));
     $$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.go===name));
     $$('#screen-jump button').forEach(t=>t.classList.toggle('cur',t.dataset.go===name));
     $('#altitude').style.display=(name==='today')?'flex':'none';
-    root.dataset.screen=name;
+    root.dataset.screen=name;syncNav();
     scroll.scrollTop=0;}
   $$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.go)));
   {const _sj=$('#screen-jump');if(_sj)_sj.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.go);});}
@@ -1311,7 +1338,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 
   /* ---------- orchestration cloud ---------- */
   const fc=$('#f-cloud');if(fc){let h='';for(let i=0;i<60;i++){h+=(i%17===0)?'<i class="live"></i>':'<i></i>';}fc.innerHTML=h;}
-  layoutTriage();syncGlance();
+  layoutTriage();syncGlance();syncNav();
 
   /* ---------- onboarding (3-step, image-led opening) ---------- */
   const ob=$('#onboarding'),obNext=$('#ob-next');let obIdx=0;const OB_N=3;
