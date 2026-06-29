@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>V03 Conversational x The Tell: Leo morning command center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm paper surface, never pure white */
+    --paper:    oklch(0.975 0.011 83);
+    --card:     oklch(0.995 0.004 85);
+    --sunken:   oklch(0.955 0.012 80);
+    --hair:     oklch(0.30 0.02 60 / 0.09);
+    --hair-2:   oklch(0.30 0.02 60 / 0.16);
+    --shadow:   0 14px 34px -18px oklch(0.45 0.04 60 / 0.30);
+
+    /* ink: warm near-black, never pure */
+    --ink:   oklch(0.26 0.02 60);
+    --body:  oklch(0.46 0.016 62);
+    --muted: oklch(0.60 0.012 65);
+    --faint: oklch(0.70 0.010 68);
+
+    /* AI-state accents: color encodes a confidence state, not decoration */
+    --confident: oklch(0.52 0.10 168);
+    --confident-tint: oklch(0.95 0.03 168);
+    --uncertain: oklch(0.58 0.12 70);
+    --uncertain-tint: oklch(0.955 0.035 78);
+    --urgent: oklch(0.54 0.16 28);
+    --urgent-tint: oklch(0.955 0.030 32);
+
+    --accent: oklch(0.50 0.13 262);  /* the single primary action per screen */
+    --accent-ink: oklch(0.985 0.006 262);
+
+    --r-card: 18px;
+    --r-chip: 9px;
+    --r-btn: 13px;
+    --r-sheet: 26px;
+
+    --serif: "Newsreader", Georgia, serif;
+    --sans:  "Inter", system-ui, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, monospace;
+
+    --ease: cubic-bezier(.16,1,.3,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    /* neutral backdrop behind the phone: warm, tinted, not flat grey */
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.93 0.018 75) 0%, oklch(0.90 0.016 70) 60%, oklch(0.875 0.014 68) 100%);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    gap:18px;
+    padding:34px 16px 56px;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ---- variant caption ---- */
+  .caption{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:oklch(0.42 0.02 65);
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .caption .tick{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--accent);
+    display:inline-block;
+  }
+
+  /* ---- phone frame (chrome) ---- */
+  .phone{
+    width:393px;
+    max-width:100%;
+    height:840px;
+    border-radius:54px;
+    background:oklch(0.22 0.012 60);
+    padding:11px;
+    box-shadow:
+      0 2px 2px oklch(0.30 0.02 60 / 0.4),
+      0 40px 80px -28px oklch(0.32 0.03 60 / 0.55);
+    position:relative;
+  }
+  .screen{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:44px;
+    background:var(--paper);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  /* status bar */
+  .statusbar{
+    height:50px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:0 28px 8px;
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+    letter-spacing:0.01em;
+  }
+  .statusbar .right{ display:flex; gap:7px; align-items:center; }
+  .statusbar .right svg{ display:block; }
+  .notch{
+    position:absolute;
+    top:13px; left:50%; transform:translateX(-50%);
+    width:118px; height:30px;
+    background:oklch(0.22 0.012 60);
+    border-radius:18px;
+    z-index:5;
+  }
+
+  /* scroll body */
+  .body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:6px 22px 30px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .body::-webkit-scrollbar{ width:0; }
+
+  /* ---- the conversational header: Leo speaks ---- */
+  .leo-head{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    margin:8px 0 2px;
+  }
+  .orb{
+    width:30px;height:30px;border-radius:50%;
+    flex:0 0 auto;
+    background:
+      radial-gradient(circle at 35% 32%, oklch(0.72 0.07 168) 0%, oklch(0.50 0.10 168) 58%, oklch(0.40 0.09 170) 100%);
+    position:relative;
+    animation:breathe 5.6s var(--ease) infinite;
+  }
+  .orb::after{
+    content:"";
+    position:absolute; inset:-5px;
+    border-radius:50%;
+    border:1px solid var(--confident);
+    opacity:0.22;
+    animation:ring 5.6s var(--ease) infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.07); }
+  }
+  @keyframes ring{
+    0%,100%{ transform:scale(1); opacity:0.22; }
+    50%{ transform:scale(1.18); opacity:0.05; }
+  }
+  .leo-name{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .leo-time{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--faint);
+    margin-left:auto;
+  }
+
+  /* the mixed-weight paragraph: bright/bold words carry the signal */
+  .tell-para{
+    font-family:var(--serif);
+    font-size:25px;
+    line-height:1.42;
+    letter-spacing:-0.005em;
+    color:var(--faint);            /* dim words connect */
+    font-weight:400;
+    margin:14px 0 4px;
+  }
+  .tell-para .lead{ color:var(--body); }
+  .tell-para b{
+    font-weight:600;
+    color:var(--ink);             /* bright words = the signal */
+  }
+  .tell-para .due{ color:var(--urgent); font-weight:600; }
+  .tell-para .open{ color:var(--confident); font-weight:600; }
+  .tell-para .soft{ color:var(--uncertain); font-weight:600; }
+
+  /* inline avatar inside the paragraph */
+  .ava-inline{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;height:24px;
+    border-radius:50%;
+    vertical-align:-5px;
+    margin:0 1px;
+    font-family:var(--sans);
+    font-size:10px;
+    font-weight:600;
+    color:oklch(0.30 0.03 60);
+    letter-spacing:0;
+  }
+  .ava-m{ background:oklch(0.86 0.05 70); }
+  .ava-c{ background:oklch(0.85 0.045 168); }
+
+  .read-line{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    color:var(--muted);
+    margin:14px 0 2px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .read-line .dot{ width:4px;height:4px;border-radius:50%; background:var(--faint); }
+
+  /* ---- THE TELL: the quiet subtract offer (shown just for her) ---- */
+  .tell{
+    margin:16px 0 6px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    transition:opacity .5s var(--ease), transform .5s var(--ease);
+  }
+  .tell.accepted{ }
+  .tell-inner{ padding:17px 18px 16px; }
+  .tell-eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--uncertain);
+    margin-bottom:11px;
+  }
+  .tell-eyebrow .pulse{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--uncertain);
+    box-shadow:0 0 0 0 var(--uncertain-tint);
+    animation:soft-pulse 3.4s var(--ease) infinite;
+  }
+  @keyframes soft-pulse{
+    0%{ box-shadow:0 0 0 0 oklch(0.58 0.12 70 / 0.35); }
+    70%,100%{ box-shadow:0 0 0 7px oklch(0.58 0.12 70 / 0); }
+  }
+  .tell-read{
+    font-family:var(--serif);
+    font-size:16.5px;
+    line-height:1.5;
+    color:var(--body);
+    margin:0 0 14px;
+  }
+  .tell-read b{ color:var(--ink); font-weight:600; }
+  .tell-evidence{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+  }
+  .ev{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.02em;
+    color:var(--body);
+    background:var(--sunken);
+    border:1px solid var(--hair);
+    border-radius:var(--r-chip);
+    padding:5px 9px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .ev .dot{ width:5px;height:5px;border-radius:50%; background:var(--uncertain); }
+  .tell-offer{
+    font-family:var(--sans);
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--body);
+    background:var(--uncertain-tint);
+    border-radius:var(--r-btn);
+    padding:11px 13px;
+    margin-bottom:15px;
+  }
+  .tell-offer b{ color:oklch(0.40 0.10 65); font-weight:600; }
+  .tell-actions{ display:flex; gap:10px; }
+  .btn{
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:500;
+    border-radius:var(--r-btn);
+    min-height:46px;
+    padding:0 16px;
+    cursor:pointer;
+    border:1px solid var(--hair-2);
+    background:var(--card);
+    color:var(--ink);
+    transition:transform .16s var(--ease), background .2s var(--ease);
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  }
+  .btn:active{ transform:scale(.975); }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .btn-primary{
+    flex:1;
+    background:var(--accent);
+    color:var(--accent-ink);
+    border-color:transparent;
+    font-weight:600;
+  }
+  .btn-ghost{ flex:0 0 auto; color:var(--body); }
+
+  /* accepted state: the soft accept transition target */
+  .tell-done{
+    display:none;
+    padding:18px;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .tell.accepted .tell-inner{ display:none; }
+  .tell.accepted .tell-done{ display:flex; animation:fade-up .42s var(--ease) both; }
+  .tell-done .check{
+    width:26px;height:26px;border-radius:50%;
+    flex:0 0 auto;
+    background:var(--confident-tint);
+    color:var(--confident);
+    display:flex;align-items:center;justify-content:center;
+    margin-top:1px;
+  }
+  .tell-done p{
+    margin:0;
+    font-family:var(--serif);
+    font-size:15.5px;
+    line-height:1.5;
+    color:var(--body);
+  }
+  .tell-done p b{ color:var(--ink); font-weight:600; }
+  .tell-done .undo{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--accent);
+    margin-top:6px;
+    display:inline-block;
+    cursor:pointer;
+    background:none;border:none;padding:4px 0;
+  }
+  .tell-done .undo:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+
+  /* ---- the fanned deck of message cards ---- */
+  .deck-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:26px 0 18px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .deck-label .rule{ flex:1; height:1px; background:var(--hair); }
+
+  .deck{ position:relative; margin:0 0 6px; }
+  .mcard{
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    padding:15px 16px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    transition:transform .22s var(--ease), box-shadow .22s var(--ease);
+    outline:none;
+  }
+  .mcard:focus-visible{ box-shadow:var(--shadow), 0 0 0 2px var(--accent); }
+  .mcard:active{ transform:scale(.99); }
+  /* the fan: each card overlaps the one above, rotated a hair */
+  .deck .mcard{ margin-top:-12px; }
+  .deck .mcard:first-child{ margin-top:0; transform:rotate(-0.5deg); }
+  .deck .mcard:nth-child(2){ transform:rotate(0.4deg); }
+  .deck .mcard:nth-child(3){ transform:rotate(-0.3deg); }
+  .deck .mcard:hover,
+  .deck .mcard:focus-visible{ transform:rotate(0deg) translateY(-2px); z-index:3; }
+
+  .mcard-top{ display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .ava{
+    width:30px;height:30px;border-radius:50%;
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--sans); font-size:11px; font-weight:600;
+    color:oklch(0.30 0.03 60);
+  }
+  .ava-oak{ background:oklch(0.84 0.05 30); }
+  .ava-lin{ background:oklch(0.85 0.045 168); }
+  .ava-mar{ background:oklch(0.86 0.05 70); }
+  .mcard-who{ display:flex; flex-direction:column; }
+  .mcard-who .name{
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink);
+    line-height:1.2;
+  }
+  .mcard-who .meta{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.05em;
+    color:var(--muted); margin-top:2px;
+  }
+  .state-chip{
+    margin-left:auto;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:4px 9px;
+    border-radius:var(--r-chip);
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .state-chip .d{ width:5px;height:5px;border-radius:50%; }
+  .chip-urgent{ color:oklch(0.40 0.13 28); background:var(--urgent-tint); }
+  .chip-urgent .d{ background:var(--urgent); }
+  .chip-open{ color:oklch(0.36 0.09 168); background:var(--confident-tint); }
+  .chip-open .d{ background:var(--confident); }
+  .chip-soft{ color:oklch(0.40 0.10 65); background:var(--uncertain-tint); }
+  .chip-soft .d{ background:var(--uncertain); }
+
+  .mcard-line{
+    font-family:var(--serif);
+    font-size:15.5px;
+    line-height:1.46;
+    color:var(--body);
+    margin:0;
+  }
+  .mcard-line b{ color:var(--ink); font-weight:600; }
+  .mcard-foot{
+    display:flex; align-items:center; gap:10px;
+    margin-top:11px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.04em;
+    color:var(--muted);
+  }
+  .mcard-foot .when{ color:var(--urgent); }
+  .mcard-foot .conf{ margin-left:auto; color:var(--body); }
+
+  /* the 5-minute window: a thin draining bar (state, not decoration) */
+  .window-bar{
+    height:3px; border-radius:2px;
+    background:var(--sunken);
+    margin-top:11px;
+    overflow:hidden;
+  }
+  .window-bar i{
+    display:block; height:100%;
+    width:100%;
+    background:var(--confident);
+    transform-origin:left center;
+    animation:drain 26s linear forwards;
+  }
+  @keyframes drain{ from{ transform:scaleX(1);} to{ transform:scaleX(.18);} }
+
+  /* ---- the silence ledger (the silent AI state) ---- */
+  .ledger{
+    margin:26px 0 10px;
+    border-top:1px solid var(--hair);
+    padding-top:18px;
+  }
+  .ledger-row{
+    display:flex; align-items:center; gap:11px;
+    width:100%;
+    background:none; border:none;
+    text-align:left;
+    cursor:pointer;
+    padding:6px 2px;
+    border-radius:var(--r-chip);
+    color:inherit;
+  }
+  .ledger-row:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .ledger-num{
+    font-family:var(--serif);
+    font-size:30px;
+    font-weight:500;
+    color:var(--ink);
+    line-height:1;
+    font-feature-settings:"tnum" 1;
+  }
+  .ledger-copy{ display:flex; flex-direction:column; gap:2px; }
+  .ledger-copy .a{
+    font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--body);
+  }
+  .ledger-copy .b{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.05em; color:var(--muted);
+  }
+  .ledger-copy .b b{ color:var(--confident); font-weight:500; }
+  .ledger-chev{
+    margin-left:auto;
+    color:var(--muted);
+    transition:transform .3s var(--ease);
+    flex:0 0 auto;
+  }
+  .ledger.open .ledger-chev{ transform:rotate(180deg); }
+
+  /* expanding panel: animated via grid-rows (transform/opacity inside) */
+  .ledger-panel{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .42s var(--ease);
+  }
+  .ledger.open .ledger-panel{ grid-template-rows:1fr; }
+  .ledger-panel > div{ overflow:hidden; }
+  .near-list{ padding:14px 2px 2px; }
+  .near{
+    display:flex; align-items:flex-start; gap:11px;
+    padding:11px 0;
+    border-top:1px solid var(--hair);
+    opacity:0;
+    transform:translateY(8px);
+  }
+  .ledger.open .near{ animation:fade-up .44s var(--ease) forwards; }
+  .ledger.open .near:nth-child(1){ animation-delay:.05s; }
+  .ledger.open .near:nth-child(2){ animation-delay:.12s; }
+  .ledger.open .near:nth-child(3){ animation-delay:.19s; }
+  .near .mark{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.04em;
+    color:var(--muted);
+    background:var(--sunken);
+    border-radius:6px;
+    padding:3px 7px;
+    flex:0 0 auto;
+    margin-top:1px;
+  }
+  .near .txt{
+    font-family:var(--sans); font-size:13px; line-height:1.5; color:var(--body);
+  }
+  .near .txt b{ color:var(--ink); font-weight:600; }
+  .near .txt .why{
+    display:block;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.03em;
+    color:var(--muted); margin-top:3px;
+  }
+
+  @keyframes fade-up{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* entrance stagger for the main blocks */
+  .rise{ opacity:0; transform:translateY(12px); animation:fade-up .56s var(--ease) forwards; }
+  .rise.d1{ animation-delay:.06s; }
+  .rise.d2{ animation-delay:.16s; }
+  .rise.d3{ animation-delay:.26s; }
+  .rise.d4{ animation-delay:.36s; }
+  .rise.d5{ animation-delay:.46s; }
+
+  /* a tiny live region for the accept announcement */
+  .sr-only{
+    position:absolute; width:1px;height:1px;
+    padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; }
+    .rise,.near{ opacity:1 !important; transform:none !important; }
+    .ledger-panel{ grid-template-rows:0fr; }
+    .ledger.open .ledger-panel{ grid-template-rows:1fr; }
+    .window-bar i{ width:38%; }
+    .orb{ transform:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="caption"><span class="tick" aria-hidden="true"></span>V03 CONVERSATIONAL x THE TELL</div>
+
+  <div class="phone">
+    <div class="notch" aria-hidden="true"></div>
+    <div class="screen">
+
+      <div class="statusbar" aria-hidden="true">
+        <span>5:52</span>
+        <div class="right">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="6" width="3" height="5" rx="1" fill="currentColor"/><rect x="4.5" y="3.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="9" y="1.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor" opacity="0.35"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"/><rect x="22" y="4" width="1.5" height="4" rx="0.75" fill="currentColor" opacity="0.5"/></svg>
+        </div>
+      </div>
+
+      <main class="body">
+
+        <!-- Leo opens the morning, conversationally -->
+        <div class="leo-head rise d1">
+          <span class="orb" aria-hidden="true"></span>
+          <span class="leo-name">Leo</span>
+          <span class="leo-time">5:52 AM</span>
+        </div>
+
+        <!-- the mixed-weight paragraph: bright words carry the signal -->
+        <p class="tell-para rise d1">
+          <span class="lead">Morning, Dana.</span> Three things need you before the
+          office wakes up. The buyers for <b>142 Oak St</b> <span class="due">want an answer by 10</span>,
+          a new buyer for <b>88 Linden</b> is <span class="open">ready and has loan approval</span>, and
+          <span class="ava-inline ava-m" aria-hidden="true">MO</span><b>Marcus</b> has a buyer who
+          <span class="soft">has gone quiet</span>. I saved everything else for later.
+        </p>
+
+        <div class="read-line rise d2"><span class="dot" aria-hidden="true"></span>One quick note before the list</div>
+
+        <!-- ============ THE TELL ============ -->
+        <section class="tell rise d2" id="tell" aria-labelledby="tell-h">
+          <div class="tell-inner">
+            <div class="tell-eyebrow"><span class="pulse" aria-hidden="true"></span>A quiet note, just for you</div>
+            <p class="tell-read" id="tell-h">
+              You opened this <b>before six</b>, and you have
+              <b>nine things still to decide</b>. That is more than most mornings.
+            </p>
+            <div class="tell-evidence" aria-label="What I noticed">
+              <span class="ev"><span class="dot" aria-hidden="true"></span>Started 5:52 AM</span>
+              <span class="ev"><span class="dot" aria-hidden="true"></span>9 things to decide</span>
+              <span class="ev"><span class="dot" aria-hidden="true"></span>3rd early start this week</span>
+            </div>
+            <p class="tell-offer">
+              I can <b>keep the team's less urgent items out of the way until noon</b> so your first
+              hour is only the three that are really yours. Nothing goes away; it just waits.
+            </p>
+            <div class="tell-actions">
+              <button class="btn btn-primary" id="tell-accept" type="button">
+                Keep them aside until noon
+              </button>
+              <button class="btn btn-ghost" id="tell-dismiss" type="button">Not today</button>
+            </div>
+          </div>
+
+          <div class="tell-done" role="status">
+            <span class="check" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div>
+              <p>Set <b>4 team items</b> aside until noon. Your first hour is the three that
+              are yours. I will bring them back at <b>11:45</b>, sooner if one becomes urgent.</p>
+              <button class="undo" id="tell-undo" type="button">Undo, bring them back</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ THE FANNED DECK ============ -->
+        <div class="deck-label rise d3">The three<span class="rule" aria-hidden="true"></span>most urgent first</div>
+
+        <div class="deck rise d3">
+
+          <!-- 142 Oak St: urgent, own deal -->
+          <div class="mcard" role="button" tabindex="0" data-deal="the 142 Oak St offer">
+            <div class="mcard-top">
+              <span class="ava ava-oak" aria-hidden="true">OS</span>
+              <div class="mcard-who">
+                <span class="name">142 Oak St</span>
+                <span class="meta">YOUR DEAL · BUYER REPLIED WITH AN OFFER</span>
+              </div>
+              <span class="state-chip chip-urgent"><span class="d" aria-hidden="true"></span>Answer by 10:00</span>
+            </div>
+            <p class="mcard-line">
+              The buyers offered <b>$612k</b> and want you to pay for the survey. I wrote
+              a reply that keeps your price and offers a quicker closing instead of paying for the survey.
+            </p>
+            <div class="mcard-foot">
+              <span class="when">Their offer expires 10:00 AM</span>
+              <span class="conf">How sure I am: very sure</span>
+            </div>
+          </div>
+
+          <!-- 88 Linden: open window, new lead -->
+          <div class="mcard" role="button" tabindex="0" data-deal="the 88 Linden buyer">
+            <div class="mcard-top">
+              <span class="ava ava-lin" aria-hidden="true">LN</span>
+              <div class="mcard-who">
+                <span class="name">88 Linden buyer</span>
+                <span class="meta">NEW · ALREADY HAS LOAN APPROVAL</span>
+              </div>
+              <span class="state-chip chip-open"><span class="d" aria-hidden="true"></span>Reach out now</span>
+            </div>
+            <p class="mcard-line">
+              Came in at <b>5:40</b>, already approved for a loan up to <b>$540k</b>. Buyers
+              you reply to within five minutes are far more likely to work with you. I can send your hello now.
+            </p>
+            <div class="mcard-foot">
+              <span class="when">Best to reply in the next 5 minutes</span>
+              <span class="conf">How sure I am: very sure</span>
+            </div>
+            <div class="window-bar" aria-hidden="true"><i></i></div>
+          </div>
+
+          <!-- Marcus: soft, team deal -->
+          <div class="mcard" role="button" tabindex="0" data-deal="Marcus and the Hale buyer">
+            <div class="mcard-top">
+              <span class="ava ava-mar" aria-hidden="true">MO</span>
+              <div class="mcard-who">
+                <span class="name">Marcus Okafor</span>
+                <span class="meta">YOUR TEAM · THE HALE BUYER</span>
+              </div>
+              <span class="state-chip chip-soft"><span class="d" aria-hidden="true"></span>No reply in 2 days</span>
+            </div>
+            <p class="mcard-line">
+              His Hale buyer has not replied in <b>two days</b>. Not a problem yet,
+              but these usually fall away by day four. A quick check-in from you would help.
+            </p>
+            <div class="mcard-foot">
+              <span class="when">No reply in 2 days</span>
+              <span class="conf">How sure I am: fairly sure</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============ THE SILENCE LEDGER ============ -->
+        <div class="ledger rise d4" id="ledger">
+          <button class="ledger-row" id="ledger-toggle" type="button"
+                  aria-expanded="false" aria-controls="ledger-panel">
+            <span class="ledger-num" aria-hidden="true">47</span>
+            <span class="ledger-copy">
+              <span class="a">Handled 47 things overnight, woke you for none</span>
+              <span class="b">3 were close calls. <b>Crestview has gone quiet.</b></span>
+            </span>
+            <span class="ledger-chev" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+          <div class="ledger-panel" id="ledger-panel" role="region" aria-label="Close calls I chose not to wake you for">
+            <div>
+              <div class="near-list">
+                <div class="near">
+                  <span class="mark" aria-hidden="true">2:14 AM</span>
+                  <span class="txt"><b>Crestview Dr</b> went quiet after the home inspection.
+                    <span class="why">Keeping an eye on it. I will tell you if there is no reply by this afternoon.</span></span>
+                </div>
+                <div class="near">
+                  <span class="mark" aria-hidden="true">3:48 AM</span>
+                  <span class="txt">A <b>new buyer from a listing site</b> looked promising, but the name was on your do-not-contact list.
+                    <span class="why">Did not act on it. Set it aside for a person to check, not you.</span></span>
+                </div>
+                <div class="near">
+                  <span class="mark" aria-hidden="true">5:06 AM</span>
+                  <span class="txt">A company moved the <b>Oak St closing</b> back by a day.
+                    <span class="why">I rebooked the closing call myself. Your calendar is already updated.</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sr-only" id="live" role="status" aria-live="polite"></div>
+      </main>
+
+    </div>
+  </div>
+
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+
+  var live = document.getElementById('live');
+
+  /* ---- THE TELL: soft accept / dismiss / undo ---- */
+  var tell    = document.getElementById('tell');
+  var accept  = document.getElementById('tell-accept');
+  var dismiss = document.getElementById('tell-dismiss');
+  var undo    = document.getElementById('tell-undo');
+
+  accept.addEventListener('click', function(){
+    tell.classList.add('accepted');
+    live.textContent = 'Set four team items aside until noon. Your first hour is the three that are yours.';
+  });
+  dismiss.addEventListener('click', function(){
+    tell.style.opacity = '0';
+    tell.style.transform = 'translateY(-6px)';
+    setTimeout(function(){ tell.style.display = 'none'; }, 480);
+    live.textContent = 'Kept everything in view. Nothing set aside.';
+  });
+  undo.addEventListener('click', function(){
+    tell.classList.remove('accepted');
+    live.textContent = 'Brought the four team items back into view.';
+  });
+
+  /* ---- THE SILENCE LEDGER expand ---- */
+  var ledger = document.getElementById('ledger');
+  var toggle = document.getElementById('ledger-toggle');
+  toggle.addEventListener('click', function(){
+    var open = ledger.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    live.textContent = open
+      ? 'Showing three things I almost woke you for, and what I did instead.'
+      : '';
+  });
+
+  /* ---- deck cards: keyboard-accessible activation ---- */
+  document.querySelectorAll('.mcard[role="button"]').forEach(function(card){
+    function open(){
+      live.textContent = 'Opening ' + card.getAttribute('data-deal') + '. You will see the draft reply, why I suggested it, and an undo before anything is sent.';
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+    });
+  });
+</script>
+</body>
+</html>

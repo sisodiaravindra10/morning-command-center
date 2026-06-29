@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Tell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.195 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.92 0.01 250); --body:oklch(0.78 0.014 255); --muted:oklch(0.60 0.018 258); --soft:oklch(0.48 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .08); --hair2:oklch(0.96 0.01 250 / .13);
+  --confident:oklch(0.76 0.09 168); --cobalt:oklch(0.64 0.13 262); --on:oklch(0.99 0 0);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.19 0.03 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.55 0.03 260)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:60px 28px 28px}
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.88 0.06 200), oklch(0.6 0.13 250) 46%, oklch(0.34 0.10 270));box-shadow:0 0 9px oklch(0.6 0.13 250 / .4);animation:breathe 6s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.card{margin:auto 0;background:var(--card);border:1px solid var(--hair);border-radius:22px;padding:26px 24px}
+.obs{font-family:var(--serif);font-size:23px;line-height:1.4;color:var(--ink)}
+/* the fingerprint signals */
+.sig{display:flex;flex-direction:column;gap:11px;margin-top:22px}
+.s-row{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.s-row .k{flex:1;letter-spacing:.02em}
+.s-row .bar{width:64px;height:4px;border-radius:2px;background:var(--hair2);overflow:hidden}
+.s-row .bar i{display:block;height:100%;background:var(--soft);width:var(--w,40%)}
+.s-row .v{color:var(--body);width:54px;text-align:right}
+.offer{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.5;color:var(--ink);margin-top:24px;padding-top:20px;border-top:1px solid var(--hair)}
+.acts{display:flex;gap:10px;margin-top:20px}
+.btn{flex:1;height:50px;border-radius:14px;font-family:var(--sans);font-size:14.5px;font-weight:600;border:none;cursor:pointer;transition:transform .18s var(--exp)}
+.btn:active{transform:scale(.97)}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+.btn-p{background:var(--cobalt);color:var(--on)} .btn-g{background:transparent;color:var(--body);border:1px solid var(--hair2)}
+.done{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.5;color:var(--confident);text-align:center;margin-top:8px;max-height:0;overflow:hidden;opacity:0;transition:max-height .5s var(--exp),opacity .4s}
+.card.held .obs,.card.held .sig,.card.held .offer,.card.held .acts,
+.card.dismissed .obs,.card.dismissed .sig,.card.dismissed .offer,.card.dismissed .acts{display:none}
+.card.held #done-hold,.card.dismissed #done-dismiss{max-height:120px;opacity:1;margin-top:0}
+.foot{font-family:var(--mono);font-size:10px;color:var(--soft);text-align:center;margin-top:18px;letter-spacing:.04em}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){ .orb{animation:none} .done{transition:none} }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · The Tell</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="hi"><span class="orb"></span>Leo · quietly, just for you</div>
+  <div class="card" id="card">
+    <div class="obs">You've started before 6:00 four mornings running, and you're holding nine decisions longer than usual.</div>
+    <div class="sig">
+      <div class="s-row"><span class="k">First touch before 6a</span><span class="bar"><i style="--w:80%"></i></span><span class="v">4 days</span></div>
+      <div class="s-row"><span class="k">Reply latency</span><span class="bar"><i style="--w:64%"></i></span><span class="v">up 38%</span></div>
+      <div class="s-row"><span class="k">Decisions deferred</span><span class="bar"><i style="--w:72%"></i></span><span class="v">9 open</span></div>
+    </div>
+    <div class="offer">Want me to hold the team's non-urgent items until noon, so the morning's just yours?</div>
+    <div class="acts"><button class="btn btn-p" id="hold">Hold them till noon</button><button class="btn btn-g" id="dismiss">I'm good</button></div>
+    <div class="done" id="done-hold">Held until noon. The team won't notice the difference. Go.</div>
+    <div class="done" id="done-dismiss">All yours, then. Nothing held.</div>
+  </div>
+  <div class="foot">Leo won't mention this again this week.</div>
+</div></div>
+<div class="controls"><button id="replay">↻ Replay</button></div>
+<script>
+const card=document.getElementById('card');
+document.getElementById('hold').addEventListener('click',()=>{card.classList.remove('dismissed');card.classList.add('held');});
+document.getElementById('dismiss').addEventListener('click',()=>{card.classList.remove('held');card.classList.add('dismissed');});
+document.getElementById('replay').addEventListener('click',()=>card.classList.remove('held','dismissed'));
+
+// Boot-time keyboard sweep: make non-native click targets keyboard-operable.
+(function(){
+  function sweep(){
+    var sel='[onclick],.s-row,.btn,.controls button';
+    var nodes=document.querySelectorAll(sel);
+    for(var i=0;i<nodes.length;i++){
+      var el=nodes[i], tag=el.tagName.toLowerCase();
+      if(tag==='button'||tag==='a') continue; // already natively focusable/operable
+      if(!el.hasAttribute('role')) el.setAttribute('role','button');
+      if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',sweep);
+  else sweep();
+
+  // One document-level keydown handler for synthetic (non-native) buttons.
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+    var t=e.target;
+    if(!t||t.nodeType!==1) return;
+    var tag=t.tagName.toLowerCase();
+    if(tag==='input'||tag==='textarea'||tag==='select'||t.isContentEditable) return; // don't interfere with typing
+    if(tag==='button'||tag==='a') return; // native elements handle their own keys
+    if(t.getAttribute('role')!=='button') return;
+    e.preventDefault();
+    t.click();
+  });
+})();
+</script>
+</body>
+</html>

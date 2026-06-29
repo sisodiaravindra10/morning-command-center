@@ -1,0 +1,812 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inspiration 10 - Leo Morning Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: oklch(0.955 0.004 95);
+    --bg-2: oklch(0.975 0.003 95);
+    --frame: #15140f;
+    --screen: #faf7f1;
+    --screen-2: #ffffff;
+
+    --ink: #211f1a;
+    --ink-soft: #4a463d;
+    --grey: #9a958a;
+    --grey-soft: #b6b1a6;
+    --track: #efece4;
+    --track-2: #f3f0e9;
+    --hair: #ebe7df;
+
+    --orange: #f08a3c;
+    --orange-deep: #e87a2a;
+    --yellow: #f6cf4f;
+    --yellow-deep: #f3c43a;
+    --yellow-soft: #fbe9a6;
+    --pink: #f6d2cf;
+    --pink-ink: #8a5450;
+    --lav: #ddd6f3;
+    --lav-ink: #5a5081;
+    --mint: #cfe6cf;
+
+    --bar-steady: #7bb87f;
+    --bar-closing: #7fb6b0;
+    --bar-atrisk: #f3c43a;
+    --bar-quiet: #e08a6f;
+
+    --caption: rgba(33, 31, 26, 0.46);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(120% 80% at 50% 0%, var(--bg-2) 0%, var(--bg) 62%, oklch(0.935 0.005 90) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 44px 16px 56px;
+    color: var(--ink);
+  }
+
+  .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--caption);
+    font-weight: 500;
+  }
+
+  .stage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 28px;
+  }
+
+  /* ---------- iPhone frame ---------- */
+  .phone {
+    width: 372px;
+    height: 806px;
+    max-width: calc(100vw - 32px);
+    background: var(--frame);
+    border-radius: 56px;
+    padding: 11px;
+    box-shadow:
+      0 1px 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 0 0 2px rgba(0, 0, 0, 0.55),
+      0 50px 100px -36px rgba(70, 60, 40, 0.42),
+      0 18px 40px -22px rgba(70, 60, 40, 0.3);
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--screen);
+    border-radius: 46px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- status bar + notch ---------- */
+  .statusbar {
+    position: relative;
+    height: 50px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 30px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+    z-index: 6;
+  }
+
+  .statusbar .right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .statusbar .right svg { display: block; }
+
+  .notch {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 30px;
+    background: var(--frame);
+    border-radius: 18px;
+    z-index: 7;
+  }
+
+  /* ---------- scrolling body ---------- */
+  .body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 6px 22px 96px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .body::-webkit-scrollbar { width: 0; height: 0; }
+
+  /* ---------- home header ---------- */
+  .hi {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .hi h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .hi .sub {
+    font-size: 13px;
+    color: var(--grey);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 auto;
+    box-shadow: 0 0 0 3px var(--screen-2), 0 6px 16px -8px rgba(70,60,40,0.5);
+  }
+
+  /* ---------- weekday strip ---------- */
+  .strip {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 22px;
+    gap: 4px;
+  }
+  .day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    flex: 1 1 0;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+  .day .lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--grey);
+    letter-spacing: 0.02em;
+  }
+  .day .num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--track);
+    color: var(--ink-soft);
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  }
+  .day:active .num { transform: scale(0.92); }
+  .day.is-active .lbl { color: var(--ink); }
+  .day.is-active .num {
+    background: linear-gradient(160deg, var(--orange) 0%, var(--orange-deep) 100%);
+    color: #fff;
+    box-shadow: 0 10px 20px -8px rgba(232,122,42,0.62);
+  }
+
+  /* ---------- section row ---------- */
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 28px;
+    margin-bottom: 14px;
+  }
+  .row h2 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .row .seeall {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--grey);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px 2px;
+  }
+  .row .seeall:active { color: var(--ink-soft); }
+
+  /* ---------- big yellow card + evening tab ---------- */
+  .startwrap {
+    display: flex;
+    gap: 9px;
+    align-items: stretch;
+  }
+  .startcard {
+    flex: 1 1 auto;
+    position: relative;
+    background: linear-gradient(150deg, var(--yellow) 0%, var(--yellow-deep) 100%);
+    border-radius: 26px;
+    padding: 22px 20px 0;
+    overflow: hidden;
+    min-height: 188px;
+    cursor: pointer;
+    box-shadow: 0 18px 34px -20px rgba(243,196,58,0.85);
+  }
+  .startcard h3 {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #3b2f10;
+    line-height: 1.12;
+    max-width: 165px;
+  }
+  .startcard p {
+    margin-top: 8px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: rgba(59,47,16,0.62);
+    font-weight: 500;
+    max-width: 170px;
+  }
+  .startcard .scene {
+    position: absolute;
+    right: -6px;
+    bottom: 0;
+    width: 168px;
+    height: 116px;
+    pointer-events: none;
+  }
+  .evening {
+    flex: 0 0 36px;
+    background: var(--track);
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+  .evening:active { background: var(--track-2); }
+  .evening span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- decision cards ---------- */
+  .quickscroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    margin: 0 -22px;
+    padding: 4px 22px 8px;
+    scroll-snap-type: x mandatory;
+  }
+  .quickscroll::-webkit-scrollbar { height: 0; }
+  .qcard {
+    flex: 0 0 200px;
+    border-radius: 24px;
+    padding: 18px 18px 18px;
+    min-height: 168px;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+  .qcard:active { transform: translateY(2px); }
+  .qcard.pink { background: var(--pink); }
+  .qcard.lav { background: var(--lav); }
+  .qcard.peek { flex: 0 0 64px; background: var(--track); }
+  .qcard .icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .qcard h4 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.18;
+  }
+  .qcard.pink h4 { color: #5a3633; }
+  .qcard.lav h4 { color: #3d3560; }
+  .qcard p {
+    margin-top: 6px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    font-weight: 500;
+    flex: 1 1 auto;
+  }
+  .qcard.pink p { color: var(--pink-ink); }
+  .qcard.lav p { color: var(--lav-ink); }
+  .qcard .meta {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    opacity: 0.72;
+    margin-top: 10px;
+  }
+
+  /* ---------- bottom nav ---------- */
+  .nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 84px;
+    background: linear-gradient(to top, var(--screen) 62%, rgba(250,247,241,0));
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding: 14px 26px 0;
+    z-index: 5;
+  }
+  .nav .navbtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--grey-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+    font-size: 9.5px;
+    font-weight: 600;
+    width: 48px;
+    transition: color 0.2s ease;
+  }
+  .nav .navbtn.is-on { color: var(--ink); }
+  .nav .navbtn svg { display: block; }
+  .fabwrap {
+    width: 60px;
+    display: flex;
+    justify-content: center;
+  }
+  .fab {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: none;
+    margin-top: -22px;
+    background: linear-gradient(160deg, var(--orange) 0%, var(--orange-deep) 100%);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 16px 28px -10px rgba(232,122,42,0.7);
+    transition: transform 0.18s ease;
+  }
+  .fab:active { transform: scale(0.93); }
+
+  /* ---------- detail header ---------- */
+  .dhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .iconbtn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--screen-2);
+    border: 1px solid var(--hair);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ink);
+    transition: transform 0.18s ease, background 0.2s ease;
+  }
+  .iconbtn:active { transform: scale(0.92); }
+  .dhead .title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .bignum {
+    text-align: center;
+    margin-top: 40px;
+  }
+  .bignum .n {
+    font-size: 88px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .bignum .cap {
+    margin: 16px auto 0;
+    font-size: 14px;
+    color: var(--grey);
+    font-weight: 500;
+    max-width: 240px;
+    line-height: 1.4;
+  }
+
+  /* ---------- pipeline card ---------- */
+  .emocard {
+    margin-top: 34px;
+    background: var(--screen-2);
+    border-radius: 30px;
+    padding: 24px 22px 22px;
+    box-shadow: 0 20px 44px -28px rgba(70,60,40,0.4);
+    border: 1px solid var(--hair);
+  }
+  .emocard .eh { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .emocard .es {
+    font-size: 12.5px;
+    color: var(--grey);
+    font-weight: 500;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+  .bars {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 14px;
+    margin-top: 26px;
+    height: 248px;
+  }
+  .bcol {
+    flex: 1 1 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--track-2);
+    border-radius: 999px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+  .bar {
+    width: 100%;
+    border-radius: 999px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 14px;
+    color: #fff;
+    transform-origin: bottom;
+    height: var(--h);
+    transform: scaleY(1);
+  }
+  .bar .val { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; }
+  .bar .name { font-size: 11px; font-weight: 600; margin-top: 2px; opacity: 0.92; }
+
+  .bar.steady  { background: linear-gradient(180deg, #8cc790 0%, var(--bar-steady) 100%); }
+  .bar.closing { background: linear-gradient(180deg, #9ccac4 0%, var(--bar-closing) 100%); }
+  .bar.atrisk  { background: linear-gradient(180deg, #f8d965 0%, var(--bar-atrisk) 100%); color:#5a4710; }
+  .bar.quiet   { background: linear-gradient(180deg, #ee9f87 0%, var(--bar-quiet) 100%); }
+
+  /* gentle grow-in (enhancement only; content visible by default) */
+  @media (prefers-reduced-motion: no-preference) {
+    .bar {
+      transform: scaleY(0.04);
+      animation: grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .bar.b2 { animation-delay: 0.08s; }
+    .bar.b3 { animation-delay: 0.16s; }
+    .bar.b4 { animation-delay: 0.24s; }
+    @keyframes grow { to { transform: scaleY(1); } }
+  }
+
+  .createbtn {
+    width: 100%;
+    margin-top: 24px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(150deg, var(--yellow) 0%, var(--yellow-deep) 100%);
+    color: #3b2f10;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    padding: 19px;
+    border-radius: 22px;
+    box-shadow: 0 16px 30px -16px rgba(243,196,58,0.85);
+    transition: transform 0.18s ease;
+  }
+  .createbtn:active { transform: translateY(2px); }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 132px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(33,31,26,0.26);
+    z-index: 8;
+  }
+
+  @media (max-width: 820px) {
+    .stage { gap: 22px; }
+  }
+</style>
+
+<div class="caption">INSPIRATION 10 - LEO MORNING COMMAND CENTER</div>
+
+<div class="stage">
+
+  <!-- ============ PHONE 1 : HOME ============ -->
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="right">
+          <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><rect x="0" y="6" width="3" height="5" rx="1" fill="#211f1a"/><rect x="5" y="3.5" width="3" height="7.5" rx="1" fill="#211f1a"/><rect x="10" y="1.5" width="3" height="9.5" rx="1" fill="#211f1a"/><rect x="15" y="0" width="3" height="11" rx="1" fill="#211f1a" opacity="0.32"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2C10.3 2.2 12.4 3.1 14 4.6L15.1 3.4C13.2 1.6 10.7 0.6 8 0.6S2.8 1.6 0.9 3.4L2 4.6C3.6 3.1 5.7 2.2 8 2.2Z" fill="#211f1a"/><path d="M8 5.4C9.3 5.4 10.5 5.9 11.4 6.8L12.5 5.6C11.3 4.5 9.7 3.8 8 3.8S4.7 4.5 3.5 5.6L4.6 6.8C5.5 5.9 6.7 5.4 8 5.4Z" fill="#211f1a"/><path d="M8 8.4 9.9 6.6C9.4 6.1 8.7 5.8 8 5.8S6.6 6.1 6.1 6.6L8 8.4Z" fill="#211f1a"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.8" width="21" height="10.4" rx="3" stroke="#211f1a" stroke-opacity="0.4"/><rect x="2" y="2.3" width="18" height="7.4" rx="1.6" fill="#211f1a"/><rect x="22.5" y="3.8" width="1.6" height="4.4" rx="0.8" fill="#211f1a" fill-opacity="0.4"/></svg>
+        </span>
+      </div>
+
+      <div class="body">
+        <div class="hi">
+          <div>
+            <h1>Hi, Dana</h1>
+            <div class="sub">Leo has your morning ready</div>
+          </div>
+          <img class="avatar" src="https://picsum.photos/id/64/120/120" alt="avatar" />
+        </div>
+
+        <div class="strip" id="dayStrip">
+          <button class="day" data-day="0"><span class="lbl">Mon</span><span class="num">7</span></button>
+          <button class="day" data-day="1"><span class="lbl">Tue</span><span class="num">8</span></button>
+          <button class="day" data-day="2"><span class="lbl">Wed</span><span class="num">9</span></button>
+          <button class="day is-active" data-day="3"><span class="lbl">Thu</span><span class="num">10</span></button>
+          <button class="day" data-day="4"><span class="lbl">Fri</span><span class="num">11</span></button>
+          <button class="day" data-day="5"><span class="lbl">Sat</span><span class="num">12</span></button>
+          <button class="day" data-day="6"><span class="lbl">Sun</span><span class="num">13</span></button>
+        </div>
+
+        <div class="row">
+          <h2>Today's brief</h2>
+          <button class="seeall">See all</button>
+        </div>
+
+        <div class="startwrap">
+          <div class="startcard">
+            <h3>Start the morning brief</h3>
+            <p>Three decisions need you today</p>
+            <svg class="scene" viewBox="0 0 168 116" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <!-- birds -->
+              <path d="M28 26c3-3 5-3 7 0M42 22c3-3 5-3 7 0" stroke="#7a5f1a" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- sun -->
+              <g transform="translate(118 36)">
+                <line x1="0" y1="-26" x2="0" y2="-18" stroke="#fff4c8" stroke-width="3" stroke-linecap="round"/>
+                <line x1="18" y1="-18" x2="13" y2="-13" stroke="#fff4c8" stroke-width="3" stroke-linecap="round"/>
+                <line x1="26" y1="0" x2="18" y2="0" stroke="#fff4c8" stroke-width="3" stroke-linecap="round"/>
+                <line x1="-18" y1="-18" x2="-13" y2="-13" stroke="#fff4c8" stroke-width="3" stroke-linecap="round"/>
+                <line x1="-26" y1="0" x2="-18" y2="0" stroke="#fff4c8" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="17" fill="#fff4c8"/>
+                <circle cx="-6" cy="-1" r="1.8" fill="#cf9a2e"/>
+                <circle cx="6" cy="-1" r="1.8" fill="#cf9a2e"/>
+                <path d="M-5 5c2.6 3 7.4 3 10 0" stroke="#cf9a2e" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <circle cx="-9" cy="4" r="2.4" fill="#f4a64f" opacity="0.55"/>
+                <circle cx="9" cy="4" r="2.4" fill="#f4a64f" opacity="0.55"/>
+              </g>
+              <!-- back hill -->
+              <path d="M-4 116c30-44 64-44 92-12 22 25 50 28 84 6V116Z" fill="#6fae6f"/>
+              <!-- front hill -->
+              <path d="M-4 116c40-30 70-28 104 2 18 16 40 18 72 6V116Z" fill="#4f9a57"/>
+              <!-- little tree -->
+              <g transform="translate(36 84)">
+                <rect x="-2" y="6" width="4" height="14" rx="1.5" fill="#3a6b40"/>
+                <circle cx="0" cy="2" r="11" fill="#5fa564"/>
+                <circle cx="-7" cy="6" r="7" fill="#6fae6f"/>
+                <circle cx="7" cy="6" r="7" fill="#6fae6f"/>
+              </g>
+            </svg>
+          </div>
+          <div class="evening"><span>Recap</span></div>
+        </div>
+
+        <div class="row">
+          <h2>Decisions for you</h2>
+          <button class="seeall">See all</button>
+        </div>
+
+        <div class="quickscroll">
+          <div class="qcard pink">
+            <div class="icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7.5 4c0 5.4-7.5 10-7.5 10Z" fill="#d98a84"/></svg>
+            </div>
+            <h4>Review the Oak St counter</h4>
+            <p>Buyer came back 12k under list</p>
+            <span class="meta">Now - Needs you</span>
+          </div>
+          <div class="qcard lav">
+            <div class="icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l2.4 5.6L20 9.6l-4.2 3.9 1.2 6L12 16.8 7 19.5l1.2-6L4 9.6l5.6-1z" fill="#8a7fc0"/></svg>
+            </div>
+            <h4>Check Crestview escrow</h4>
+            <p>Closing docs ready to sign off</p>
+            <span class="meta">Today - Time sensitive</span>
+          </div>
+          <div class="qcard peek"></div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="navbtn is-on">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+          Home
+        </button>
+        <button class="navbtn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2"/><path d="m20 20-3.4-3.4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          Deals
+        </button>
+        <div class="fabwrap">
+          <button class="fab" aria-label="Ask Leo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <button class="navbtn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 6h11M5 12h14M5 18h9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          Skills
+        </button>
+        <button class="navbtn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.6" stroke="currentColor" stroke-width="2.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          Dana
+        </button>
+      </nav>
+
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <!-- ============ PHONE 2 : PIPELINE DETAIL ============ -->
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="right">
+          <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><rect x="0" y="6" width="3" height="5" rx="1" fill="#211f1a"/><rect x="5" y="3.5" width="3" height="7.5" rx="1" fill="#211f1a"/><rect x="10" y="1.5" width="3" height="9.5" rx="1" fill="#211f1a"/><rect x="15" y="0" width="3" height="11" rx="1" fill="#211f1a" opacity="0.32"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2C10.3 2.2 12.4 3.1 14 4.6L15.1 3.4C13.2 1.6 10.7 0.6 8 0.6S2.8 1.6 0.9 3.4L2 4.6C3.6 3.1 5.7 2.2 8 2.2Z" fill="#211f1a"/><path d="M8 5.4C9.3 5.4 10.5 5.9 11.4 6.8L12.5 5.6C11.3 4.5 9.7 3.8 8 3.8S4.7 4.5 3.5 5.6L4.6 6.8C5.5 5.9 6.7 5.4 8 5.4Z" fill="#211f1a"/><path d="M8 8.4 9.9 6.6C9.4 6.1 8.7 5.8 8 5.8S6.6 6.1 6.1 6.6L8 8.4Z" fill="#211f1a"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.8" width="21" height="10.4" rx="3" stroke="#211f1a" stroke-opacity="0.4"/><rect x="2" y="2.3" width="18" height="7.4" rx="1.6" fill="#211f1a"/><rect x="22.5" y="3.8" width="1.6" height="4.4" rx="0.8" fill="#211f1a" fill-opacity="0.4"/></svg>
+        </span>
+      </div>
+
+      <div class="body">
+        <div class="dhead">
+          <button class="iconbtn" aria-label="Back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m15 5-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="title">Leo overnight</span>
+          <button class="iconbtn" aria-label="More">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor"/><circle cx="19" cy="12" r="1.9" fill="currentColor"/></svg>
+          </button>
+        </div>
+
+        <div class="bignum">
+          <div class="n">47</div>
+          <div class="cap">handled while you slept.</div>
+        </div>
+
+        <div class="emocard">
+          <div class="eh">Pipeline</div>
+          <div class="es">Here is how your deals are tracking today</div>
+          <div class="bars">
+            <div class="bcol">
+              <div class="track">
+                <div class="bar steady b1" style="--h:88%">
+                  <span class="val">48%</span>
+                  <span class="name">Steady</span>
+                </div>
+              </div>
+            </div>
+            <div class="bcol">
+              <div class="track">
+                <div class="bar closing b2" style="--h:62%">
+                  <span class="val">27%</span>
+                  <span class="name">Closing</span>
+                </div>
+              </div>
+            </div>
+            <div class="bcol">
+              <div class="track">
+                <div class="bar atrisk b3" style="--h:50%">
+                  <span class="val">19%</span>
+                  <span class="name">At risk</span>
+                </div>
+              </div>
+            </div>
+            <div class="bcol">
+              <div class="track">
+                <div class="bar quiet b4" style="--h:74%">
+                  <span class="val">6%</span>
+                  <span class="name">Going quiet</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="createbtn">Open today's brief</button>
+      </div>
+
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Day strip: tap to select (fidelity-first vanilla JS)
+  (function () {
+    var strip = document.getElementById('dayStrip');
+    if (!strip) return;
+    strip.addEventListener('click', function (e) {
+      var btn = e.target.closest('.day');
+      if (!btn) return;
+      var days = strip.querySelectorAll('.day');
+      for (var i = 0; i < days.length; i++) days[i].classList.remove('is-active');
+      btn.classList.add('is-active');
+    });
+  })();
+</script>

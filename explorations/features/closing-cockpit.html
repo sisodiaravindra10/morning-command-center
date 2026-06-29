@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Closing Day Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --done:oklch(0.80 0.11 168); --wait:oklch(0.82 0.12 72); --pending:oklch(0.45 0.02 260); --alarm:oklch(0.66 0.20 25); --cobalt:oklch(0.66 0.16 262);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:54px 24px 20px; overflow-y:auto; scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 10px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.dealrow{display:flex;align-items:baseline;justify-content:space-between;margin-top:14px}
+.dealrow .nm{font-family:var(--serif);font-size:26px;letter-spacing:-.3px}
+.eta{text-align:right} .eta .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)} .eta .clk{font-family:var(--mono);font-size:20px;color:var(--wait);font-weight:500}
+
+/* wire sentinel */
+.wire{display:flex;align-items:center;gap:10px;margin-top:16px;padding:11px 14px;border-radius:13px;background:oklch(0.80 0.11 168 / .08);border:1px solid oklch(0.80 0.11 168 / .25)}
+.wire svg{flex:none;color:var(--done)} .wire .t{font-family:var(--sans);font-size:12.5px;color:var(--body)} .wire .t b{color:var(--ink);font-weight:600}
+.wire .sim{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--soft);background:none;border:1px solid var(--hair2);border-radius:8px;padding:5px 8px;cursor:pointer}
+
+/* gates runway */
+.runway{margin-top:22px;position:relative;padding-left:8px}
+.gate{display:flex;gap:15px;padding-bottom:22px;position:relative;cursor:default}
+.gate:not(:last-child)::before{content:"";position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--gline,var(--hair2))}
+.gate.done{--gline:var(--done)}
+.node{width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;border:2px solid var(--nc);background:var(--canvas);z-index:1;color:var(--nc)}
+.gate.done{--nc:var(--done)} .gate.wait{--nc:var(--wait);cursor:pointer} .gate.pending{--nc:var(--pending)}
+.gate.wait .node{animation:pulse 1.8s var(--exp) infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 oklch(0.82 0.12 72 / .5)}60%{box-shadow:0 0 0 7px oklch(0.82 0.12 72 / 0)}}
+.gbody{flex:1;padding-top:0}
+.gtitle{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--ink)}
+.gate.pending .gtitle{color:var(--muted)}
+.gmeta{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:3px}
+.gate.wait .gmeta{color:var(--wait)}
+.gexp{max-height:0;overflow:hidden;transition:max-height .45s var(--exp)}
+.gate.open .gexp{max-height:160px}
+.gexp-in{margin-top:12px;padding:13px;border-radius:12px;background:var(--inset);border:1px solid var(--hair)}
+.gexp-in p{font-family:var(--sans);font-size:13px;line-height:1.45;color:var(--body)}
+.gexp-in .esc{margin-top:11px;width:100%;height:42px;border-radius:11px;background:var(--wait);color:oklch(0.18 0.04 70);border:none;font-family:var(--sans);font-weight:600;font-size:13.5px;cursor:pointer}
+
+/* wire interlock overlay */
+.interlock{position:absolute;inset:0;background:oklch(0.16 0.08 25 / .96);backdrop-filter:blur(4px);z-index:55;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 30px;opacity:0;pointer-events:none;transition:opacity .35s}
+.interlock.show{opacity:1;pointer-events:auto}
+.interlock .ic{width:62px;height:62px;border-radius:50%;border:2px solid var(--alarm);display:flex;align-items:center;justify-content:center;color:var(--alarm);margin-bottom:20px;animation:pulse2 1.4s var(--exp) infinite}
+@keyframes pulse2{0%,100%{box-shadow:0 0 0 0 oklch(0.66 0.20 25 / .5)}60%{box-shadow:0 0 0 14px oklch(0.66 0.20 25 / 0)}}
+.interlock h2{font-family:var(--serif);font-size:26px;line-height:1.15;color:oklch(0.97 0.02 30)}
+.interlock p{font-family:var(--sans);font-size:14px;line-height:1.5;color:oklch(0.9 0.04 30);margin-top:14px;max-width:30ch}
+.interlock .ph{font-family:var(--mono);font-size:13px;color:oklch(0.97 0.03 30);margin-top:8px}
+.interlock .ia{display:flex;flex-direction:column;gap:10px;margin-top:24px;width:100%;max-width:280px}
+.interlock button{height:48px;border-radius:13px;font-family:var(--sans);font-weight:600;font-size:14px;border:none;cursor:pointer}
+.interlock .v{background:oklch(0.97 0.02 30);color:oklch(0.2 0.08 25)} .interlock .f{background:transparent;color:oklch(0.97 0.03 30);border:1px solid oklch(0.97 0.03 30 / .4)}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){ .orb,.gate.wait .node,.interlock .ic{animation:none} }
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · Closing Day Cockpit</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="hi"><span class="orb"></span>Closing today</div>
+  <div class="dealrow"><span class="nm">142 Oak St</span><span class="eta"><div class="lbl">ETA to keys</div><div class="clk">3:40p</div></span></div>
+  <div class="wire">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 16.5 5v4.5c0 4-2.8 6.6-6.5 8-3.7-1.4-6.5-4-6.5-8V5L10 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 10l2 2 4-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="t"><b>Wire details locked</b> · verified by phone 8:02a</span>
+    <button class="sim" id="sim">Simulate change</button>
+  </div>
+
+  <div class="runway" id="runway">
+    <div class="gate done"><div class="node"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="gbody"><div class="gtitle">Wire instructions verified</div><div class="gmeta">by phone · 8:02a</div></div></div>
+    <div class="gate done"><div class="node"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="gbody"><div class="gtitle">Final walkthrough</div><div class="gmeta">buyer cleared · 9:15a</div></div></div>
+    <div class="gate done"><div class="node"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="gbody"><div class="gtitle">Clear to close</div><div class="gmeta">lender · 9:40a</div></div></div>
+    <div class="gate wait" id="stuck"><div class="node"><span style="width:7px;height:7px;border-radius:50%;background:currentColor"></span></div><div class="gbody"><div class="gtitle">Documents signed</div><div class="gmeta">with title · no movement 92 min</div>
+      <div class="gexp"><div class="gexp-in"><p>Leo nudged the title coordinator twice (10:14a, 11:02a). No response. This is the only gate between you and keys.</p><button class="esc">Escalate to a human at First American</button></div></div>
+    </div></div>
+    <div class="gate pending"><div class="node"></div><div class="gbody"><div class="gtitle">Funded</div><div class="gmeta">waiting on signing</div></div></div>
+    <div class="gate pending"><div class="node"></div><div class="gbody"><div class="gtitle">Recorded</div><div class="gmeta">county</div></div></div>
+  </div>
+</div>
+
+<!-- wire-fraud interlock -->
+<div class="interlock" id="interlock">
+  <div class="ic"><svg width="30" height="30" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 3l11 20H3L14 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 11v6M14 20.5v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+  <h2>Wiring instructions just changed.</h2>
+  <p>Do not transfer funds. This is how closing-day fraud happens. Verify by phone before anything moves.</p>
+  <div class="ph">First American · (415) 555-0182</div>
+  <div class="ia"><button class="v" id="verified">I verified by phone</button><button class="f" id="freeze">Freeze the wire</button></div>
+</div>
+</div>
+<div class="controls"><button id="reset">↻ Reset</button></div>
+<script>
+const stuck=document.getElementById('stuck');
+stuck.addEventListener('click',()=>{ const open=stuck.classList.toggle('open'); stuck.setAttribute('aria-expanded', open?'true':'false'); });
+const il=document.getElementById('interlock');
+document.getElementById('sim').addEventListener('click',()=>il.classList.add('show'));
+document.getElementById('verified').addEventListener('click',()=>il.classList.remove('show'));
+document.getElementById('freeze').addEventListener('click',()=>il.classList.remove('show'));
+document.getElementById('reset').addEventListener('click',()=>{ il.classList.remove('show'); stuck.classList.remove('open'); stuck.setAttribute('aria-expanded','false'); });
+
+// Escalation CTA inside the stuck gate: was inert and its click bubbled to #stuck,
+// collapsing the panel. Wire it and stop propagation so it acts instead of closing the gate.
+const esc=document.querySelector('.gexp-in .esc');
+if(esc){
+  esc.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    esc.disabled=true;
+    esc.textContent='Escalation sent to First American';
+  });
+}
+
+// Boot-time keyboard/ARIA sweep: make click-bound non-native controls operable.
+function makeOperable(el){
+  if(!el) return;
+  const tag=el.tagName.toLowerCase();
+  if(tag==='button'||tag==='a') return;          // do not double-bind native controls
+  if(!el.hasAttribute('role')) el.setAttribute('role','button');
+  if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+}
+function bootSweep(){
+  document.querySelectorAll('[onclick]').forEach(makeOperable);
+  // primary interactive row/card/item/tab/pill in this file: the click-bound stuck gate
+  document.querySelectorAll('.gate.wait').forEach(makeOperable);
+  stuck.setAttribute('aria-expanded', stuck.classList.contains('open')?'true':'false');
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bootSweep);
+}else{
+  bootSweep();
+}
+
+// Single document-level keydown: Enter/Space activates a focused synthetic button.
+document.addEventListener('keydown',(e)=>{
+  if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+  const t=e.target;
+  if(!t||!t.getAttribute) return;
+  const tag=t.tagName.toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select'||t.isContentEditable) return; // don't block typing
+  if(tag==='button'||tag==='a') return;          // native controls already handle keys
+  if(t.getAttribute('role')!=='button') return;
+  e.preventDefault();
+  t.click();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Guest Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --on:oklch(0.99 0 0);
+  /* client (warm, branded) */
+  --c-canvas:oklch(0.97 0.013 80); --c-ink:oklch(0.22 0.02 50); --c-body:oklch(0.42 0.02 55); --c-muted:oklch(0.56 0.02 60); --c-brand:oklch(0.55 0.14 28); --c-hair:oklch(0.22 0.02 50 / .12); --c-done:oklch(0.5 0.11 165);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:50}
+.screen{position:absolute; inset:0; overflow:hidden}
+
+/* AGENT VIEW (dark, internal) */
+.agent{position:absolute;inset:0;color:var(--ink);display:flex;flex-direction:column;padding:54px 24px 24px}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 10px oklch(0.64 0.17 250 / .5);flex:none}
+.a-title{font-family:var(--serif);font-size:26px;margin-top:14px}
+.a-sub{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:4px}
+.internal{margin-top:20px;display:flex;flex-direction:column;gap:1px;border-radius:14px;overflow:hidden;border:1px solid var(--hair)}
+.i-row{display:flex;justify-content:space-between;align-items:center;padding:14px 15px;background:var(--card);font-family:var(--sans);font-size:13.5px}
+.i-row .k{color:var(--muted)} .i-row .v{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.i-row .lock{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--coral);background:oklch(0.73 0.16 28 / .14);padding:3px 7px;border-radius:6px}
+.hand{margin-top:auto;height:54px;border-radius:15px;background:var(--cobalt);color:var(--on);border:none;cursor:pointer;font-family:var(--sans);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .18s var(--exp)}
+.hand:active{transform:scale(.98)}
+.handnote{font-family:var(--mono);font-size:10px;color:var(--soft);text-align:center;margin-top:10px}
+
+/* CLIENT VIEW (warm, sealed) */
+.client{position:absolute;inset:0;background:var(--c-canvas);color:var(--c-ink);display:flex;flex-direction:column;padding:54px 26px 26px;transform:translateY(100%);transition:transform .55s var(--exp);z-index:20}
+.client.show{transform:none}
+.client::before{content:"";position:absolute;inset:0;border:3px solid var(--c-done);border-radius:54px;pointer-events:none;z-index:30}
+.cv-chip{position:absolute;top:60px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-done);background:oklch(0.5 0.11 165 / .12);padding:4px 12px;border-radius:999px;z-index:31}
+.cv-h{font-family:var(--serif);font-size:28px;letter-spacing:-.3px;margin-top:26px}
+.cv-sub{font-family:var(--sans);font-size:13.5px;color:var(--c-muted);margin-top:5px}
+.miles{margin-top:24px;position:relative;padding-left:6px}
+.mile{display:flex;gap:14px;padding-bottom:20px;position:relative}
+.mile:not(:last-child)::before{content:"";position:absolute;left:8px;top:18px;bottom:0;width:2px;background:var(--ml,var(--c-hair))}
+.mile.done{--ml:var(--c-done)}
+.mn{width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--mc);display:flex;align-items:center;justify-content:center;background:var(--c-canvas);color:var(--mc);z-index:1}
+.mile.done{--mc:var(--c-done)} .mile.now{--mc:var(--c-brand)} .mile.up{--mc:oklch(0.7 0.01 60)}
+.mile.now .mn{animation:p 1.8s var(--exp) infinite}
+@keyframes p{0%,100%{box-shadow:0 0 0 0 oklch(0.55 0.14 28 / .4)}60%{box-shadow:0 0 0 6px oklch(0.55 0.14 28 / 0)}}
+.ml-t{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--c-ink)}
+.mile.up .ml-t{color:var(--c-muted)}
+.ml-s{font-family:var(--mono);font-size:11px;color:var(--c-muted);margin-top:3px}
+.cv-next{margin-top:auto;padding:15px 16px;border-radius:14px;background:oklch(0.55 0.14 28 / .08);font-family:var(--sans);font-size:14px;color:var(--c-ink)}
+.cv-next b{color:var(--c-brand)}
+.exit{margin-top:12px;height:46px;border-radius:13px;background:transparent;border:1px solid var(--c-hair);color:var(--c-body);font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+
+/* faceid exit */
+.faceid{position:absolute;inset:0;background:oklch(0.1 0.02 260 / .85);backdrop-filter:blur(6px);z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity .3s}
+.faceid.show{opacity:1;pointer-events:auto}
+.faceid .fi{width:54px;height:54px;border-radius:14px;border:2px solid var(--cobalt);color:var(--cobalt);display:flex;align-items:center;justify-content:center}
+.faceid p{font-family:var(--sans);font-size:14px;color:var(--ink)}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){ .client,.mile.now .mn{transition:none;animation:none} }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · Guest Mode</div>
+<div class="phone"><div class="notch"></div><div class="screen" id="screen">
+
+  <!-- AGENT VIEW -->
+  <div class="agent">
+    <div class="hi"><span class="orb"></span>Your view · 142 Oak St</div>
+    <div class="a-title">142 Oak St</div>
+    <div class="a-sub">buyer: the Okafors · closing Jun 28</div>
+    <div class="internal">
+      <div class="i-row"><span class="k">Your commission</span><span class="v">$18,360</span></div>
+      <div class="i-row"><span class="k">Cap progress</span><span class="v">$9,700 / $12k</span></div>
+      <div class="i-row"><span class="k">Private note</span><span class="lock">hidden from client</span></div>
+      <div class="i-row"><span class="k">Silence Ledger</span><span class="v">47 handled</span></div>
+    </div>
+    <button class="hand" id="hand"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 11V5.5a1.5 1.5 0 0 1 3 0M7 5V4a1.5 1.5 0 0 1 3 0v1M10 5V4.5a1.5 1.5 0 0 1 3 0V10M13 6.5a1.5 1.5 0 0 1 3 0V13c0 3-2 5-5 5h-1c-2 0-3-1-4-2l-3-4c-.6-.9.4-2 1.4-1.5L7 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Hand to the client</button>
+    <div class="handnote">Seals cap, commission, notes, and the team's data</div>
+  </div>
+
+  <!-- CLIENT VIEW -->
+  <div class="client" id="client">
+    <div class="cv-chip">Client view</div>
+    <div class="cv-h">Your home</div>
+    <div class="cv-sub">142 Oak St · with Dana Reyes</div>
+    <div class="miles">
+      <div class="mile done"><span class="mn"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div class="ml-t">Offer accepted</div><div class="ml-s">Jun 6</div></div></div>
+      <div class="mile done"><span class="mn"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><div class="ml-t">Inspection cleared</div><div class="ml-s">Jun 14</div></div></div>
+      <div class="mile now"><span class="mn"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span></span><div><div class="ml-t">Loan approval</div><div class="ml-s">in progress · your lender has everything</div></div></div>
+      <div class="mile up"><span class="mn"></span><div><div class="ml-t">Sign disclosures</div><div class="ml-s">by Fri</div></div></div>
+      <div class="mile up"><span class="mn"></span><div><div class="ml-t">Keys are yours</div><div class="ml-s">Jun 28</div></div></div>
+    </div>
+    <div class="cv-next">Next for you: <b>sign the disclosures by Friday</b>. Dana will walk you through them.</div>
+    <button class="exit" id="exit"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="3" y="6.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 6.5V4.8a2.5 2.5 0 0 1 5 0v1.7" stroke="currentColor" stroke-width="1.3"/></svg>Exit (Face ID)</button>
+  </div>
+
+  <!-- FACE ID -->
+  <div class="faceid" id="faceid"><div class="fi"><svg width="26" height="26" viewBox="0 0 28 28" fill="none"><path d="M4 9V6a2 2 0 0 1 2-2h3M19 4h3a2 2 0 0 1 2 2v3M24 19v3a2 2 0 0 1-2 2h-3M9 24H6a2 2 0 0 1-2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="12" r="1" fill="currentColor"/><circle cx="17" cy="12" r="1" fill="currentColor"/><path d="M14 12v3M11 18c1.5 1.2 4.5 1.2 6 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><p>Face ID to return to your view</p></div>
+
+</div></div>
+<div class="controls"><button id="reset">↻ Reset</button></div>
+<script>
+const client=document.getElementById('client'), faceid=document.getElementById('faceid');
+document.getElementById('hand').addEventListener('click',()=>client.classList.add('show'));
+document.getElementById('exit').addEventListener('click',()=>{ faceid.classList.add('show'); setTimeout(()=>{ faceid.classList.remove('show'); client.classList.remove('show'); },1100); });
+document.getElementById('reset').addEventListener('click',()=>{ faceid.classList.remove('show'); client.classList.remove('show'); });
+
+/* Keyboard operability: promote any non-native click targets to focusable buttons */
+(function(){
+  var sel='[onclick], .i-row, .mile, .cv-chip, .cv-next';
+  document.querySelectorAll(sel).forEach(function(el){
+    if(el.tagName==='BUTTON'||el.tagName==='A') return;            // never double-bind real buttons/links
+    var clickBound = el.hasAttribute('onclick') || el.dataset.clickBound==='1';
+    if(!clickBound) return;                                          // only upgrade things that actually do something on click
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var t=e.target;
+    if(!t||t.tagName==='BUTTON'||t.tagName==='A') return;           // native controls handle their own keys
+    var tag=t.tagName, type=(t.getAttribute('type')||'').toLowerCase();
+    if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable) return; // don't interfere with typing
+    if(t.getAttribute('role')!=='button') return;
+    e.preventDefault();
+    t.click();
+  });
+})();
+</script>
+</body>
+</html>

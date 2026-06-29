@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Calibration Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --high:oklch(0.80 0.11 168); --likely:oklch(0.82 0.12 72); --low:oklch(0.73 0.13 40); --cobalt:oklch(0.66 0.16 262);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:54px 24px 24px; overflow-y:auto; scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 10px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+/* the chip that was tapped */
+.from{margin-top:16px;display:flex;align-items:center;gap:9px;padding:12px 14px;border-radius:13px;background:var(--inset);border:1px solid var(--hair)}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--high);background:oklch(0.80 0.11 168 / .13);padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+.chip .d{width:5px;height:5px;border-radius:50%;background:var(--high)}
+.from .ctx{font-family:var(--sans);font-size:13px;color:var(--body)}
+.q{font-family:var(--serif);font-size:21px;line-height:1.3;margin-top:20px}
+.q em{font-style:italic;color:var(--high)}
+
+.tiers{margin-top:22px;display:flex;flex-direction:column;gap:4px}
+.tier{padding:16px 2px;border-top:1px solid var(--hair);cursor:pointer}
+.tier:first-child{border-top:none}
+.t-row{display:flex;align-items:baseline;gap:10px}
+.t-name{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--tc)}
+.t-acc{margin-left:auto;font-family:var(--serif);font-size:22px;color:var(--ink)}
+.t-n{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:8px}
+.bar{height:5px;border-radius:3px;background:var(--hair2);margin-top:11px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--tc);width:0;transition:width 1s var(--exp)}
+.tier.high{--tc:var(--high)} .tier.likely{--tc:var(--likely)} .tier.low{--tc:var(--low)}
+.misses{max-height:0;overflow:hidden;transition:max-height .5s var(--exp)}
+.tier.open .misses{max-height:280px}
+.miss-h{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin:16px 0 4px}
+.miss{font-family:var(--sans);font-size:13px;line-height:1.45;color:var(--body);padding:9px 0;border-top:1px solid var(--hair)}
+.miss .dt{font-family:var(--mono);font-size:10.5px;color:var(--soft)}
+.drift{margin-top:24px;padding:15px 16px;border-radius:14px;background:var(--inset);border:1px solid var(--hair);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.5;color:var(--ink)}
+.drift b{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--high)}
+.hint{font-family:var(--mono);font-size:10.5px;color:var(--soft);text-align:center;margin-top:16px;letter-spacing:.04em}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+@media (prefers-reduced-motion: reduce){ .orb{animation:none} .bar i,.misses{transition:none} }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · Calibration Card</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="hi"><span class="orb"></span>Leo · how sure is sure?</div>
+  <div class="from"><span class="chip"><span class="d"></span>High confidence</span><span class="ctx">you tapped this on "list at $615k"</span></div>
+  <div class="q">When Leo says <em>high</em>, how often is it actually right?</div>
+
+  <div class="tiers" id="tiers">
+    <div class="tier high" data-w="94">
+      <div class="t-row"><span class="t-name">High</span><span class="t-acc">94%</span><span class="t-n">211 calls</span></div>
+      <div class="bar"><i></i></div>
+      <div class="misses">
+        <div class="miss-h">The 13 times it was wrong</div>
+        <div class="miss">Said the Alvarez appraisal would clear. It came in $8k low. <span class="dt">Mar 3</span></div>
+        <div class="miss">Predicted the Birch buyer would counter once. They walked. <span class="dt">Feb 19</span></div>
+        <div class="miss">Called the Cedar inspection clean. A roof flag surfaced. <span class="dt">Jan 28</span></div>
+        <div class="miss">+ 10 more, each tap-through to the deal</div>
+      </div>
+    </div>
+    <div class="tier likely" data-w="81">
+      <div class="t-row"><span class="t-name">Likely</span><span class="t-acc">81%</span><span class="t-n">148 calls</span></div>
+      <div class="bar"><i></i></div>
+      <div class="misses"><div class="miss-h">The 28 times it was wrong</div><div class="miss">Tap to read each, with the deal it came from.</div></div>
+    </div>
+    <div class="tier low" data-w="62">
+      <div class="t-row"><span class="t-name">Uncertain</span><span class="t-acc">62%</span><span class="t-n">96 calls</span></div>
+      <div class="bar"><i></i></div>
+      <div class="misses"><div class="miss-h">When Leo flags uncertain, it asks you. It is right 62% of the time, and says so.</div></div>
+    </div>
+  </div>
+
+  <div class="drift">"When I say high, I'm right <b>94%</b> of the time, down from 96%. I tightened the threshold last month after a run of misses, so the word would keep meaning something."</div>
+  <div class="hint">Tap a tier to read the misses</div>
+</div></div>
+<div class="controls"><button id="replay">↻ Replay</button></div>
+<script>
+function fill(){ document.querySelectorAll('.tier').forEach((t,i)=>setTimeout(()=>t.querySelector('.bar i').style.width=t.dataset.w+'%', 300+i*180)); }
+document.querySelectorAll('.tier').forEach(t=>t.addEventListener('click',()=>{t.classList.toggle('open');t.setAttribute('aria-expanded',t.classList.contains('open'));}));
+document.getElementById('replay').addEventListener('click',()=>{ document.querySelectorAll('.tier').forEach(t=>{t.classList.remove('open');t.setAttribute('aria-expanded','false');t.querySelector('.bar i').style.width='0%';}); setTimeout(fill,60); });
+fill();
+
+// Boot-time keyboard sweep: make click-bound non-button/anchor elements operable.
+function isNativeControl(el){ return el.matches('button, a, input, textarea, select'); }
+(function makeKeyboardOperable(){
+  var targets = new Set();
+  document.querySelectorAll('[onclick]').forEach(function(el){ if(!isNativeControl(el)) targets.add(el); });
+  document.querySelectorAll('.tier').forEach(function(el){ if(!isNativeControl(el)) targets.add(el); });
+  targets.forEach(function(el){
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    if(el.classList.contains('tier') && !el.hasAttribute('aria-expanded')) el.setAttribute('aria-expanded','false');
+  });
+})();
+// One document-level keydown listener: Enter/Space activates a focused synthetic button.
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  var el=e.target;
+  if(!el || isNativeControl(el)) return;            // let native buttons/links/inputs handle their own keys
+  if(el.getAttribute('role')!=='button') return;    // only our synthetic buttons
+  e.preventDefault();
+  el.click();
+});
+
+// open the High tier by default so the misses show
+setTimeout(()=>{ var h=document.querySelector('.tier.high'); if(h){ h.classList.add('open'); h.setAttribute('aria-expanded','true'); } }, 700);
+</script>
+</body>
+</html>

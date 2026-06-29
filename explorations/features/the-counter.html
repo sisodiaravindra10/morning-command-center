@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Counter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262);
+  --on:oklch(0.18 0.03 168);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260); text-align:center; max-width:393px}
+
+/* phone */
+.phone{position:relative; width:393px; height:800px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.statusbar{position:absolute; top:0; left:0; right:0; height:54px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 30px 7px; z-index:30; font-family:var(--mono); font-size:12px; color:var(--body); pointer-events:none}
+.statusbar .dots{display:flex; gap:5px; align-items:center}
+.statusbar .dots span{width:5px;height:5px;border-radius:50%;background:var(--body)}
+.statusbar .dots .bat{width:22px;height:11px;border:1.3px solid var(--body);border-radius:3px;position:relative;background:none}
+.statusbar .dots .bat::after{content:"";position:absolute;inset:1.5px;width:75%;background:var(--body);border-radius:1px}
+.statusbar .dots .bat::before{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--body);border-radius:0 1px 1px 0}
+.screen{position:absolute; inset:0; color:var(--ink); overflow-y:auto; padding:60px 22px 22px; scrollbar-width:none; display:flex; flex-direction:column}
+.screen::-webkit-scrollbar{display:none}
+
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 11px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+
+/* context line */
+.ctx{margin-top:14px; padding:13px 15px; background:var(--inset); border:1px solid var(--hair); border-radius:14px; display:flex; flex-direction:column; gap:8px}
+.ctx .addr{font-family:var(--sans); font-size:15px; font-weight:600; letter-spacing:-.15px; color:var(--ink)}
+.ctx .nums{display:flex; gap:0; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.ctx .nums .seg{flex:1; display:flex; flex-direction:column; gap:3px}
+.ctx .nums .seg + .seg{border-left:1px solid var(--hair); padding-left:12px}
+.ctx .nums .seg .k{letter-spacing:.08em; text-transform:uppercase; font-size:9.5px; color:var(--soft)}
+.ctx .nums .seg .v{font-size:13.5px; color:var(--body); font-weight:500}
+
+/* Leo read */
+.read{font-family:var(--serif); font-size:21px; line-height:1.42; margin-top:18px; color:var(--ink)}
+.read em{font-style:italic}
+.read .num{font-style:normal; font-weight:500; transition:color .35s ease}
+
+/* value stepper */
+.value-wrap{margin-top:20px; display:flex; align-items:center; justify-content:center; gap:14px}
+.step{width:46px; height:46px; flex:none; border-radius:50%; border:1px solid var(--hair2); background:oklch(0.96 0.01 250 / .04); color:var(--body); font-size:24px; font-weight:400; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .16s var(--exp), border-color .25s, background .25s}
+.step:hover{border-color:var(--hair2); background:oklch(0.96 0.01 250 / .09); color:var(--ink)}
+.step:active{transform:scale(.9)}
+.value{font-family:var(--mono); font-weight:500; font-size:46px; letter-spacing:-1px; color:var(--ink); min-width:172px; text-align:center; font-variant-numeric:tabular-nums; transition:color .35s ease}
+.value .k{font-size:30px; color:var(--muted); font-weight:400}
+.value.bump{animation:bump .4s var(--exp)}
+@keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.06)}100%{transform:scale(1)}}
+.delta{text-align:center; margin-top:6px; font-family:var(--mono); font-size:11px; color:var(--soft); letter-spacing:.02em}
+.delta b{color:var(--body); font-weight:500}
+
+/* slider */
+.slider-wrap{margin-top:20px; position:relative; padding:0 4px}
+.srail{position:relative; height:4px; border-radius:4px; background:linear-gradient(90deg, var(--confident), var(--uncertain) 62%, var(--coral)); opacity:.9}
+.srail .tick{position:absolute; top:-5px; width:2px; height:14px; background:var(--hair2); border-radius:2px; transform:translateX(-50%)}
+.srail .tick.list{background:oklch(0.96 0.01 250 / .35)}
+input[type=range]{position:absolute; left:0; top:-13px; width:100%; height:30px; -webkit-appearance:none; appearance:none; background:transparent; cursor:pointer; margin:0}
+input[type=range]:focus{outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:24px; height:24px; border-radius:50%; background:var(--ink); border:3px solid var(--canvas); box-shadow:0 2px 8px rgba(0,0,0,.5); cursor:grab; transition:transform .15s var(--exp)}
+input[type=range]:active::-webkit-slider-thumb{cursor:grabbing; transform:scale(1.12)}
+input[type=range]::-moz-range-thumb{width:24px; height:24px; border-radius:50%; background:var(--ink); border:3px solid var(--canvas); box-shadow:0 2px 8px rgba(0,0,0,.5); cursor:grab}
+.slabels{display:flex; justify-content:space-between; margin-top:12px; font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--soft)}
+.slabels .mid{color:var(--muted)}
+
+/* gauge */
+.gauge{margin-top:22px; display:flex; flex-direction:column; gap:10px}
+.gauge-top{display:flex; align-items:baseline; justify-content:space-between}
+.gauge-top .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft)}
+.gauge-top .state{font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.04em; text-transform:uppercase; transition:color .35s ease}
+.barbg{position:relative; height:12px; border-radius:8px; background:var(--inset); overflow:hidden; border:1px solid var(--hair)}
+.barfill{position:absolute; left:0; top:0; bottom:0; border-radius:8px; transition:width .45s var(--exp), background .45s ease; width:60%}
+.barfill::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, oklch(1 0 0 / .18)); border-radius:8px}
+
+/* confidence chip */
+.conf{margin-top:18px; display:flex; gap:11px; align-items:flex-start; padding:13px 14px; border-radius:14px; background:oklch(0.82 0.12 72 / .10); border:1px solid oklch(0.82 0.12 72 / .28)}
+.conf .tag{font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--uncertain); border:1px solid oklch(0.82 0.12 72 / .45); border-radius:999px; padding:3px 9px; flex:none; margin-top:1px}
+.conf p{font-family:var(--sans); font-size:12.5px; line-height:1.5; color:var(--body)}
+.conf p b{color:var(--ink); font-weight:500}
+
+/* actions */
+.acts{margin-top:auto; padding-top:20px; display:flex; flex-direction:column; gap:10px}
+.btn{height:52px; border-radius:15px; font-family:var(--sans); font-size:15px; font-weight:600; border:none; cursor:pointer; transition:transform .16s var(--exp), filter .2s; display:flex; align-items:center; justify-content:center; gap:8px}
+.btn:active{transform:scale(.975)}
+.btn-p{background:var(--confident); color:var(--on)} .btn-p:hover{filter:brightness(1.06)}
+.btn-g{background:transparent; color:var(--body); border:1px solid var(--hair2)} .btn-g:hover{color:var(--ink); border-color:oklch(0.96 0.01 250 / .25)}
+.review-note{display:flex; align-items:center; justify-content:center; gap:7px; font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--soft); margin-bottom:2px}
+.review-note .lock{width:6px;height:6px;border-radius:50%;background:var(--confident);box-shadow:0 0 8px var(--confident)}
+
+/* sent overlay */
+.sheet{position:absolute; left:14px; right:14px; bottom:14px; background:var(--card); border:1px solid var(--hair2); border-radius:22px; padding:22px 20px 20px; box-shadow:0 22px 60px rgba(0,0,0,.55); opacity:0; transform:translateY(20px); pointer-events:none; transition:opacity .35s ease, transform .4s var(--exp); z-index:50}
+.sheet.show{opacity:1; transform:none; pointer-events:auto}
+.sheet .sh-hi{display:flex; align-items:center; gap:9px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft)}
+.sheet .sh-read{font-family:var(--serif); font-size:17px; line-height:1.5; color:var(--ink); margin-top:12px}
+.sheet .sh-read b{font-weight:500; font-family:var(--mono); font-size:15px}
+.sheet .sh-row{display:flex; gap:9px; margin-top:16px}
+.sheet .sh-row button{flex:1; height:44px; border-radius:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; border:none; cursor:pointer; transition:transform .16s var(--exp)}
+.sheet .sh-row button:active{transform:scale(.97)}
+.sheet .undo{background:transparent; color:var(--body); border:1px solid var(--hair2)}
+.sheet .ok{background:var(--confident); color:var(--on)}
+.timer{position:absolute; left:0; bottom:0; height:2px; background:var(--confident); width:100%; border-radius:0 0 22px 22px}
+.sheet.show .timer{animation:countdown 6s linear forwards}
+@keyframes countdown{from{width:100%}to{width:0}}
+
+/* footer controls under phone */
+.controls{display:flex; gap:10px}
+.controls button{font-family:var(--sans); font-size:13px; font-weight:500; color:var(--body); background:oklch(0.96 0.01 250 / .06); border:1px solid var(--hair2); border-radius:11px; padding:10px 16px; cursor:pointer; transition:color .2s, border-color .2s}
+.controls button:hover{color:var(--ink); border-color:oklch(0.96 0.01 250 / .25)}
+
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+
+@media (prefers-reduced-motion: reduce){
+  .orb{animation:none}
+  .value,.value.bump,.barfill,.read .num,.gauge-top .state,.sheet,.sheet.show .timer{transition:none; animation:none}
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="island"></div>
+  <div class="statusbar"><span>9:14</span><span class="dots"><span></span><span></span><span></span><span class="bat"></span></span></div>
+  <div class="screen" id="screen">
+
+    <div class="hi"><span class="orb"></span>Leo · counter-offer draft</div>
+
+    <div class="ctx">
+      <div class="addr">142 Oak St</div>
+      <div class="nums">
+        <div class="seg"><span class="k">List</span><span class="v">$625k</span></div>
+        <div class="seg"><span class="k">Their offer</span><span class="v">$590k</span></div>
+        <div class="seg"><span class="k">Gap</span><span class="v" id="gapv">$35k</span></div>
+      </div>
+    </div>
+
+    <p class="read" id="read">I would counter at <em><span class="num" id="readNum">$612k</span></em>. The gap is closeable and it keeps them warm.</p>
+
+    <div class="value-wrap">
+      <button class="step" id="minus" aria-label="Decrease by 1k">&minus;</button>
+      <div class="value" id="value"><span class="k">$</span><span id="valNum">612</span><span class="k">k</span></div>
+      <button class="step" id="plus" aria-label="Increase by 1k">+</button>
+    </div>
+    <div class="delta" id="delta">+<b>$22k</b> over their offer · <b>$13k</b> under list</div>
+
+    <div class="slider-wrap">
+      <div class="srail" id="srail">
+        <span class="tick list" id="listTick" title="List price"></span>
+      </div>
+      <input type="range" id="slider" min="595" max="640" step="1" value="612" aria-label="Counter-offer value">
+      <div class="slabels"><span>$595k</span><span class="mid">$612k Leo</span><span>$640k</span></div>
+    </div>
+
+    <div class="gauge">
+      <div class="gauge-top">
+        <span class="lbl">Deal strength</span>
+        <span class="state" id="gstate">Strong</span>
+      </div>
+      <div class="barbg"><div class="barfill" id="barfill"></div></div>
+    </div>
+
+    <div class="conf" id="conf">
+      <span class="tag" id="confTag">Medium</span>
+      <p id="confText"><b>Comps support 612.</b> The buyer hinted at a deadline I cannot verify, so I would not push much higher.</p>
+    </div>
+
+    <div class="acts">
+      <div class="review-note"><span class="lock"></span>Nothing sends without your review</div>
+      <button class="btn btn-p" id="sendReview">Send for your review</button>
+      <button class="btn btn-g" id="handle">I will handle it</button>
+    </div>
+
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="sh-hi"><span class="orb"></span>Queued for your review</div>
+    <p class="sh-read">Your counter at <b id="sheetNum">$612k</b> is drafted and waiting in your outbox. It will not go to the other agent until you open it and tap send.</p>
+    <div class="sh-row">
+      <button class="undo" id="undo">Undo</button>
+      <button class="ok" id="okSheet">Got it</button>
+    </div>
+    <div class="timer"></div>
+  </div>
+</div>
+
+<div class="cap">The Counter &middot; Leo drafts, you tune, nothing sends without review.</div>
+
+<div class="controls">
+  <button id="reset">&#8635; Reset to Leo's 612</button>
+</div>
+
+<script>
+(function(){
+  const LEO=612, LIST=625, OFFER=590, MIN=595, MAX=640;
+  const slider=document.getElementById('slider');
+  const valNum=document.getElementById('valNum');
+  const value=document.getElementById('value');
+  const readNum=document.getElementById('readNum');
+  const read=document.getElementById('read');
+  const delta=document.getElementById('delta');
+  const gapv=document.getElementById('gapv');
+  const barfill=document.getElementById('barfill');
+  const gstate=document.getElementById('gstate');
+  const conf=document.getElementById('conf');
+  const confTag=document.getElementById('confTag');
+  const confText=document.getElementById('confText');
+  const sheet=document.getElementById('sheet');
+  const sheetNum=document.getElementById('sheetNum');
+  const sheetHi=sheet.querySelector('.sh-hi');
+  const sheetRead=sheet.querySelector('.sh-read');
+
+  // position the list-price tick on the gradient rail
+  const listPct=((LIST-MIN)/(MAX-MIN))*100;
+  document.getElementById('listTick').style.left=listPct+'%';
+
+  let undoTimer=null;
+
+  function k(n){ return '$'+n+'k'; }
+
+  // map a value to a strength score (higher value = lower strength for the deal closing)
+  // below/at 612 -> strong; 613-625 -> defensible; above 625 -> risky
+  function strength(v){
+    // 595 => ~96, 612 => ~80, 625 => ~55, 640 => ~16
+    if(v<=LEO){
+      // strong band 78-96
+      const t=(v-MIN)/(LEO-MIN); // 0..1
+      return Math.round(96 - t*18);
+    } else if(v<=LIST){
+      // amber band 76 down to 50
+      const t=(v-LEO)/(LIST-LEO);
+      return Math.round(76 - t*26);
+    } else {
+      // coral band 48 down to 14
+      const t=(v-LIST)/(MAX-LIST);
+      return Math.round(48 - t*34);
+    }
+  }
+
+  function bandColor(v){
+    if(v<=LEO) return 'var(--confident)';
+    if(v<=LIST) return 'var(--uncertain)';
+    return 'var(--coral)';
+  }
+
+  function update(v, bump){
+    valNum.textContent=v;
+    slider.value=v;
+
+    const col=bandColor(v);
+    value.style.color=col;
+    readNum.style.color=col;
+    gstate.style.color=col;
+
+    // delta line
+    const overOffer=v-OFFER, underList=LIST-v;
+    if(v<LIST){
+      delta.innerHTML='+<b>$'+overOffer+'k</b> over their offer &middot; <b>$'+underList+'k</b> under list';
+    } else if(v===LIST){
+      delta.innerHTML='+<b>$'+overOffer+'k</b> over their offer &middot; <b>at list</b>';
+    } else {
+      delta.innerHTML='+<b>$'+overOffer+'k</b> over their offer &middot; <b>$'+(v-LIST)+'k</b> over list';
+    }
+
+    // gauge
+    const s=strength(v);
+    barfill.style.width=s+'%';
+    barfill.style.background=col;
+
+    // Leo's read + gauge state label + confidence, three bands
+    if(v<=LEO){
+      gstate.textContent='Strong';
+      read.innerHTML='I would counter at <em><span class="num" id="readNum">'+k(v)+'</span></em>. The gap is closeable and it keeps them warm.';
+      conf.style.background='oklch(0.82 0.12 72 / .10)';
+      conf.style.borderColor='oklch(0.82 0.12 72 / .28)';
+      confTag.textContent='Medium';
+      confTag.style.color='var(--uncertain)';
+      confTag.style.borderColor='oklch(0.82 0.12 72 / .45)';
+      confText.innerHTML='<b>Comps support 612.</b> The buyer hinted at a deadline I cannot verify, so I would not push much higher.';
+    } else if(v<=LIST){
+      gstate.textContent='Defensible';
+      read.innerHTML='At <em><span class="num" id="readNum">'+k(v)+'</span></em> you are defensible, but the back-and-forth gets slower. Tell me if you want the room.';
+      conf.style.background='oklch(0.82 0.12 72 / .10)';
+      conf.style.borderColor='oklch(0.82 0.12 72 / .28)';
+      confTag.textContent='Medium';
+      confTag.style.color='var(--uncertain)';
+      confTag.style.borderColor='oklch(0.82 0.12 72 / .45)';
+      confText.innerHTML='<b>Above 612 the comps thin out.</b> Defensible, but expect another round. The unverified deadline could work against the wait.';
+    } else {
+      gstate.textContent='They may walk';
+      read.innerHTML='At <em><span class="num" id="readNum">'+k(v)+'</span></em> there is real risk they walk. The comps do not support a number over list.';
+      conf.style.background='oklch(0.73 0.16 28 / .10)';
+      conf.style.borderColor='oklch(0.73 0.16 28 / .30)';
+      confTag.textContent='Low';
+      confTag.style.color='var(--coral)';
+      confTag.style.borderColor='oklch(0.73 0.16 28 / .45)';
+      confText.innerHTML='<b>I would not draft this.</b> Over list with no supporting comps reads as not serious. If the deadline is real, this risks the deal.';
+    }
+    // re-grab the regenerated num span and re-tint it
+    const rn=document.getElementById('readNum');
+    if(rn) rn.style.color=col;
+
+    if(bump){
+      value.classList.remove('bump'); void value.offsetWidth; value.classList.add('bump');
+    }
+  }
+
+  function setVal(v, bump){
+    v=Math.max(MIN, Math.min(MAX, v));
+    update(v, bump);
+  }
+
+  slider.addEventListener('input', ()=> update(parseInt(slider.value,10), false));
+  document.getElementById('plus').addEventListener('click', ()=> setVal(parseInt(slider.value,10)+1, true));
+  document.getElementById('minus').addEventListener('click', ()=> setVal(parseInt(slider.value,10)-1, true));
+
+  // gap line is fixed context (list - their offer), set once
+  gapv.textContent=k(LIST-OFFER);
+
+  // send for review -> queue sheet (review-before-send, not auto-send)
+  document.getElementById('sendReview').addEventListener('click', ()=>{
+    sheetHi.innerHTML='<span class="orb"></span>Queued for your review';
+    sheetRead.innerHTML='Your counter at <b id="sheetNum">'+k(parseInt(slider.value,10))+'</b> is drafted and waiting in your outbox. It will not go to the other agent until you open it and tap send.';
+    sheet.classList.add('show');
+    clearTimeout(undoTimer);
+    undoTimer=setTimeout(()=> sheet.classList.remove('show'), 6000);
+  });
+  // "I will handle it" -> you take the negotiation over manually; Leo steps back.
+  // This is NOT a review-draft queue: it dismisses Leo's draft and confirms you have it.
+  document.getElementById('handle').addEventListener('click', ()=>{
+    sheetHi.innerHTML='<span class="orb"></span>You have got this';
+    sheetRead.innerHTML='Leo will step back on this one. Nothing is queued and no draft will be sent. The counter is yours to send when you are ready.';
+    sheet.classList.add('show');
+    clearTimeout(undoTimer);
+    undoTimer=setTimeout(()=> sheet.classList.remove('show'), 6000);
+  });
+  document.getElementById('undo').addEventListener('click', ()=>{ clearTimeout(undoTimer); sheet.classList.remove('show'); });
+  document.getElementById('okSheet').addEventListener('click', ()=>{ clearTimeout(undoTimer); sheet.classList.remove('show'); });
+
+  document.getElementById('reset').addEventListener('click', ()=> setVal(LEO, true));
+
+  // Keyboard operability sweep: make any click-bound non-native control focusable
+  // and operable. Native <button>/<a>/<input> are already keyboard-operable, so they
+  // are skipped here to avoid double-binding. This file currently has none, so the
+  // sweep is a defensive no-op, but it keeps behavior correct if click-bound rows,
+  // cards, items, tabs or pills are added later.
+  const KB_SELECTOR='[onclick],.row,.card,.item,.tab,.pill';
+  const kbTargets=[];
+  document.querySelectorAll(KB_SELECTOR).forEach(function(el){
+    if(el.matches('button,a')) return;            // never touch real buttons/links
+    if(el.closest('button,a')) return;            // skip content inside them
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    kbTargets.push(el);
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+    const t=e.target;
+    if(!t || typeof t.matches!=='function') return;
+    // do not hijack typing inside form fields
+    if(t.matches('input,textarea,select') || t.isContentEditable) return;
+    // only act on elements our sweep made operable
+    if(t.getAttribute('role')!=='button' || !t.hasAttribute('tabindex')) return;
+    e.preventDefault();
+    t.click();
+  });
+
+  update(LEO, false);
+})();
+</script>
+</body>
+</html>

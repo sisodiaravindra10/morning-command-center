@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · Headline workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root{
+  --canvas:oklch(0.985 0.006 95); --raise:oklch(1 0 0); --card:oklch(0.975 0.008 90); --inset:oklch(0.955 0.012 85);
+  --ink:oklch(0.18 0.012 60); --body:oklch(0.40 0.018 65); --muted:oklch(0.56 0.018 70); --soft:oklch(0.70 0.012 75);
+  --hair:oklch(0.18 0.012 60 / .12); --hair2:oklch(0.18 0.012 60 / .22);
+  --confident:oklch(0.50 0.11 168); --uncertain:oklch(0.58 0.12 70); --coral:oklch(0.56 0.17 30); --cobalt:oklch(0.52 0.16 262);
+  --urgent-bg:oklch(0.93 0.05 40); --uncertain-bg:oklch(0.95 0.04 80); --confident-bg:oklch(0.94 0.04 168);
+  --on-accent:oklch(0.99 0.004 95);
+  --disp:'Space Grotesk',sans-serif; --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+html,body{height:100%}
+body{background:oklch(0.92 0.012 90); font-family:var(--sans); display:flex; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 92px; -webkit-font-smoothing:antialiased}
+.phone{position:relative; width:393px; height:852px; max-height:calc(100dvh - 132px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.16 0.01 60), 0 0 0 12px oklch(0.32 0.01 60), 0 40px 90px -22px oklch(0.3 0.03 60 / .5); overflow:hidden; isolation:isolate}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:oklch(0.16 0.01 60); border-radius:20px; z-index:60}
+.screen{position:absolute; inset:0; color:var(--ink); overflow:hidden}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:16px 28px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:50; pointer-events:none}
+.statusbar .ic{display:flex; gap:7px; opacity:.8}
+
+/* view router */
+.views{position:absolute; inset:0}
+.view{position:absolute; inset:0; overflow-y:auto; padding:52px 24px 104px; opacity:0; transform:translateX(28px); pointer-events:none; transition:opacity .35s var(--exp), transform .45s var(--exp); scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+.view.active{opacity:1; transform:none; pointer-events:auto}
+.view.exit-left{transform:translateX(-22px); opacity:0}
+
+/* orb + spot + avatars */
+.orb{width:20px;height:20px;border-radius:50%;flex:none;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.07 200) 0%, oklch(0.62 0.16 250) 42%, oklch(0.30 0.10 270) 100%);box-shadow:0 0 10px oklch(0.62 0.16 250 / .4), inset 0 1px 2px oklch(1 0 0 / .5);animation:breathe 5s var(--exp) infinite}
+@keyframes breathe{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.06);filter:brightness(1.12)}}
+.av{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-weight:600;font-size:12px;color:oklch(0.99 0 0);letter-spacing:-.02em}
+.av.dana{background:linear-gradient(135deg,oklch(0.62 0.14 28),oklch(0.50 0.13 18))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.58 0.11 168),oklch(0.46 0.10 180))}
+.av.priya{background:linear-gradient(135deg,oklch(0.60 0.13 300),oklch(0.48 0.12 285))}
+
+/* ---- HOME (the headline IS the triage) ---- */
+.hi{font-family:var(--serif);font-size:18px;color:var(--muted);display:flex;align-items:center;gap:10px}
+.headline{font-family:var(--disp);font-weight:700;font-size:clamp(54px,18vw,74px);line-height:.9;letter-spacing:-.04em;color:var(--ink);margin-top:16px}
+.headline .n{color:var(--coral);font-variant-numeric:tabular-nums}
+.sub{font-family:var(--sans);font-size:15px;color:var(--muted);margin-top:16px;max-width:30ch;line-height:1.5}
+.spot{width:100%;height:128px;border-radius:20px;margin-top:22px;display:block;overflow:hidden}
+.list-head{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-top:26px}
+
+/* type-led triage entries (not colored blocks) */
+.row{padding:22px 0;border-top:1px solid var(--hair);cursor:pointer;position:relative}
+.row:first-of-type{border-top:1px solid var(--ink)}
+.row.done{opacity:.45}
+.e-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sdot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--st)}
+.row.urgent{--st:var(--coral)} .row.uncertain{--st:var(--uncertain)} .row.confident{--st:var(--confident)}
+.e-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--st)}
+.e-alt{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin-left:auto}
+.row .title{font-family:var(--disp);font-weight:600;font-size:23px;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+.row.urgent .title{font-size:26px}
+.row .why{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--body);margin-top:9px;max-width:34ch}
+.row .deesc{color:var(--uncertain)}
+.e-foot{display:flex;align-items:center;gap:10px;margin-top:14px}
+.e-foot .who{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-size:13px;color:var(--muted)}
+.row .meta{display:none}
+.act{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-weight:600;font-size:13.5px;color:var(--ink)}
+.act .arr{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--canvas);display:flex;align-items:center;justify-content:center;transition:background .2s}
+.row.urgent .act .arr{background:var(--coral)}
+
+/* silence ledger: editorial footer */
+.ledger{margin-top:30px;padding-top:20px;border-top:1px solid var(--ink);cursor:pointer}
+.ledger-line{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;font-family:var(--sans);font-size:14px;color:var(--body);line-height:1.55}
+.ledger-line .big{font-family:var(--disp);font-weight:700;font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+.ledger-line b{font-weight:400}
+.chev{margin-left:auto;color:var(--soft);align-self:center;transition:transform .3s var(--exp)}
+.ledger.open .chev{transform:rotate(90deg)}
+.ledger-list{max-height:0;overflow:hidden;transition:max-height .5s var(--exp)}
+.ledger.open .ledger-list{max-height:280px}
+.near{font-family:var(--sans);font-size:13px;line-height:1.45;color:var(--muted);padding-top:14px}
+.near .nm{font-family:var(--mono);font-size:10.5px;color:var(--soft);margin-top:3px}
+
+/* ---- DETAIL (type-led editorial) ---- */
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.back{width:42px;height:42px;border-radius:50%;border:1px solid var(--hair2);background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;transition:background .2s}
+.back:active{background:var(--inset)}
+.topbar .tt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.d-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dc);background:color-mix(in oklch,var(--dc) 14%,transparent);padding:5px 12px;border-radius:999px}
+.d-tag .d{width:6px;height:6px;border-radius:50%;background:var(--dc)}
+#detail.urgent{--dc:var(--coral);--dc-bg:var(--urgent-bg)} #detail.uncertain{--dc:var(--uncertain);--dc-bg:var(--uncertain-bg)} #detail.confident{--dc:var(--confident);--dc-bg:var(--confident-bg)}
+.d-title{font-family:var(--disp);font-weight:600;font-size:33px;line-height:1.04;letter-spacing:-.03em;color:var(--ink);margin-top:18px}
+.d-why{font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--body);margin-top:16px}
+.d-rationale{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.5;color:var(--ink);margin-top:20px;padding:15px 18px;background:var(--dc-bg);border-radius:16px}
+.d-rationale .hedge{color:var(--uncertain);font-style:normal;background:color-mix(in oklch,var(--uncertain) 10%,transparent)}
+.trace{margin-top:28px}
+.trace-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-bottom:6px}
+.trace-row{display:flex;align-items:center;gap:11px;padding:13px 0;border-top:1px solid var(--hair);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.trace-row:first-child{border-top:1px solid var(--ink)}
+.trace-row .k{color:var(--soft)}
+.trace-row .v{margin-left:auto;color:var(--ink)}
+.d-actions{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}
+.btn{height:52px;padding:0 22px;border-radius:14px;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .16s var(--exp);flex:1}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--ink);color:var(--canvas)} .btn-u{background:var(--coral);color:var(--on-accent)}
+.btn-g{background:transparent;color:var(--body);border:1px solid var(--hair2);flex:0 0 auto;padding:0 20px}
+.result{margin-top:28px;padding:22px;border-radius:18px;background:var(--confident-bg);display:none}
+.result.show{display:block;animation:rise .5s var(--exp) both}
+.result .rh{display:flex;align-items:center;gap:11px;font-family:var(--sans);font-weight:600;font-size:15px;color:var(--confident)}
+.result .tick{width:26px;height:26px;border-radius:50%;background:color-mix(in oklch,var(--confident) 22%,transparent);display:flex;align-items:center;justify-content:center}
+.result p{font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.5;color:var(--body);margin-top:13px}
+
+/* ---- PIPELINE / TEAM / LEO ---- */
+.view-h{font-family:var(--disp);font-weight:700;font-size:38px;letter-spacing:-.03em;line-height:1;color:var(--ink);margin-bottom:10px}
+.view-sub{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:26px}
+.p-row{display:flex;align-items:center;gap:14px;padding:18px 0;border-top:1px solid var(--hair);cursor:pointer}
+.p-row:first-of-type{border-top:1px solid var(--ink)}
+.p-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--st,var(--soft))}
+.p-row.urgent{--st:var(--coral)} .p-row.uncertain{--st:var(--uncertain)} .p-row.confident{--st:var(--confident)} .p-row.calm{--st:var(--soft)}
+.p-row .pt{font-family:var(--disp);font-weight:600;font-size:17px;letter-spacing:-.01em;color:var(--ink)}
+.p-row .ps{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:4px;letter-spacing:.02em}
+.p-row .pv{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--body);font-variant-numeric:tabular-nums}
+.t-card{display:flex;align-items:center;gap:14px;padding:18px 0;border-top:1px solid var(--hair)}
+.t-card:first-of-type{border-top:1px solid var(--ink)}
+.t-card .tn{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.t-card .td{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:3px}
+.t-flag{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.t-flag.risk{color:var(--uncertain);background:color-mix(in oklch,var(--uncertain) 16%,transparent)}
+.t-flag.ok{color:var(--confident);background:color-mix(in oklch,var(--confident) 14%,transparent)}
+
+/* leo chat */
+.chat{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.msg{max-width:84%;padding:14px 17px;border-radius:20px;font-size:14.5px;line-height:1.45}
+.msg.user{align-self:flex-end;background:var(--ink);color:var(--canvas);border-bottom-right-radius:6px;font-family:var(--sans)}
+.msg.leo{align-self:flex-start;background:var(--inset);border-bottom-left-radius:6px;font-family:var(--serif);color:var(--ink)}
+.composer{position:absolute;left:24px;right:24px;bottom:100px;display:flex;align-items:center;gap:10px;height:52px;padding:0 8px 0 18px;border-radius:16px;background:var(--raise);border:1px solid var(--hair2);box-shadow:0 4px 16px oklch(0.3 0.02 60 / .08)}
+.composer input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:var(--sans);font-size:14px}
+.composer input::placeholder{color:var(--soft)}
+.composer .send{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--canvas);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* recovery sheet */
+.sheet-scrim{position:absolute;inset:0;background:oklch(0.3 0.02 60 / .35);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .35s;z-index:55}
+.sheet-scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--raise);border-top:1px solid var(--hair);border-radius:26px 26px 0 0;padding:26px 24px 34px;transform:translateY(100%);transition:transform .45s var(--exp);z-index:56;box-shadow:0 -20px 60px oklch(0.3 0.02 60 / .2)}
+.sheet.show{transform:none}
+.sheet .sh{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--coral);display:flex;align-items:center;gap:8px}
+.sheet h3{font-family:var(--disp);font-weight:600;font-size:22px;letter-spacing:-.02em;margin-top:13px;line-height:1.15;color:var(--ink)}
+.sheet .sr{font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.5;color:var(--body);margin-top:14px;padding:13px 16px;background:var(--urgent-bg);border-radius:14px}
+.sheet .teach{font-family:var(--sans);font-size:13px;color:var(--body);margin-top:14px;padding:12px 14px;background:var(--inset);border-radius:12px}
+.sheet .teach b{color:var(--cobalt)}
+.sheet .sa{display:flex;gap:10px;margin-top:20px;align-items:center}
+.undo{height:48px;padding:0 20px;border-radius:13px;background:var(--coral);color:var(--on-accent);font-family:var(--sans);font-weight:600;font-size:14px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px}
+.undo .cd{font-family:var(--mono);font-size:12px;opacity:.85}
+
+/* tab bar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:88px;padding:12px 22px 30px;background:linear-gradient(to top,var(--canvas) 64%,transparent);display:flex;justify-content:space-between;z-index:45}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;color:var(--soft);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;background:none;border:none}
+.tab.active{color:var(--ink)}
+
+/* entrance */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+#home.active [data-anim]{animation:rise .85s var(--exp) both;animation-delay:calc(var(--i,0) * 80ms + 100ms)}
+
+/* presenter controls */
+.controls{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:min(96vw,860px);z-index:100;background:oklch(0.99 0.005 90 / .92);backdrop-filter:blur(12px);border:1px solid var(--hair2);border-radius:14px;padding:8px;scrollbar-width:none;box-shadow:0 8px 30px oklch(0.3 0.02 60 / .12)}
+.controls::-webkit-scrollbar{display:none}
+.controls button{white-space:nowrap;flex:0 0 auto;font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--body);background:oklch(0.18 0.012 60 / .04);border:1px solid var(--hair2);border-radius:10px;padding:8px 12px;cursor:pointer}
+.controls button:hover{background:oklch(0.18 0.012 60 / .09);color:var(--ink)}
+.controls .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);align-self:center;padding:0 3px}
+
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001s !important;transition-duration:.05s !important} .orb{animation:none} }
+</style>
+</head>
+<body>
+<div class="phone"><div class="notch"></div>
+<div class="screen">
+  <div class="statusbar"><span id="clock">5:42</span><span class="ic">
+    <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="13.5" width="3" height="11" rx="1" fill="currentColor" opacity=".35"/></svg>
+    <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="3" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/></svg>
+  </span></div>
+
+  <div class="views">
+
+    <!-- HOME -->
+    <section class="view active" id="home" data-view>
+      <div class="hi" data-anim style="--i:0"><span class="orb"></span>Good morning, Dana.</div>
+      <h1 class="headline" data-anim style="--i:1"><span class="n" data-count="3">3</span> need you<span class="n">.</span></h1>
+      <p class="sub" data-anim style="--i:2">I took care of the rest overnight. These three are most important first.</p>
+
+      <!-- morning spot illustration: dawn over a roofline -->
+      <svg class="spot" data-anim style="--i:3" viewBox="0 0 345 128" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="oklch(0.90 0.07 50)"/><stop offset="1" stop-color="oklch(0.96 0.03 90)"/>
+          </linearGradient>
+          <radialGradient id="sun" cx="74%" cy="86%" r="58%">
+            <stop offset="0" stop-color="oklch(0.88 0.13 55)"/><stop offset="55%" stop-color="oklch(0.91 0.08 58)"/><stop offset="100%" stop-color="oklch(0.96 0.03 80 / 0)"/>
+          </radialGradient>
+        </defs>
+        <rect width="345" height="128" fill="url(#dawn)"/>
+        <circle cx="255" cy="110" r="74" fill="url(#sun)"/>
+        <g fill="none" stroke="oklch(0.32 0.02 60 / .42)" stroke-width="1.4" stroke-linejoin="round">
+          <path d="M0 104 L34 86 L68 104 L96 80 L124 104 L158 90 L190 104 L232 74 L268 104 L300 88 L345 104"/>
+        </g>
+        <g fill="oklch(0.32 0.02 60 / .3)">
+          <rect x="92" y="86" width="6" height="6" rx="1"/><rect x="228" y="82" width="5" height="5" rx="1"/><rect x="296" y="94" width="5" height="5" rx="1"/>
+        </g>
+        <g stroke="oklch(0.55 0.06 60 / .22)" stroke-width="1" fill="none">
+          <path d="M-10 118 Q120 108 360 120"/><path d="M-10 124 Q150 116 360 126"/>
+        </g>
+      </svg>
+
+      <div class="list-head" data-anim style="--i:4">Needs you, most important first</div>
+      <div id="rows"></div>
+
+      <div class="ledger" data-anim style="--i:8" id="ledger">
+        <div class="ledger-line"><span class="big" data-count="47">47</span> <b>things handled overnight. I left</b> <span class="big" data-count="6">6</span> <b>alone so I would not wake you.</b><span class="chev"><svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1.5 1.5 6.5 6.5 1.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="ledger-list">
+          <div class="near">Almost flagged a price gap on the Henderson home. It sorted itself out when the lender replied at 6:41a.<div class="nm">Checked the paperwork, no action needed</div></div>
+          <div class="near">Saw a price drop on your Birch listing. Too small to bother you, under your $5k cutoff.<div class="nm">Watched the market, below your cutoff</div></div>
+          <div class="near">Wrote 3 birthday notes for your contacts. Ready to send at 9a.<div class="nm">Drafted, waiting to send</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAIL -->
+    <section class="view" id="detail" data-view>
+      <div class="topbar"><button class="back" data-back><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M11 4 6 9l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="tt" id="d-alt">My deal</span></div>
+      <span class="d-tag" id="d-tag"><span class="d"></span><span id="d-tagtext">High</span></span>
+      <h2 class="d-title" id="d-title"></h2>
+      <p class="d-why" id="d-why"></p>
+      <p class="d-rationale" id="d-rationale"></p>
+      <div class="trace">
+        <div class="trace-h">Why I am telling you this</div>
+        <div id="d-trace"></div>
+      </div>
+      <div class="d-actions" id="d-actions"></div>
+      <div class="result" id="d-result"><div class="rh"><span class="tick"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="oklch(0.50 0.11 168)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="d-result-h">Done</span></div><p id="d-result-p"></p></div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section class="view" id="pipeline" data-view>
+      <h2 class="view-h">Your deals</h2>
+      <div class="view-sub">9 going · 2 need you · $4.1M being closed</div>
+      <div id="pipe-rows"></div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="view" id="team" data-view>
+      <h2 class="view-h">Your team</h2>
+      <div class="view-sub">7 people · 1 deal needs a check-in</div>
+      <div class="t-card"><span class="av marcus">M</span><div><div class="tn">Marcus Reyes</div><div class="td">Henderson buyer has gone quiet</div></div><span class="t-flag risk">Needs a look</span></div>
+      <div class="t-card"><span class="av priya">P</span><div><div class="tn">Priya Anand</div><div class="td">3 deals, all on track</div></div><span class="t-flag ok">All good</span></div>
+      <div class="t-card"><span class="av" style="background:linear-gradient(135deg,oklch(0.6 0.12 230),oklch(0.48 0.11 245))">J</span><div><div class="tn">Jordan Wells</div><div class="td">Closing Tuesday, paperwork is clear</div></div><span class="t-flag ok">All good</span></div>
+      <div class="t-card"><span class="av" style="background:linear-gradient(135deg,oklch(0.62 0.13 60),oklch(0.5 0.12 48))">T</span><div><div class="tn">Tom Okafor</div><div class="td">2 new buyers, checking they are serious</div></div><span class="t-flag ok">All good</span></div>
+    </section>
+
+    <!-- LEO -->
+    <section class="view" id="leo" data-view>
+      <h2 class="view-h" style="display:flex;align-items:center;gap:12px"><span class="orb"></span>Ask Leo</h2>
+      <div class="view-sub">Type or talk, ask me anything about your deals</div>
+      <div class="chat">
+        <div class="msg user">Which of my deals is most likely to fall apart this week?</div>
+        <div class="msg leo">Maplewood, and it is not close. The buyer raised a problem after the home inspection, you have not replied, and only 18 hours are left. It is the only firm deadline you have not met. I would deal with it before your 9:30.</div>
+        <div class="msg user">Write the reply to the buyer for me.</div>
+        <div class="msg leo">Written. I stuck to the three repairs the inspector named and left the dollar amount blank for you to fill in. I will not send it until you say so.</div>
+      </div>
+      <div class="composer"><input placeholder="Type your question, or hold to talk" /><button class="send"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M3 9h11M9.5 4.5 14 9l-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    </section>
+
+  </div>
+
+  <!-- recovery sheet -->
+  <div class="sheet-scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="sh"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1l6 11H1L7 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 5.5v3M7 10.2v.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> I made a mistake</div>
+    <h3>I emailed the Alvarez buyer before you said it was okay.</h3>
+    <p class="sr">I thought "draft these" meant "send these." That was my mistake. I have held back the other 4 I was about to send.</p>
+    <div class="teach">From now on: <b>I will show you anything going to a client before I send it</b>, unless you tell me to stop.</div>
+    <div class="sa"><button class="undo" id="undoBtn">Take it back <span class="cd" id="undoCount">14s</span></button><button class="btn-g" style="height:48px" id="dismissSheet">I will handle it</button></div>
+  </div>
+
+  <!-- tab bar -->
+  <nav class="tabbar">
+    <button class="tab active" data-tab="home"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor"/><rect x="12" y="3" width="7" height="4.5" rx="1.6" fill="currentColor" opacity=".55"/><rect x="12" y="9.5" width="7" height="9.5" rx="2" fill="currentColor"/><rect x="3" y="12" width="7" height="7" rx="2" fill="currentColor" opacity=".55"/></svg>Today</button>
+    <button class="tab" data-tab="pipeline"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 16l4.5-5 3.5 3L19 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Deals</button>
+    <button class="tab" data-tab="team"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M2.5 18c.6-3 2.8-4.6 5.5-4.6S13 15 13.5 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team</button>
+    <button class="tab" data-tab="leo"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.7"/><circle cx="11" cy="11" r="3.6" fill="currentColor"/></svg>Leo</button>
+  </nav>
+</div></div>
+
+<div class="controls">
+  <span class="lbl">Demo</span>
+  <button id="cReplay">↻ Replay the morning</button>
+  <button id="cTheme">☀ Bring up the day</button>
+  <button id="cDeesc">◐ New info comes in</button>
+  <button id="cWrong">⚠ Leo got it wrong</button>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ----- data -----
+const DEALS={
+  maplewood:{state:'urgent',alt:'My deal',tag:'18 hours left',title:'The Maplewood buyer raised a problem and you have not replied.',
+    why:'You have until 8:00a tomorrow to respond. Miss it and the buyer can walk away and take their money back.',
+    rationale:'I spotted this the moment the inspection report arrived. The three repairs they listed are small. The real risk is the clock, not the repairs.',
+    trace:[['From','Home inspection report, page 4'],['Checked by','Me, reading the paperwork'],['How sure I am','Very sure'],['Checked','6:38a today']],
+    actions:[{label:'Look and reply',kind:'u',result:['Your reply is saved','I saved your reply as a draft. I will tell you the moment the buyer\'s agent sees it.']},{label:'Remind me later',kind:'g'}]},
+  oak:{state:'uncertain',alt:'My deal',tag:'Fairly sure',title:'142 Oak St. The buyer offered $24k below your price.',
+    why:'I wrote a reply offer for you, but there is a deadline I could not check. Your call.',
+    rationale:'A fair counter is $605k to $620k. I would go with $612k. Recent sales nearby back that up. <span class="hedge">The buyer\'s agent hinted at a deadline I could not confirm, so I did not send anything yet.</span>',
+    trace:[['How I worked it out','Compared 14 recent nearby sales'],['Things I could not check','2'],['How sure I am','Fairly sure'],['Written','5:30a today']],
+    actions:[{label:'Send my counter offer',kind:'p',result:['Counter offer sent at $612k','Sent. I will tell you the moment they reply, and keep an eye out for that deadline I could not confirm.']},{label:'Change it first',kind:'g'}]},
+  henderson:{state:'confident',alt:'Marcus\'s deal',tag:'Very sure',title:"Marcus's buyer for Henderson has gone quiet.",
+    why:'No reply in 3 days. The buyer opened the listing 4 times last night. That mix usually means they are about to drop off.',
+    rationale:'This is Marcus\'s deal, not yours. Still, the sign is strong enough that a quick word from you now beats sorting out a lost deal later.',
+    trace:[['From','Checking how serious the buyer is'],['What I saw','Opened the listing 4 times, no reply'],['How sure I am','Very sure'],['Last contact','3 days ago']],
+    actions:[{label:'Give Marcus a heads-up',kind:'p',result:['Heads-up sent to Marcus','I gave Marcus the background and a suggested first line. I will tell you if the buyer comes back.']},{label:'See the messages',kind:'g'}]}
+};
+const ORDER=['maplewood','oak','henderson'];
+const PIPE=[
+  {id:'maplewood',cls:'urgent',t:'Maplewood Dr',s:'Closing · buyer raised a problem',v:'$840k'},
+  {id:'oak',cls:'uncertain',t:'142 Oak St',s:'Waiting on your reply offer',v:'$612k'},
+  {id:'birch',cls:'calm',t:'Birch Ln listing',s:'For sale · 12 viewings',v:'$1.2M'},
+  {id:'cedar',cls:'calm',t:'Cedar Ct',s:'Closing Tue · paperwork clear',v:'$705k'},
+  {id:'elm',cls:'confident',t:'Elm & 4th',s:'Offer accepted yesterday',v:'$528k'}
+];
+
+// avatar by alt / agent
+const AV={maplewood:['dana','D'],oak:['dana','D'],henderson:['marcus','M']};
+const ARR='<span class="arr"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.5 8h8M8 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+
+// ----- render home rows -----
+const rowsEl=$('#rows');
+ORDER.forEach((id,idx)=>{
+  const d=DEALS[id];
+  const [avc,avl]=AV[id]||['dana','D'];
+  const verb=id==='henderson'?'Heads-up':'Open';
+  const src=d.trace[0][1];
+  const el=document.createElement('article');
+  el.className='row '+d.state; el.dataset.anim=''; el.style.setProperty('--i',5+idx); el.dataset.deal=id;
+  el.innerHTML=`<div class="e-top"><span class="sdot"></span><span class="e-tag">${d.tag}</span><span class="e-alt">${d.alt}</span></div><div class="title">${d.title}</div><div class="why">${d.why}</div><div class="e-foot"><span class="who"><span class="av ${avc}">${avl}</span>${src}</span><span class="act">${verb}${ARR}</span></div><div class="meta">${d.alt} · <span class="c">${d.tag}</span></div>`;
+  el.addEventListener('click',()=>openDeal(id));
+  rowsEl.appendChild(el);
+});
+// pipeline rows
+const pipeEl=$('#pipe-rows');
+PIPE.forEach(p=>{
+  const el=document.createElement('div'); el.className='p-row '+p.cls;
+  el.innerHTML=`<span class="p-dot"></span><div><div class="pt">${p.t}</div><div class="ps">${p.s}</div></div><span class="pv">${p.v}</span>`;
+  if(DEALS[p.id]) el.addEventListener('click',()=>openDeal(p.id));
+  pipeEl.appendChild(el);
+});
+
+// ----- router -----
+let current='home';
+function show(id){
+  const cur=$('#'+current), next=$('#'+id);
+  if(cur===next) return;
+  cur.classList.add('exit-left'); cur.classList.remove('active');
+  setTimeout(()=>cur.classList.remove('exit-left'),400);
+  next.classList.add('active');
+  current=id;
+  // tab highlight
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
+  next.scrollTop=0;
+}
+function openDeal(id){
+  const d=DEALS[id];
+  const det=$('#detail'); det.className='view '+d.state;
+  $('#d-actions').style.display='flex';
+  $('#d-alt').textContent=d.alt;
+  $('#d-tagtext').textContent=d.tag;
+  $('#d-title').textContent=d.title;
+  $('#d-why').textContent=d.why;
+  $('#d-rationale').innerHTML=d.rationale;
+  $('#d-trace').innerHTML=d.trace.map(([k,v])=>`<div class="trace-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  $('#d-actions').innerHTML=d.actions.map((a,i)=>`<button class="btn btn-${a.kind}" data-act="${i}">${a.label}</button>`).join('');
+  $('#d-result').classList.remove('show');
+  det.dataset.deal=id;
+  $$('#d-actions .btn').forEach((b,i)=>b.addEventListener('click',()=>doAction(id,i)));
+  show('detail');
+}
+function doAction(id,i){
+  const a=DEALS[id].actions[i];
+  if(!a.result){ show('home'); return; } // ghost actions (Edit/Snooze/See thread) just return to home (in-app router only)
+  $('#d-result-h').textContent=a.result[0];
+  $('#d-result-p').textContent=a.result[1];
+  $('#d-result').classList.add('show');
+  $('#d-actions').style.display='none';
+  // mark resolved on home + pipeline
+  const r=$(`.row[data-deal="${id}"]`); if(r) r.classList.add('done');
+}
+// back
+$$('[data-back]').forEach(b=>b.addEventListener('click',()=>{ $('#d-actions').style.display='flex'; show('home'); }));
+// tabs
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{ $('#d-actions').style.display='flex'; show(t.dataset.tab); }));
+// ledger
+$('#ledger').addEventListener('click',()=>$('#ledger').classList.toggle('open'));
+
+// ----- theme (time-aware) -----
+let day=false;
+$('#cTheme').addEventListener('click',()=>{
+  day=!day;
+  if(day){
+    setVars({'--canvas':'oklch(0.995 0.004 95)','--raise':'oklch(1 0 0)','--card':'oklch(0.985 0.006 92)','--inset':'oklch(0.97 0.01 88)','--ink':'oklch(0.16 0.012 60)','--body':'oklch(0.38 0.018 65)','--muted':'oklch(0.54 0.018 70)','--soft':'oklch(0.68 0.012 75)','--hair':'oklch(0.16 0.012 60 / .12)','--hair2':'oklch(0.16 0.012 60 / .22)'});
+    document.body.style.background='oklch(0.95 0.02 92)';
+    $('#clock').textContent='7:28'; $('#cTheme').textContent='☾ Back to dawn';
+  } else { resetLight(); $('#clock').textContent='5:42'; $('#cTheme').textContent='☀ Bring up the day'; }
+});
+function setVars(o){ for(const k in o) document.documentElement.style.setProperty(k,o[k]); }
+function resetLight(){ ['--canvas','--raise','--card','--inset','--ink','--body','--muted','--soft','--hair','--hair2'].forEach(k=>document.documentElement.style.removeProperty(k)); document.body.style.background='oklch(0.92 0.012 90)'; }
+
+// ----- de-escalation -----
+$('#cDeesc').addEventListener('click',()=>{
+  show('home');
+  const r=$('.row[data-deal="henderson"]'); if(!r||r.dataset.deesc) return; r.dataset.deesc='1';
+  r.classList.remove('confident'); r.classList.add('uncertain');
+  r.querySelector('.e-tag').textContent='Now less sure · new info';
+  r.querySelector('.meta').innerHTML='Marcus\'s deal · <span class="c">Now less sure · new info</span>';
+  if(!r.querySelector('.deesc')){ const p=document.createElement('p'); p.className='why deesc'; p.style.marginTop='8px'; p.textContent='Update: the buyer just made an offer on a different home. I am no longer sure they are about to drop off. Want me to ask Marcus to check?'; r.querySelector('.why').after(p); }
+  DEALS.henderson.state='uncertain'; DEALS.henderson.tag='Now less sure';
+  DEALS.henderson.why='No reply in 3 days, but the buyer just made an offer on a different home. I am no longer sure they are about to drop off.';
+  DEALS.henderson.rationale='This is Marcus\'s deal, not yours. <span class="hedge">The new offer goes against what I thought earlier, so I would ask Marcus to check before assuming they are dropping off.</span>';
+  DEALS.henderson.trace=[['From','Checking how serious the buyer is'],['What I saw','Made an offer on a different home'],['How sure I am','Fairly sure'],['Last contact','3 days ago']];
+  r.scrollIntoView({behavior:reduce()?'auto':'smooth',block:'center'});
+});
+
+// ----- wrong / recovery sheet -----
+let undoT=null;
+$('#cWrong').addEventListener('click',()=>{
+  $('#scrim').classList.add('show'); $('#sheet').classList.add('show');
+  $('#sheet .sa').style.display='flex'; $('#undoBtn').innerHTML='Take it back <span class="cd" id="undoCount">14s</span>';
+  let t=14; if(reduce())return; clearInterval(undoT);
+  undoT=setInterval(()=>{ t--; const c=$('#undoCount'); if(c)c.textContent=t+'s'; if(t<=0){clearInterval(undoT);} },1000);
+});
+function closeSheet(){ clearInterval(undoT); $('#scrim').classList.remove('show'); $('#sheet').classList.remove('show'); }
+$('#scrim').addEventListener('click',closeSheet);
+$('#dismissSheet').addEventListener('click',closeSheet);
+$('#undoBtn').addEventListener('click',()=>{ clearInterval(undoT); $('#sheet h3').textContent='Pulled back before it reached the buyer. Nothing was sent.'; $('#sheet .sa').style.display='none'; setTimeout(closeSheet,1100); });
+
+// ----- replay -----
+function playMorning(){
+  ['maplewood','oak'].forEach(id=>{ DEALS[id]; });
+  // reset de-escalation + resolved
+  const h=$('.row[data-deal="henderson"]'); if(h){ h.className='row confident'; delete h.dataset.deesc; h.querySelector('.e-tag').textContent='Very sure'; h.querySelector('.meta').innerHTML='Marcus\'s deal · <span class="c">Very sure</span>'; const de=h.querySelector('.deesc'); if(de)de.remove(); }
+  DEALS.henderson.state='confident'; DEALS.henderson.tag='Very sure';
+  $$('.row').forEach(r=>r.classList.remove('done'));
+  show('home');
+  // retrigger entrance animation
+  const hv=$('#home'); hv.classList.remove('active'); void hv.offsetWidth; hv.classList.add('active');
+  runCounts();
+}
+$('#cReplay').addEventListener('click',playMorning);
+
+// ----- keyboard operability sweep (boot-time, DOM is ready here) -----
+function makeKeyboardOperable(){
+  // elements with an onclick attr that aren't already native buttons/links, plus the primary click-bound rows/items
+  const sel='[onclick]:not(button):not(a), .row, .p-row, .ledger';
+  $$(sel).forEach(el=>{
+    if(el.matches('button,a')) return;            // never double-bind real buttons/links
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  });
+}
+makeKeyboardOperable();
+// one document-level keydown: Enter/Space activates a focused synthetic button via its real click()
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  const t=e.target;
+  if(!t || !t.closest) return;
+  if(t.matches('input,textarea,select') || t.isContentEditable) return; // don't interfere with typing
+  if(t.matches('button,a')) return;               // native controls already handle Enter/Space
+  const el=t.closest('[role="button"]');
+  if(!el) return;
+  e.preventDefault();
+  el.click();
+});
+
+// ----- GSAP count-ups (safe: final value in DOM) -----
+function runCounts(){
+  if(!window.gsap || reduce()) return;
+  $$('[data-count]').forEach(el=>{ const end=+el.dataset.count,o={v:0}; gsap.to(o,{v:end,duration:1.0,ease:'power2.out',delay:.4,onUpdate:()=>el.textContent=Math.round(o.v)}); });
+}
+runCounts();
+</script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Relay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --amber:oklch(0.82 0.12 72); --urgent:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --on:oklch(0.99 0 0);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260); text-align:center}
+
+/* phone shell */
+.phone{position:relative; width:393px; height:800px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.statusbar{position:absolute; top:18px; left:0; right:0; height:22px; padding:0 32px; display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:12px; color:var(--body); z-index:35}
+.statusbar .glyphs{display:flex; gap:5px; align-items:center; opacity:.85}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:58px 22px 22px; overflow:hidden}
+
+/* leo header */
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 10px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+
+/* incoming item */
+.incoming{margin-top:16px;padding:14px 15px;border-radius:14px;background:var(--inset);border:1px solid var(--hair);border-left:2px solid var(--urgent);position:relative;overflow:hidden}
+.incoming::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,oklch(0.73 0.16 28 / .10) 50%,transparent 70%);background-size:240% 100%;animation:sweep 3.4s linear infinite}
+@keyframes sweep{0%{background-position:140% 0}100%{background-position:-140% 0}}
+.incoming .tagrow{display:flex;align-items:center;gap:8px;margin-bottom:7px;position:relative;z-index:1}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:6px}
+.tag.new{color:var(--urgent);background:oklch(0.73 0.16 28 / .14)}
+.tag.busy{color:var(--amber);background:oklch(0.82 0.12 72 / .12)}
+.incoming .addr{font-family:var(--serif);font-size:19px;line-height:1.25;position:relative;z-index:1}
+.incoming .sub{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:4px;position:relative;z-index:1}
+
+/* leo's proposal lede */
+.lede{font-family:var(--serif);font-size:19px;line-height:1.34;margin-top:18px}
+.lede em{font-style:italic;color:var(--confident)}
+
+/* relay stage: from -> to */
+.stage{position:relative;height:152px;margin-top:14px}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.arctrack{fill:none;stroke:var(--hair2);stroke-width:1.5;stroke-dasharray:3 5}
+.arc{fill:none;stroke:var(--cobalt);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 1.5s var(--exp)}
+.screen.relayed .arc{stroke-dashoffset:0}
+/* baton token traveling along the arc via CSS offset-path */
+.baton{position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;background:radial-gradient(60% 60% at 35% 30%, oklch(0.94 0.06 200), var(--cobalt) 60%);box-shadow:0 0 12px oklch(0.66 0.16 262 / .7);opacity:0;offset-path:path("M44 122 Q172 6 300 122");offset-distance:0%;offset-rotate:0deg}
+.screen.relayed .baton{animation:travel 1.5s var(--exp) forwards}
+@keyframes travel{0%{offset-distance:0%;opacity:0;transform:scale(.6)}12%{opacity:1;transform:scale(1)}88%{opacity:1;transform:scale(1)}100%{offset-distance:100%;opacity:0;transform:scale(.6)}}
+.person{position:absolute;top:78px;display:flex;flex-direction:column;align-items:center;gap:7px;width:120px}
+.person.l{left:-8px} .person.r{right:-8px}
+.av{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:19px;color:var(--on);position:relative;transition:transform .5s var(--exp), box-shadow .5s var(--exp)}
+.av.you{background:linear-gradient(135deg,oklch(0.6 0.12 250),oklch(0.46 0.13 270))}
+.av.priya{background:linear-gradient(135deg,oklch(0.62 0.13 150),oklch(0.48 0.12 175))}
+.screen.relayed .av.you{transform:scale(.9);box-shadow:none;opacity:.7}
+.screen.relayed .av.priya{transform:scale(1.06);box-shadow:0 0 0 3px oklch(0.80 0.11 168 / .35),0 0 22px oklch(0.80 0.11 168 / .35)}
+.person .nm{font-family:var(--sans);font-size:13px;font-weight:600;text-align:center}
+.person .rl{font-family:var(--mono);font-size:9px;letter-spacing:.02em;color:var(--soft);text-align:center;line-height:1.4}
+.dir{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);display:flex;gap:18px}
+.dir .from{color:var(--muted)} .dir .to{color:var(--cobalt)}
+
+/* why-priya rationale */
+.why{margin-top:6px;padding:11px 14px;border-radius:12px;background:oklch(0.66 0.16 262 / .07);border:1px solid oklch(0.66 0.16 262 / .22)}
+.why .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--cobalt);margin-bottom:5px}
+.why p{font-family:var(--serif);font-size:14px;line-height:1.45;color:var(--ink)}
+.why b{font-style:normal;color:var(--confident);font-family:var(--sans);font-weight:600;font-size:13px}
+
+/* context that travels */
+.ctx{margin-top:13px}
+.ctx .hd{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.ctx .hd::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--cobalt);box-shadow:0 0 7px var(--cobalt)}
+.ctxlist{display:flex;flex-direction:column;gap:7px}
+.ci{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:13px;color:var(--body)}
+.ci .ic{flex:none;width:22px;height:22px;border-radius:6px;background:var(--inset);border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--cobalt)}
+.ci .meta{font-family:var(--mono);font-size:10px;color:var(--soft);margin-left:auto}
+/* the 5-minute clock chip */
+.clock{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--amber)}
+.clock .ring{width:13px;height:13px;flex:none}
+.clock .ring circle{fill:none;stroke:var(--amber);stroke-width:2.5;stroke-linecap:round}
+.clock .ring .bg{stroke:oklch(0.82 0.12 72 / .25)}
+.clock .ring .fg{stroke-dasharray:34;stroke-dashoffset:0;transform:rotate(-90deg);transform-origin:center;animation:tick 5s linear infinite}
+@keyframes tick{from{stroke-dashoffset:0}to{stroke-dashoffset:34}}
+
+/* post-relay confirmation */
+.done{margin-top:13px;padding:15px 16px;border-radius:14px;background:oklch(0.80 0.11 168 / .08);border:1px solid oklch(0.80 0.11 168 / .35);opacity:0;max-height:0;overflow:hidden;transition:opacity .5s ease .2s, max-height .6s var(--exp) .2s, margin-top .6s var(--exp)}
+.screen.relayed .done{opacity:1;max-height:160px}
+.done .h{font-family:var(--serif);font-size:18px;color:var(--confident);display:flex;align-items:center;gap:8px}
+.done .h .ck{width:18px;height:18px;flex:none}
+.done .h .ck circle{fill:none;stroke:var(--confident);stroke-width:2}
+.done .h .ck path{fill:none;stroke:var(--confident);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:18;stroke-dashoffset:18;transition:stroke-dashoffset .5s var(--exp) .9s}
+.screen.relayed .done .h .ck path{stroke-dashoffset:0}
+.done p{font-family:var(--sans);font-size:12.5px;color:var(--body);margin-top:6px;line-height:1.5}
+
+/* actions */
+.acts{margin-top:auto;display:flex;gap:10px;padding-top:14px}
+.btn{flex:1;height:50px;border-radius:14px;font-family:var(--sans);font-size:14.5px;font-weight:600;border:none;cursor:pointer;transition:transform .18s var(--exp), opacity .3s ease, background .3s ease}
+.btn:active{transform:scale(.97)}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+.btn-p{background:var(--cobalt);color:var(--on)}
+.btn-g{background:transparent;color:var(--body);border:1px solid var(--hair2)}
+.screen.relayed .acts.before{display:none}
+.screen.claimed .acts.before{display:none}
+.acts.after{display:none;margin-top:auto;padding-top:14px}
+.screen.relayed .acts.after{display:flex}
+.btn-take{flex:1;background:transparent;color:var(--amber);border:1px solid oklch(0.82 0.12 72 / .4)}
+
+.controls{display:flex;gap:8px}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+.controls button:active{transform:scale(.97)}
+
+@media (prefers-reduced-motion: reduce){
+  .orb,.incoming::after,.clock .ring .fg{animation:none}
+  .arc,.baton,.av,.done,.done .h .ck path{transition:none;animation:none}
+  .baton{display:none} .arc{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · The Relay</div>
+<div class="phone">
+  <div class="island"></div>
+  <div class="statusbar"><span>9:41</span><span class="glyphs">5G &nbsp;100</span></div>
+  <div class="screen">
+
+    <div class="hi"><span class="orb"></span>Leo · while you are in a showing</div>
+
+    <div class="incoming">
+      <div class="tagrow"><span class="tag new">New lead</span><span class="tag busy">You are busy</span></div>
+      <div class="addr">88 Linden Ave</div>
+      <div class="sub">Inquiry 40 seconds ago. You are mid-showing at Cedar Park until 10:15.</div>
+    </div>
+
+    <div class="lede">This one needs a person now. Want me to <em>relay it</em>?</div>
+
+    <div class="stage" id="stage">
+      <svg viewBox="0 0 345 132" aria-hidden="true">
+        <path class="arctrack" d="M44 122 Q172 6 300 122"/>
+        <path class="arc" d="M44 122 Q172 6 300 122"/>
+      </svg>
+      <div class="dir"><span class="from">From</span><span class="to">To</span></div>
+      <div class="baton"></div>
+      <div class="person l"><span class="av you">D</span><div class="nm">You</div><div class="rl">in a showing<br>until 10:15</div></div>
+      <div class="person r"><span class="av priya">P</span><div class="nm">Priya Nair</div><div class="rl">free now</div></div>
+    </div>
+
+    <div class="why">
+      <div class="lbl">Why Priya</div>
+      <p>Same zip as 88 Linden. <b>2 open leads</b>, lightest on the team. <b>Fastest responder</b> this week, median 3 min.</p>
+    </div>
+
+    <div class="ctx">
+      <div class="hd">What travels with it</div>
+      <div class="ctxlist">
+        <div class="ci"><span class="ic">L</span>Lead details &amp; source<span class="meta">88 Linden · Zillow</span></div>
+        <div class="ci"><span class="ic">T</span>Your intro template<span class="meta">pre-filled</span></div>
+        <div class="ci"><span class="ic">C</span>The 5-minute clock
+          <span class="clock"><svg class="ring" viewBox="0 0 14 14"><circle class="bg" cx="7" cy="7" r="5.4"/><circle class="fg" cx="7" cy="7" r="5.4"/></svg>4:20 left</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="done">
+      <div class="h"><svg class="ck" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.3 L9 13 L14.2 7"/></svg>Priya has it.</div>
+      <p>She got the lead, your intro, and the clock. You will get the summary the moment she replies, no need to step out.</p>
+    </div>
+
+    <div class="acts before">
+      <button class="btn btn-p" id="relay">Relay to Priya</button>
+      <button class="btn btn-g" id="self">I will take it</button>
+    </div>
+    <div class="acts after">
+      <button class="btn btn-take" id="takeback">Take it back</button>
+    </div>
+
+  </div>
+</div>
+<div class="controls"><button id="replay">&#8635; Replay</button></div>
+
+<script>
+const stage=document.getElementById('stage');
+const screen=document.querySelector('.screen');
+function doRelay(){ screen.classList.add('relayed'); }
+function reset(){ screen.classList.remove('relayed'); screen.classList.remove('claimed'); void screen.offsetWidth; }
+document.getElementById('relay').addEventListener('click',doRelay);
+document.getElementById('self').addEventListener('click',()=>{
+  // taking it yourself dismisses the relay proposal so the two
+  // primary actions stay mutually exclusive
+  screen.classList.add('claimed');
+  const lede=document.querySelector('.lede'); lede.innerHTML='You took <em>88 Linden</em> yourself. Leo is holding your showing notes.';
+});
+document.getElementById('takeback').addEventListener('click',reset);
+document.getElementById('replay').addEventListener('click',()=>{
+  reset();
+  document.querySelector('.lede').innerHTML='This one needs a person now. Want me to <em>relay it</em>?';
+});
+
+/* Keyboard operability sweep: promote any click-bound non-native control
+   to a focusable, keyboard-activatable button. Real <button>/<a> are
+   skipped so they keep their native semantics and are not double-bound. */
+(function(){
+  function sweep(){
+    var sel='[onclick], .ci, .incoming, .person';
+    var nodes=document.querySelectorAll(sel);
+    for(var i=0;i<nodes.length;i++){
+      var el=nodes[i];
+      if(el.closest('button, a')) continue;
+      var tag=el.tagName.toLowerCase();
+      if(tag==='button'||tag==='a') continue;
+      // only adopt elements that are actually click-bound
+      if(!el.hasAttribute('onclick')) continue;
+      if(!el.hasAttribute('role')) el.setAttribute('role','button');
+      if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    }
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',sweep);
+  } else {
+    sweep();
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+    var t=e.target;
+    if(!t || t.getAttribute('role')!=='button') return;
+    var tag=t.tagName.toLowerCase();
+    if(tag==='button'||tag==='a'||tag==='input'||tag==='textarea'||tag==='select') return;
+    if(t.isContentEditable) return;
+    e.preventDefault();
+    t.click();
+  });
+})();
+</script>
+</body>
+</html>

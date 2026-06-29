@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo - Morning Command Center - V02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   V02  BOLD EDITORIAL x STAKE LENSING
+   Lineage: lavender ground, heavy black grotesk headline, big numerals,
+   a translucent glass shelf holding the deals, count-badged tabs.
+   Centerpiece: stake lensing - the deals re-sort (FLIP) on open and on
+   lens tap (Deadline / Dollars / Relationship), each with a "why it moved" tag.
+   Signature motion: FLIP transform reorder + count-up of the "47 handled".
+   Held to the warm-editorial-light tokens; color = a confidence state only.
+   ========================================================================= */
+:root{
+  /* lavender ground keeps a warm-paper sibling so it never reads as cold tech */
+  --lav: oklch(0.93 0.028 296);
+  --lav-deep: oklch(0.90 0.034 298);
+  --paper: oklch(0.975 0.011 83);
+  --card: oklch(0.995 0.004 95);
+  --sunken: oklch(0.955 0.014 296);
+  --hair: oklch(0.32 0.03 296 / 0.12);
+  --hair-soft: oklch(0.32 0.03 296 / 0.07);
+  --shadow: 0 16px 38px -20px oklch(0.34 0.06 296 / 0.42);
+  --shadow-lift: 0 22px 52px -22px oklch(0.32 0.07 296 / 0.50);
+
+  --ink: oklch(0.22 0.03 296);
+  --body: oklch(0.44 0.022 296);
+  --muted: oklch(0.55 0.018 296);
+
+  /* AI-state accents - tuned for contrast on the lavender ground */
+  --seaglass: oklch(0.56 0.10 168);
+  --amber: oklch(0.64 0.12 70);
+  --coral: oklch(0.55 0.17 28);
+  --cobalt: oklch(0.49 0.14 276);
+  --accent: oklch(0.49 0.14 276);
+
+  --coral-text: oklch(0.46 0.17 28);
+  --amber-text: oklch(0.47 0.12 70);
+  --seaglass-text: oklch(0.43 0.10 168);
+
+  --coral-tint: oklch(0.55 0.17 28 / 0.12);
+  --amber-tint: oklch(0.64 0.12 70 / 0.14);
+  --seaglass-tint: oklch(0.56 0.10 168 / 0.12);
+  --cobalt-tint: oklch(0.49 0.14 276 / 0.12);
+
+  --r-card: 20px;
+  --r-chip: 9px;
+  --r-sheet: 28px;
+  --r-btn: 13px;
+
+  --serif: 'Newsreader', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:3px; border-radius:11px; }
+
+html,body{ height:100%; }
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(130% 90% at 50% -8%, oklch(0.96 0.018 300) 0%, oklch(0.93 0.022 296) 46%, oklch(0.90 0.024 290) 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center;
+  padding:30px 16px 56px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---- stage caption ---- */
+.stage{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+.page-caption{
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* =========================================================================
+   PHONE FRAME
+   ========================================================================= */
+.phone{
+  position:relative;
+  width:393px; max-width:100%;
+  height:min(838px, calc(100svh - 36px));
+  background:var(--lav);
+  border-radius:48px;
+  box-shadow:
+    0 0 0 11px oklch(0.20 0.02 296),
+    0 0 0 13px oklch(0.30 0.02 296),
+    0 44px 100px -34px oklch(0.26 0.05 296 / 0.60);
+  overflow:hidden;
+  isolation:isolate;
+  display:flex; flex-direction:column;
+}
+
+/* status bar */
+.statusbar{
+  flex:0 0 auto; height:52px; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 28px 0;
+  font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink);
+  pointer-events:none;
+}
+.statusbar .icons{ display:flex; gap:6px; align-items:center; }
+.bars{ width:17px; height:11px; display:flex; gap:2px; align-items:flex-end; }
+.bars i{ width:3px; background:var(--ink); border-radius:1px; }
+.bars i:nth-child(1){ height:4px;} .bars i:nth-child(2){ height:6px;} .bars i:nth-child(3){ height:8px;} .bars i:nth-child(4){ height:11px;}
+.battery{ width:23px; height:12px; border:1.4px solid var(--ink); border-radius:3px; position:relative; opacity:.92; }
+.battery::after{ content:""; position:absolute; right:-3px; top:3px; width:2px; height:5px; background:var(--ink); border-radius:0 1px 1px 0; }
+.battery i{ position:absolute; inset:1.6px; width:72%; background:var(--ink); border-radius:1px; }
+
+/* scroll surface */
+.scroll{
+  flex:1 1 auto; overflow-y:auto; overflow-x:hidden;
+  padding:6px 22px 132px;
+  scrollbar-width:none;
+}
+.scroll::-webkit-scrollbar{ display:none; }
+
+/* =========================================================================
+   MASTHEAD - bold editorial
+   ========================================================================= */
+.masthead{ padding:10px 2px 4px; }
+.kicker{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;
+}
+.kicker .orb{
+  width:9px; height:9px; border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 4px var(--cobalt-tint);
+  animation:breathe 3.6s var(--ease) infinite;
+}
+@keyframes breathe{ 0%,100%{ transform:scale(1); opacity:.95; } 50%{ transform:scale(1.32); opacity:.6; } }
+.kicker .sep{ width:1px; height:11px; background:var(--hair); }
+
+.greet{
+  font-family:var(--serif); font-size:16px; font-weight:400; color:var(--body);
+  font-style:italic; letter-spacing:.005em; margin-bottom:4px;
+}
+.greet b{ font-style:normal; font-weight:500; color:var(--ink); }
+
+/* the heavy grotesk headline + big numeral */
+.headline{
+  font-family:var(--sans); font-weight:700;
+  font-size:52px; line-height:0.9; letter-spacing:-0.035em; color:var(--ink);
+  margin:2px 0 2px; text-wrap:balance;
+}
+.headline .num{
+  font-size:58px; letter-spacing:-0.04em;
+}
+.subhead{
+  font-family:var(--serif); font-size:15.5px; line-height:1.45; color:var(--body);
+  max-width:30ch; margin-top:10px;
+}
+.subhead b{ color:var(--ink); font-weight:500; }
+
+/* =========================================================================
+   LENS SELECTOR  (the stake-lensing control)
+   ========================================================================= */
+.lens-wrap{ margin:22px 2px 4px; }
+.lens-label{
+  font-family:var(--mono); font-size:10px; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:9px; display:flex; align-items:center; gap:7px;
+}
+.lens-label .tick{ flex:1 1 auto; height:1px; background:var(--hair-soft); }
+.lenses{ display:flex; gap:8px; }
+.lens{
+  flex:1 1 0; min-height:46px;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1px;
+  padding:8px 12px;
+  background:oklch(0.99 0.006 95 / 0.55);
+  border:1px solid var(--hair);
+  border-radius:var(--r-btn);
+  font-family:var(--sans); cursor:pointer;
+  transition:transform .24s var(--ease), background .24s var(--ease), border-color .24s var(--ease), box-shadow .24s var(--ease);
+}
+.lens .lt{ font-size:13px; font-weight:600; color:var(--body); letter-spacing:-0.005em; }
+.lens .ls{ font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.lens:hover{ transform:translateY(-1px); }
+.lens[aria-pressed="true"]{
+  background:var(--card);
+  border-color:oklch(0.49 0.14 276 / 0.42);
+  box-shadow:var(--shadow);
+}
+.lens[aria-pressed="true"] .lt{ color:var(--ink); }
+.lens[aria-pressed="true"] .ls{ color:var(--accent); }
+
+/* =========================================================================
+   GLASS SHELF  - the translucent chrome that holds the deals
+   ========================================================================= */
+.shelf{
+  margin-top:14px;
+  border-radius:var(--r-card);
+  padding:7px;
+  /* glassmorphism allowed: this is CHROME, not a content card */
+  background:oklch(0.99 0.02 300 / 0.42);
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);
+  backdrop-filter:blur(14px) saturate(1.2);
+  border:1px solid oklch(0.99 0.02 300 / 0.55);
+  box-shadow:var(--shadow);
+}
+.shelf-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:6px 8px 9px;
+}
+.shelf-title{
+  font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--body);
+}
+.shelf-why{
+  font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--muted);
+  display:flex; align-items:center; gap:6px;
+  transition:opacity .3s var(--ease);
+}
+.shelf-why .dot{ width:5px; height:5px; border-radius:50%; background:var(--accent); }
+
+/* the deck of deal rows - FLIP reorders these */
+.deck{ display:flex; flex-direction:column; gap:7px; position:relative; }
+
+/* =========================================================================
+   DEAL ROW  (content card - NO glass here, solid paper)
+   ========================================================================= */
+.row{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--hair-soft);
+  border-radius:15px;
+  padding:14px 15px 14px 16px;
+  cursor:pointer;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:13px; align-items:center;
+  transition:transform .54s var(--ease), box-shadow .26s var(--ease), border-color .26s var(--ease);
+  will-change:transform;
+}
+.row:hover{ box-shadow:var(--shadow); border-color:var(--hair); }
+.row.is-flipping{ z-index:5; }
+
+/* leading state dot - color = confidence/urgency state, never decoration */
+.row .dot{
+  width:11px; height:11px; border-radius:50%; align-self:flex-start; margin-top:5px;
+  position:relative;
+}
+.row .dot::after{
+  content:""; position:absolute; inset:-5px; border-radius:50%;
+  border:1px solid currentColor; opacity:.28;
+}
+.dot.s-urgent{ background:var(--coral); color:var(--coral); }
+.dot.s-window{ background:var(--seaglass); color:var(--seaglass); }
+.dot.s-watch{ background:var(--amber); color:var(--amber); }
+
+.row .body{ min-width:0; }
+.row .tagrow{ display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+.row .addr{
+  font-family:var(--sans); font-size:16.5px; font-weight:600; letter-spacing:-0.012em; color:var(--ink);
+}
+.row .meta{
+  font-family:var(--serif); font-size:13.5px; line-height:1.4; color:var(--body);
+}
+.row .meta b{ color:var(--ink); font-weight:500; }
+.altitude{
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--hair); border-radius:5px; padding:2px 5px;
+}
+
+/* the right-hand stake numeral - changes with the lens */
+.stake{
+  text-align:right; align-self:center; min-width:52px;
+}
+.stake .big{
+  font-family:var(--sans); font-weight:700; font-size:21px; letter-spacing:-0.03em; color:var(--ink);
+  line-height:1; display:block;
+}
+.stake .lbl{
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);
+  margin-top:4px; display:block;
+}
+.stake .big.warm{ color:var(--coral-text); }
+
+/* the "why it moved" tag that flashes under a row after a re-sort.
+   The slot is shown/hidden instantly via .display (no layout animation);
+   only the inner text animates, and only via transform + opacity. */
+.moved{
+  grid-column:1 / -1;
+  display:none; overflow:hidden;
+  margin-top:9px;
+}
+.row.show-moved .moved{ display:block; }
+.moved .inner{
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:var(--seaglass-text);
+  opacity:0; transform:translateY(-6px);
+  transition:opacity .4s var(--ease), transform .4s var(--ease);
+}
+.row.show-moved .moved .inner{ opacity:1; transform:none; }
+.moved .arrow{ color:var(--accent); }
+
+/* =========================================================================
+   LEDGER  - the calm count-up + the silence line
+   ========================================================================= */
+.ledger{
+  margin-top:18px;
+  background:var(--sunken);
+  border:1px solid var(--hair-soft);
+  border-radius:var(--r-card);
+  padding:17px 18px;
+  display:flex; align-items:center; gap:16px;
+}
+.ledger .count{
+  font-family:var(--sans); font-weight:700; font-size:42px; letter-spacing:-0.04em; color:var(--ink);
+  line-height:0.92; font-variant-numeric:tabular-nums; min-width:62px;
+}
+.ledger .ltext{ font-family:var(--serif); font-size:14px; line-height:1.42; color:var(--body); }
+.ledger .ltext b{ color:var(--ink); font-weight:500; }
+.ledger .ltext .zero{ color:var(--seaglass-text); font-weight:500; font-style:normal; }
+.ledger .lmeta{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  margin-top:6px; display:block;
+}
+
+/* calm signal line - Crestview going quiet */
+.signal{
+  margin-top:11px;
+  display:flex; align-items:center; gap:11px;
+  padding:13px 16px;
+  border:1px solid var(--hair-soft);
+  border-radius:var(--r-card);
+  background:oklch(0.99 0.006 95 / 0.5);
+  cursor:pointer;
+  transition:background .24s var(--ease), border-color .24s var(--ease);
+}
+.signal:hover{ border-color:var(--hair); background:var(--card); }
+.signal .sdot{ width:8px; height:8px; border-radius:50%; background:var(--amber); flex:0 0 auto; }
+.signal .stxt{ font-family:var(--serif); font-size:13.5px; line-height:1.4; color:var(--body); }
+.signal .stxt b{ color:var(--ink); font-weight:500; }
+.signal .stag{ margin-left:auto; font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--amber-text); flex:0 0 auto; }
+
+/* =========================================================================
+   TAB BAR  - count-badged
+   ========================================================================= */
+.tabbar{
+  position:absolute; left:0; right:0; bottom:0; z-index:50;
+  padding:10px 18px calc(20px + env(safe-area-inset-bottom));
+  display:flex; gap:6px; align-items:stretch;
+  background:linear-gradient(to top, oklch(0.92 0.024 296) 60%, oklch(0.92 0.024 296 / 0));
+}
+.tab{
+  flex:1 1 0; min-height:46px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  background:transparent; border:none; cursor:pointer; position:relative;
+  font-family:var(--sans); font-size:10.5px; font-weight:500; color:var(--muted);
+  transition:color .2s var(--ease);
+}
+.tab .glyph{ width:21px; height:21px; display:block; }
+.tab .glyph svg{ width:100%; height:100%; display:block; }
+.tab[aria-current="page"]{ color:var(--ink); }
+.tab[aria-current="page"] .glyph{ color:var(--accent); }
+.tab .badge{
+  position:absolute; top:-1px; right:50%; transform:translateX(20px);
+  min-width:16px; height:16px; padding:0 4px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:9px; font-weight:500; color:oklch(0.99 0.01 90);
+  background:var(--coral); border-radius:8px;
+}
+.tab .badge.cool{ background:var(--accent); }
+
+/* =========================================================================
+   ENTRANCES
+   ========================================================================= */
+@keyframes rise{ from{ opacity:0; transform:translateY(13px); } to{ opacity:1; transform:none; } }
+.anim{ animation:rise .56s var(--ease) both; }
+.d1{ animation-delay:.04s; } .d2{ animation-delay:.11s; } .d3{ animation-delay:.18s; }
+.d4{ animation-delay:.25s; } .d5{ animation-delay:.34s; } .d6{ animation-delay:.42s; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-delay:0s !important; transition-duration:.001ms !important; }
+  .kicker .orb{ animation:none; }
+  .row{ transition:none; }
+}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <span class="page-caption">V02 BOLD EDITORIAL x STAKE LENSING</span>
+
+    <div class="phone" role="application" aria-label="Leo morning command center">
+      <!-- status bar -->
+      <div class="statusbar">
+        <span>7:14</span>
+        <span class="icons">
+          <span class="bars"><i></i><i></i><i></i><i></i></span>
+          <span class="battery"><i></i></span>
+        </span>
+      </div>
+
+      <main class="scroll">
+        <!-- MASTHEAD -->
+        <header class="masthead">
+          <div class="kicker anim d1">
+            <span class="orb" aria-hidden="true"></span>
+            <span>Leo</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span>Sat, Jun 22</span>
+          </div>
+          <p class="greet anim d1"><b>Morning, Dana.</b> Here is the short list.</p>
+          <h1 class="headline anim d2"><span class="num">Three</span> need you</h1>
+          <p class="subhead anim d2">Sorted by what matters most. Tap a button below to <b>sort a different way</b>. I am already handling everything else.</p>
+        </header>
+
+        <!-- LENS SELECTOR -->
+        <section class="lens-wrap anim d3" aria-label="Re-rank lens">
+          <div class="lens-label"><span>Sort by</span><span class="tick" aria-hidden="true"></span></div>
+          <div class="lenses" role="group" aria-label="Choose how to sort">
+            <button class="lens" type="button" data-lens="deadline" aria-pressed="true">
+              <span class="lt">Due soonest</span><span class="ls">by time</span>
+            </button>
+            <button class="lens" type="button" data-lens="dollars" aria-pressed="false">
+              <span class="lt">Most money</span><span class="ls">by size</span>
+            </button>
+            <button class="lens" type="button" data-lens="relationship" aria-pressed="false">
+              <span class="lt">People</span><span class="ls">who is counting on you</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- GLASS SHELF holding the deals -->
+        <section class="shelf anim d4" aria-label="The three that need you">
+          <div class="shelf-head">
+            <span class="shelf-title">The three for you</span>
+            <span class="shelf-why" id="shelfWhy"><span class="dot" aria-hidden="true"></span><span id="shelfWhyText">due soonest first</span></span>
+          </div>
+
+          <div class="deck" id="deck">
+            <!-- ROW: 142 Oak St counter -->
+            <article class="row" id="r-oak" role="button" tabindex="0"
+              data-deadline="1" data-dollars="2" data-rel="3"
+              data-tag-deadline="due first, by 10:00am" data-tag-dollars="2nd biggest" data-tag-relationship="your own sale">
+              <span class="dot s-urgent" aria-hidden="true"></span>
+              <div class="body">
+                <div class="tagrow"><span class="addr">142 Oak St</span><span class="altitude">your sale</span></div>
+                <p class="meta">A reply is <b>due by 10:00am.</b> I wrote a draft for you, waiting for you to read it.</p>
+              </div>
+              <div class="stake">
+                <span class="big warm" data-deadline="2:46" data-dollars="$870K" data-rel="High">2:46</span>
+                <span class="lbl" data-deadline="time left" data-dollars="price" data-rel="how much it matters">time left</span>
+              </div>
+              <div class="moved"><span class="inner"><span class="arrow">&uarr;</span> <span class="movedtxt"></span></span></div>
+            </article>
+
+            <!-- ROW: 88 Linden lead -->
+            <article class="row" id="r-linden" role="button" tabindex="0"
+              data-deadline="2" data-dollars="3" data-rel="2"
+              data-tag-deadline="call in the next few minutes" data-tag-dollars="3rd biggest" data-tag-relationship="never spoken yet">
+              <span class="dot s-window" aria-hidden="true"></span>
+              <div class="body">
+                <div class="tagrow"><span class="addr">88 Linden</span><span class="altitude">new buyer</span></div>
+                <p class="meta">Already approved for a loan. Call in the <b>next 5 minutes</b> to be the first to reach them.</p>
+              </div>
+              <div class="stake">
+                <span class="big" data-deadline="4:50" data-dollars="$540K" data-rel="New">4:50</span>
+                <span class="lbl" data-deadline="time to call" data-dollars="their budget" data-rel="new to you">time to call</span>
+              </div>
+              <div class="moved"><span class="inner"><span class="arrow">&uarr;</span> <span class="movedtxt"></span></span></div>
+            </article>
+
+            <!-- ROW: Marcus / teammate -->
+            <article class="row" id="r-marcus" role="button" tabindex="0"
+              data-deadline="3" data-dollars="1" data-rel="1"
+              data-tag-deadline="no set deadline" data-tag-dollars="biggest of the three" data-tag-relationship="a teammate needs help">
+              <span class="dot s-watch" aria-hidden="true"></span>
+              <div class="body">
+                <div class="tagrow"><span class="addr">Marcus, 30 Pine</span><span class="altitude">teammate</span></div>
+                <p class="meta">His buyer has <b>not replied in 4 days.</b> A message from you would help.</p>
+              </div>
+              <div class="stake">
+                <span class="big" data-deadline="4d" data-dollars="$1.2M" data-rel="High">4d</span>
+                <span class="lbl" data-deadline="no reply" data-dollars="price" data-rel="how much it matters">no reply</span>
+              </div>
+              <div class="moved"><span class="inner"><span class="arrow">&uarr;</span> <span class="movedtxt"></span></span></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- LEDGER -->
+        <section class="ledger anim d5" aria-label="Overnight ledger">
+          <span class="count" id="ledgerCount" aria-hidden="true">0</span>
+          <div>
+            <p class="ltext"><b>things I handled overnight.</b> None of them <span class="zero">needed to wake you.</span></p>
+            <span class="lmeta">22 sent to a teammate - 18 replies written - 7 meetings booked</span>
+          </div>
+        </section>
+
+        <!-- CALM SIGNAL -->
+        <div class="signal anim d6" role="button" tabindex="0" aria-label="Crestview has not replied in a while, view details">
+          <span class="sdot" aria-hidden="true"></span>
+          <span class="stxt"><b>Crestview</b> has gone quiet. Not urgent, but worth a look this week.</span>
+          <span class="stag">keeping an eye on it</span>
+        </div>
+      </main>
+
+      <!-- TAB BAR -->
+      <nav class="tabbar" aria-label="Primary">
+        <button class="tab" type="button" aria-current="page">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg></span>
+          <span class="badge">3</span>
+          Today
+        </button>
+        <button class="tab" type="button">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9l5-4 5 4"/><path d="M14 19v-7l5-3v10"/><path d="M3 19h18"/></svg></span>
+          <span class="badge cool">9</span>
+          Deals
+        </button>
+        <button class="tab" type="button">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M17.5 19a5 5 0 0 0-3-4.6"/></svg></span>
+          People
+        </button>
+        <button class="tab" type="button">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v11H9l-4 3z"/></svg></span>
+          Leo
+        </button>
+      </nav>
+    </div>
+
+    <span class="page-caption">tap a sort button - the list reorders and tells you why</span>
+  </div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- count-up of the "47 handled" numeral (stepped timers, no rAF) ---------- */
+  var countEl = document.getElementById('ledgerCount');
+  var target = 47;
+  if (reduce){
+    countEl.textContent = target;
+  } else {
+    var dur = 1100, steps = 28, i = 0;
+    var ti = setInterval(function(){
+      i++;
+      var t = i / steps;
+      var e = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      countEl.textContent = Math.round(e * target);
+      if (i >= steps){ countEl.textContent = target; clearInterval(ti); }
+    }, dur / steps);
+  }
+
+  /* ---------- STAKE LENSING: FLIP reorder of the deck ---------- */
+  var deck = document.getElementById('deck');
+  var rows = Array.prototype.slice.call(deck.querySelectorAll('.row'));
+  var lensBtns = Array.prototype.slice.call(document.querySelectorAll('.lens'));
+  var shelfWhyText = document.getElementById('shelfWhyText');
+
+  var lensCopy = {
+    deadline: 'due soonest first',
+    dollars: 'most money first',
+    relationship: 'who is counting on you first'
+  };
+  var keyByLens = { deadline:'deadline', dollars:'dollars', relationship:'rel' };
+
+  function applyStakeValues(lens){
+    var k = keyByLens[lens];
+    rows.forEach(function(row){
+      var big = row.querySelector('.stake .big');
+      var lbl = row.querySelector('.stake .lbl');
+      var bv = big.getAttribute('data-' + k);
+      var lv = lbl.getAttribute('data-' + k);
+      if (bv) big.textContent = bv;
+      if (lv) lbl.textContent = lv;
+      // warm (coral) numeral only when the deadline lens shows a hard clock for the urgent deal
+      big.classList.toggle('warm', lens === 'deadline' && row.id === 'r-oak');
+    });
+  }
+
+  function order(lens){
+    var k = keyByLens[lens];
+    return rows.slice().sort(function(a,b){
+      return parseInt(a.getAttribute('data-' + k),10) - parseInt(b.getAttribute('data-' + k),10);
+    });
+  }
+
+  function flipTo(lens, announce){
+    // 1. FIRST - record current positions
+    var first = {};
+    rows.forEach(function(r){ first[r.id] = r.getBoundingClientRect().top; });
+
+    // 2. reorder DOM
+    var sorted = order(lens);
+    sorted.forEach(function(r){ deck.appendChild(r); });
+
+    // update stake numerals + shelf caption
+    applyStakeValues(lens);
+    shelfWhyText.textContent = lensCopy[lens];
+
+    if (reduce){
+      if (announce) flashMoved(lens, sorted);
+      return;
+    }
+
+    // 3. LAST - new positions, then INVERT + PLAY
+    rows.forEach(function(r){
+      var last = r.getBoundingClientRect().top;
+      var delta = first[r.id] - last;
+      if (delta){
+        r.classList.add('is-flipping');
+        r.style.transition = 'none';
+        r.style.transform = 'translateY(' + delta + 'px)';
+        // force reflow
+        void r.offsetWidth;
+        r.style.transition = '';
+        r.style.transform = '';
+        (function(rr){
+          setTimeout(function(){ rr.classList.remove('is-flipping'); }, 560);
+        })(r);
+      }
+    });
+
+    if (announce) flashMoved(lens, sorted);
+  }
+
+  function flashMoved(lens, sorted){
+    // tag only the row that newly took the top slot, with its "why it moved" reason
+    rows.forEach(function(r){ r.classList.remove('show-moved'); });
+    var top = sorted[0];
+    var reason = top.getAttribute('data-tag-' + lens);
+    var txt = top.querySelector('.movedtxt');
+    if (txt) txt.textContent = 'now at top: ' + reason;
+    // small delay so the move reads before the tag appears
+    setTimeout(function(){ top.classList.add('show-moved'); }, reduce ? 0 : 360);
+    setTimeout(function(){ top.classList.remove('show-moved'); }, 4200);
+  }
+
+  lensBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if (btn.getAttribute('aria-pressed') === 'true') return;
+      lensBtns.forEach(function(b){ b.setAttribute('aria-pressed', 'false'); });
+      btn.setAttribute('aria-pressed', 'true');
+      flipTo(btn.getAttribute('data-lens'), true);
+    });
+  });
+
+  /* initial: deadline is pressed; ensure values match and do an opening settle */
+  applyStakeValues('deadline');
+  // opening re-sort flourish: nudge once after entrance so the deck visibly "lands"
+  if (!reduce){
+    setTimeout(function(){
+      // a gentle confirm that the deck is sorted by deadline on open
+      var top = order('deadline')[0];
+      var txt = top.querySelector('.movedtxt');
+      if (txt) txt.textContent = 'now at top: ' + top.getAttribute('data-tag-deadline');
+      top.classList.add('show-moved');
+      setTimeout(function(){ top.classList.remove('show-moved'); }, 3600);
+    }, 980);
+  }
+
+  /* ---------- keyboard activation for clickable non-buttons (rows + signal) ---------- */
+  function makeKeyable(el, fn){
+    el.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        fn(el);
+      }
+    });
+    el.addEventListener('click', function(){ fn(el); });
+  }
+  function pulse(el){
+    if (reduce) return;
+    el.style.transition = 'transform .12s var(--ease)';
+    el.style.transform = 'scale(0.985)';
+    setTimeout(function(){ el.style.transform = ''; setTimeout(function(){ el.style.transition=''; }, 180); }, 110);
+  }
+  rows.forEach(function(r){ makeKeyable(r, pulse); });
+  var signal = document.querySelector('.signal');
+  if (signal) makeKeyable(signal, pulse);
+})();
+</script>
+</body>
+</html>

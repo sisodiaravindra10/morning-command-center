@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Leo - Morning Command Center - V06 Bold Playful x Swipe Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm paper surfaces, never pure white */
+    --paper: oklch(0.972 0.012 84);
+    --card:  oklch(0.994 0.005 86);
+    --sunken:oklch(0.951 0.013 80);
+    --hair:  oklch(0.30 0.02 60 / 0.10);
+    --shadow: 0 16px 38px -20px oklch(0.42 0.05 58 / 0.34);
+
+    /* warm ink, never pure black */
+    --ink:   oklch(0.24 0.022 58);
+    --body:  oklch(0.45 0.018 60);
+    --muted: oklch(0.60 0.013 64);
+
+    /* the one saturated color block - a warm clay/persimmon, the playful hero ground */
+    --block: oklch(0.66 0.158 42);
+    --block-ink: oklch(0.21 0.03 40);
+    --block-soft: oklch(0.74 0.12 48 / 0.34);
+
+    /* AI-confidence states (color = a state, never decoration) */
+    --confident: oklch(0.56 0.10 168);
+    --confident-bg: oklch(0.56 0.10 168 / 0.13);
+    --uncertain: oklch(0.64 0.13 70);
+    --uncertain-bg: oklch(0.64 0.13 70 / 0.15);
+    --urgent: oklch(0.55 0.165 28);
+    --urgent-bg: oklch(0.55 0.165 28 / 0.13);
+    --team: oklch(0.50 0.13 262);
+    --team-bg: oklch(0.50 0.13 262 / 0.12);
+
+    /* one interactive accent */
+    --accent: oklch(0.50 0.13 262);
+
+    --r-card: 22px; --r-chip: 999px; --r-btn: 14px; --r-sheet: 28px;
+
+    --display: "Archivo Black", "Archivo", sans-serif;
+    --cond: "Archivo", sans-serif;
+    --serif: "Newsreader", Georgia, serif;
+    --sans: "Archivo", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --spring: cubic-bezier(.34,1.4,.5,1);
+    --exp: cubic-bezier(.16,1,.3,1);
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(120% 90% at 18% -10%, oklch(0.95 0.02 70) 0%, transparent 55%),
+      oklch(0.93 0.012 78);
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:18px; padding:34px 16px;
+    font-family:var(--sans);
+    color:var(--ink);
+  }
+
+  .variant-caption{
+    font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .variant-caption b{ color:var(--block-ink); font-weight:500; }
+
+  /* iPhone frame (chrome only) */
+  .device{
+    width:393px; height:842px;
+    background:oklch(0.18 0.012 58);
+    border-radius:54px;
+    padding:11px;
+    box-shadow:
+      0 2px 0 1px oklch(0.34 0.02 60) inset,
+      var(--shadow),
+      0 50px 90px -50px oklch(0.30 0.04 50 / 0.5);
+    position:relative;
+  }
+  .screen{
+    position:relative;
+    width:100%; height:100%;
+    background:var(--paper);
+    border-radius:44px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .notch{
+    position:absolute; top:11px; left:50%; transform:translateX(-50%);
+    width:118px; height:32px; background:oklch(0.16 0.01 58);
+    border-radius:18px; z-index:60;
+  }
+  .statusbar{
+    position:absolute; top:0; left:0; right:0; height:54px; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 30px 0;
+    font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink);
+  }
+  .statusbar .dots{ display:flex; gap:5px; align-items:center; }
+  .statusbar .dots i{ width:5px; height:5px; border-radius:50%; background:var(--ink); display:block; opacity:.75; }
+
+  .scroll{
+    flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:62px 0 26px;
+  }
+  .scroll::-webkit-scrollbar{ width:0; }
+
+  /* ===== HERO: the one saturated color block ===== */
+  .hero{
+    margin:6px 16px 0;
+    background:var(--block);
+    border-radius:26px;
+    padding:20px 20px 22px;
+    color:oklch(0.99 0.01 80);
+    position:relative;
+    overflow:hidden;
+    box-shadow: 0 18px 40px -22px oklch(0.55 0.12 40 / 0.6);
+  }
+  .hero::after{
+    /* soft texture, not a glow - a single offset disc */
+    content:""; position:absolute; right:-46px; top:-58px;
+    width:190px; height:190px; border-radius:50%;
+    background:var(--block-soft); pointer-events:none;
+  }
+  .hero-top{
+    display:flex; align-items:center; gap:11px; position:relative; z-index:2;
+  }
+  .hero-meta{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase;
+    color:oklch(0.97 0.02 70 / 0.86);
+  }
+  .hero-meta b{ color:oklch(0.99 0.01 80); font-weight:500; }
+  .hero-line{
+    position:relative; z-index:2;
+    font-family:var(--display);
+    font-size:39px; line-height:0.94; letter-spacing:-0.015em;
+    text-transform:uppercase;
+    margin:16px 0 0;
+    color:oklch(0.99 0.012 82);
+  }
+  .hero-line .em{ color:oklch(0.93 0.05 75); }
+  .hero-sub{
+    position:relative; z-index:2;
+    font-family:var(--serif); font-size:16px; line-height:23px;
+    color:oklch(0.97 0.02 72 / 0.95);
+    margin:13px 0 0; max-width:30ch;
+  }
+
+  /* mascot - flat friendly vector, gentle idle */
+  .mascot{ width:46px; height:46px; flex:none; }
+  .mascot .leo-body{ transform-origin:23px 30px; animation:leoIdle 5.2s var(--exp) infinite; }
+  .mascot .leo-eye{ transform-origin:center; animation:leoBlink 5.2s steps(1,end) infinite; }
+  @keyframes leoIdle{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-2.4px) rotate(-2.2deg); }
+  }
+  @keyframes leoBlink{
+    0%,92%,100%{ transform:scaleY(1); }
+    95%{ transform:scaleY(0.1); }
+  }
+
+  /* ===== section label ===== */
+  .sec-label{
+    display:flex; align-items:baseline; gap:9px;
+    margin:26px 22px 13px;
+  }
+  .sec-label .k{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .sec-label .count{
+    margin-left:auto;
+    font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    color:var(--block-ink);
+    background:var(--block-soft);
+    padding:4px 11px; border-radius:999px;
+    transition:transform .34s var(--spring);
+  }
+  .count.pop{ animation:countPop .42s var(--spring); }
+  @keyframes countPop{ 0%{transform:scale(1);} 40%{transform:scale(1.22);} 100%{transform:scale(1);} }
+
+  /* ===== SWIPE DECK ===== */
+  .deck-wrap{ margin:0 16px; position:relative; height:286px; }
+  .deck{ position:absolute; inset:0; touch-action:pan-y; }
+
+  .card{
+    position:absolute; left:0; right:0; top:0;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    box-shadow:var(--shadow);
+    padding:20px 20px 18px;
+    min-height:268px;
+    display:flex; flex-direction:column;
+    transform-origin:50% 120%;
+    will-change:transform, opacity;
+    user-select:none;
+  }
+  .card .row1{ display:flex; align-items:center; gap:9px; }
+  .state-dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .card.urgent .state-dot{ background:var(--urgent); }
+  .card.confident .state-dot{ background:var(--confident); }
+  .card.team .state-dot{ background:var(--team); }
+
+  .card .tag{
+    font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--body);
+  }
+  .card.urgent .tag{ color:var(--urgent); }
+  .card .pill{
+    margin-left:auto;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+    padding:4px 10px; border-radius:999px;
+  }
+  .pill.window{ color:var(--confident); background:var(--confident-bg); }
+  .pill.team{ color:var(--team); background:var(--team-bg); }
+  .pill.due{ color:var(--urgent); background:var(--urgent-bg); }
+
+  .card .title{
+    font-family:var(--cond); font-weight:600;
+    font-size:26px; line-height:1.02; letter-spacing:-0.01em;
+    color:var(--ink);
+    margin:18px 0 0;
+    text-transform:none;
+  }
+  .card .leo-says{
+    font-family:var(--serif); font-size:15.5px; line-height:22px; font-style:italic;
+    color:var(--body); margin:11px 0 0;
+  }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; margin:auto 0 0; padding-top:16px; }
+  .chip{
+    font-family:var(--sans); font-size:12px; font-weight:500;
+    color:var(--body); background:var(--sunken);
+    border:1px solid var(--hair);
+    padding:7px 12px; border-radius:var(--r-chip);
+  }
+  .chip .em{ color:var(--ink); font-weight:600; }
+
+  .hint{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:14px; padding-top:13px; border-top:1px solid var(--hair);
+    font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .hint .l{ color:var(--uncertain); }
+  .hint .r{ color:var(--confident); }
+
+  /* stamps */
+  .stamp{
+    position:absolute; top:30px; z-index:5;
+    font-family:var(--display); font-size:21px; letter-spacing:.03em;
+    text-transform:uppercase;
+    padding:8px 14px; border-radius:13px; border:3px solid;
+    opacity:0; pointer-events:none;
+  }
+  .stamp.act{ left:22px; color:var(--confident); border-color:var(--confident); transform:rotate(-13deg); }
+  .stamp.later{ right:22px; color:var(--uncertain); border-color:var(--uncertain); transform:rotate(13deg); }
+
+  /* deck done state */
+  .deck-done{
+    position:absolute; inset:0;
+    display:none; flex-direction:column; align-items:flex-start; justify-content:center;
+    gap:12px; padding:24px;
+    opacity:0; transition:opacity .4s var(--exp);
+  }
+  .deck-done.show{ display:flex; opacity:1; }
+  .deck-done .dl{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  }
+  .deck-done .dh{
+    font-family:var(--cond); font-weight:600; font-size:25px; line-height:1.06; color:var(--ink); letter-spacing:-0.01em;
+  }
+  .deck-done .ds{ font-family:var(--serif); font-size:15px; line-height:22px; color:var(--body); font-style:italic; }
+  .restart{
+    margin-top:6px;
+    font-family:var(--sans); font-size:13px; font-weight:600; color:var(--accent);
+    background:transparent; border:1px solid var(--hair);
+    border-radius:var(--r-btn); padding:11px 16px; min-height:44px; cursor:pointer;
+    transition:transform .2s var(--spring), background .2s ease;
+  }
+  .restart:active{ transform:scale(.97); }
+  .restart:hover{ background:var(--sunken); }
+
+  /* ===== deck controls (buttons mirror the swipe) ===== */
+  .deck-controls{
+    display:flex; align-items:center; justify-content:center; gap:22px;
+    margin:18px 16px 0;
+  }
+  .rnd{
+    width:56px; height:56px; min-width:44px; min-height:44px;
+    border-radius:50%; border:1px solid var(--hair);
+    background:var(--card);
+    box-shadow:0 8px 18px -10px oklch(0.35 0.04 58 / 0.5);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    color:var(--body);
+    transition:transform .22s var(--spring), color .2s ease, border-color .2s ease;
+  }
+  .rnd:active{ transform:scale(.9); }
+  .rnd.act:hover{ color:var(--confident); border-color:var(--confident); }
+  .rnd.later:hover{ color:var(--uncertain); border-color:var(--uncertain); }
+  .rnd svg{ width:22px; height:22px; }
+  .rnd-label{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+    text-align:center; margin-top:6px;
+  }
+  .ctrl{ display:flex; flex-direction:column; align-items:center; }
+
+  /* ===== calm signal ===== */
+  .signal{
+    margin:24px 16px 0;
+    background:var(--sunken);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    padding:16px 18px;
+    display:flex; align-items:center; gap:13px;
+  }
+  .signal .sdot{ width:9px; height:9px; border-radius:50%; background:var(--uncertain); flex:none; }
+  .signal .col{ flex:1; min-width:0; }
+  .signal .st{ font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ink); }
+  .signal .sw{ font-family:var(--serif); font-size:14px; line-height:20px; color:var(--body); margin-top:3px; font-style:italic; }
+  .signal .spark{ width:62px; height:22px; flex:none; }
+  .signal .spark path{ fill:none; stroke:var(--uncertain); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; opacity:.7; }
+
+  /* ===== quiet ledger line ===== */
+  .ledger{
+    margin:14px 22px 4px;
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.03em;
+    color:var(--muted);
+  }
+  .ledger b{ color:var(--body); font-weight:500; }
+  .ledger .led-dot{ width:5px; height:5px; border-radius:50%; background:var(--muted); flex:none; }
+  .ledger .zero{ color:var(--confident); }
+
+  /* tab bar (earned-familiar chrome) */
+  .tabbar{
+    position:absolute; bottom:0; left:0; right:0; height:78px; z-index:50;
+    background:oklch(0.99 0.006 84 / 0.86);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border-top:1px solid var(--hair);
+    display:flex; align-items:flex-start; justify-content:space-around;
+    padding:11px 16px 0;
+  }
+  .tab{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    font-family:var(--sans); font-size:10.5px; font-weight:500; color:var(--muted);
+    background:none; border:none; cursor:pointer; min-width:44px; min-height:44px;
+  }
+  .tab svg{ width:23px; height:23px; }
+  .tab.on{ color:var(--block-ink); }
+
+  /* entrances */
+  .rise{ opacity:0; transform:translateY(13px); animation:rise .56s var(--exp) forwards; }
+  .d1{ animation-delay:.05s; } .d2{ animation-delay:.13s; } .d3{ animation-delay:.21s; } .d4{ animation-delay:.29s; }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+
+  :focus-visible{ outline:2.5px solid var(--accent); outline-offset:3px; border-radius:8px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+    .rise{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="variant-caption">V06&nbsp;&nbsp;<b>BOLD PLAYFUL</b>&nbsp;&times;&nbsp;<b>SWIPE DECK</b></div>
+
+  <div class="device">
+    <div class="notch" aria-hidden="true"></div>
+    <div class="screen">
+      <div class="statusbar" aria-hidden="true">
+        <span>7:18</span>
+        <span class="dots"><i></i><i></i><i></i><i></i></span>
+      </div>
+
+      <div class="scroll">
+
+        <!-- HERO: saturated color block + condensed caps + mascot -->
+        <section class="hero rise d1" aria-label="Leo morning greeting">
+          <div class="hero-top">
+            <svg class="mascot" viewBox="0 0 46 46" fill="none" aria-hidden="true" role="img">
+              <g class="leo-body">
+                <circle cx="23" cy="24" r="14" fill="oklch(0.93 0.06 78)"/>
+                <path d="M11 16 L8 8 L17 13 Z" fill="oklch(0.88 0.08 70)"/>
+                <path d="M35 16 L38 8 L29 13 Z" fill="oklch(0.88 0.08 70)"/>
+                <circle class="leo-eye" cx="18.5" cy="23" r="2.2" fill="oklch(0.24 0.02 50)"/>
+                <circle class="leo-eye" cx="27.5" cy="23" r="2.2" fill="oklch(0.24 0.02 50)"/>
+                <path d="M19 29 Q23 32 27 29" stroke="oklch(0.24 0.02 50)" stroke-width="2" stroke-linecap="round" fill="none"/>
+              </g>
+            </svg>
+            <div class="hero-meta">LEO&nbsp;&middot;&nbsp;<b>your helper</b></div>
+          </div>
+          <h1 class="hero-line">GOOD<br>MORNING,<br><span class="em">DANA.</span></h1>
+          <p class="hero-sub">Three things need you this morning. Swipe through them one by one. I am holding the rest.</p>
+        </section>
+
+        <!-- the deck -->
+        <div class="sec-label rise d2">
+          <span class="k">NEEDS YOU</span>
+          <span class="count" id="count" aria-live="polite">3 LEFT</span>
+        </div>
+
+        <div class="deck-wrap rise d2">
+          <div class="deck" id="deck" aria-label="Your morning cards. Swipe right to do it now, left to leave for later.">
+
+            <!-- card 3 (bottom) -->
+            <article class="card team" data-id="relay" data-stack="2">
+              <div class="row1">
+                <span class="state-dot"></span>
+                <span class="tag">Teammate</span>
+                <span class="pill team">Teammate</span>
+              </div>
+              <h2 class="title">A buyer of Marcus is waiting</h2>
+              <p class="leo-says">Marcus is out showing a home. His new buyer texted 40 minutes ago and has not heard back.</p>
+              <div class="chips">
+                <span class="chip"><span class="em">Take it on</span>, or leave it with Marcus</span>
+                <span class="chip">Reply written for you</span>
+              </div>
+              <div class="hint"><span class="l">&larr; Later</span><span>swipe</span><span class="r">Do it now &rarr;</span></div>
+              <span class="stamp act">Do it now</span><span class="stamp later">Later</span>
+            </article>
+
+            <!-- card 2 (middle) -->
+            <article class="card confident" data-id="linden" data-stack="1">
+              <div class="row1">
+                <span class="state-dot"></span>
+                <span class="tag">New buyer</span>
+                <span class="pill window">Call in 5 min</span>
+              </div>
+              <h2 class="title">New buyer for 88 Linden, loan already approved</h2>
+              <p class="leo-says">Calling now gives you the best shot. They just reached out, and their home loan is already approved.</p>
+              <div class="chips">
+                <span class="chip"><span class="em">Loan approved</span></span>
+                <span class="chip">Budget under $700K</span>
+                <span class="chip">Hello message written</span>
+              </div>
+              <div class="hint"><span class="l">&larr; Later</span><span>swipe</span><span class="r">Do it now &rarr;</span></div>
+              <span class="stamp act">Do it now</span><span class="stamp later">Later</span>
+            </article>
+
+            <!-- card 1 (top) -->
+            <article class="card urgent" data-id="oak" data-stack="0">
+              <div class="row1">
+                <span class="state-dot"></span>
+                <span class="tag">Reply on a price</span>
+                <span class="pill due">Reply by 10:00 AM</span>
+              </div>
+              <h2 class="title">142 Oak St needs your reply on price</h2>
+              <p class="leo-says">I would offer back $612K. Their last message sounded keen. Want to look it over?</p>
+              <div class="chips">
+                <span class="chip"><span class="em">How sure I am: very sure</span></span>
+                <span class="chip">Reply written for you</span>
+              </div>
+              <div class="hint"><span class="l">&larr; Later</span><span>swipe</span><span class="r">Do it now &rarr;</span></div>
+              <span class="stamp act">Do it now</span><span class="stamp later">Later</span>
+            </article>
+
+            <!-- done -->
+            <div class="deck-done" id="deckDone" aria-live="polite">
+              <span class="dl">ALL DONE</span>
+              <span class="dh">That is the whole morning.</span>
+              <span class="ds">You handled what needed you and set the rest aside. I will keep an eye out and bring anything back if it changes.</span>
+              <button class="restart" id="restart" type="button">Go through them again</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- controls mirror the gesture -->
+        <div class="deck-controls rise d3" id="deckControls">
+          <div class="ctrl">
+            <button class="rnd later" id="btnLater" type="button" aria-label="Leave for later">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </button>
+            <div class="rnd-label">Later</div>
+          </div>
+          <div class="ctrl">
+            <button class="rnd act" id="btnAct" type="button" aria-label="Do it now">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+            </button>
+            <div class="rnd-label">Do it now</div>
+          </div>
+        </div>
+
+        <!-- calm signal -->
+        <div class="sec-label rise d3"><span class="k">WORTH WATCHING</span></div>
+        <section class="signal rise d3" aria-label="Crestview has gone quiet">
+          <span class="sdot" aria-hidden="true"></span>
+          <div class="col">
+            <div class="st">Crestview has gone quiet</div>
+            <div class="sw">No rush yet. Worth a quick check-in before Thursday.</div>
+          </div>
+          <svg class="spark" viewBox="0 0 62 22" preserveAspectRatio="none" aria-hidden="true"><path d="M0,7 L9,6 L18,9 L27,8 L36,12 L45,13 L54,16 L62,17"/></svg>
+        </section>
+
+        <!-- quiet ledger -->
+        <div class="ledger rise d4" aria-label="Overnight ledger">
+          <span class="led-dot" aria-hidden="true"></span>
+          <span><b>I took care of 47 things overnight.</b> I woke you for <span class="zero">0</span> of them.</span>
+        </div>
+
+      </div>
+
+      <!-- tab chrome -->
+      <nav class="tabbar" aria-label="Primary">
+        <button class="tab on" type="button" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+          Today
+        </button>
+        <button class="tab" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+          Deals
+        </button>
+        <button class="tab" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 3-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 6.5a3 3 0 010 5.6"/></svg>
+          People
+        </button>
+        <button class="tab" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v11H8l-3 3z"/></svg>
+          Leo
+        </button>
+      </nav>
+    </div>
+  </div>
+
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+
+  const deck = document.getElementById('deck');
+  const countEl = document.getElementById('count');
+  const doneEl = document.getElementById('deckDone');
+  const controls = document.getElementById('deckControls');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function liveCards(){
+    return Array.from(deck.querySelectorAll('.card')).filter(c => !c.classList.contains('gone'));
+  }
+
+  // initial stacking: the last .card in DOM order is the top card
+  function layout(){
+    const ordered = liveCards().slice().reverse(); // [top, mid, bottom]
+    ordered.forEach((c, depth) => {
+      c.style.zIndex = String(30 - depth);
+      if (!c._dragging){
+        const scale = 1 - depth * 0.045;
+        const ty = depth * 14;
+        c.style.transform = `translateY(${ty}px) scale(${scale})`;
+        c.style.opacity = depth > 2 ? '0' : (depth === 2 ? '0.7' : '1');
+      }
+      c.style.pointerEvents = depth === 0 ? 'auto' : 'none';
+    });
+  }
+
+  function updateCount(){
+    const n = liveCards().length;
+    countEl.textContent = n === 0 ? 'ALL DONE' : (n + ' LEFT');
+    countEl.classList.remove('pop'); void countEl.offsetWidth; countEl.classList.add('pop');
+    if (n === 0){
+      controls.style.pointerEvents = 'none';
+      controls.style.opacity = '0.4';
+      doneEl.classList.add('show');
+    }
+  }
+
+  function commit(card, dir){
+    if (!card || card.classList.contains('gone')) return;
+    card.classList.add('gone');
+    card.style.pointerEvents = 'none';
+    const stamp = card.querySelector(dir === 'act' ? '.stamp.act' : '.stamp.later');
+    if (stamp) stamp.style.opacity = '1';
+    const x = dir === 'act' ? 460 : -460;
+    const rot = dir === 'act' ? 22 : -22;
+    card.style.transition = reduce ? 'none' : 'transform .5s var(--spring), opacity .42s ease';
+    card.style.transform = `translate(${x}px, 18px) rotate(${rot}deg) scale(1)`;
+    card.style.opacity = '0';
+    setTimeout(() => { layout(); updateCount(); }, reduce ? 0 : 110);
+  }
+
+  function topCard(){ const c = liveCards(); return c.length ? c[c.length - 1] : null; }
+
+  // pointer drag on top card
+  let drag = null;
+  deck.addEventListener('pointerdown', e => {
+    const top = topCard();
+    if (!top || !top.contains(e.target)) return;
+    drag = { x: e.clientX, y: e.clientY, c: top };
+    top._dragging = true;
+    top.style.transition = 'none';
+    if (top.setPointerCapture) try { top.setPointerCapture(e.pointerId); } catch(_){}
+  });
+  deck.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    drag.c.style.transform = `translate(${dx}px, ${dy*0.28}px) rotate(${dx*0.05}deg)`;
+    drag.c.querySelector('.stamp.act').style.opacity = Math.max(0, Math.min(1, dx/110));
+    drag.c.querySelector('.stamp.later').style.opacity = Math.max(0, Math.min(1, -dx/110));
+  });
+  function endDrag(e){
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    const c = drag.c; c._dragging = false; drag = null;
+    if (dx > 105){ commit(c, 'act'); }
+    else if (dx < -105){ commit(c, 'later'); }
+    else {
+      c.style.transition = 'transform .5s var(--spring)';
+      c.querySelectorAll('.stamp').forEach(s => s.style.opacity = 0);
+      layout();
+    }
+  }
+  deck.addEventListener('pointerup', endDrag);
+  deck.addEventListener('pointercancel', endDrag);
+
+  // button mirrors
+  document.getElementById('btnAct').addEventListener('click', () => commit(topCard(), 'act'));
+  document.getElementById('btnLater').addEventListener('click', () => commit(topCard(), 'later'));
+
+  // keyboard: deck is focusable region; arrows act
+  deck.setAttribute('tabindex', '0');
+  deck.setAttribute('role', 'group');
+  deck.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight'){ e.preventDefault(); commit(topCard(), 'act'); }
+    else if (e.key === 'ArrowLeft'){ e.preventDefault(); commit(topCard(), 'later'); }
+  });
+
+  // restart
+  document.getElementById('restart').addEventListener('click', () => {
+    deck.querySelectorAll('.card').forEach(c => {
+      c.classList.remove('gone'); c._dragging = false;
+      c.style.transition = 'none'; c.style.opacity = '';
+      c.querySelectorAll('.stamp').forEach(s => s.style.opacity = 0);
+    });
+    doneEl.classList.remove('show');
+    controls.style.pointerEvents = ''; controls.style.opacity = '';
+    layout();
+    countEl.textContent = '3 LEFT';
+  });
+
+  layout();
+</script>
+</body>
+</html>

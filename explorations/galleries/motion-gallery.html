@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Motion Gallery - Leo Morning Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* AI-state palette (OKLCH) */
+    --confident: oklch(0.80 0.11 168);
+    --uncertain: oklch(0.82 0.12 72);
+    --urgent:    oklch(0.73 0.16 28);
+    --thinking:  oklch(0.66 0.16 262);
+    --cobalt:    oklch(0.66 0.16 262);
+    --silent:    oklch(0.62 0.012 260);
+    --seaglass:  oklch(0.80 0.11 168);
+    --amber:     oklch(0.82 0.12 72);
+    --coral:     oklch(0.73 0.16 28);
+
+    /* tinted neutrals toward hue 262 */
+    --canvas:    oklch(0.14 0.02 262);
+    --canvas-2:  oklch(0.115 0.018 264);
+    --card:      oklch(0.185 0.022 262);
+    --card-2:    oklch(0.215 0.024 262);
+    --hairline:  oklch(0.96 0.01 250 / .10);
+    --hairline-2:oklch(0.96 0.01 250 / .06);
+    --ink:       oklch(0.95 0.01 250);
+    --ink-soft:  oklch(0.78 0.012 255);
+    --ink-mute:  oklch(0.60 0.012 258);
+
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --ease: cubic-bezier(.16,1,.3,1);
+    --ease-exit: cubic-bezier(.32,.72,0,1);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ -webkit-text-size-adjust:100%; }
+
+  body{
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 264) 0%, transparent 55%),
+      radial-gradient(140% 120% at 50% 120%, oklch(0.16 0.03 262) 0%, transparent 60%),
+      var(--canvas-2);
+    min-height: 100vh;
+    padding: 48px 22px 80px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  .wrap{ max-width: 1180px; margin: 0 auto; }
+
+  /* ---------- board header ---------- */
+  header.board{
+    max-width: 760px;
+    margin: 0 auto 52px;
+  }
+  .kicker{
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--cobalt);
+    margin-bottom: 18px;
+  }
+  header.board h1{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(30px, 5.4vw, 50px);
+    line-height: 1.08;
+    letter-spacing: -0.012em;
+    margin-bottom: 20px;
+  }
+  header.board p{
+    font-family: var(--serif);
+    font-size: clamp(16px, 2.3vw, 19px);
+    line-height: 1.62;
+    color: var(--ink-soft);
+    max-width: 660px;
+  }
+  header.board p .em{ color: var(--ink); }
+
+  /* ---------- section ---------- */
+  .section-head{
+    display:flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 54px 0 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .section-head h2{
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .section-head .count{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-mute);
+  }
+
+  /* ---------- grid ---------- */
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+  }
+
+  /* ---------- tile ---------- */
+  .tile{
+    background: var(--card);
+    border: 1px solid var(--hairline);
+    border-radius: 22px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .stage{
+    position: relative;
+    height: 188px;
+    background:
+      radial-gradient(120% 130% at 50% 0%, oklch(0.21 0.026 262) 0%, transparent 70%),
+      var(--canvas);
+    border-bottom: 1px solid var(--hairline-2);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+  .replay{
+    position: absolute;
+    top: 10px; right: 10px;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    color: var(--ink-soft);
+    background: oklch(0.20 0.022 262 / .82);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 5px 10px 5px 8px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+  }
+  .replay:hover{ color: var(--ink); border-color: var(--cobalt); }
+  .replay:active{ transform: translateY(1px); }
+  .replay svg{ width: 11px; height: 11px; display:block; }
+  .replay:hover svg{ animation: spinOnce .5s var(--ease); }
+  @keyframes spinOnce{ from{ transform: rotate(0); } to{ transform: rotate(-360deg); } }
+
+  .meta{ padding: 16px 17px 18px; }
+  .meta .name{
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.005em;
+    margin-bottom: 7px;
+  }
+  .meta .signals{
+    font-family: var(--serif);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .meta .signals b{ color: var(--ink); font-weight: 600; }
+  .meta .tech{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    letter-spacing: .01em;
+  }
+  .meta .used{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    letter-spacing: .01em;
+  }
+  .meta .used b{ color: var(--ink-soft); font-weight: 500; }
+
+  /* ===================================================================
+     SHARED PRIMITIVES
+     =================================================================== */
+  .phone{
+    width: 100%;
+    max-width: 248px;
+    background: var(--card-2);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 12px 13px;
+  }
+  .row{ display:flex; align-items:center; gap: 8px; }
+  .dot{ width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .chip{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .03em;
+    padding: 3px 7px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .mono{ font-family: var(--mono); }
+  .serif{ font-family: var(--serif); }
+
+  /* ============ 1. NAMED SHIMMER (thinking) ============ */
+  .d-shim{ width: 100%; max-width: 250px; }
+  .d-shim .lbl{
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cobalt);
+    margin-bottom: 9px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .d-shim .spinner{
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.6px solid oklch(0.66 0.16 262 / .35);
+    border-top-color: var(--cobalt);
+    animation: shimSpin 1s linear infinite;
+  }
+  @keyframes shimSpin{ to{ transform: rotate(360deg); } }
+  .skel{
+    height: 11px;
+    border-radius: 6px;
+    margin-bottom: 9px;
+    background:
+      linear-gradient(100deg,
+        oklch(0.24 0.025 262) 28%,
+        oklch(0.34 0.05 262) 46%,
+        oklch(0.24 0.025 262) 64%);
+    background-size: 220% 100%;
+    background-position: 120% 0;
+  }
+  .skel.w1{ width: 92%; } .skel.w2{ width: 70%; } .skel.w3{ width: 80%; }
+  .skel.short{ width: 44%; }
+  .replay-on .skel{ animation: shimSweep 1.5s var(--ease) infinite; }
+  .replay-on .skel:nth-child(3){ animation-delay: .12s; }
+  .replay-on .skel:nth-child(4){ animation-delay: .24s; }
+  .replay-on .skel:nth-child(5){ animation-delay: .36s; }
+  @keyframes shimSweep{ to{ background-position: -120% 0; } }
+
+  /* ============ 2. CONFIDENT REVEAL ============ */
+  .d-conf{ width: 100%; max-width: 250px; }
+  .conf-card .line{ opacity: 1; transform: none; }
+  .replay-on .conf-card .line{ opacity: 0; transform: translateY(10px); animation: calmUp .7s var(--ease) forwards; }
+  .replay-on .conf-card .line:nth-child(1){ animation-delay: .05s; }
+  .replay-on .conf-card .line:nth-child(2){ animation-delay: .13s; }
+  .replay-on .conf-card .line:nth-child(3){ animation-delay: .21s; }
+  .replay-on .conf-card .line:nth-child(4){ animation-delay: .29s; }
+  @keyframes calmUp{ to{ opacity: 1; transform: none; } }
+  .conf-card .claim{ font-family: var(--sans); font-weight: 600; font-size: 14px; line-height: 1.35; margin: 8px 0 9px; }
+  .conf-card .rat{ font-family: var(--serif); font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+  .chip.seaglass{ color: var(--seaglass); background: oklch(0.80 0.11 168 / .14); }
+
+  /* ============ 3. UNCERTAIN DE-ESCALATION ============ */
+  .d-unc{ width: 100%; max-width: 250px; }
+  .unc-claim{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 16px;
+    transition: font-weight .5s var(--ease), color .5s var(--ease);
+    margin: 9px 0 8px;
+  }
+  .unc-range{
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--seaglass);
+    transition: color .5s var(--ease);
+    margin-bottom: 8px;
+  }
+  .unc-verify{
+    font-family: var(--serif);
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity .5s var(--ease) .25s, max-height .5s var(--ease);
+  }
+  .unc-dot{ background: var(--seaglass); transition: background .5s var(--ease); }
+  .unc-tag{ color: var(--seaglass); background: oklch(0.80 0.11 168 / .14); transition: color .5s var(--ease), background .5s var(--ease); }
+  .replay-on .unc-claim{ font-weight: 400; color: var(--ink-soft); }
+  .replay-on .unc-range{ color: var(--amber); }
+  .replay-on .unc-verify{ opacity: 1; max-height: 60px; }
+  .replay-on .unc-dot{ background: var(--amber); }
+  .replay-on .unc-tag{ color: var(--amber); background: oklch(0.82 0.12 72 / .15); }
+  .replay-on .unc-tag .txt::after{ content: " now uncertain"; }
+
+  /* ============ 4. EMPATHIC APOLOGY ============ */
+  .d-apo{ width: 100%; max-width: 252px; }
+  .apo-step{
+    display:flex; gap:8px; align-items:flex-start;
+    font-size: 12px; line-height: 1.4;
+    opacity: 1; transform: none;
+    margin-bottom: 8px;
+  }
+  .apo-step .ic{ font-family: var(--mono); font-size: 9px; color: var(--coral); flex:none; margin-top:2px; letter-spacing:.05em; }
+  .apo-step span{ font-family: var(--serif); color: var(--ink-soft); }
+  .apo-step span b{ color: var(--ink); font-weight:600; }
+  .replay-on .apo-step{ opacity: 0; transform: translateY(8px); animation: calmUp .55s var(--ease) forwards; }
+  .replay-on .apo-step:nth-child(1){ animation-delay: .1s; }
+  .replay-on .apo-step:nth-child(2){ animation-delay: .6s; }
+  .replay-on .apo-step:nth-child(3){ animation-delay: 1.1s; }
+  .undo-bar{
+    margin-top: 4px;
+    border: 1px solid oklch(0.73 0.16 28 / .4);
+    border-radius: 10px;
+    padding: 8px 10px;
+    display:flex; align-items:center; justify-content:space-between;
+    background: oklch(0.73 0.16 28 / .07);
+  }
+  .undo-bar .txt{ font-family: var(--mono); font-size: 10px; color: var(--coral); }
+  .undo-track{ height: 3px; border-radius:2px; background: oklch(0.73 0.16 28 / .2); margin-top:7px; overflow:hidden; }
+  .undo-fill{ height: 100%; width: 100%; background: var(--coral); transform-origin: left; transform: scaleX(1); }
+  .replay-on .undo-fill{ animation: drain 14s linear forwards; animation-delay: 1.4s; }
+  @keyframes drain{ to{ transform: scaleX(0); } }
+
+  /* ============ 5. SILENCE LEDGER EXPAND ============ */
+  .d-led{ width: 100%; max-width: 250px; }
+  .led-head{ font-family: var(--serif); font-size: 13.5px; line-height: 1.45; color: var(--ink); }
+  .led-head b{ font-weight:600; }
+  .led-sub{ font-family: var(--mono); font-size: 10px; color: var(--silent); margin-top: 6px; }
+  .led-body{
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height .6s var(--ease), opacity .5s var(--ease), margin-top .6s var(--ease);
+    margin-top: 0;
+  }
+  .led-near{
+    font-family: var(--serif);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    padding: 8px 0;
+    border-top: 1px solid var(--hairline-2);
+  }
+  .led-near .ag{ font-family: var(--mono); font-size: 9px; color: var(--silent); display:block; margin-bottom:3px; }
+  .replay-on .led-body{ max-height: 160px; opacity: 1; margin-top: 10px; }
+
+  /* ============ 6. FLIP RE-RANK ============ */
+  .d-flip{ width: 100%; max-width: 250px; display:flex; flex-direction:column; gap: 7px; }
+  .flip-row{
+    display:flex; align-items:center; gap:8px;
+    background: var(--card-2);
+    border: 1px solid var(--hairline-2);
+    border-radius: 10px;
+    padding: 8px 10px;
+    transition: transform .65s var(--ease);
+  }
+  .flip-row .rk{ font-family: var(--mono); font-size:10px; color: var(--ink-mute); width:14px; flex:none; }
+  .flip-row .nm{ font-family: var(--sans); font-size: 12px; font-weight:500; }
+  .flip-row .st{ margin-left:auto; }
+  /* default (resting) = ranked state. replay pulls them to scrambled then transitions back */
+  .flip-row[data-r="0"]{ transform: translateY(0); }
+  .flip-row[data-r="1"]{ transform: translateY(0); }
+  .flip-row[data-r="2"]{ transform: translateY(0); }
+  .flip-row[data-r="3"]{ transform: translateY(0); }
+  /* scrambled offsets: rows are laid out 0,1,2,3 (h+gap = 41.6px each) */
+  .replay-pre .flip-row{ transition: none; }
+  .replay-pre .flip-row[data-r="0"]{ transform: translateY(124.8px); } /* coral goes from top to slot 3 then animates up */
+  .replay-pre .flip-row[data-r="1"]{ transform: translateY(-41.6px); }
+  .replay-pre .flip-row[data-r="2"]{ transform: translateY(-41.6px); }
+  .replay-pre .flip-row[data-r="3"]{ transform: translateY(-41.6px); }
+
+  /* ============ 7. PULSE STRIP EKG ============ */
+  .d-ekg{ width: 100%; max-width: 250px; display:flex; flex-direction:column; gap: 11px; }
+  .ekg-line{ display:flex; align-items:center; gap:9px; }
+  .ekg-line .nm{ font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); width: 56px; flex:none; }
+  .ekg-line svg{ flex:1; height: 22px; }
+  .ekg-path{ fill:none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .ekg-path.ok{ stroke: var(--seaglass); }
+  .ekg-path.flat{ stroke: var(--amber); }
+  .ekg-dash{ stroke-dasharray: 240; stroke-dashoffset: 240; }
+  .replay-on .ekg-dash{ animation: ekgDraw 1.6s var(--ease) forwards; }
+  .replay-on .ekg-line:nth-child(2) .ekg-dash{ animation-delay: .15s; }
+  .replay-on .ekg-line:nth-child(3) .ekg-dash{ animation-delay: .3s; }
+  @keyframes ekgDraw{ to{ stroke-dashoffset: 0; } }
+  .ekg-tag{ font-family: var(--mono); font-size: 9px; color: var(--amber); }
+
+  /* ============ 8. DRAINING RING ============ */
+  .d-ring{ position: relative; width: 132px; height: 132px; display:grid; place-items:center; }
+  .d-ring svg{ position:absolute; inset:0; transform: rotate(-90deg); }
+  .ring-track{ fill:none; stroke: oklch(0.73 0.16 28 / .16); stroke-width: 7; }
+  .ring-prog{ fill:none; stroke: var(--coral); stroke-width: 7; stroke-linecap: round;
+    stroke-dasharray: 339.292; stroke-dashoffset: 0; }
+  .replay-on .ring-prog{ animation: ringDrain 5s linear forwards; }
+  @keyframes ringDrain{ to{ stroke-dashoffset: 339.292; } }
+  .ring-c{ text-align:center; }
+  .ring-c .big{ font-family: var(--mono); font-size: 22px; color: var(--coral); font-weight:500; }
+  .ring-c .lbl{ font-family: var(--mono); font-size: 8.5px; color: var(--ink-mute); letter-spacing:.06em; }
+
+  /* ============ 9. COUNT-UP NUMERALS ============ */
+  .d-count{ text-align:center; }
+  .count-num{
+    font-family: var(--mono);
+    font-size: 50px;
+    font-weight: 500;
+    color: var(--seaglass);
+    line-height: 1;
+    height: 50px;
+    overflow: hidden;
+    display: inline-flex;
+  }
+  .count-num .reel{ display:flex; flex-direction:column; }
+  .count-num .reel span{ height: 50px; }
+  /* resting shows final digits 4 7 */
+  .reel.r1{ transform: translateY(-200px); } /* shows '4' (index 4) */
+  .reel.r2{ transform: translateY(-350px); } /* shows '7' (index 7) */
+  .replay-on .reel{ transition: none; }
+  .replay-pre .reel{ transform: translateY(0); }
+  .replay-on .reel.r1{ transition: transform 1.1s var(--ease); transform: translateY(-200px); }
+  .replay-on .reel.r2{ transition: transform 1.3s var(--ease) .08s; transform: translateY(-350px); }
+  .count-cap{ font-family: var(--serif); font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
+
+  /* ============ 10. DISCLOSURE EXPAND ============ */
+  .d-disc{ width: 100%; max-width: 250px; }
+  .disc-l1{ font-family: var(--sans); font-weight:600; font-size: 13.5px; }
+  .disc-l2, .disc-l3{
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height .55s var(--ease), opacity .45s var(--ease), margin-top .55s var(--ease);
+    margin-top: 0;
+  }
+  .disc-l2{ font-family: var(--serif); font-size: 12px; color: var(--ink-soft); line-height:1.5; }
+  .disc-l3{ font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); line-height:1.55; }
+  .replay-on .disc-l2{ max-height: 70px; opacity:1; margin-top: 9px; transition-delay: .15s; }
+  .replay-on .disc-l3{ max-height: 70px; opacity:1; margin-top: 9px; transition-delay: .85s; }
+  .disc-tier{ font-family: var(--mono); font-size: 8.5px; letter-spacing:.06em; color: var(--cobalt); text-transform:uppercase; }
+
+  /* ============ 11. SWIPE-DECK SPRING ============ */
+  .d-swipe{ position: relative; width: 168px; height: 150px; }
+  .swipe-card{
+    position:absolute; inset:0;
+    background: var(--card-2);
+    border:1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 14px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .swipe-card.back{ transform: scale(.92) translateY(10px); opacity:.5; z-index:1; }
+  .swipe-card.front{ z-index:3; transform-origin: bottom right; }
+  .replay-on .swipe-card.front{ animation: flyOff 1.05s var(--ease) forwards; }
+  .replay-on .swipe-card.back{ animation: riseUp .7s var(--ease) .35s forwards; }
+  @keyframes flyOff{
+    0%{ transform: none; opacity:1; }
+    18%{ transform: translateX(8px) rotate(2deg); }
+    100%{ transform: translateX(260px) rotate(18deg); opacity:0; }
+  }
+  @keyframes riseUp{ to{ transform: scale(1) translateY(0); opacity:1; } }
+  .stamp{
+    position:absolute; top: 16px; left: 14px;
+    font-family: var(--mono); font-weight:500; font-size: 16px; letter-spacing:.08em;
+    color: var(--seaglass);
+    border: 2px solid var(--seaglass);
+    border-radius: 7px; padding: 3px 8px;
+    transform: rotate(-12deg) scale(1.4); opacity: 0;
+  }
+  .replay-on .stamp{ animation: stampIn .5s var(--ease) .12s forwards; }
+  @keyframes stampIn{ to{ transform: rotate(-12deg) scale(1); opacity: 1; } }
+  .swipe-card .h{ font-family: var(--sans); font-weight:600; font-size:12.5px; }
+  .swipe-card .s{ font-family: var(--serif); font-size:11px; color: var(--ink-soft); }
+
+  /* ============ 12. SCROLL-STORY RECOMPOSE ============ */
+  .d-story{ width: 100%; max-width: 252px; text-align:center; }
+  .story-h{ font-family: var(--serif); font-weight:500; font-size: 23px; line-height:1.18; letter-spacing:-.01em; }
+  .story-h .w{ display:inline-block; transition: opacity .5s var(--ease), transform .5s var(--ease); }
+  .story-h .swap{ position: relative; }
+  .story-h .swap .a, .story-h .swap .b{ display:inline-block; transition: opacity .55s var(--ease), transform .55s var(--ease); }
+  .story-h .swap .b{ position:absolute; left:0; top:0; opacity:0; transform: translateY(10px); white-space:nowrap; }
+  .replay-on .story-h .swap .a{ opacity:0; transform: translateY(-10px); }
+  .replay-on .story-h .swap .b{ opacity:1; transform: translateY(0); }
+
+  /* ============ 13. CALM-SEQUENCE ARC ============ */
+  .d-arc{ position: relative; width: 150px; height: 96px; display:grid; place-items:end center; }
+  .d-arc svg{ position:absolute; top:0; left:0; }
+  .arc-track{ fill:none; stroke: var(--hairline); stroke-width: 8; stroke-linecap: round; }
+  .arc-prog{ fill:none; stroke: var(--confident); stroke-width: 8; stroke-linecap:round;
+    stroke-dasharray: 220; stroke-dashoffset: 0; }
+  .replay-on .arc-prog{ animation: arcFill 1.8s var(--ease) forwards; }
+  @keyframes arcFill{ from{ stroke-dashoffset: 220; } to{ stroke-dashoffset: 0; } }
+  .arc-c{ position: relative; z-index:2; text-align:center; padding-bottom: 4px; }
+  .arc-c .lbl{ font-family: var(--serif); font-size: 14px; color: var(--ink); opacity:1; }
+  .replay-on .arc-c .lbl{ opacity:0; animation: calmUp .6s var(--ease) 1.5s forwards; }
+  .arc-c .sub{ font-family: var(--mono); font-size: 9px; color: var(--ink-mute); }
+
+  /* ============ 14. DYNAMIC ISLAND MORPH ============ */
+  .d-island{ width: 100%; display:flex; justify-content:center; }
+  .island-pill{
+    background: oklch(0.07 0.012 264);
+    border: 1px solid var(--hairline-2);
+    border-radius: 22px;
+    width: 132px; height: 38px;
+    padding: 0 14px;
+    display:flex; align-items:center; gap:8px;
+    overflow:hidden;
+    transition: width .6s var(--ease), height .6s var(--ease), border-radius .6s var(--ease), padding .6s var(--ease);
+  }
+  .island-pill .orb{ width:14px; height:14px; border-radius:50%; flex:none;
+    background: radial-gradient(circle at 35% 30%, var(--seaglass), var(--cobalt) 70%); }
+  .island-pill .one{ font-family: var(--mono); font-size: 10px; color: var(--ink-soft); white-space:nowrap; }
+  .island-pill .more{
+    opacity:0; max-height:0; overflow:hidden;
+    transition: opacity .4s var(--ease) .25s, max-height .5s var(--ease);
+    width:100%;
+  }
+  .island-pill .more .t{ font-family: var(--serif); font-size:12px; color:var(--ink); line-height:1.4; }
+  .island-pill .more .m{ font-family: var(--mono); font-size:9px; color: var(--seaglass); margin-top:4px; }
+  .replay-on .island-pill{ width: 200px; height: 96px; border-radius: 18px; padding: 12px 14px; align-items:flex-start; flex-direction:column; }
+  .replay-on .island-pill .more{ opacity:1; max-height: 70px; margin-top:6px; }
+
+  /* ============ 15. BREATHING ORB ============ */
+  .d-orb{ display:grid; place-items:center; }
+  .orb-big{
+    width: 84px; height: 84px; border-radius:50%;
+    background: radial-gradient(circle at 36% 30%, oklch(0.86 0.1 168) 0%, var(--cobalt) 64%, oklch(0.42 0.14 264) 100%);
+    box-shadow: 0 0 36px oklch(0.66 0.16 262 / .45), 0 0 12px oklch(0.80 0.11 168 / .4) inset;
+    animation: breathe 4.6s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform: scale(1); box-shadow: 0 0 30px oklch(0.66 0.16 262 / .35), 0 0 12px oklch(0.80 0.11 168 / .35) inset; }
+    50%{ transform: scale(1.07); box-shadow: 0 0 48px oklch(0.66 0.16 262 / .55), 0 0 16px oklch(0.80 0.11 168 / .5) inset; }
+  }
+  .replay-on .orb-big{ animation: breathe 4.6s ease-in-out infinite; }
+
+  /* ============ 16. TIME-AWARE THEME CROSSFADE ============ */
+  .d-theme{ position: relative; width: 100%; max-width: 250px; height: 130px; border-radius:14px; overflow:hidden; border:1px solid var(--hairline); }
+  .theme-layer{ position:absolute; inset:0; padding: 16px; transition: opacity 1.2s var(--ease); }
+  .theme-onyx{ background:
+      radial-gradient(120% 90% at 50% 0%, oklch(0.24 0.05 264), oklch(0.12 0.02 262) 70%);
+    opacity:1; }
+  .theme-paper{ background:
+      radial-gradient(120% 90% at 50% 0%, oklch(0.97 0.02 80), oklch(0.93 0.03 70) 75%);
+    opacity:0; }
+  .theme-layer .label{ font-family: var(--mono); font-size:10px; letter-spacing:.06em; }
+  .theme-onyx .label{ color: oklch(0.78 0.012 255); }
+  .theme-paper .label{ color: oklch(0.40 0.04 60); }
+  .theme-layer .greet{ font-family: var(--serif); font-size:17px; margin-top:8px; }
+  .theme-onyx .greet{ color: oklch(0.92 0.01 250); }
+  .theme-paper .greet{ color: oklch(0.30 0.03 60); }
+  .theme-sun{ position:absolute; top:-22px; right:-22px; width:80px; height:80px; border-radius:50%;
+    background: radial-gradient(circle, oklch(0.9 0.11 78), transparent 68%); opacity:0; transition: opacity 1.2s var(--ease); }
+  .replay-on .theme-onyx{ opacity: 0; }
+  .replay-on .theme-paper{ opacity: 1; }
+  .replay-on .theme-sun{ opacity: 1; }
+
+  /* ---------- footer ---------- */
+  footer{
+    margin: 64px auto 0;
+    max-width: 760px;
+    text-align: center;
+    padding-top: 26px;
+    border-top: 1px solid var(--hairline);
+  }
+  footer a{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--cobalt);
+    text-decoration: none;
+    border-bottom: 1px solid oklch(0.66 0.16 262 / .35);
+    padding-bottom: 2px;
+    transition: color .2s var(--ease), border-color .2s var(--ease);
+  }
+  footer a:hover{ color: var(--seaglass); border-color: var(--seaglass); }
+  footer .note{ font-family: var(--serif); font-size: 13px; color: var(--ink-mute); margin-top: 16px; }
+
+  /* ---------- reduced motion: collapse everything to static ---------- */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation: none !important;
+      transition: none !important;
+    }
+    .replay{ display: none; }
+    /* force played/resting states so demos read as their final frame */
+    .unc-claim{ font-weight: 400; color: var(--ink-soft); }
+    .unc-range{ color: var(--amber); }
+    .unc-verify{ opacity:1; max-height:none; }
+    .unc-dot{ background: var(--amber); }
+    .unc-tag{ color: var(--amber); background: oklch(0.82 0.12 72 / .15); }
+    .led-body, .disc-l2, .disc-l3{ max-height:none; opacity:1; margin-top:10px; }
+    .ekg-dash, .ring-prog, .arc-prog{ stroke-dashoffset: 0 !important; }
+    .skel{ background: oklch(0.27 0.03 262); }
+    .island-pill{ width: 200px; height: 96px; flex-direction:column; align-items:flex-start; padding:12px 14px; }
+    .island-pill .more{ opacity:1; max-height:none; }
+    .theme-onyx{ opacity:0; } .theme-paper, .theme-sun{ opacity:1; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="board">
+    <div class="kicker">Motion catalog / Leo command center</div>
+    <h1>Every animation orients, gives feedback, or encodes an AI confidence state.</h1>
+    <p>Motion here is never decoration. <span class="em">It is the channel that tells you what Leo is doing, how sure it is, and whether it needs you.</span> All of it is CSS keyframes and transitions, not JavaScript, so it degrades gracefully: if the script never runs, every demo still shows its resting state. Tap <b>replay</b> on any tile to watch it again. Easing is a single ease-out curve throughout; reduced-motion users get the final frame, instantly.</p>
+  </header>
+
+  <!-- ============================ SECTION 1 ============================ -->
+  <div class="section-head">
+    <h2>AI-state motion</h2>
+    <span class="count">01 - 05 / the five states</span>
+  </div>
+  <div class="grid">
+
+    <!-- 1 NAMED SHIMMER -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-shim">
+          <div class="lbl"><span class="spinner"></span>Negotiation Prep - checking 14 comps</div>
+          <div class="skel w1"></div>
+          <div class="skel w3"></div>
+          <div class="skel w2"></div>
+          <div class="skel short"></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Named shimmer</div>
+        <div class="signals">Signals: <b>a competent assistant is working</b>, and exactly which skill is working on what. Dead load time becomes orchestration transparency.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 1500ms</div>
+        <div class="used">Used in: <b>app open / "Replay morning"</b>, any agent computing (THINKING state)</div>
+      </div>
+    </div>
+
+    <!-- 2 CONFIDENT REVEAL -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-conf">
+          <div class="phone conf-card">
+            <div class="row line"><span class="dot" style="background:var(--seaglass)"></span><span class="chip seaglass">HIGH CONFIDENCE</span></div>
+            <div class="line claim">Counter at $612k holds the deal.</div>
+            <div class="line"><span class="chip seaglass">based on 14 comps</span></div>
+            <div class="line rat">Leo: the buyer's agent has moved twice already; the gap is closeable.</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Confident reveal</div>
+        <div class="signals">Signals: <b>you can rely on this</b>, without celebrating. A calm staggered fade-up, deliberately un-celebratory. Reliable is unremarkable.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 700ms / 80ms stagger</div>
+        <div class="used">Used in: <b>resolved high-confidence card</b> (CONFIDENT state)</div>
+      </div>
+    </div>
+
+    <!-- 3 UNCERTAIN -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-unc">
+          <div class="phone">
+            <div class="row"><span class="dot unc-dot"></span><span class="chip unc-tag"><span class="txt">Marcus / 142 Oak</span></span></div>
+            <div class="unc-claim">List at $612k.</div>
+            <div class="unc-range">$605k to $618k</div>
+            <div class="unc-verify">Leo: I am no longer sure this is a drift. Want me to confirm before nudging? 2 unknowns flagged.</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Uncertain de-escalation</div>
+        <div class="signals">Signals: <b>I am not sure - here is why, you decide.</b> Type weight drops, color shifts seaglass to amber, a point becomes a range, verify copy appears.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 500ms</div>
+        <div class="used">Used in: <b>live de-escalation on new signal</b> (UNCERTAIN state)</div>
+      </div>
+    </div>
+
+    <!-- 4 EMPATHIC APOLOGY -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-apo">
+          <div class="phone">
+            <div class="apo-step"><span class="ic">01</span><span><b>Acknowledge.</b> I misread "draft these" as "send these".</span></div>
+            <div class="apo-step"><span class="ic">02</span><span><b>Correct.</b> Paused the rest of the batch.</span></div>
+            <div class="apo-step"><span class="ic">03</span><span><b>Escalate.</b> Going forward I route client-facing to you first.</span></div>
+            <div class="undo-bar">
+              <div class="txt">Undo - nothing sent yet</div>
+              <div class="txt" style="opacity:.7">14s</div>
+            </div>
+            <div class="undo-track"><div class="undo-fill"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Empathic apology (wrong)</div>
+        <div class="signals">Signals: <b>I got one wrong, here is how I am fixing it and what I learned.</b> Acknowledge, correct, escalate, with a time-boxed Undo draining.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 550ms steps / 14000ms drain</div>
+        <div class="used">Used in: <b>confidently-wrong recovery banner</b> (WRONG state)</div>
+      </div>
+    </div>
+
+    <!-- 5 SILENCE LEDGER -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-led">
+          <div class="phone">
+            <div class="led-head">Leo handled <b>47</b> things overnight, woke you for <b>0</b>.</div>
+            <div class="led-sub">CHOSE NOT TO INTERRUPT YOU ON 6</div>
+            <div class="led-body">
+              <div class="led-near"><span class="ag">Henderson Appraisal</span>Considered flagging the gap. Resolved itself when the lender replied at 6:41a.</div>
+              <div class="led-near"><span class="ag">Lockbox / 9 Pine</span>Held the alert. Showing agent confirmed access 4 min later.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Silence Ledger expand</div>
+        <div class="signals">Signals: <b>I did a lot, and I chose not to bother you with most of it - here is the proof.</b> Restraint made legible.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 600ms</div>
+        <div class="used">Used in: <b>home Silence Ledger, tap to expand</b> (SILENT state)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================ SECTION 2 ============================ -->
+  <div class="section-head">
+    <h2>Orchestration + data</h2>
+    <span class="count">06 - 10 / the machine layer</span>
+  </div>
+  <div class="grid">
+
+    <!-- 6 FLIP RE-RANK -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-flip">
+          <div class="flip-row" data-r="0"><span class="rk">1</span><span class="dot" style="background:var(--coral)"></span><span class="nm">Marcus / 142 Oak</span></div>
+          <div class="flip-row" data-r="1"><span class="rk">2</span><span class="dot" style="background:var(--amber)"></span><span class="nm">Closing / 9 Pine</span></div>
+          <div class="flip-row" data-r="2"><span class="rk">3</span><span class="dot" style="background:var(--seaglass)"></span><span class="nm">Tour / 4 Birch</span></div>
+          <div class="flip-row" data-r="3"><span class="rk">4</span><span class="dot" style="background:var(--silent)"></span><span class="nm">Lead / Elm Ave</span></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">FLIP re-rank (stake lensing)</div>
+        <div class="signals">Signals: <b>the feed just re-prioritised by what is at stake.</b> A new signal pulls the coral item to the top; the rest settle smoothly so you trust the new order.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 650ms transform</div>
+        <div class="used">Used in: <b>Stake Lensing feed re-sort</b>, command-center home</div>
+      </div>
+    </div>
+
+    <!-- 7 PULSE STRIP EKG -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-ekg">
+          <div class="ekg-line"><span class="nm">9 Pine</span>
+            <svg viewBox="0 0 120 22" preserveAspectRatio="none"><path class="ekg-path ok ekg-dash" d="M0,11 L24,11 L30,4 L36,18 L42,11 L66,11 L72,5 L78,17 L84,11 L120,11"/></svg></div>
+          <div class="ekg-line"><span class="nm">4 Birch</span>
+            <svg viewBox="0 0 120 22" preserveAspectRatio="none"><path class="ekg-path ok ekg-dash" d="M0,11 L30,11 L36,6 L42,16 L48,11 L78,11 L84,5 L90,17 L96,11 L120,11"/></svg></div>
+          <div class="ekg-line"><span class="nm">142 Oak</span>
+            <svg viewBox="0 0 120 22" preserveAspectRatio="none"><path class="ekg-path flat ekg-dash" d="M0,11 L40,11 L46,5 L52,16 L58,11 L120,11"/></svg></div>
+          <div class="row" style="justify-content:flex-end"><span class="ekg-tag">one deal went quiet</span></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Pulse Strip EKG</div>
+        <div class="signals">Signals: <b>deal vital signs at a glance.</b> Healthy deals beat; the one that flatlines turns amber. Flatline, do not beep: absence is the alarm.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 1600ms draw</div>
+        <div class="used">Used in: <b>Pulse Strip</b> (prototype/features/pulse-strip.html)</div>
+      </div>
+    </div>
+
+    <!-- 8 DRAINING RING -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-track" cx="60" cy="60" r="54"/>
+            <circle class="ring-prog" cx="60" cy="60" r="54"/>
+          </svg>
+          <div class="ring-c"><div class="big">5:00</div><div class="lbl">WINDOW TO ACT</div></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Draining ring (five-minute window)</div>
+        <div class="signals">Signals: <b>this is time-critical and the window is closing.</b> A coral stroke countdown makes urgency physical without a beep.</div>
+        <div class="tech">ease linear - 5000ms (countdown is real time)</div>
+        <div class="used">Used in: <b>The Five-Minute Window</b>, urgent / irreversible items</div>
+      </div>
+    </div>
+
+    <!-- 9 COUNT-UP -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-count">
+          <div class="count-num">
+            <span class="reel r1"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></span>
+            <span class="reel r2"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></span>
+          </div>
+          <div class="count-cap">handled overnight</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Count-up numerals</div>
+        <div class="signals">Signals: <b>a real tally settling into place.</b> The number rolls to its value, so the figure feels counted, not pasted. Final value lives in the DOM, so it shows even if motion never runs.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 1300ms reel</div>
+        <div class="used">Used in: <b>Silence Ledger count, digest totals</b></div>
+      </div>
+    </div>
+
+    <!-- 10 DISCLOSURE -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-disc">
+          <div class="phone">
+            <div class="disc-tier">L1 / glance</div>
+            <div class="disc-l1">Nudge Marcus on 142 Oak.</div>
+            <div class="disc-l2"><span class="disc-tier">L2 / why</span><br>Buyer's agent has gone quiet for 3 days; comps still support the ask.</div>
+            <div class="disc-l3"><span style="color:var(--cobalt)">L3 / TRACE</span><br>Negotiation Prep / confidence HIGH / sources: 14 comps, MLS 6:02a, last reply 3d ago</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Disclosure expand (L1 to L3)</div>
+        <div class="signals">Signals: <b>you can go as deep as you want.</b> A glance line grows to the why, then to the full source trace, so trust is earnable, never forced.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 550ms staged</div>
+        <div class="used">Used in: <b>every triage card</b>, progressive disclosure</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================ SECTION 3 ============================ -->
+  <div class="section-head">
+    <h2>Navigation + interaction</h2>
+    <span class="count">11 - 14 / how you move</span>
+  </div>
+  <div class="grid">
+
+    <!-- 11 SWIPE DECK -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-swipe">
+          <div class="swipe-card back">
+            <div class="h">Closing / 9 Pine</div>
+            <div class="s">Wire instructions to verify.</div>
+          </div>
+          <div class="swipe-card front">
+            <div class="stamp">ACT</div>
+            <div class="h">Marcus / 142 Oak</div>
+            <div class="s">Send Leo's counter at $612k?</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Swipe-deck spring</div>
+        <div class="signals">Signals: <b>decision committed, next one is ready.</b> The card stamps ACT, springs off, and the one behind rises. One-handed triage with momentum.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 1050ms fly / spring rise</div>
+        <div class="used">Used in: <b>Daybook swipe deck</b> (prototype/interactions/swipe-deck.html)</div>
+      </div>
+    </div>
+
+    <!-- 12 SCROLL STORY -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-story">
+          <div class="story-h">
+            <span class="w">Three</span> things
+            <span class="swap"><span class="a">need a look.</span><span class="b">need you.</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Scroll-story recompose</div>
+        <div class="signals">Signals: <b>the sentence is sharpening as you read.</b> Words swap to recompose the headline, so the triage statement lands with editorial weight.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 550ms swap</div>
+        <div class="used">Used in: <b>Headline scroll-story</b> (prototype/interactions/scroll-story.html)</div>
+      </div>
+    </div>
+
+    <!-- 13 CALM ARC -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-arc">
+          <svg width="150" height="96" viewBox="0 0 150 96">
+            <path class="arc-track" d="M12,90 A63,63 0 0 1 138,90"/>
+            <path class="arc-prog" d="M12,90 A63,63 0 0 1 138,90"/>
+          </svg>
+          <div class="arc-c"><div class="lbl serif">You are clear.</div><div class="sub">3 OF 3 HANDLED</div></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Calm-sequence progress arc</div>
+        <div class="signals">Signals: <b>you are getting to the end, exhale.</b> The arc fills as you clear each item; reaching full earns the "you are clear" line. Closure, not a streak.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 1800ms fill</div>
+        <div class="used">Used in: <b>Quiet Capital calm-sequence</b> (prototype/interactions/calm-sequence.html)</div>
+      </div>
+    </div>
+
+    <!-- 14 DYNAMIC ISLAND -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-island">
+          <div class="island-pill">
+            <div class="row" style="width:100%"><span class="orb"></span><span class="one">Leo - 1 needs you</span></div>
+            <div class="more">
+              <div class="t">Marcus replied on 142 Oak.</div>
+              <div class="m">tap to send the counter</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Dynamic Island morph</div>
+        <div class="signals">Signals: <b>Leo wants a moment of your attention, not a takeover.</b> The pill grows into a glance card, then settles back. Ambient presence on the lock screen.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 600ms morph</div>
+        <div class="used">Used in: <b>Dynamic Island live activity</b> (showcase/dynamic-island.html)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================ SECTION 4 ============================ -->
+  <div class="section-head">
+    <h2>Ambient</h2>
+    <span class="count">15 - 16 / always there</span>
+  </div>
+  <div class="grid">
+
+    <!-- 15 BREATHING ORB -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-orb">
+          <div class="orb-big"></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Breathing Leo orb</div>
+        <div class="signals">Signals: <b>Leo is alive, idle, and calm.</b> The signature slow breathe is presence without noise; it never spikes unless something needs you.</div>
+        <div class="tech">ease ease-in-out - 4600ms idle loop</div>
+        <div class="used">Used in: <b>every header (Leo aurora orb)</b>, all skins</div>
+      </div>
+    </div>
+
+    <!-- 16 THEME CROSSFADE -->
+    <div class="tile">
+      <div class="stage" data-anim>
+        <button class="replay" type="button" aria-label="Replay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>replay</button>
+        <div class="d-theme">
+          <div class="theme-layer theme-onyx">
+            <div class="label">ONYX / 5:42a</div>
+            <div class="greet">Before the desk.</div>
+          </div>
+          <div class="theme-layer theme-paper">
+            <div class="theme-sun"></div>
+            <div class="label">MORNING PAPER / 7:15a</div>
+            <div class="greet">Good morning, Dana.</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="name">Time-aware theme cross-fade</div>
+        <div class="signals">Signals: <b>the screen tracks the real morning.</b> A dawn sweep blooms and the palette flips Onyx to Morning Paper, tying the product to the ritual, not to a toggle.</div>
+        <div class="tech">ease cubic-bezier(.16,1,.3,1) - 1200ms cross-fade</div>
+        <div class="used">Used in: <b>"Bring up the day" dawn sweep</b>, command-center.html</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="./landing.html">&larr; back to the showcase landing</a>
+    <div class="note">16 patterns, one easing curve, zero JavaScript-dependent reveals.</div>
+  </footer>
+
+</div>
+
+<script>
+  // Replay = restart a tile's animation by toggling a class.
+  // Remove class -> force reflow -> re-add. If this script never runs,
+  // every demo still shows its resting / final state (CSS-only baseline).
+  (function(){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function play(stage){
+      // some tiles need a "pre" frame (start position) before the transition runs
+      stage.classList.remove('replay-on');
+      stage.classList.add('replay-pre');
+      void stage.offsetWidth;              // force reflow
+      stage.classList.remove('replay-pre');
+      stage.classList.add('replay-on');
+    }
+
+    document.querySelectorAll('.stage[data-anim]').forEach(function(stage){
+      var btn = stage.querySelector('.replay');
+      if(btn){
+        btn.addEventListener('click', function(){ if(!reduce) play(stage); });
+      }
+      // play once on load so the gallery feels alive (skipped under reduced-motion)
+      if(!reduce){ play(stage); }
+    });
+  })();
+</script>
+</body>
+</html>

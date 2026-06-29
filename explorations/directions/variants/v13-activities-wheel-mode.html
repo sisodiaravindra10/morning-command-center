@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V13 Maximalist Editorial x Wheel Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* warm cream paper + buttercup yellow, never pure #fff/#000 */
+  --paper:oklch(0.965 0.035 95);
+  --paper2:oklch(0.945 0.045 92);
+  --card:oklch(0.985 0.018 96);
+  --yellow:oklch(0.885 0.155 96);
+  --yellow-deep:oklch(0.835 0.16 92);
+  --hair:oklch(0.28 0.03 80 / 0.14);
+  --hair2:oklch(0.28 0.03 80 / 0.22);
+
+  /* near-black editorial ink, tinted warm (never pure #000) */
+  --ink:oklch(0.205 0.02 80);
+  --ink2:oklch(0.30 0.022 78);
+  --body:oklch(0.40 0.02 78);
+  --muted:oklch(0.52 0.018 80);
+  --soft:oklch(0.62 0.016 82);
+
+  /* color == confidence state */
+  --coral:oklch(0.56 0.18 28);      --coral-bg:oklch(0.92 0.075 34);
+  --amber:oklch(0.60 0.135 70);     --amber-bg:oklch(0.92 0.09 82);
+  --green:oklch(0.55 0.115 165);    --green-bg:oklch(0.92 0.07 165);
+  --cobalt:oklch(0.50 0.13 262);
+  --on-ink:oklch(0.975 0.03 96);
+
+  --display:'Archivo','Inter',sans-serif;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(130% 90% at 84% -8%, oklch(0.90 0.09 96 / .9), transparent 58%),
+    oklch(0.905 0.05 94);
+  font-family:var(--sans);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100dvh; gap:15px; padding:24px 16px 50px;
+  -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+/* variant caption */
+.caption{
+  font-family:var(--mono); font-size:10px; letter-spacing:.17em; text-transform:uppercase;
+  color:oklch(0.42 0.03 80 / .8); white-space:nowrap; text-align:center;
+}
+
+/* phone */
+.phone{
+  position:relative; width:393px; height:830px; max-height:calc(100dvh - 96px);
+  background:var(--paper); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.20 0.02 80), 0 0 0 12px oklch(0.36 0.025 82), 0 44px 96px -26px oklch(0.30 0.04 80 / .55);
+  overflow:hidden; isolation:isolate;
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.20 0.02 80); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink)}
+.statusbar .ic{display:flex; gap:6px; align-items:center; opacity:.82}
+.statusbar .bars{display:flex; gap:2px; align-items:flex-end; height:11px}
+.statusbar .bars i{width:3px; background:currentColor; border-radius:1px}
+.statusbar .bars i:nth-child(1){height:4px}.statusbar .bars i:nth-child(2){height:6px}.statusbar .bars i:nth-child(3){height:8px}.statusbar .bars i:nth-child(4){height:11px}
+
+.screen{position:absolute; inset:0; display:flex; flex-direction:column; padding:52px 22px 18px}
+
+/* ---- masthead (editorial) ---- */
+.masthead{display:flex; align-items:flex-start; gap:11px}
+.orb{
+  width:18px;height:18px;border-radius:50%;flex:none;margin-top:6px;
+  background:radial-gradient(60% 60% at 34% 30%, oklch(0.96 0.04 96), var(--yellow-deep) 48%, oklch(0.62 0.15 78));
+  box-shadow:0 0 0 4px oklch(0.88 0.14 96 / .35);
+  animation:breathe 5.4s var(--exp) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.masthead .ttl{flex:1; min-width:0}
+.kicker{font-family:var(--mono); font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:8px}
+.kicker .rule{flex:1; height:1px; background:var(--hair2)}
+.headline{font-family:var(--display); font-weight:800; font-size:33px; line-height:.96; letter-spacing:-.018em; color:var(--ink); margin-top:7px; text-transform:uppercase}
+.dek{font-family:var(--serif); font-size:15px; line-height:1.46; color:var(--body); margin-top:9px; max-width:31ch}
+.dek em{font-style:italic; color:var(--ink2); font-weight:500}
+
+.editrule{height:3px; background:var(--ink); margin:15px 0 0; border-radius:2px; position:relative}
+.editrule::after{content:""; position:absolute; left:0; bottom:-5px; width:38%; height:2px; background:var(--yellow-deep)}
+
+.deckline{display:flex; align-items:baseline; gap:9px; margin-top:11px; font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft)}
+.deckline .n{color:var(--ink); background:var(--yellow); padding:3px 8px; border-radius:6px; font-weight:500}
+.deckline .left{margin-left:auto; transition:color .3s var(--exp)}
+.deckline .left.pop b{animation:numpop .42s var(--exp)}
+.deckline .left b{display:inline-block; color:var(--ink)}
+@keyframes numpop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+
+/* ============================================================
+   THE WHEEL STAGE  (centerpiece: sticker rolodex)
+   ============================================================ */
+.stage{flex:1; display:flex; flex-direction:column; min-height:0; position:relative; margin-top:6px}
+
+/* the centered "front-page" card carrying the active decision */
+.cards{position:relative; flex:1 1 auto; min-height:228px}
+.dcard{
+  position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center;
+  opacity:0; transform:translateY(12px) scale(.985); pointer-events:none;
+  transition:opacity .34s var(--exp), transform .44s var(--exp);
+}
+.dcard.active{opacity:1; transform:none; pointer-events:auto}
+
+/* no-JS fallback: every decision stays a readable stacked editorial list */
+.no-js .cards{display:flex; flex-direction:column; gap:20px; min-height:auto}
+.no-js .dcard{position:relative; inset:auto; opacity:1; transform:none; pointer-events:auto}
+.no-js .wheelwrap{display:none}
+
+.dc-top{display:flex; align-items:center; gap:9px}
+.tag{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; padding:4px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; line-height:1}
+.tag .d{width:6px;height:6px;border-radius:50%}
+.tag.coral{color:var(--coral); background:var(--coral-bg)} .tag.coral .d{background:var(--coral)}
+.tag.amber{color:var(--amber); background:var(--amber-bg)} .tag.amber .d{background:var(--amber)}
+.tag.green{color:var(--green); background:var(--green-bg)} .tag.green .d{background:var(--green)}
+.dc-alt{font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--body); background:oklch(0.28 0.03 80 / .07); padding:4px 9px; border-radius:999px}
+.dc-when{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
+
+.dc-line{font-family:var(--display); font-weight:700; font-size:27px; line-height:1.04; letter-spacing:-.014em; color:var(--ink); margin-top:15px}
+.dc-line .y{background:var(--yellow); padding:0 5px; border-radius:5px; box-decoration-break:clone; -webkit-box-decoration-break:clone}
+.dc-why{font-family:var(--serif); font-size:15px; line-height:1.5; color:var(--body); margin-top:12px; max-width:34ch}
+.dc-why b{color:var(--ink2); font-weight:600}
+
+.dc-conf{display:inline-flex; align-items:center; gap:7px; margin-top:14px; font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted)}
+.dc-conf .c{width:6px;height:6px;border-radius:50%}
+
+.dc-act{display:flex; flex-direction:column; gap:9px; margin-top:18px}
+.btn{height:50px; border-radius:14px; border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .16s var(--exp), filter .2s var(--exp)}
+.btn:active{transform:scale(.98)}
+.btn-go{background:var(--ink); color:var(--on-ink)}
+.btn-go:hover{filter:brightness(1.14)}
+.btn-alt{height:44px; background:transparent; color:var(--body); border:1px solid var(--hair2); font-weight:500; font-size:13.5px}
+.btn-alt:hover{background:oklch(0.28 0.03 80 / .045)}
+
+/* ---- the wheel ---- */
+.wheelwrap{position:relative; height:188px; flex:none; margin:6px -22px -18px; overflow:hidden}
+.hint{position:absolute; top:4px; left:0; right:0; text-align:center; font-family:var(--mono); font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--soft); z-index:5; transition:opacity .4s var(--exp)}
+/* detent marker at top, where the active sticker snaps to */
+.detent{position:absolute; top:26px; left:50%; transform:translateX(-50%); z-index:6; display:flex; flex-direction:column; align-items:center; gap:2px}
+.detent .pip{width:2px; height:11px; background:var(--ink); border-radius:2px}
+.detent .car{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--ink)}
+
+/* wheel center sits well below the wrap; stickers fan along the top arc */
+.wheel{position:absolute; left:50%; top:64px; width:560px; height:560px; margin-left:-280px; border-radius:50%; transition:transform .58s var(--exp); will-change:transform}
+.wheel.tick{animation:detentick .5s var(--exp)}
+@keyframes detentick{0%{}54%{transform:rotate(var(--rot)) scale(1.012)}100%{}}
+.ringline{position:absolute; inset:0; border-radius:50%; border:1.5px dashed oklch(0.28 0.03 80 / .12)}
+.ringline.inner{inset:54px; border-style:dotted; opacity:.6}
+
+/* each sticker rides a seg anchored at wheel center, pushed out by RADIUS */
+.seg{position:absolute; top:50%; left:50%; width:0; height:0}
+.sticker{
+  position:absolute; width:62px; height:62px; margin:-31px 0 0 -31px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  background:var(--card); color:var(--ink);
+  border:1.5px solid var(--hair2);
+  /* counter-rotate so the sticker stays upright + carry a small editorial tilt */
+  transform:rotate(calc(-1 * var(--rot) + var(--tilt)));
+  transition:transform .5s var(--exp), opacity .5s var(--exp), background .45s var(--exp), border-color .45s var(--exp), box-shadow .45s var(--exp);
+  box-shadow:0 6px 16px -10px oklch(0.30 0.04 80 / .5);
+}
+.sticker .tm{font-family:var(--mono); font-size:10.5px; font-weight:500; letter-spacing:-.01em; line-height:1; text-align:center}
+.sticker .sd{position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--c, var(--soft)); transition:transform .4s var(--exp)}
+
+/* the three sticker SILHOUETTES (lineage: starburst, squircle, circle) */
+.sh-circle{border-radius:50%}
+.sh-squircle{border-radius:30% / 30%; border-radius:22px}
+.sh-burst{
+  clip-path:polygon(50% 0,61% 22%,85% 15%,79% 40%,100% 50%,79% 60%,85% 85%,61% 78%,50% 100%,39% 78%,15% 85%,21% 60%,0 50%,21% 40%,15% 15%,39% 22%);
+  border:none; box-shadow:none;
+}
+.sh-burst .sd{top:11px; right:18px}
+
+.sticker:hover{transform:rotate(calc(-1 * var(--rot) + var(--tilt))) scale(1.06)}
+.sticker:active{transform:rotate(calc(-1 * var(--rot) + var(--tilt))) scale(.93)}
+
+/* active sticker pops to full color, named by its state */
+.seg.active .sticker{
+  background:var(--c-bg); border-color:var(--c);
+  box-shadow:0 12px 26px -10px var(--c), 0 0 0 4px var(--c-bg);
+  color:var(--c-ink);
+}
+.seg.active .sticker .sd{transform:scale(1.4)}
+.seg.active .sh-burst{background:var(--c-bg); box-shadow:none}
+
+/* resolved sticker fills then collapses out, tightening the wheel */
+.seg.resolved .sticker{background:var(--green); border-color:var(--green); color:var(--on-ink); box-shadow:0 10px 22px -10px var(--green)}
+.seg.resolved .sticker .tm{opacity:0}
+.seg.resolved .sticker .chk{opacity:1; transform:scale(1)}
+.seg.resolved .sticker .sd{opacity:0}
+.sticker .chk{position:absolute; opacity:0; transform:scale(.4); display:flex; transition:opacity .34s var(--exp) .1s, transform .34s var(--exp) .1s; color:var(--on-ink)}
+.seg.dropped{pointer-events:none}
+.seg.dropped .sticker{opacity:0; transform:rotate(calc(-1 * var(--rot) + var(--tilt))) scale(.35)}
+
+/* prev/next fallback nav */
+.nav{position:absolute; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:28px; z-index:8; transition:opacity .4s var(--exp)}
+.nav button{width:42px; height:42px; border-radius:50%; background:var(--card); border:1px solid var(--hair2); color:var(--ink2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .16s var(--exp), background .2s; box-shadow:0 4px 12px -8px oklch(0.30 0.04 80 / .5)}
+.nav button:hover{background:var(--paper2)}
+.nav button:active{transform:scale(.9)}
+.nav button:disabled{opacity:.32; cursor:default}
+
+/* the "you're clear" collapse */
+.clear{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:13px; opacity:0; pointer-events:none; transition:opacity .55s var(--exp); z-index:20; padding:24px; background:linear-gradient(to bottom, transparent, var(--paper) 22%)}
+.clear.show{opacity:1; pointer-events:auto}
+.clear .seal{width:88px; height:88px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green); display:flex; align-items:center; justify-content:center; color:var(--green); animation:sealin .6s var(--exp)}
+@keyframes sealin{0%{transform:scale(.62);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.clear .big{font-family:var(--display); font-weight:800; font-size:34px; letter-spacing:-.02em; text-transform:uppercase; color:var(--ink)}
+.clear .small{font-family:var(--serif); font-size:15px; line-height:1.5; color:var(--body); max-width:28ch}
+.clear .small b{color:var(--ink2); font-weight:600}
+
+/* ---- calm signal + silence ledger (low density, below the fold) ---- */
+.below{flex:none; margin-top:8px}
+.signal{display:flex; gap:11px; align-items:flex-start; padding:13px 15px; border-radius:16px; background:var(--paper2); border:1px solid var(--hair)}
+.signal .d{width:7px; height:7px; border-radius:50%; background:var(--amber); margin-top:6px; flex:none}
+.signal .body{min-width:0}
+.signal .lbl{font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+.signal .txt{font-family:var(--serif); font-size:13.5px; line-height:1.45; color:var(--body); margin-top:4px}
+.signal .txt b{color:var(--ink2); font-weight:600}
+.ledger{display:flex; align-items:center; gap:9px; margin-top:11px; padding:0 3px; font-family:var(--mono); font-size:10.5px; letter-spacing:.02em; color:var(--muted); line-height:1.5}
+.ledger .b{width:5px;height:5px;border-radius:50%;background:var(--soft);flex:none}
+.ledger b{color:var(--ink2); font-weight:500}
+
+/* presenter control (chrome, sits outside the frame) */
+.controls{display:flex; gap:9px}
+.controls button{font-family:var(--sans); font-size:12.5px; font-weight:500; color:var(--ink2); background:oklch(0.97 0.02 95 / .8); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); border:1px solid var(--hair2); border-radius:11px; padding:9px 15px; cursor:pointer; transition:transform .15s var(--exp), background .2s}
+.controls button:hover{background:var(--card)}
+.controls button:active{transform:scale(.96)}
+
+:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px; border-radius:4px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important}
+  .orb{animation:none}
+  .dcard,.dcard.active{opacity:1; transform:none}
+  .wheel.tick,.clear .seal,.deckline .left.pop b{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" role="application" aria-label="Your morning, the few things that need you">
+  <div class="notch" aria-hidden="true"></div>
+  <div class="statusbar">
+    <span>8:42</span>
+    <span class="ic"><span>5G</span><span class="bars"><i></i><i></i><i></i><i></i></span><span>100</span></span>
+  </div>
+
+  <div class="screen">
+
+    <!-- ===== MASTHEAD ===== -->
+    <header class="masthead">
+      <span class="orb" aria-hidden="true"></span>
+      <div class="ttl">
+        <div class="kicker"><span>This morning</span><span class="rule" aria-hidden="true"></span><span>Tue 8:42</span></div>
+        <h1 class="headline">Three for you,<br>Dana</h1>
+        <p class="dek">Everything else can wait. <em>Spin the dial</em> to go through these one at a time.</p>
+      </div>
+    </header>
+
+    <div class="editrule" aria-hidden="true"></div>
+    <div class="deckline">
+      <span>Needs you</span>
+      <span class="n">Spin the dial</span>
+      <span class="left" id="left"><b>3</b> left</span>
+    </div>
+
+    <!-- ===== WHEEL STAGE ===== -->
+    <div class="stage">
+      <div class="cards" id="cards">
+        <!-- no-JS fallback: all three decisions stay readable as stacked front-page cards -->
+        <article class="dcard active">
+          <div class="dc-top"><span class="tag amber"><span class="d"></span>Reply written for you</span><span class="dc-alt">Your deal</span><span class="dc-when">Due 10:00am</span></div>
+          <div class="dc-line">142 Oak St reply is <span class="y">ready</span></div>
+          <p class="dc-why">I wrote the reply to the buyer. The price looks <b>right</b>, but there are two things I could not check. Read it before it goes out.</p>
+          <div class="dc-conf"><span class="c" style="background:var(--amber)"></span>How sure I am: fairly sure · 2 things to check</div>
+        </article>
+        <article class="dcard">
+          <div class="dc-top"><span class="tag green"><span class="d"></span>New buyer</span><span class="dc-alt">Call in the next 5 min</span><span class="dc-when">2 min ago</span></div>
+          <div class="dc-line">88 Linden buyer is <span class="y">approved for a loan</span></div>
+          <p class="dc-why">They reached out just now and they are ready. Calling fast wins this one, so <b>reach out now</b>. I have a first reply ready to send.</p>
+          <div class="dc-conf"><span class="c" style="background:var(--green)"></span>How sure I am: very sure · yours to take</div>
+        </article>
+        <article class="dcard">
+          <div class="dc-top"><span class="tag coral"><span class="d"></span>No reply lately</span><span class="dc-alt">Teammate · Marcus</span><span class="dc-when">No reply in 3 days</span></div>
+          <div class="dc-line">Marcus's Birchwood buyer <span class="y">went quiet</span></div>
+          <p class="dc-why">No reply since Friday, and Marcus has not noticed. A quick <b>note from you</b> would help.</p>
+          <div class="dc-conf"><span class="c" style="background:var(--coral)"></span>How sure I am: very sure it is slipping</div>
+        </article>
+      </div>
+
+      <div class="wheelwrap">
+        <div class="hint" id="hint">Spin the dial · tap one to bring it up</div>
+        <div class="detent" aria-hidden="true"><span class="pip"></span><span class="car"></span></div>
+        <div class="wheel" id="wheel"><div class="ringline" aria-hidden="true"></div><div class="ringline inner" aria-hidden="true"></div></div>
+        <div class="nav" id="nav">
+          <button id="prev" aria-label="Previous decision"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 7 10l5.5 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button id="next" aria-label="Next decision"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7.5 4 13 10l-5.5 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+
+      <div class="clear" id="clear">
+        <div class="seal" aria-hidden="true"><svg width="42" height="42" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 10 17l9-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="big">All done</div>
+        <p class="small">Three handled. I took care of <b>47</b> more overnight and did not wake you for <b>any</b> of them.</p>
+      </div>
+    </div>
+
+    <!-- ===== CALM SIGNAL + SILENCE LEDGER ===== -->
+    <div class="below">
+      <section class="signal" aria-label="Worth a look: Crestview deal slowing down">
+        <span class="d" aria-hidden="true"></span>
+        <div class="body">
+          <div class="lbl">Worth a look · nothing to do yet</div>
+          <p class="txt">The <b>Crestview</b> deal is slowing down a little, but it is not stuck. Replies have been slower this week. I am keeping an eye on it and will flag it here if it slows down more.</p>
+        </div>
+      </section>
+      <p class="ledger">
+        <span class="b" aria-hidden="true"></span>
+        Overnight I handled <b>47</b> things and did not wake you once.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="controls"><button id="replay">Start over</button></div>
+<div class="caption">V13 MAXIMALIST EDITORIAL x WHEEL MODE</div>
+
+<script>
+// JS present: drop the stacked no-JS fallback, enhance into the one-thumb sticker wheel.
+document.documentElement.classList.remove('no-js');
+
+// the three morning decisions, each carried on a sticker shape + colored by its confidence state
+var STATES = {
+  amber:{c:'var(--amber)', bg:'var(--amber-bg)', ink:'var(--amber)'},
+  green:{c:'var(--green)', bg:'var(--green-bg)', ink:'var(--green)'},
+  coral:{c:'var(--coral)', bg:'var(--coral-bg)', ink:'var(--coral)'}
+};
+var DECISIONS = [
+  {st:'amber', shape:'sh-burst', time:'10:00', tilt:-7,
+    tag:'Reply written for you', tagClass:'amber', alt:'Your deal', when:'Due 10:00am',
+    line:'142 Oak St reply is <span class="y">ready</span>',
+    why:'I wrote the reply to the buyer. The price looks <b>right</b>, but there are two things I could not check. Read it before it goes out.',
+    conf:'How sure I am: fairly sure · 2 things to check', confC:'var(--amber)',
+    go:'Read the reply I wrote', altBtn:'Change the price first'},
+  {st:'green', shape:'sh-squircle', time:'now', tilt:5,
+    tag:'New buyer', tagClass:'green', alt:'Call in the next 5 min', when:'2 min ago',
+    line:'88 Linden buyer is <span class="y">approved for a loan</span>',
+    why:'They reached out just now and they are ready. Calling fast wins this one, so <b>reach out now</b>. I have a first reply ready to send.',
+    conf:'How sure I am: very sure · yours to take', confC:'var(--green)',
+    go:'Send the first reply', altBtn:'Open the buyer first'},
+  {st:'coral', shape:'sh-circle', time:'3d', tilt:-4,
+    tag:'No reply lately', tagClass:'coral', alt:'Teammate · Marcus', when:'No reply in 3 days',
+    line:'Marcus’s Birchwood buyer <span class="y">went quiet</span>',
+    why:'No reply since Friday, and Marcus has not noticed. A quick <b>note from you</b> would help.',
+    conf:'How sure I am: very sure it is slipping', confC:'var(--coral)',
+    go:'Send Marcus a quick note', altBtn:'Let Marcus handle it'}
+];
+
+var wheel = document.getElementById('wheel');
+var cardsWrap = document.getElementById('cards');
+var leftChip = document.getElementById('left');
+var hint = document.getElementById('hint');
+var clearPanel = document.getElementById('clear');
+var navWrap = document.getElementById('nav');
+var prevBtn = document.getElementById('prev');
+var nextBtn = document.getElementById('next');
+
+var RADIUS = 256;   // distance of each sticker from wheel center
+var ARC = 30;       // detent step in degrees between adjacent stickers
+var state = [];
+var activeId = 0;
+
+function build(){
+  // reset rings only
+  wheel.querySelectorAll('.seg').forEach(function(s){ s.remove(); });
+  cardsWrap.innerHTML = '';
+  state = DECISIONS.map(function(d, i){
+    var sObj = STATES[d.st];
+    // seg + sticker on the wheel
+    var seg = document.createElement('div');
+    seg.className = 'seg';
+    seg.style.setProperty('--c', sObj.c);
+    seg.style.setProperty('--c-bg', sObj.bg);
+    seg.style.setProperty('--c-ink', sObj.ink);
+    var stick = document.createElement('div');
+    stick.className = 'sticker ' + d.shape;
+    stick.style.setProperty('--tilt', d.tilt + 'deg');
+    stick.setAttribute('role','button');
+    stick.setAttribute('tabindex','0');
+    stick.setAttribute('aria-label', d.tag + ', ' + d.alt + '. Bring to center.');
+    stick.innerHTML =
+      '<span class="sd" aria-hidden="true"></span>' +
+      '<span class="tm">' + d.time + '</span>' +
+      '<span class="chk" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 10 17l9-10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+    activate(stick, function(){ onSticker(i); });
+    seg.appendChild(stick);
+    wheel.appendChild(seg);
+
+    // center front-page card
+    var card = document.createElement('article');
+    card.className = 'dcard';
+    card.innerHTML =
+      '<div class="dc-top"><span class="tag ' + d.tagClass + '"><span class="d"></span>' + d.tag + '</span>' +
+        '<span class="dc-alt">' + d.alt + '</span><span class="dc-when">' + d.when + '</span></div>' +
+      '<div class="dc-line">' + d.line + '</div>' +
+      '<p class="dc-why">' + d.why + '</p>' +
+      '<div class="dc-conf"><span class="c" style="background:' + d.confC + '"></span>' + d.conf + '</div>' +
+      '<div class="dc-act"><button class="btn btn-go">' + d.go + '</button>' +
+        '<button class="btn btn-alt">' + d.altBtn + '</button></div>';
+    card.querySelector('.btn-go').addEventListener('click', function(){ resolve(i); });
+    card.querySelector('.btn-alt').addEventListener('click', function(){ resolve(i); });
+    cardsWrap.appendChild(card);
+
+    return {data:d, resolved:false, dropped:false, segEl:seg, stickEl:stick, cardEl:card, idx:i, angle:0, slot:i};
+  });
+  activeId = 0;
+  layout(false);
+  showCard(0);
+  updateLeft();
+  clearPanel.classList.remove('show');
+  navWrap.style.opacity = '1';
+  hint.style.opacity = '1';
+}
+
+// place live stickers along the top arc at fixed detent spacing; rotate wheel so active snaps up
+function layout(animate){
+  var live = state.filter(function(s){ return !s.dropped; });
+  var n = live.length;
+  var mid = (n - 1) / 2;
+  live.forEach(function(s, k){
+    s.slot = k;
+    var ang = (k - mid) * ARC;
+    s.angle = ang;
+    var rad = (ang - 90) * Math.PI / 180;  // -90 => 0deg points up
+    var x = Math.cos(rad) * RADIUS;
+    var y = Math.sin(rad) * RADIUS;
+    s.stickEl.style.left = x + 'px';
+    s.stickEl.style.top  = y + 'px';
+  });
+  var act = state.find(function(s){ return s.idx === activeId && !s.dropped; });
+  var rot = act ? -act.angle : 0;
+  wheel.style.setProperty('--rot', rot + 'deg');
+  state.forEach(function(s){ s.stickEl.style.setProperty('--rot', rot + 'deg'); });
+  if(animate){
+    wheel.style.transform = 'rotate(' + rot + 'deg)';
+    wheel.classList.remove('tick'); void wheel.offsetWidth; wheel.classList.add('tick');
+  } else {
+    wheel.style.transition = 'none';
+    wheel.style.transform = 'rotate(' + rot + 'deg)';
+    void wheel.offsetWidth;
+    wheel.style.transition = '';
+  }
+  state.forEach(function(s){ s.segEl.classList.toggle('active', s.idx === activeId && !s.dropped); });
+}
+
+function showCard(id){
+  state.forEach(function(s){ s.cardEl.classList.toggle('active', s.idx === id); });
+  refreshNav();
+}
+
+function setActive(id){
+  if(id === activeId) return;
+  activeId = id;
+  hint.style.opacity = '0';
+  layout(true);
+  showCard(id);
+}
+
+function onSticker(id){
+  if(state[id].resolved) return;
+  setActive(id);
+}
+
+function liveOrder(){ return state.filter(function(s){ return !s.dropped; }).map(function(s){ return s.idx; }); }
+function step(dir){
+  var order = liveOrder();
+  if(order.length <= 1) return;
+  var at = order.indexOf(activeId);
+  var nx = order[(at + dir + order.length) % order.length];
+  setActive(nx);
+}
+function refreshNav(){
+  var single = liveOrder().length <= 1;
+  prevBtn.disabled = single; nextBtn.disabled = single;
+}
+
+function resolve(id){
+  var s = state[id];
+  if(s.resolved) return;
+  s.resolved = true;
+  s.segEl.classList.add('resolved');   // sticker fills + checks
+  s.cardEl.classList.remove('active');
+  updateLeft();
+  var wasActive = (activeId === id);
+  setTimeout(function(){
+    s.dropped = true;
+    s.segEl.classList.add('dropped');  // collapses out, wheel tightens
+    var remaining = liveOrder();
+    if(remaining.length === 0){ finish(); return; }
+    if(wasActive || remaining.indexOf(activeId) === -1){
+      var after = remaining.find(function(i){ return i > id; });
+      activeId = (after !== undefined) ? after : remaining[remaining.length - 1];
+    }
+    layout(true);
+    showCard(activeId);
+  }, 600);
+}
+
+function updateLeft(){
+  var n = state.filter(function(s){ return !s.resolved; }).length;
+  leftChip.innerHTML = n === 0 ? 'all clear' : ('<b>' + n + '</b> left');
+  leftChip.classList.remove('pop'); void leftChip.offsetWidth; leftChip.classList.add('pop');
+  leftChip.style.color = (n === 1) ? 'var(--green)' : '';
+}
+
+function finish(){
+  navWrap.style.opacity = '0';
+  hint.style.opacity = '0';
+  wheel.style.transition = 'transform .58s var(--exp), opacity .58s var(--exp)';
+  wheel.style.transform = 'rotate(0deg) scale(.18)';
+  wheel.style.opacity = '0';
+  setTimeout(function(){ clearPanel.classList.add('show'); }, 240);
+}
+
+// bind click + Enter/Space for non-native role=button controls
+function activate(el, fn){
+  el.addEventListener('click', fn);
+  el.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){ e.preventDefault(); fn(); }
+  });
+}
+
+prevBtn.addEventListener('click', function(){ step(-1); });
+nextBtn.addEventListener('click', function(){ step(1); });
+document.addEventListener('keydown', function(e){
+  if(e.key === 'ArrowLeft'){ step(-1); }
+  if(e.key === 'ArrowRight'){ step(1); }
+});
+document.getElementById('replay').addEventListener('click', function(){
+  wheel.style.transition = 'none';
+  wheel.style.opacity = '1';
+  wheel.style.transform = '';
+  build();
+});
+
+build();
+window.addEventListener('load', build);
+</script>
+</body>
+</html>

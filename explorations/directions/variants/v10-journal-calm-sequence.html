@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V10 Warm Journal x Calm Sequence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* warm journal paper, never pure white */
+  --paper:oklch(0.969 0.018 78);
+  --paper2:oklch(0.955 0.020 74);
+  --card:oklch(0.988 0.010 84);
+  --sunken:oklch(0.945 0.020 72);
+  --hair:oklch(0.34 0.03 56 / 0.12);
+  --hair2:oklch(0.34 0.03 56 / 0.20);
+  --shadow:0 12px 30px -18px oklch(0.45 0.05 56 / 0.34);
+  --shadow-lift:0 18px 44px -20px oklch(0.42 0.06 50 / 0.42);
+
+  /* ink, never pure black */
+  --ink:oklch(0.275 0.025 52);
+  --body:oklch(0.452 0.022 54);
+  --muted:oklch(0.585 0.018 58);
+  --soft:oklch(0.695 0.014 66);
+
+  /* color == a confidence state, not decoration */
+  --calm:oklch(0.55 0.10 168);     --calm-bg:oklch(0.935 0.060 168);
+  --hold:oklch(0.60 0.125 74);      --hold-bg:oklch(0.945 0.075 82);
+  --warm:oklch(0.575 0.165 38);     --warm-bg:oklch(0.935 0.075 42);
+  --on-state:oklch(0.985 0.010 88);
+
+  /* friendly journal accent (terracotta) for the FAB + arc */
+  --accent:oklch(0.60 0.155 46);
+  --accent-soft:oklch(0.93 0.065 50);
+
+  --serif:'Newsreader',Georgia,serif;       /* human + Leo voice */
+  --display:'Fraunces',Georgia,serif;        /* journal display */
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; /* interface */
+  --mono:'JetBrains Mono',ui-monospace,monospace;             /* machine */
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(130% 70% at 78% -8%, oklch(0.93 0.035 66 / .85), transparent 58%),
+    oklch(0.905 0.024 72);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center; min-height:100dvh;
+  padding:26px 16px 56px; -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+/* variant caption */
+.caption{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:oklch(0.42 0.025 54 / .72); white-space:nowrap;
+}
+
+/* phone */
+.phone{
+  position:relative; width:393px; height:852px; max-height:calc(100dvh - 96px);
+  background:var(--paper); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.20 0.015 56), 0 0 0 12px oklch(0.36 0.015 56), 0 44px 96px -26px oklch(0.30 0.03 56 / .55);
+  overflow:hidden; isolation:isolate;
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.20 0.015 56); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink)}
+.statusbar .ic{display:flex; gap:7px; opacity:.78}
+
+.screen{position:absolute; inset:0; overflow-y:auto; scrollbar-width:none; padding:54px 18px 96px}
+.screen::-webkit-scrollbar{display:none}
+
+/* ---------- flat sun + hills spot illustration ---------- */
+.spot{
+  position:relative; margin:8px 4px 2px; height:118px; border-radius:24px; overflow:hidden;
+  background:linear-gradient(180deg, oklch(0.955 0.030 78) 0%, oklch(0.935 0.040 64) 100%);
+  border:1px solid var(--hair);
+}
+.spot svg{position:absolute; inset:0; width:100%; height:100%; display:block}
+.spot .sun{transform-origin:center; animation:sunrise 6s var(--exp) infinite alternate}
+@keyframes sunrise{0%{transform:translateY(3px)}100%{transform:translateY(-2px)}}
+.spot .ray{transform-origin:50% 50%; animation:rays 7s linear infinite}
+@keyframes rays{to{transform:rotate(360deg)}}
+
+/* ---------- header ---------- */
+.head{display:flex; align-items:baseline; gap:10px; padding:14px 6px 0}
+.head .hi{font-family:var(--display); font-size:27px; font-weight:500; color:var(--ink); letter-spacing:-.3px}
+.head .now{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--muted)}
+.lede{font-family:var(--serif); font-size:16.5px; line-height:1.52; color:var(--body); padding:9px 6px 0; max-width:34ch}
+.lede em{font-style:italic; color:var(--ink)}
+
+/* ---------- the journal ledger line (quiet, top) ---------- */
+.ledger{
+  margin:16px 4px 6px; padding:12px 15px; border-radius:16px;
+  background:var(--sunken); border:1px solid var(--hair);
+  display:flex; align-items:center; gap:11px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--muted); line-height:1.5;
+}
+.ledger .moon{width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 32% 30%, var(--soft), var(--muted));flex:none}
+.ledger b{color:var(--ink); font-weight:500}
+
+.list-head{display:flex; align-items:baseline; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--soft); padding:20px 6px 12px}
+.list-head .n{color:var(--accent)}
+
+/* ---------- soft category cards (the triage entries) ---------- */
+#cards{display:flex; flex-direction:column; gap:13px}
+.jcard{
+  border-radius:22px; padding:16px; background:var(--card); border:1px solid var(--hair);
+  box-shadow:var(--shadow); position:relative; cursor:pointer;
+  opacity:0; transform:translateY(12px);
+  animation:rise .56s var(--exp) forwards;
+  transition:opacity .5s var(--exp), transform .5s var(--exp), box-shadow .25s var(--exp);
+}
+.jcard:nth-child(1){animation-delay:.06s}
+.jcard:nth-child(2){animation-delay:.13s}
+.jcard:nth-child(3){animation-delay:.20s}
+@keyframes rise{to{opacity:1; transform:none}}
+.jcard:hover{box-shadow:var(--shadow-lift); transform:translateY(-2px)}
+.jcard:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+.jcard.done{opacity:.5; transform:none; box-shadow:none; cursor:default; pointer-events:none}
+
+.jcard .top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+.tag{font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:4px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; line-height:1}
+.tag .dot{width:6px;height:6px;border-radius:50%}
+.tag.warm{color:var(--warm); background:var(--warm-bg)} .tag.warm .dot{background:var(--warm)}
+.tag.hold{color:var(--hold); background:var(--hold-bg)} .tag.hold .dot{background:var(--hold)}
+.tag.calm{color:var(--calm); background:var(--calm-bg)} .tag.calm .dot{background:var(--calm)}
+.tag.plain{color:var(--body); background:oklch(0.34 0.03 56 / .07)}
+.jcard .when{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.jcard .title{font-family:var(--display); font-size:19px; font-weight:500; line-height:1.28; letter-spacing:-.2px; color:var(--ink); margin-top:12px}
+.jcard .why{font-family:var(--serif); font-size:14.5px; line-height:1.48; color:var(--body); margin-top:6px}
+.jcard .foot{display:flex; align-items:center; gap:9px; margin-top:14px}
+.jcard .who{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.av{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:10px;color:var(--on-state);font-family:var(--sans)}
+.av.dana{background:linear-gradient(135deg,oklch(0.62 0.15 40),oklch(0.50 0.13 28))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.56 0.12 168),oklch(0.46 0.10 182))}
+.jcard .go{margin-left:auto; width:36px; height:36px; border-radius:50%; background:var(--sunken); color:var(--ink); border:1px solid var(--hair); display:flex; align-items:center; justify-content:center; flex:none; pointer-events:none}
+/* the 5-minute window pulse, on the warm lead */
+.window{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; color:var(--warm); background:var(--warm-bg); padding:4px 9px; border-radius:999px}
+.window .pulse{width:6px;height:6px;border-radius:50%;background:var(--warm);animation:winp 1.6s var(--exp) infinite}
+@keyframes winp{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.35)}}
+.jcard .checkmark{position:absolute; top:16px; right:16px; width:22px; height:22px; border-radius:50%; background:var(--calm-bg); display:none; align-items:center; justify-content:center}
+.jcard.done .checkmark{display:flex}
+.jcard.done .go{display:none}
+
+/* ---------- calm signal (Crestview) ---------- */
+.signal{margin:14px 4px 0; padding:15px 16px; border-radius:18px; background:var(--sunken); border:1px solid var(--hair)}
+.signal .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:7px}
+.signal .lbl .d{width:7px;height:7px;border-radius:50%;background:var(--hold)}
+.signal .txt{font-family:var(--serif); font-size:14.5px; line-height:1.48; color:var(--body); margin-top:8px}
+.signal .txt b{color:var(--ink); font-weight:600}
+
+/* ---------- accent FAB: start the calm sequence ---------- */
+.fab{
+  position:absolute; right:18px; bottom:22px; z-index:60;
+  height:54px; padding:0 20px 0 18px; border-radius:18px; border:none;
+  background:var(--accent); color:var(--on-state);
+  font-family:var(--sans); font-size:15px; font-weight:600; letter-spacing:-.1px;
+  display:inline-flex; align-items:center; gap:10px; cursor:pointer;
+  box-shadow:0 14px 30px -12px oklch(0.55 0.15 46 / .6);
+  transition:transform .2s var(--exp), filter .2s var(--exp);
+}
+.fab:hover{filter:brightness(1.06)}
+.fab:active{transform:scale(.96)}
+.fab:focus-visible{outline:3px solid var(--ink); outline-offset:3px}
+.fab svg{flex:none}
+
+/* =========================================================
+   THE CALM SEQUENCE  (centerpiece: one decision at a time)
+   ========================================================= */
+.scrim{position:absolute; inset:0; background:oklch(0.22 0.025 52 / .44); opacity:0; pointer-events:none; transition:opacity .34s var(--exp); z-index:90}
+.scrim.on{opacity:1; pointer-events:auto}
+
+.seq{
+  position:absolute; inset:0; z-index:91; background:var(--paper);
+  transform:translateY(100%); transition:transform .46s var(--exp);
+  display:flex; flex-direction:column; padding:54px 22px 26px;
+}
+.seq.on{transform:none}
+
+.seq-top{display:flex; align-items:center; gap:14px; padding:6px 0 2px}
+/* the closing progress arc */
+.arc{position:relative; width:46px; height:46px; flex:none}
+.arc svg{transform:rotate(-90deg); display:block}
+.arc .track{stroke:var(--hair2); fill:none}
+.arc .prog{stroke:var(--accent); fill:none; stroke-linecap:round;
+  stroke-dasharray:119.4; stroke-dashoffset:119.4;
+  transition:stroke-dashoffset .7s var(--exp);}
+.arc .count{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; font-weight:500; color:var(--ink)}
+.seq-top .lbl{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.seq-top .lbl b{display:block; font-family:var(--display); font-size:16px; font-weight:500; text-transform:none; letter-spacing:-.1px; color:var(--ink); margin-top:3px}
+.seq-top .x{margin-left:auto; width:36px; height:36px; border-radius:50%; background:var(--sunken); border:1px solid var(--hair); color:var(--body); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.seq-top .x:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+.seq-body{flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0; overflow-y:auto; scrollbar-width:none}
+.seq-body::-webkit-scrollbar{display:none}
+
+/* each step: one focus, lots of whitespace */
+.step{display:none; flex-direction:column}
+.step.live{display:flex; animation:stepIn .5s var(--exp)}
+@keyframes stepIn{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+.step.leaving{animation:stepOut .3s var(--exp) forwards}
+@keyframes stepOut{to{opacity:0; transform:translateY(-12px)}}
+
+.step .kicker{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; align-self:flex-start; padding:5px 11px; border-radius:999px}
+.step .kicker .dot{width:7px;height:7px;border-radius:50%}
+.step .kicker.warm{color:var(--warm); background:var(--warm-bg)} .step .kicker.warm .dot{background:var(--warm)}
+.step .kicker.hold{color:var(--hold); background:var(--hold-bg)} .step .kicker.hold .dot{background:var(--hold)}
+.step .kicker.calm{color:var(--calm); background:var(--calm-bg)} .step .kicker.calm .dot{background:var(--calm)}
+
+.step h2{font-family:var(--display); font-size:27px; font-weight:500; line-height:1.16; letter-spacing:-.4px; color:var(--ink); margin-top:18px}
+.step .leo{font-family:var(--serif); font-size:16px; line-height:1.56; color:var(--body); margin-top:14px}
+.step .leo b{color:var(--ink); font-weight:600}
+.step .leo .num{font-variant-numeric:tabular-nums}
+
+/* the confidence read (categorical, plus a defensible range, never a fake %) */
+.conf{display:inline-flex; align-items:center; gap:8px; margin-top:18px; padding:7px 13px; border-radius:999px; font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase}
+.conf.calm{color:var(--calm); background:var(--calm-bg)} .conf.calm .d{background:var(--calm)}
+.conf.hold{color:var(--hold); background:var(--hold-bg)} .conf.hold .d{background:var(--hold)}
+.conf .d{width:7px;height:7px;border-radius:50%}
+
+.note{margin-top:16px; padding:14px 15px; border-radius:16px; background:var(--sunken); border:1px solid var(--hair); font-family:var(--serif); font-size:14px; line-height:1.5; color:var(--body)}
+.note b{color:var(--ink); font-weight:600}
+.note .q{font-family:var(--mono); color:var(--hold); margin-right:6px}
+
+/* a small range read for the counter step */
+.range{margin-top:16px}
+.range .cap{display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:9px}
+.range .track2{position:relative; height:40px; border-radius:12px; overflow:hidden; background:var(--sunken); border:1px solid var(--hair)}
+.range .band{position:absolute; top:0; bottom:0; background:color-mix(in oklch, var(--calm) 22%, transparent)}
+.range .band.thin{background:repeating-linear-gradient(135deg, oklch(0.60 0.125 74 / .26) 0 7px, transparent 7px 14px)}
+.range .pin{position:absolute; top:-4px; bottom:-4px; width:3px; background:var(--ink); border-radius:3px}
+.range .pin::after{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;background:var(--ink);border:2px solid var(--paper)}
+.range .ticks{display:flex; justify-content:space-between; margin-top:8px; font-family:var(--mono); font-size:10.5px; color:var(--soft)}
+
+/* per-step action footer */
+.seq-foot{flex:none; padding-top:14px}
+.gate{display:flex; align-items:center; justify-content:center; gap:8px; font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-bottom:12px}
+.gate .lk{width:6px;height:6px;border-radius:50%;background:var(--calm)}
+.acts{display:flex; flex-direction:column; gap:10px}
+.btn{height:52px; border-radius:15px; border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .18s var(--exp), filter .18s var(--exp)}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.btn-p{background:var(--ink); color:var(--paper)}
+.btn-p:hover{filter:brightness(1.14)}
+.btn-s{background:transparent; color:var(--body); border:1px solid var(--hair2); height:48px; font-weight:500}
+.btn-s:hover{background:oklch(0.34 0.03 56 / .04)}
+
+/* ---------- the "you are clear" exhale (final step) ---------- */
+.exhale{display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; flex:1; gap:18px; padding:0 18px}
+.exhale.live{display:flex; animation:stepIn .55s var(--exp)}
+.exhale .glow{position:relative; width:96px; height:96px}
+.exhale .glow .ring{position:absolute; inset:0; border-radius:50%; background:var(--accent-soft); transform:scale(.5); opacity:0; animation:bloom .9s var(--exp) .1s forwards}
+@keyframes bloom{to{transform:scale(1); opacity:1}}
+.exhale .glow .sun2{position:absolute; inset:0; display:flex; align-items:center; justify-content:center}
+.exhale .glow .sun2 .core{width:40px;height:40px;border-radius:50%;background:var(--accent); transform:scale(.4); opacity:0; animation:bloom .7s var(--exp) .28s forwards}
+.exhale h2{font-family:var(--display); font-size:30px; font-weight:500; letter-spacing:-.5px; color:var(--ink); opacity:0; transform:translateY(10px); animation:rise .5s var(--exp) .4s forwards}
+.exhale p{font-family:var(--serif); font-size:16px; line-height:1.56; color:var(--body); max-width:28ch; opacity:0; transform:translateY(10px); animation:rise .5s var(--exp) .52s forwards}
+.exhale .recap{font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--muted); line-height:1.7; opacity:0; transform:translateY(10px); animation:rise .5s var(--exp) .64s forwards}
+.exhale .recap b{color:var(--ink); font-weight:500}
+.exhale .close{margin-top:8px; height:50px; padding:0 28px; border-radius:15px; background:var(--ink); color:var(--paper); border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; opacity:0; transform:translateY(10px); animation:rise .5s var(--exp) .76s forwards}
+.exhale .close:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important}
+  .spot .sun,.spot .ray,.window .pulse{animation:none}
+  .jcard,.exhale h2,.exhale p,.exhale .recap,.exhale .close,.exhale .glow .ring,.exhale .glow .sun2 .core{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" role="application" aria-label="Leo morning command center">
+  <div class="notch"></div>
+  <div class="statusbar"><span>8:42</span><span class="ic"><span>5G</span><span>100</span></span></div>
+
+  <main class="screen" id="screen">
+
+    <!-- flat sun + hills spot illustration -->
+    <div class="spot" aria-hidden="true">
+      <svg viewBox="0 0 357 118" preserveAspectRatio="xMidYMid slice">
+        <g class="sun">
+          <g class="ray">
+            <g stroke="oklch(0.78 0.13 66)" stroke-width="3" stroke-linecap="round">
+              <line x1="262" y1="22" x2="262" y2="8"/>
+              <line x1="262" y1="78" x2="262" y2="92"/>
+              <line x1="234" y1="50" x2="220" y2="50"/>
+              <line x1="290" y1="50" x2="304" y2="50"/>
+              <line x1="242" y1="30" x2="232" y2="20"/>
+              <line x1="282" y1="70" x2="292" y2="80"/>
+              <line x1="242" y1="70" x2="232" y2="80"/>
+              <line x1="282" y1="30" x2="292" y2="20"/>
+            </g>
+          </g>
+          <circle cx="262" cy="50" r="20" fill="oklch(0.80 0.145 64)"/>
+        </g>
+        <path d="M0 118 L0 86 Q70 60 150 80 T357 70 L357 118 Z" fill="oklch(0.66 0.085 132)"/>
+        <path d="M0 118 L0 100 Q90 78 200 96 T357 92 L357 118 Z" fill="oklch(0.56 0.090 144)"/>
+      </svg>
+    </div>
+
+    <header class="head">
+      <span class="hi">Good morning, Dana</span>
+      <span class="now">TUE 8:42</span>
+    </header>
+    <p class="lede">Three things need you this morning. Everything else can wait. <em>Take them one at a time.</em></p>
+
+    <p class="ledger">
+      <span class="moon" aria-hidden="true"></span>
+      Overnight I took care of <b>47</b> things and did not need to wake you once.
+    </p>
+
+    <div class="list-head">Needs you<span aria-hidden="true">·</span><span class="n">3 to do</span></div>
+
+    <div id="cards">
+
+      <!-- 1. The 142 Oak counter -->
+      <div class="jcard" data-step="0" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open the 142 Oak Street reply, due 10am, first in the list">
+        <span class="checkmark" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--calm)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>
+        <div class="top">
+          <span class="tag hold"><span class="dot"></span>Reply written</span>
+          <span class="tag plain">Your deal</span>
+          <span class="when">Due 10:00am</span>
+        </div>
+        <div class="title">142 Oak St reply is ready</div>
+        <p class="why">I wrote a reply to the buyer's offer. It looks good, but there are two things I could not check. Have a look before it goes out.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>I wrote it for you</span>
+          <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+
+      <!-- 2. New 88 Linden lead, 5-minute window -->
+      <div class="jcard" data-step="1" role="button" tabindex="0" aria-label="Open the new 88 Linden buyer, already approved for a loan, best to call now">
+        <span class="checkmark" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--calm)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>
+        <div class="top">
+          <span class="tag warm"><span class="dot"></span>New buyer</span>
+          <span class="window"><span class="pulse" aria-hidden="true"></span>Call now</span>
+          <span class="when">2 min ago</span>
+        </div>
+        <div class="title">New 88 Linden buyer, loan approved</div>
+        <p class="why">They are ready to move and already approved for a loan. Buyers who hear back fast almost always go with you. I have a first message ready to send.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>Yours if you want it</span>
+          <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+
+      <!-- 3. Marcus lead going quiet -->
+      <div class="jcard" data-step="2" role="button" tabindex="0" aria-label="Open Marcus's Birchwood buyer who has gone quiet, last in the list">
+        <span class="checkmark" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--calm)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>
+        <div class="top">
+          <span class="tag warm"><span class="dot"></span>No reply</span>
+          <span class="tag plain">Team · Marcus</span>
+          <span class="when">Quiet 3 days</span>
+        </div>
+        <div class="title">Marcus's Birchwood buyer has gone quiet</div>
+        <p class="why">No reply since Friday. Marcus has not noticed yet. A quick note from you would help.</p>
+        <div class="foot">
+          <span class="who"><span class="av marcus" aria-hidden="true">M</span>Your team</span>
+          <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-head">Worth a glance</div>
+    <section class="signal" aria-label="Heads up, the Crestview deal is slowing down">
+      <div class="lbl"><span class="d" aria-hidden="true"></span>Slowing down</div>
+      <p class="txt">The <b>Crestview</b> deal is slowing, but not stuck. The buyer is taking longer to reply this week. Nothing to do yet. I am keeping an eye on it and will tell you here if it slows down again.</p>
+    </section>
+
+  </main>
+
+  <!-- accent FAB: starts the guided calm sequence -->
+  <button class="fab" id="fab" aria-label="Go through all three, one at a time">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    Go through them with me
+  </button>
+
+  <!-- ===== THE CALM SEQUENCE ===== -->
+  <div class="scrim" id="scrim"></div>
+  <section class="seq" id="seq" role="dialog" aria-modal="true" aria-label="One thing at a time" aria-hidden="true">
+
+    <div class="seq-top">
+      <div class="arc" aria-hidden="true">
+        <svg width="46" height="46" viewBox="0 0 46 46">
+          <circle class="track" cx="23" cy="23" r="19" stroke-width="4"/>
+          <circle class="prog" id="arcProg" cx="23" cy="23" r="19" stroke-width="4"/>
+        </svg>
+        <span class="count" id="arcCount">0/3</span>
+      </div>
+      <div class="lbl">One at a time<b id="seqHeading">One thing at a time</b></div>
+      <button class="x" id="seqClose" aria-label="Close and go back">&times;</button>
+    </div>
+
+    <div class="seq-body" id="seqBody">
+
+      <!-- STEP 0: the counter -->
+      <div class="step" data-i="0">
+        <span class="kicker hold"><span class="dot" aria-hidden="true"></span>1 of 3 · 142 Oak St</span>
+        <h2>Reply with $612k?</h2>
+        <p class="leo">I would reply with <b class="num">$612k</b>. It is close enough to their offer to keep things friendly, and it still leaves you room to come down later if you need to.</p>
+        <span class="conf hold"><span class="d" aria-hidden="true"></span>Sure on the price, 2 things to check</span>
+        <div class="range" aria-label="A fair range to reply with">
+          <div class="cap"><span>A fair range</span><span>What I would pick</span></div>
+          <div class="track2">
+            <div class="band" style="left:22.2%; width:44.4%;"></div>
+            <div class="band thin" style="left:66.6%; width:33.4%;"></div>
+            <div class="pin" style="left:37.8%;" aria-hidden="true"></div>
+          </div>
+          <div class="ticks"><span>$595k</span><span>$612k</span><span>$640k</span></div>
+        </div>
+        <div class="note">
+          <span class="q" aria-hidden="true">?</span><b>The buyer hinted they need to move in by a certain date,</b> but did not confirm it. And a nearby sale at 9 Maple is still in progress, not final. If both turn out true, you can ask for more than this price.
+        </div>
+      </div>
+
+      <!-- STEP 1: the 5-minute window lead -->
+      <div class="step" data-i="1">
+        <span class="kicker warm"><span class="dot" aria-hidden="true"></span>2 of 3 · 88 Linden</span>
+        <h2>Take this buyer now?</h2>
+        <p class="leo">Loan approved and ready to go, came in <b>2 minutes ago</b>. Buyers who hear back in the first five minutes are far more likely to go with you. I have a first message written in your words.</p>
+        <span class="conf warm"><span class="d" aria-hidden="true"></span>Best to call in the next 3 minutes</span>
+        <div class="note">
+          Message ready: <b>"Hi Priya, Dana here, congrats on getting approved for your loan. I can show you 88 Linden today, does 4pm work?"</b> Nothing sends until you say yes.
+        </div>
+      </div>
+
+      <!-- STEP 2: Marcus's quiet lead -->
+      <div class="step" data-i="2">
+        <span class="kicker warm"><span class="dot" aria-hidden="true"></span>3 of 3 · Team · Marcus</span>
+        <h2>Send Marcus a quick note?</h2>
+        <p class="leo">His Birchwood buyer has been quiet since Friday and he has not noticed yet. A short note from you usually helps more than a system reminder. I wrote one.</p>
+        <span class="conf hold"><span class="d" aria-hidden="true"></span>Just a friendly heads up</span>
+        <div class="note">
+          Note to Marcus: <b>"Birchwood's gone quiet since Fri, want me to take a look or have you got it?"</b> It stays his deal and lets him say no.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- the exhale lives in the body flow but toggled by JS -->
+    <div class="exhale" id="exhale">
+      <div class="glow" aria-hidden="true">
+        <span class="ring"></span>
+        <span class="sun2"><span class="core"></span></span>
+      </div>
+      <h2>You're all done.</h2>
+      <p>All three are taken care of. Nothing else needs you right now. I will only bring you the next thing when it really matters.</p>
+      <div class="recap">
+        <b>3 done</b> · 142 Oak reply sent<br>
+        88 Linden buyer taken · Marcus messaged<br>
+        Crestview is fine, nothing to do yet
+      </div>
+      <button class="close" id="seqDone">Back to today</button>
+    </div>
+
+    <div class="seq-foot" id="seqFoot">
+      <div class="gate"><span class="lk" aria-hidden="true"></span>Nothing happens until you choose</div>
+      <div class="acts">
+        <button class="btn btn-p" id="actPrimary">Send the reply</button>
+        <button class="btn btn-s" id="actSkip">Skip for now</button>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<div class="caption">V10 WARM JOURNAL x CALM SEQUENCE</div>
+
+<script>
+  document.documentElement.classList.add('js');
+
+  var cards   = Array.prototype.slice.call(document.querySelectorAll('.jcard'));
+  var fab     = document.getElementById('fab');
+  var scrim   = document.getElementById('scrim');
+  var seq     = document.getElementById('seq');
+  var seqClose= document.getElementById('seqClose');
+  var seqBody = document.getElementById('seqBody');
+  var steps   = Array.prototype.slice.call(seqBody.querySelectorAll('.step'));
+  var exhale  = document.getElementById('exhale');
+  var seqFoot = document.getElementById('seqFoot');
+  var seqDone = document.getElementById('seqDone');
+  var actPrim = document.getElementById('actPrimary');
+  var actSkip = document.getElementById('actSkip');
+  var arcProg = document.getElementById('arcProg');
+  var arcCount= document.getElementById('arcCount');
+  var seqHeading = document.getElementById('seqHeading');
+
+  var CIRC = 2 * Math.PI * 19; /* = 119.38 */
+  var TOTAL = 3;
+  var cur = 0;      /* current step index */
+  var resolved = 0; /* how many notches closed */
+
+  /* per-step primary verbs (interface copy) */
+  var verbs = ['Send the reply', 'Take this buyer', 'Send the note'];
+  var headings = ['Decide on the reply', 'Reach out now', 'Help out Marcus'];
+
+  function setArc(){
+    var frac = resolved / TOTAL;
+    arcProg.style.strokeDashoffset = (CIRC * (1 - frac)).toFixed(2);
+    arcCount.textContent = resolved + '/' + TOTAL;
+  }
+
+  function showStep(i){
+    cur = i;
+    steps.forEach(function(s){ s.classList.remove('live'); });
+    var s = steps[i];
+    s.classList.add('live');
+    actPrim.textContent = verbs[i];
+    seqHeading.textContent = headings[i];
+    setTimeout(function(){ actPrim.focus(); }, 80);
+  }
+
+  function openSeq(startAt){
+    scrim.classList.add('on');
+    seq.classList.add('on');
+    seq.setAttribute('aria-hidden','false');
+    exhale.classList.remove('live');
+    seqFoot.style.display = '';
+    seqBody.style.display = '';
+    showStep(typeof startAt === 'number' ? startAt : nextOpen());
+  }
+  function closeSeq(){
+    scrim.classList.remove('on');
+    seq.classList.remove('on');
+    seq.setAttribute('aria-hidden','true');
+    fab.focus();
+  }
+
+  /* find the first not-yet-done step */
+  function nextOpen(){
+    for(var i=0;i<TOTAL;i++){ if(!cards[i].classList.contains('done')) return i; }
+    return 0;
+  }
+
+  /* mark a card handled on the home screen (restrained, no celebration) */
+  function markDone(i){
+    var card = cards[i];
+    if(card.classList.contains('done')) return false;
+    card.classList.add('done');
+    var tag = card.querySelector('.tag');
+    if(tag){
+      tag.className = 'tag calm';
+      tag.innerHTML = '<span class="dot"></span>Done';
+    }
+    resolved++;
+    setArc();
+    return true;
+  }
+
+  function advanceFrom(i){
+    /* leave-animate current step, then move on */
+    var s = steps[i];
+    s.classList.add('leaving');
+    setTimeout(function(){
+      s.classList.remove('live');
+      s.classList.remove('leaving');
+      var n = nextOpen();
+      if(resolved >= TOTAL || allDone()){
+        showExhale();
+      } else {
+        showStep(n);
+      }
+    }, 280);
+  }
+
+  function allDone(){
+    return cards.every(function(c){ return c.classList.contains('done'); });
+  }
+
+  function showExhale(){
+    seqFoot.style.display = 'none';
+    steps.forEach(function(s){ s.classList.remove('live'); });
+    seqBody.style.display = 'none';
+    exhale.classList.add('live');
+    seqHeading.textContent = 'All done';
+    setTimeout(function(){ seqDone.focus(); }, 120);
+  }
+
+  /* ----- wiring ----- */
+  function activate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fn(); }
+    });
+  }
+
+  /* tapping a card opens the sequence at that step */
+  cards.forEach(function(card){
+    activate(card, function(){
+      if(card.classList.contains('done')) return;
+      openSeq(parseInt(card.getAttribute('data-step'),10));
+    });
+  });
+
+  /* the FAB starts the full guided run from the first open step */
+  fab.addEventListener('click', function(){ openSeq(nextOpen()); });
+
+  actPrim.addEventListener('click', function(){
+    markDone(cur);
+    advanceFrom(cur);
+  });
+  actSkip.addEventListener('click', function(){
+    /* skip: do not resolve, just move to the next still-open step */
+    var s = steps[cur];
+    s.classList.add('leaving');
+    setTimeout(function(){
+      s.classList.remove('live'); s.classList.remove('leaving');
+      var n = -1;
+      for(var k=1;k<=TOTAL;k++){
+        var idx = (cur + k) % TOTAL;
+        if(!cards[idx].classList.contains('done')){ n = idx; break; }
+      }
+      if(n === -1){ /* nothing left open */ closeSeq(); }
+      else showStep(n);
+    }, 280);
+  });
+
+  seqClose.addEventListener('click', closeSeq);
+  scrim.addEventListener('click', closeSeq);
+  seqDone.addEventListener('click', closeSeq);
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && seq.classList.contains('on')) closeSeq();
+  });
+
+  setArc();
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Explorations · the range behind the morning command center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,450;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#0A0B10; --p1:#15171F; --p2:#1C1E29; --p3:#131420;
+    --ink:#F1F3FA; --body:#BCC1D2; --muted:#828AA0; --subtle:#5C6378;
+    --hair:rgba(255,255,255,.07); --hair-2:rgba(255,255,255,.04);
+    --accent:#AEC2F6;          /* periwinkle: the AI, the calm, the interactive */
+    --accent-soft:rgba(174,194,246,.14);
+    --sand:#E7C79C;            /* warm sand: what needs a human */
+    --sand-soft:rgba(231,199,156,.13);
+    --display:'Host Grotesk', 'Inter', system-ui, sans-serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--canvas); color:var(--body);
+    font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(1100px 620px at 78% -8%, rgba(174,194,246,.10), transparent 60%),
+      radial-gradient(900px 520px at 6% 4%, rgba(231,199,156,.05), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1060px; margin:0 auto; padding:0 24px}
+  a{color:inherit; text-decoration:none}
+
+  /* mono label, sentence case (no all-caps, by house rule) */
+  .label{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--muted)}
+  .accent{color:var(--accent)} .sand{color:var(--sand)}
+
+  /* ---- top bar ---- */
+  .topbar{position:sticky; top:0; z-index:9; backdrop-filter:blur(10px);
+    background:rgba(10,11,16,.74); border-bottom:1px solid var(--hair); }
+  .topbar .wrap{display:flex; align-items:center; gap:16px; height:56px}
+  .topbar .home{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; color:var(--body);
+    border:1px solid var(--hair); border-radius:9px; padding:7px 12px; transition:.18s}
+  .topbar .home:hover{border-color:var(--accent); color:var(--ink)}
+  .topbar .sp{flex:1}
+  .topbar .lead{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--canvas);
+    background:var(--accent); border-radius:9px; padding:8px 13px; font-weight:500; transition:.18s}
+  .topbar .lead:hover{transform:translateY(-1px)}
+
+  /* ---- hero ---- */
+  header.hero{padding:76px 0 30px}
+  header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
+    font-size:clamp(38px,6vw,62px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0}
+  header.hero h1 em{font-style:normal; color:var(--accent)}
+  header.hero .sub{font-size:clamp(17px,2vw,20px); color:var(--body); max-width:60ch; margin:20px 0 0; line-height:1.5}
+  header.hero .meta{margin-top:26px; display:flex; flex-wrap:wrap; gap:10px}
+  header.hero .meta span{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--muted);
+    border:1px solid var(--hair); border-radius:999px; padding:6px 12px; background:var(--p3)}
+
+  /* ---- the arc ---- */
+  section{padding:30px 0}
+  .shead{display:flex; align-items:baseline; gap:14px; margin:0 0 20px; flex-wrap:wrap}
+  .shead h2{font-family:var(--display); font-weight:600; color:var(--ink);
+    font-size:clamp(23px,3vw,30px); letter-spacing:-.02em; margin:0}
+  .shead p{margin:0; color:var(--muted); font-size:14.5px; max-width:54ch}
+
+  .arc{display:grid; gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--r); overflow:hidden}
+  .arc .step{background:linear-gradient(178deg,var(--p2),var(--p3)); padding:18px 20px; display:flex; gap:16px; align-items:flex-start}
+  .arc .n{font-family:var(--mono); font-size:11px; color:var(--accent); padding-top:3px; flex:0 0 28px; letter-spacing:.06em}
+  .arc .st-b{flex:1}
+  .arc .st-t{font-family:var(--display); font-weight:500; color:var(--ink); font-size:16.5px; letter-spacing:-.01em}
+  .arc .st-d{color:var(--body); font-size:14.5px; margin-top:3px; line-height:1.5}
+  .arc .step.land .st-t{color:var(--accent)}
+
+  /* ---- card grids ---- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(264px,1fr)); gap:13px}
+  .card{display:block; background:linear-gradient(178deg,var(--p2),var(--p3)); border:1px solid var(--hair);
+    border-radius:14px; padding:16px 17px; box-shadow:var(--shadow);
+    box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05);
+    transition:transform .18s ease, border-color .18s ease; position:relative}
+  .card:hover{transform:translateY(-3px); border-color:rgba(174,194,246,.3)}
+  .card .k{font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; color:var(--muted)}
+  .card .t{font-family:var(--display); font-weight:500; color:var(--ink); font-size:16px; margin:9px 0 0; letter-spacing:-.01em}
+  .card .d{font-size:13.5px; color:var(--body); margin:7px 0 0; line-height:1.5}
+  .card .go{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--accent); margin-top:11px; display:inline-block; opacity:.0; transition:.18s}
+  .card:hover .go{opacity:1}
+  .card.big{grid-column:span 2}
+  @media(max-width:560px){ .card.big{grid-column:span 1} .grid{grid-template-columns:1fr} }
+
+  .stripe{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--muted); margin:-6px 0 16px}
+
+  footer{padding:44px 0 70px; border-top:1px solid var(--hair); margin-top:34px}
+  footer .cta{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+  footer a.b{font-family:var(--mono); font-size:12px; letter-spacing:.06em; padding:11px 16px; border-radius:10px; transition:.18s}
+  footer a.lead{background:var(--accent); color:var(--canvas); font-weight:500}
+  footer a.ghost{border:1px solid var(--hair); color:var(--body)}
+  footer a.b:hover{transform:translateY(-1px)}
+  footer p{color:var(--muted); font-size:13px; margin:18px 0 0; max-width:64ch}
+
+  /* a soft, reduced-motion-safe entrance; content visible by default */
+  @media (prefers-reduced-motion: no-preference){
+    .rise{opacity:0; transform:translateY(10px); animation:rise .6s cubic-bezier(.16,1,.3,1) forwards}
+    @keyframes rise{to{opacity:1; transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <a class="home" href="../README.md">README</a>
+  <a class="home" href="../deck.html">Deck</a>
+  <span class="sp"></span>
+  <a class="lead" href="../prototype/command-center.html">Open the lead prototype</a>
+</div></div>
+
+<div class="wrap">
+
+  <header class="hero rise">
+    <div class="label">Appendix · process and explorations</div>
+    <h1>The range behind<br>the <em>morning command center</em>.</h1>
+    <p class="sub">The lead is one calm, dark prototype. Getting there meant a lot of trying, changing, and cutting. This is that work, kept honest: the research, the concepts, the features built, the interaction models, and the visual directions, including the ones that did not survive.</p>
+    <div class="meta">
+      <span>30 concepts across 2 waves</span>
+      <span>22 feature demos</span>
+      <span>3 interaction models</span>
+      <span>5 visual directions</span>
+      <span>20 fused variants</span>
+      <span>10 aesthetic studies</span>
+    </div>
+  </header>
+
+  <section class="rise">
+    <div class="shead"><h2>How it converged</h2><p>The short version of a long road. Each step narrowed the last.</p></div>
+    <div class="arc">
+      <div class="step"><div class="n">01</div><div class="st-b"><div class="st-t">Research the real day</div><div class="st-d">A team lead lives at two altitudes that fight for the same hours. The dread is a deal dying in silence. The scarce resource is trust, already spent by tools that were confidently wrong. That set the brief: less, ranked, and honest about its own confidence.</div></div></div>
+      <div class="step"><div class="n">02</div><div class="st-b"><div class="st-t">Generate widely, then cut</div><div class="st-d">Thirty concepts across two waves, pushed on three axes: lower the load, make the intelligence visible, go deeper agentic. Most were cut. The survivors are below.</div></div></div>
+      <div class="step"><div class="n">03</div><div class="st-b"><div class="st-t">Build the ideas to feel them</div><div class="st-d">Twenty-two ideas became standalone, interactive demos, because a triage product is timing and state, not a still picture. You only learn if a microinteraction earns its place by building it.</div></div></div>
+      <div class="step"><div class="n">04</div><div class="st-b"><div class="st-t">Try the whole screen three ways</div><div class="st-d">The same morning, rebuilt as Quiet Capital, Daybook, and Headline, then fused into twenty variants crossing a visual lineage with a feature and a motion idea. Different points of view, not reskins.</div></div></div>
+      <div class="step"><div class="n">05</div><div class="st-b"><div class="st-t">The honest detour: warm light</div><div class="st-d">A reviewer called dark "AI slop," so I went warm and editorial to earn calm by daylight. It was honest, but it gave up the atmosphere the product wanted.</div></div></div>
+      <div class="step land"><div class="n">06</div><div class="st-b"><div class="st-t">The answer: a disciplined dark</div><div class="st-d">Atmosphere earned back on purpose. A chosen periwinkle on near-black, warm sand reserved for what needs a human, the same anti-slop rules. The lead prototype is the distillation of everything here.</div></div></div>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead"><h2>Features explored</h2><p>Each one is a live, standalone demo. Built to test a single idea about what intelligence should feel like.</p></div>
+    <div class="stripe">flagships, the ones that earned their way toward the lead</div>
+    <div class="grid">
+      <a class="card big" href="features/spoken-brief.html"><div class="k">entry ritual</div><div class="t">The Spoken Brief</div><div class="d">A sixty to ninety second karaoke voice-walk of the night, words lighting up in Leo's voice as each card rises. Hands-free, pre-coffee, one-handed.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card big" href="features/pulse-strip.html"><div class="k">deal health</div><div class="t">The Pulse Strip</div><div class="d">Every live deal as a calm vital-signs strip. The one going quiet does not beep, it flatlines, dims, and drops a hairline. The most precise answer to her dread.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/redline.html"><div class="k">responsible AI</div><div class="t">The Redline</div><div class="d">Fair Housing as a live edit. The risky line struck in amber, the safe rewrite underlaid in green, logged on override.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/stake-lensing.html"><div class="k">the ranking, visible</div><div class="t">Stake Lensing</div><div class="d">On open, the feed re-sorts from yesterday's order into today's stakes, each card tagged why it moved. Pinch to swap the axis.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/autonomy-dial.html"><div class="k">earned autonomy</div><div class="t">Standing Orders and the Autonomy Dial</div><div class="d">Per-task autonomy on a four-stop leash, proposed only after a clean approval streak, revocable in one tap. Leo earns trust instead of spending it.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/mirror.html"><div class="k">supervise</div><div class="t">The Mirror</div><div class="d">A phone inside a phone. The client's real thread, with Leo's next message a dashed bubble on a countdown-to-send ring. Supervise with one thumb.</div><span class="go">open demo &rarr;</span></a>
+    </div>
+    <div class="stripe" style="margin-top:22px">the full set, grouped by what it protects</div>
+    <div class="grid">
+      <a class="card" href="features/focus-mode.html"><div class="k">attention</div><div class="t">Focus Mode</div><div class="d">Dissolve everything to one full-bleed decision at a time. A progress arc closes a notch per cleared item, ending on a "you're clear" exhale.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/the-relay.html"><div class="k">orchestration</div><div class="t">The Relay</div><div class="d">The baton-pass between Leo's skills on a card. A luminous baton travels the chain and stops exactly where confidence dropped and it escalated.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/visible-memory.html"><div class="k">trust</div><div class="t">Visible Agent Memory</div><div class="d">Leo's editable, first-person memory of your judgment, each rule with its provenance and a Keep, Tune, or Forget. Correct one and watch it fan out.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/calibration-card.html"><div class="k">honest confidence</div><div class="t">Calibration Card</div><div class="d">Leo's own track record per confidence tier, the misses included, with a drift line showing it self-correct. "High" becomes a measured promise.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/the-counter.html"><div class="k">respectful disagreement</div><div class="t">The Counter</div><div class="d">When a command runs against the evidence, Leo stages it but surfaces one Counter card with its reasoning, then yields gracefully and logs both.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/the-sightline.html"><div class="k">honest limits</div><div class="t">The Sightline</div><div class="d">A per-deal field of view. Connected sources lit, blind spots greyed with their honest consequences. Revoke a source and watch the view dim.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/quiet-hours-recap.html"><div class="k">work with receipts</div><div class="t">Quiet Hours Recap</div><div class="d">A replayable record of the texts Leo actually sent overnight, including the one where it read anxiety and held back for you.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/closing-cockpit.html"><div class="k">deal lifecycle</div><div class="t">Closing Day Cockpit</div><div class="d">The twenty-four hours that can detonate, as a runway of status gates, with a persistent wire-fraud interlock on any wiring change.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/five-minute-window.html"><div class="k">speed to lead</div><div class="t">The Five-Minute Window</div><div class="d">The instant a lead lands, a full-screen takeover with a draining arc, the single highest-leverage fact, and three one-tap responses.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/the-bridge.html"><div class="k">Leo originates</div><div class="t">The Bridge</div><div class="d">Leo reasons across the client graph to propose a human introduction. Two portraits joined by a drawing arc, and a double-opt-in consent ladder.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/the-wake.html"><div class="k">learn from a loss</div><div class="t">The Wake</div><div class="d">The night a deal dies, an overnight post-mortem: the cause, an honest yours or not-yours split, and the salvage. One swipe banks the lesson.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/two-key.html"><div class="k">two-human send</div><div class="t">Two-Key</div><div class="d">For irreversible actions, a two-keyhole lock bar. Dana holds her key, the co-agent presses theirs on their device, and the halves seat together.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/wheel-mode.html"><div class="k">multi-surface</div><div class="t">Wheel Mode</div><div class="d">A voice-only driving surface. It loosens autonomy for the low-stakes and hard-stops to read-only for anything touching money or Fair Housing.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/guest-mode.html"><div class="k">hand it over</div><div class="t">Guest Mode</div><div class="d">One tap seals off everything internal and shows a warm, Fair-Housing-safe client view in Dana's brand. A persistent border, Face ID to exit.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/the-tell.html"><div class="k">human factors</div><div class="t">The Tell</div><div class="d">Leo never asks how she is doing. It infers strain from her own fingerprint and offers to subtract work. Never repeats within a week.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="features/close-bloom.html"><div class="k">character</div><div class="t">The Close Bloom</div><div class="d">When a deal funds, no generic confetti. One restrained light-bloom on the word "Closed," scaled to what the deal actually took.</div><span class="go">open demo &rarr;</span></a>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead"><h2>Interaction models</h2><p>Three takes on the core gesture of clearing a morning. Each is a distinct workflow, not a reskin.</p></div>
+    <div class="grid">
+      <a class="card" href="interactions/calm-sequence.html"><div class="k">Quiet Capital</div><div class="t">Calm Sequence</div><div class="d">Guided, one decision at a time, a closing progress arc, and a "you're clear" exhale at the end.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="interactions/swipe-deck.html"><div class="k">Daybook</div><div class="t">Swipe Deck</div><div class="d">Swipe to act or defer. A stamp, a spring, a rotate, and the next card rises into place.</div><span class="go">open demo &rarr;</span></a>
+      <a class="card" href="interactions/scroll-story.html"><div class="k">Headline</div><div class="t">Scroll Story</div><div class="d">Scroll-snap pages, kinetic type reveals, and the headline recomposing from three lines to two to one.</div><span class="go">open demo &rarr;</span></a>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead"><h2>Visual directions</h2><p>The same screen, three points of view, plus the mood studies that set the palette and the twenty fused variants.</p></div>
+    <div class="grid">
+      <a class="card" href="directions/v1-quiet-capital.html"><div class="k">direction one</div><div class="t">Quiet Capital</div><div class="d">Dark, editorial, minimal. The restraint that the final lead grew from.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="directions/v2-daybook.html"><div class="k">direction two</div><div class="t">Daybook</div><div class="d">Light and warm, with color used as the carrier of Leo's confidence.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="directions/v3-headline.html"><div class="k">direction three</div><div class="t">Headline</div><div class="d">Bold and editorial, where the giant type is itself the triage.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="directions/mood-b.html"><div class="k">mood study</div><div class="t">Morning Paper</div><div class="d">A warm cream daylight study, testing calm by paper rather than by dark.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="directions/mood-c.html"><div class="k">mood study</div><div class="t">Daylight</div><div class="d">A brighter study of the same surface, pushing the time-aware palette.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="directions/variants/index.html"><div class="k">twenty fused</div><div class="t">The variant gallery</div><div class="d">Each variant crosses one visual lineage with one feature and one motion idea. The full grid, with an anti-slop scorecard.</div><span class="go">open gallery &rarr;</span></a>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead"><h2>Galleries and films</h2><p>The presentation layer, and the breadth studies that show the range of aesthetics considered.</p></div>
+    <div class="grid">
+      <a class="card big" href="galleries/inspirations/index.html"><div class="k">visual range</div><div class="t">Ten aesthetic studies</div><div class="d">The same product rebuilt in ten best-in-class app languages, all re-themed to Dana, Leo, and the deals. A map of the design space before committing.</div><span class="go">open gallery &rarr;</span></a>
+      <a class="card big" href="galleries/motion-gallery.html"><div class="k">motion</div><div class="t">Motion gallery</div><div class="d">Sixteen microinteractions and motion patterns, each shown live and annotated with what it is doing and why.</div><span class="go">open gallery &rarr;</span></a>
+      <a class="card" href="galleries/keynote/video.html"><div class="k">film</div><div class="t">The keynote film</div><div class="d">An auto-playing, three-act keynote film of the product, driven by a CSS timeline.</div><span class="go">open film &rarr;</span></a>
+      <a class="card" href="galleries/approaches.html"><div class="k">decision</div><div class="t">Three approaches</div><div class="d">The three approaches weighed, with the decision matrix that picked the one.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="galleries/case-study.html"><div class="k">essay</div><div class="t">The case study</div><div class="d">The long-form visual essay of the thinking, start to finish.</div><span class="go">open &rarr;</span></a>
+      <a class="card" href="galleries/design-system.html"><div class="k">system</div><div class="t">The styleguide</div><div class="d">The design system as a living site: tokens, type, color, and components.</div><span class="go">open &rarr;</span></a>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead"><h2>The written ideation</h2><p>The two concept waves the demos were curated from, scored and with the honest cut list.</p></div>
+    <div class="grid">
+      <a class="card" href="concepts/08-feature-ideas.md"><div class="k">wave one · markdown</div><div class="t">Feature ideas, wave one</div><div class="d">Fifteen concepts on lowering load, making intelligence visible, and going deeper agentic, with the top five flagged to build.</div><span class="go">read &rarr;</span></a>
+      <a class="card" href="concepts/09-feature-ideas-wave2.md"><div class="k">wave two · markdown</div><div class="t">Feature ideas, wave two</div><div class="d">Fifteen more on fresh lenses: responsible AI, the deal lifecycle, collaboration, multi-surface, and Leo as a character.</div><span class="go">read &rarr;</span></a>
+    </div>
+  </section>
+
+</div>
+
+<footer><div class="wrap">
+  <div class="label" style="margin-bottom:14px">where this all points</div>
+  <div class="cta">
+    <a class="b lead" href="../prototype/command-center.html">Open the lead prototype</a>
+    <a class="b ghost" href="../README.md">Back to the submission</a>
+    <a class="b ghost" href="../deck.html">The deck</a>
+  </div>
+  <p>Everything here is the process behind one answer: a calm, dark morning command center that ranks a team lead's own deals and the team's together, shows its reasoning, and reviews before it sends. The explorations are kept in their original styles on purpose, because they are the journey, not the destination.</p>
+</div></footer>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Real · morning command center · take-home submission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,450;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#0A0B10; --p1:#15171F; --p2:#1C1E29; --p3:#131420;
+    --ink:#F1F3FA; --body:#BCC1D2; --muted:#828AA0; --subtle:#5C6378;
+    --hair:rgba(255,255,255,.07); --hair-2:rgba(255,255,255,.04);
+    --accent:#AEC2F6;          /* periwinkle: the AI, the calm, the interactive */
+    --accent-soft:rgba(174,194,246,.14);
+    --sand:#E7C79C;            /* warm sand: what needs a human */
+    --sand-soft:rgba(231,199,156,.13);
+    --display:'Host Grotesk', 'Inter', system-ui, sans-serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--canvas); color:var(--body);
+    font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(1100px 620px at 78% -8%, rgba(174,194,246,.10), transparent 60%),
+      radial-gradient(900px 520px at 6% 4%, rgba(231,199,156,.05), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1060px; margin:0 auto; padding:0 24px}
+  a{color:inherit; text-decoration:none}
+  img,video{max-width:100%; display:block}
+
+  /* mono label, sentence case (no all-caps, by house rule) */
+  .label{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--muted)}
+  .accent{color:var(--accent)} .sand{color:var(--sand)}
+
+  /* ---- top bar ---- */
+  .topbar{position:sticky; top:0; z-index:9; backdrop-filter:blur(10px);
+    background:rgba(10,11,16,.74); border-bottom:1px solid var(--hair); }
+  .topbar .wrap{display:flex; align-items:center; gap:16px; height:56px}
+  .topbar .mark{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; color:var(--body)}
+  .topbar .mark b{color:var(--ink); font-weight:500}
+  .topbar .sp{flex:1}
+  .topbar .lead{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--canvas);
+    background:var(--accent); border-radius:9px; padding:8px 13px; font-weight:500; transition:.18s; white-space:nowrap}
+  .topbar .lead:hover{transform:translateY(-1px)}
+  @media(max-width:560px){ .topbar .mark{font-size:10.5px} }
+
+  /* ---- hero ---- */
+  header.hero{padding:78px 0 30px}
+  header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
+    font-size:clamp(38px,6vw,64px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0; max-width:18ch}
+  header.hero h1 em{font-style:normal; color:var(--accent)}
+  header.hero .sub{font-size:clamp(17px,2vw,20px); color:var(--body); max-width:64ch; margin:22px 0 0; line-height:1.5}
+  .ctarow{margin-top:30px; display:flex; flex-wrap:wrap; gap:12px}
+  .btn{font-family:var(--mono); font-size:12px; letter-spacing:.06em; padding:12px 18px; border-radius:11px; transition:.18s ease; display:inline-flex; align-items:center; gap:8px}
+  .btn.primary{background:var(--accent); color:var(--canvas); font-weight:500}
+  .btn.ghost{border:1px solid var(--hair); color:var(--body); background:var(--p3)}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.ghost:hover{border-color:var(--accent); color:var(--ink)}
+
+  /* ---- sections ---- */
+  section{padding:34px 0}
+  .shead{display:flex; align-items:baseline; gap:14px; margin:0 0 22px; flex-wrap:wrap}
+  .shead h2{font-family:var(--display); font-weight:600; color:var(--ink);
+    font-size:clamp(23px,3vw,31px); letter-spacing:-.02em; margin:0}
+  .shead p{margin:0; color:var(--muted); font-size:14.5px; max-width:56ch}
+
+  /* ---- films grid ---- */
+  .films{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .film{background:linear-gradient(178deg,var(--p2),var(--p3)); border:1px solid var(--hair);
+    border-radius:14px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05)}
+  .film video{width:100%; aspect-ratio:9/16; object-fit:cover; background:var(--p3); border-bottom:1px solid var(--hair)}
+  .film .cap{padding:13px 15px 15px}
+  .film .ct{font-family:var(--display); font-weight:500; color:var(--ink); font-size:15.5px; letter-spacing:-.01em}
+  .film .cm{font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--muted); margin-top:6px}
+  @media(max-width:760px){ .films{grid-template-columns:1fr} .film video{aspect-ratio:16/10} }
+
+  /* ---- the narrative beats ---- */
+  .beats{display:grid; gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--r); overflow:hidden}
+  .beat{background:linear-gradient(178deg,var(--p2),var(--p3)); padding:20px 22px; display:flex; gap:18px; align-items:flex-start}
+  .beat .n{font-family:var(--mono); font-size:11px; color:var(--accent); padding-top:4px; flex:0 0 30px; letter-spacing:.06em}
+  .beat .bb{flex:1}
+  .beat .bt{font-family:var(--display); font-weight:600; color:var(--ink); font-size:18px; letter-spacing:-.014em}
+  .beat .bd{color:var(--body); font-size:15px; margin-top:8px; line-height:1.58}
+  .beat .bd .sand{color:var(--sand)}
+  .beat.land .bt{color:var(--accent)}
+  @media(max-width:560px){ .beat{gap:14px; padding:18px} .beat .n{flex-basis:24px} }
+
+  /* ---- deliverables table ---- */
+  .deliv{display:grid; gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--r); overflow:hidden}
+  .drow{background:linear-gradient(178deg,var(--p2),var(--p3)); padding:15px 20px;
+    display:grid; grid-template-columns:1fr auto; gap:6px 16px; align-items:center; transition:border-color .18s ease}
+  .drow:hover{background:linear-gradient(178deg,#20222e,#15161f)}
+  .drow .dname{font-family:var(--sans); font-weight:500; color:var(--ink); font-size:15px}
+  .drow .dfile{font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--accent); grid-column:1 / -1}
+  .drow .dfile:hover{text-decoration:underline}
+  .pill{font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; padding:4px 9px; border-radius:999px; white-space:nowrap; justify-self:end}
+  .pill.req{color:var(--accent); background:var(--accent-soft); border:1px solid rgba(174,194,246,.3)}
+  .pill.opt{color:var(--sand); background:var(--sand-soft); border:1px solid rgba(231,199,156,.3)}
+  .pill.sup{color:var(--muted); background:var(--hair-2); border:1px solid var(--hair)}
+  .dgroup{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--muted); margin:22px 0 12px}
+  .dgroup:first-child{margin-top:0}
+
+  /* ---- big link cards ---- */
+  .lcard{display:block; background:linear-gradient(178deg,var(--p2),var(--p3)); border:1px solid var(--hair);
+    border-radius:var(--r); padding:22px 24px; box-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05);
+    transition:transform .18s ease, border-color .18s ease; position:relative}
+  .lcard + .lcard{margin-top:13px}
+  .lcard:hover{transform:translateY(-3px); border-color:rgba(174,194,246,.3)}
+  .lcard .k{font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; color:var(--muted)}
+  .lcard .t{font-family:var(--display); font-weight:600; color:var(--ink); font-size:20px; margin:9px 0 0; letter-spacing:-.015em}
+  .lcard .d{font-size:14.5px; color:var(--body); margin:8px 0 0; line-height:1.55; max-width:70ch}
+  .lcard .note{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--muted); margin-top:11px}
+  .lcard .go{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--accent); margin-top:13px; display:inline-block}
+
+  .twin{display:grid; grid-template-columns:1fr 1fr; gap:13px}
+  .twin .lcard + .lcard{margin-top:0}
+  @media(max-width:680px){ .twin{grid-template-columns:1fr} }
+
+  footer{padding:46px 0 72px; border-top:1px solid var(--hair); margin-top:36px}
+  footer .label{margin-bottom:14px}
+  footer p{color:var(--body); font-size:14px; margin:0; max-width:74ch; line-height:1.6}
+  footer .conf{color:var(--subtle); font-size:12px; margin-top:24px; font-family:var(--mono); letter-spacing:.06em}
+
+  /* a soft, reduced-motion-safe entrance; content visible by default */
+  @media (prefers-reduced-motion: no-preference){
+    .rise{opacity:0; transform:translateY(10px); animation:rise .6s cubic-bezier(.16,1,.3,1) forwards}
+    @keyframes rise{to{opacity:1; transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <span class="mark">Real · <b>morning command center</b></span>
+  <span class="sp"></span>
+  <a class="lead" href="prototype/command-center.html">Open the lead prototype</a>
+</div></div>
+
+<div class="wrap">
+
+  <header class="hero rise">
+    <div class="label">Lead AI Product Designer · take-home</div>
+    <h1>The morning <em>command center</em> for a real-estate team lead.</h1>
+    <p class="sub">A calm surface that ranks a team lead's own deals and the team's together, shows its reasoning, reviews every message before it sends, and proves it handled the night. Less, ranked, and honest about its own confidence.</p>
+    <div class="ctarow">
+      <a class="btn primary" href="prototype/command-center.html">Open the lead prototype</a>
+      <a class="btn ghost" href="#films">Watch the films</a>
+      <a class="btn ghost" href="#deliverables">Read the thinking</a>
+    </div>
+  </header>
+
+  <section id="films" class="rise">
+    <div class="shead">
+      <h2>The product in motion</h2>
+      <p>Three short films of the thing a static screen cannot hold: the AI-state transitions, the timing, the way a calm surface settles.</p>
+    </div>
+    <div class="films">
+      <div class="film">
+        <video controls preload="metadata" poster="films/product-overview-poster.jpg">
+          <source src="films/product-overview.mp4" type="video/mp4" />
+        </video>
+        <div class="cap">
+          <div class="ct">The product overview</div>
+          <div class="cm">the morning, start to clear</div>
+        </div>
+      </div>
+      <div class="film">
+        <video controls preload="metadata" poster="films/ai-states-poster.jpg">
+          <source src="films/ai-states.mp4" type="video/mp4" />
+        </video>
+        <div class="cap">
+          <div class="ct">The four AI states</div>
+          <div class="cm">confident, uncertain, wrong, silent</div>
+        </div>
+      </div>
+      <div class="film">
+        <video controls preload="metadata" poster="films/orchestration-poster.jpg">
+          <source src="films/orchestration.mp4" type="video/mp4" />
+        </video>
+        <div class="cap">
+          <div class="ct">The orchestration</div>
+          <div class="cm">how 100+ agents become 4 cards</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead">
+      <h2>How I got here</h2>
+      <p>The walkthrough, in four beats. Where I started, what I did, what changed, and the answer.</p>
+    </div>
+    <div class="beats">
+      <div class="beat">
+        <div class="n">01</div>
+        <div class="bb">
+          <div class="bt">Where I started</div>
+          <div class="bd">I researched the team lead's real day. She lives at two altitudes that fight for the same hours: her own deals, and her team's. The dread underneath it all is <span class="sand">a deal dying in silence</span>. And the scarce resource is trust, already spent by tools that were confidently wrong. So the brief wrote itself: less, ranked, and honest about its own confidence.</div>
+        </div>
+      </div>
+      <div class="beat">
+        <div class="n">02</div>
+        <div class="bb">
+          <div class="bt">What I did</div>
+          <div class="bd">I generated 30 concepts across two waves, then built 22 of them as live demos, because a triage product is timing and state, not a still picture. I tried the whole screen as three visual directions and twenty fused variants, and studied ten best-in-class app aesthetics to map the space before committing.</div>
+        </div>
+      </div>
+      <div class="beat">
+        <div class="n">03</div>
+        <div class="bb">
+          <div class="bt">What changed</div>
+          <div class="bd">I started dark. A reviewer called dark "AI slop," so I detoured to warm, editorial light to earn calm by daylight. That detour was honest, but it gave up the atmosphere the product wanted. So I came back to a disciplined dark: a chosen periwinkle on near-black, with <span class="sand">warm sand reserved for what needs a human</span>. Then I adopted a stronger wireframe and re-skinned it to this exact system.</div>
+        </div>
+      </div>
+      <div class="beat land">
+        <div class="n">04</div>
+        <div class="bb">
+          <div class="bt">The answer</div>
+          <div class="bd">One calm, dark command center. The few things that need a human, ranked across your own deals and your team's. The reasoning shown, not hidden. And review before send, so nothing leaves in your name until you tap "Send as me." That is the prototype.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="deliverables" class="rise">
+    <div class="shead">
+      <h2>What is in the box, mapped to the brief</h2>
+      <p>Every required deliverable, with the file that answers it, plus the optional prototype and the supporting work.</p>
+    </div>
+
+    <div class="dgroup">the seven required deliverables</div>
+    <div class="deliv">
+      <div class="drow">
+        <span class="dname">Scope definition</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/01-scope.md">docs/01-scope.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">User portrait</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/02-user-portrait.md">docs/02-user-portrait.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">Core experience design</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/03-core-experience.md">docs/03-core-experience.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">Agent orchestration logic</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/04-orchestration-logic.md">docs/04-orchestration-logic.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">Design rationale</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/06-design-rationale-and-dead-ends.md">docs/06-design-rationale-and-dead-ends.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">AI tool annotation</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/07-ai-tool-annotation.md">docs/07-ai-tool-annotation.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">Microinteraction spec</span><span class="pill req">required</span>
+        <a class="dfile" href="docs/05-microinteraction-spec.md">docs/05-microinteraction-spec.md</a>
+      </div>
+    </div>
+
+    <div class="dgroup">the optional build</div>
+    <div class="deliv">
+      <div class="drow">
+        <span class="dname">Interactive prototype</span><span class="pill opt">optional</span>
+        <a class="dfile" href="prototype/command-center.html">prototype/command-center.html</a>
+      </div>
+    </div>
+
+    <div class="dgroup">supporting work</div>
+    <div class="deliv">
+      <div class="drow">
+        <span class="dname">Figma breadth spec</span><span class="pill sup">supporting</span>
+        <a class="dfile" href="docs/08-figma-breadth-spec.md">docs/08-figma-breadth-spec.md</a>
+      </div>
+      <div class="drow">
+        <span class="dname">Design system</span><span class="pill sup">supporting</span>
+        <a class="dfile" href="docs/09-design-system.md">docs/09-design-system.md</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="shead"><h2>The lead, polished to highest craft</h2></div>
+    <a class="lcard" href="prototype/command-center.html">
+      <div class="k">optional · the interactive prototype</div>
+      <div class="t">The morning command center</div>
+      <div class="d">One self-contained file that opens straight into the Today triage: the trust ledger, one focus card at a time, your own deals and your team's risk ranked together, the voice outbox you review before it sends, and the Fair-Housing tripwire. Switch My deals and My team to change altitude, Calm and Heavy to see the morning adapt.</div>
+      <div class="note">motion is CSS only and honors reduced motion · best on a laptop, it renders a phone</div>
+      <span class="go">open the prototype &rarr;</span>
+    </a>
+  </section>
+
+  <section class="rise">
+    <div class="twin">
+      <a class="lcard" href="explorations/index.html">
+        <div class="k">the appendix</div>
+        <div class="t">The range I explored</div>
+        <div class="d">The process behind the one answer: 22 live feature demos, 3 interaction models, the visual directions and 20 fused variants, the aesthetic studies, and the honest dead ends, including the warm-light detour that did not survive.</div>
+        <span class="go">open the explorations &rarr;</span>
+      </a>
+      <a class="lcard" href="deck.html">
+        <div class="k">the presentation</div>
+        <div class="t">The walkthrough deck</div>
+        <div class="d">The slide deck for the live walkthrough: the problem, the user, the surface, the orchestration, and the decisions, paced for a thirty-minute conversation.</div>
+        <span class="go">open the deck &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer><div class="wrap">
+  <div class="label">with another week</div>
+  <p>I would put this in front of a real team lead and tune the one number that matters, the interrupt threshold, against their actual morning. I would wire the responsible-AI behavior, the confidence read, review-before-send, and the owned misses, onto one shared event log, so Leo visibly audits and corrects itself. And I would build the desktop war room the mobile deliberately defers, proving the phone-to-desktop hand-off with no context reload.</p>
+  <div class="conf">Confidential, for candidate use.</div>
+</div></footer>
+
+</body>
+</html>

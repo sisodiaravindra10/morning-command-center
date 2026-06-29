@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Two-Key</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --seaglass:oklch(0.80 0.11 168); --amber:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 28), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+
+/* phone frame */
+.phone{position:relative; width:393px; height:800px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.statusbar{position:absolute; top:0; left:0; right:0; height:54px; z-index:30; display:flex; align-items:center; justify-content:space-between; padding:18px 30px 0; font-family:var(--mono); font-size:12px; color:var(--body); pointer-events:none}
+.statusbar .glyphs{display:flex; gap:6px; align-items:center}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:60px 22px 22px; overflow-y:auto; scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+
+/* header / Leo voice */
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 10px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+
+/* high-stakes card */
+.stake{position:relative;margin-top:16px;border-radius:18px;background:linear-gradient(180deg, oklch(0.73 0.16 28 / .10), oklch(0.73 0.16 28 / .03));border:1px solid oklch(0.73 0.16 28 / .42);box-shadow:0 0 0 1px oklch(0.73 0.16 28 / .12), 0 18px 40px -26px oklch(0.73 0.16 28 / .7);overflow:hidden}
+.stake::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--coral)}
+.stake-in{padding:17px 18px 18px}
+.stake .flag{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--coral)}
+.stake .flag .dot{width:6px;height:6px;border-radius:50%;background:var(--coral);box-shadow:0 0 8px var(--coral);animation:pulseDot 2s var(--exp) infinite}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.4}}
+.stake h1{font-family:var(--serif);font-size:23px;line-height:1.18;letter-spacing:-.3px;color:var(--ink);margin-top:11px}
+.stake .amt{font-family:var(--mono);font-size:13px;color:var(--body);margin-top:7px}
+.stake .amt b{color:oklch(0.94 0.05 30);font-weight:500}
+.irrev{display:flex;align-items:center;gap:7px;margin-top:13px;font-family:var(--sans);font-size:11.5px;color:oklch(0.78 0.05 30)}
+.irrev svg{flex:none;color:var(--coral)}
+
+/* verification checklist */
+.sect{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:24px 2px 11px}
+.check{display:flex;align-items:flex-start;gap:11px;padding:11px 13px;border-radius:13px;background:var(--card);border:1px solid var(--hair);margin-bottom:8px}
+.tick{width:21px;height:21px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:var(--seaglass);border:1.5px solid oklch(0.80 0.11 168 / .55);background:oklch(0.80 0.11 168 / .12);margin-top:1px}
+.check .ctxt{font-family:var(--sans);font-size:13px;line-height:1.4;color:var(--body)}
+.check .ctxt b{color:var(--ink);font-weight:600}
+.check .meta{display:block;font-family:var(--mono);font-size:10.5px;color:var(--soft);margin-top:3px}
+
+/* key slots */
+.keys{display:flex;gap:12px;margin-top:6px}
+.keyslot{flex:1;position:relative;border-radius:16px;background:var(--card);border:1px solid var(--hair2);padding:16px 14px 15px;text-align:center;cursor:pointer;transition:border-color .4s var(--exp), background .4s var(--exp), box-shadow .4s var(--exp);-webkit-tap-highlight-color:transparent}
+.keyslot:hover{border-color:oklch(0.96 0.01 250 / .3)}
+.keyslot:active{transform:translateY(1px)}
+.keyslot .role{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.keyslot .who{font-family:var(--serif);font-size:16px;color:var(--ink);margin-top:2px}
+.lock{width:54px;height:54px;margin:13px auto 11px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--hair2);background:var(--inset);color:var(--muted);transition:color .4s var(--exp), border-color .4s var(--exp), background .4s var(--exp), box-shadow .4s var(--exp)}
+.lock svg{transition:transform .55s var(--exp)}
+.kstate{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:color .4s var(--exp)}
+/* turned key */
+.keyslot.turned{border-color:oklch(0.80 0.11 168 / .55);background:oklch(0.80 0.11 168 / .07)}
+.keyslot.turned .lock{color:var(--seaglass);border-color:oklch(0.80 0.11 168 / .6);background:oklch(0.80 0.11 168 / .14);box-shadow:0 0 22px -2px oklch(0.80 0.11 168 / .55)}
+.keyslot.turned .lock svg{transform:rotate(90deg)}
+.keyslot.turned .kstate{color:var(--seaglass)}
+.keyslot.turned .who{color:oklch(0.92 0.05 168)}
+
+/* cooling-off ring */
+.cool{margin-top:18px;border-radius:14px;background:var(--inset);border:1px solid var(--hair);padding:15px 16px;display:flex;align-items:center;gap:14px;opacity:.45;transition:opacity .5s var(--exp)}
+.cool.armed{opacity:1}
+.ringwrap{position:relative;width:46px;height:46px;flex:none}
+.ringwrap svg{transform:rotate(-90deg)}
+.ringwrap .track{stroke:var(--hair2);fill:none;stroke-width:4}
+.ringwrap .prog{stroke:var(--cobalt);fill:none;stroke-width:4;stroke-linecap:round;stroke-dasharray:138.2;stroke-dashoffset:138.2}
+.cool.armed .ringwrap .prog{animation:drain 10s linear forwards}
+@keyframes drain{from{stroke-dashoffset:138.2}to{stroke-dashoffset:0}}
+.ringwrap .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;color:var(--cobalt)}
+.cool .ctitle{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink)}
+.cool .csub{font-family:var(--mono);font-size:10.5px;color:var(--soft);margin-top:3px}
+.cool.cooled .ctitle{color:var(--seaglass)}
+.cool.cooled .ringwrap .prog{stroke:var(--seaglass)}
+.cool.cooled .ringwrap .num{color:var(--seaglass)}
+
+/* release button */
+.release{margin-top:16px;width:100%;height:56px;border-radius:15px;border:1px solid var(--hair2);background:var(--inset);color:var(--muted);font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:9px;cursor:not-allowed;transition:background .5s var(--exp), color .5s var(--exp), border-color .5s var(--exp), box-shadow .5s var(--exp)}
+.release svg{flex:none;transition:transform .5s var(--exp)}
+.release.unlocked{cursor:pointer;background:linear-gradient(180deg, oklch(0.73 0.16 28), oklch(0.67 0.16 28));color:oklch(0.16 0.04 28);border-color:transparent;box-shadow:0 0 28px -4px oklch(0.73 0.16 28 / .7), inset 0 1px 0 oklch(0.92 0.08 40 / .35);animation:unlockPop .55s var(--exp)}
+.release.unlocked svg{transform:rotate(0deg)}
+@keyframes unlockPop{0%{transform:scale(.97)}55%{transform:scale(1.025)}100%{transform:scale(1)}}
+.release.unlocked:active{transform:translateY(1px) scale(.995)}
+.lockhint{font-family:var(--mono);font-size:10.5px;color:var(--soft);text-align:center;margin-top:9px;min-height:14px;transition:color .4s}
+.lockhint.ready{color:var(--coral)}
+
+/* released confirmation */
+.done-line{display:none;align-items:center;gap:8px;justify-content:center;margin-top:14px;font-family:var(--serif);font-size:14px;color:var(--seaglass)}
+.done-line.show{display:flex;animation:fadeUp .5s var(--exp)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* closing thesis line */
+.thesis{margin-top:26px;padding-top:18px;border-top:1px solid var(--hair);font-family:var(--serif);font-size:15px;line-height:1.5;font-style:italic;color:var(--body)}
+.thesis b{font-style:normal;font-weight:500;color:var(--ink)}
+
+.controls{display:flex;gap:10px}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+.controls button:hover{background:oklch(0.96 0.01 250 / .1)}
+.controls button:active{transform:translateY(1px)}
+
+:focus-visible{ outline:2px solid var(--seaglass); outline-offset:2px; }
+
+@media (prefers-reduced-motion: reduce){
+  .orb,.stake .flag .dot{animation:none}
+  .cool.armed .ringwrap .prog{animation:none;stroke-dashoffset:0}
+  .release.unlocked{animation:none}
+  .keyslot .lock svg{transition:none}
+  .done-line.show{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="cap">Two-Key · the human guardrail for the irreversible</div>
+<div class="phone">
+  <div class="island"></div>
+  <div class="statusbar"><span>9:41</span><span class="glyphs">5G&nbsp;&nbsp;100</span></div>
+  <div class="screen">
+    <div class="hi"><span class="orb"></span>Leo · awaiting authorization</div>
+
+    <!-- high-stakes card -->
+    <div class="stake"><div class="stake-in">
+      <div class="flag"><span class="dot"></span>Irreversible action</div>
+      <h1>Release wire instructions</h1>
+      <div class="amt"><b>$612,000</b> to Pioneer Title</div>
+      <div class="irrev">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5 14 4v4.5c0 3.6-2.5 6-6 7.3-3.5-1.3-6-3.7-6-7.3V4L8 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 5.5v3.2M8 11v.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Once sent, the funds cannot be recalled.
+      </div>
+    </div></div>
+
+    <!-- wire-fraud checklist -->
+    <div class="sect">Leo verified · wire-fraud check</div>
+    <div class="check">
+      <span class="tick"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="ctxt"><b>Account matches</b> the title company on file<span class="meta">routing + last 4 unchanged since escrow opened</span></span>
+    </div>
+    <div class="check">
+      <span class="tick"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="ctxt"><b>No last-minute change request</b><span class="meta">zero edits to instructions in the final 72h</span></span>
+    </div>
+    <div class="check">
+      <span class="tick"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="ctxt"><b>Callback number confirmed</b><span class="meta">verified by phone with Pioneer · 8:02a</span></span>
+    </div>
+
+    <!-- two key slots -->
+    <div class="sect">Turn both keys to arm release</div>
+    <div class="keys">
+      <div class="keyslot" id="key1">
+        <div class="role">You</div>
+        <div class="who">Dana Reyes</div>
+        <div class="lock"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 11.2V21M12 15h3.4M12 18h2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <div class="kstate">Tap to turn</div>
+      </div>
+      <div class="keyslot" id="key2">
+        <div class="role">Second authorizer</div>
+        <div class="who">Marcus</div>
+        <div class="lock"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 11.2V21M12 15h3.4M12 18h2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <div class="kstate">Tap to turn</div>
+      </div>
+    </div>
+
+    <!-- cooling-off -->
+    <div class="cool" id="cool">
+      <div class="ringwrap">
+        <svg width="46" height="46" viewBox="0 0 46 46"><circle class="track" cx="23" cy="23" r="22"/><circle class="prog" id="prog" cx="23" cy="23" r="22"/></svg>
+        <div class="num" id="num">10</div>
+      </div>
+      <div>
+        <div class="ctitle" id="ctitle">Cooling-off period</div>
+        <div class="csub" id="csub">Both keys turn first · 10s to reconsider</div>
+      </div>
+    </div>
+
+    <!-- release -->
+    <button class="release" id="release">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none"><rect x="3.5" y="9" width="13" height="8.5" rx="2" stroke="currentColor" stroke-width="1.5"/><path id="shackle" d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="rlabel">Locked</span>
+    </button>
+    <div class="lockhint" id="hint">Two people must turn their keys.</div>
+    <div class="done-line" id="doneline">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.3l3 3L13 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Wire released · logged to both authorizers
+    </div>
+
+    <p class="thesis">Two people. One irreversible action. <b>This is the only thing Leo will never do alone.</b></p>
+  </div>
+</div>
+
+<div class="controls"><button id="reset">↻ Reset</button></div>
+
+<script>
+(function(){
+  const key1=document.getElementById('key1'), key2=document.getElementById('key2');
+  const cool=document.getElementById('cool'), num=document.getElementById('num');
+  const ctitle=document.getElementById('ctitle'), csub=document.getElementById('csub');
+  const release=document.getElementById('release'), rlabel=document.getElementById('rlabel');
+  const hint=document.getElementById('hint'), doneline=document.getElementById('doneline');
+  const reset=document.getElementById('reset');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let armed=false, cooled=false, countTimer=null, coolTimer=null;
+
+  function turned(){ return key1.classList.contains('turned') && key2.classList.contains('turned'); }
+
+  function refreshHint(){
+    if(release.classList.contains('unlocked')) return;
+    if(!turned()){
+      const left=[key1,key2].filter(k=>!k.classList.contains('turned'))
+        .map(k=>k.querySelector('.who').textContent);
+      hint.classList.remove('ready');
+      hint.textContent = left.length===2 ? 'Two people must turn their keys.' : 'Waiting on ' + left[0] + ' to turn their key.';
+    } else if(!cooled){
+      hint.classList.remove('ready');
+      hint.textContent = 'Both keys turned · cooling-off in progress.';
+    }
+  }
+
+  function startCooling(){
+    if(armed) return;
+    armed=true;
+    cool.classList.add('armed');
+    refreshHint();
+    let t = reduce ? 1 : 10;
+    if(reduce){ num.textContent='0'; }
+    else {
+      num.textContent = t;
+      countTimer = setInterval(()=>{ t--; if(t<=0){ t=0; clearInterval(countTimer); } num.textContent=t; }, 1000);
+    }
+    const dur = reduce ? 200 : 10000;
+    coolTimer = setTimeout(()=>{
+      cooled=true;
+      cool.classList.add('cooled');
+      ctitle.textContent='Cooling-off complete';
+      csub.textContent='Release is now armed';
+      release.classList.add('unlocked');
+      rlabel.textContent='Release wire · $612,000';
+      hint.classList.add('ready');
+      hint.textContent='Tap Release to confirm and send the wire.';
+    }, dur);
+  }
+
+  function tryTurn(k){
+    if(armed) return; // keys lock once cooling-off begins
+    k.classList.toggle('turned');
+    k.querySelector('.kstate').textContent = k.classList.contains('turned') ? 'Key turned' : 'Tap to turn';
+    if(turned()) startCooling(); else refreshHint();
+  }
+
+  key1.addEventListener('click',()=>tryTurn(key1));
+  key2.addEventListener('click',()=>tryTurn(key2));
+
+  release.addEventListener('click',()=>{
+    if(!release.classList.contains('unlocked')) return;
+    release.classList.remove('unlocked');
+    release.style.cursor='default';
+    rlabel.textContent='Wire released';
+    hint.style.display='none';
+    doneline.classList.add('show');
+  });
+
+  // boot-time keyboard sweep: make click-bound non-native elements operable
+  (function enableKeyboard(){
+    const sel = [
+      '[onclick]',
+      '.keyslot'
+    ].join(',');
+    document.querySelectorAll(sel).forEach(function(el){
+      if(el.tagName==='BUTTON' || el.tagName==='A') return; // don't double-bind native controls
+      if(!el.hasAttribute('role')) el.setAttribute('role','button');
+      if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    });
+  })();
+
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+    const el = e.target;
+    if(!el || !el.getAttribute) return;
+    const tag = el.tagName;
+    if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || el.isContentEditable) return; // don't interfere with typing
+    if(tag==='BUTTON' || tag==='A') return; // native handling
+    if(el.getAttribute('role')!=='button') return;
+    e.preventDefault();
+    el.click();
+  });
+
+  reset.addEventListener('click',()=>{
+    clearInterval(countTimer); clearTimeout(coolTimer);
+    armed=false; cooled=false;
+    [key1,key2].forEach(k=>{ k.classList.remove('turned'); k.querySelector('.kstate').textContent='Tap to turn'; });
+    cool.classList.remove('armed','cooled');
+    ctitle.textContent='Cooling-off period';
+    csub.textContent='Both keys turn first · 10s to reconsider';
+    num.textContent='10';
+    // restart the ring drain animation cleanly
+    const prog=document.getElementById('prog');
+    prog.style.animation='none'; void prog.offsetWidth; prog.style.animation='';
+    release.classList.remove('unlocked'); release.style.cursor='';
+    rlabel.textContent='Locked';
+    hint.style.display=''; hint.classList.remove('ready');
+    hint.textContent='Two people must turn their keys.';
+    doneline.classList.remove('show');
+  });
+})();
+</script>
+</body>
+</html>

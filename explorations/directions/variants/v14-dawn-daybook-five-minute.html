@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V14 Dawn Daybook x Five-Minute Window</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* warm dawn paper, never pure white. the upper screen catches first light. */
+  --paper:oklch(0.971 0.018 78);
+  --paper-2:oklch(0.958 0.022 72);
+  --card:oklch(0.993 0.006 86);
+  --sheet:oklch(0.991 0.007 88);
+  --sunken:oklch(0.948 0.018 76);
+  --hair:oklch(0.34 0.02 56 / 0.10);
+  --hair2:oklch(0.34 0.02 56 / 0.17);
+  --shadow:0 16px 36px -20px oklch(0.45 0.05 56 / 0.34);
+
+  /* ink graded for the mixed-brightness greeting: bright facts, dim connectors */
+  --ink:oklch(0.265 0.022 56);     /* brightest fact */
+  --body:oklch(0.46 0.018 58);
+  --dim:oklch(0.66 0.016 64);      /* dim connective tissue */
+  --soft:oklch(0.74 0.013 70);
+
+  /* color == a confidence state, tied to meaning before placement */
+  --coral:oklch(0.585 0.155 32);      --coral-bg:oklch(0.935 0.066 36);    /* the live window: urgent but calm */
+  --confident:oklch(0.54 0.10 166);   --confident-bg:oklch(0.932 0.062 168);
+  --uncertain:oklch(0.605 0.125 74);  --uncertain-bg:oklch(0.94 0.08 80);
+  --slow:oklch(0.60 0.085 250);       --slow-bg:oklch(0.935 0.04 250);    /* quietly cooling */
+  --on-state:oklch(0.985 0.01 90);
+
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(130% 70% at 78% -8%, oklch(0.94 0.035 64 / .85), transparent 58%),
+    oklch(0.905 0.02 74);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center; min-height:100dvh;
+  padding:26px 16px 56px; -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+/* variant caption */
+.caption{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  font-family:var(--mono); font-size:10px; letter-spacing:.17em; text-transform:uppercase;
+  color:oklch(0.42 0.02 56 / .7); white-space:nowrap;
+}
+
+/* phone */
+.phone{
+  position:relative; width:393px; height:852px; max-height:calc(100dvh - 96px);
+  background:var(--paper); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.18 0.012 56), 0 0 0 12px oklch(0.34 0.012 56), 0 44px 96px -26px oklch(0.30 0.03 56 / .55);
+  overflow:hidden; isolation:isolate;
+}
+/* the dawn light, warm not neon, catching the top of the screen */
+.phone::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(95% 42% at 16% -4%, oklch(0.97 0.05 70 / .9), transparent 54%),
+    radial-gradient(80% 36% at 96% 2%, oklch(0.93 0.06 44 / .55), transparent 52%);
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.18 0.012 56); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink)}
+.statusbar .ic{display:flex; gap:7px; opacity:.78}
+
+.screen{position:absolute; inset:0; z-index:5; display:flex; flex-direction:column}
+
+/* breathing orb (Leo present, idle) */
+.orb{
+  width:22px;height:22px;border-radius:50%;flex:none;
+  background:radial-gradient(62% 62% at 34% 30%, oklch(0.96 0.04 80), oklch(0.74 0.12 56) 46%, oklch(0.58 0.14 40));
+  box-shadow:0 0 10px oklch(0.70 0.13 50 / .3), inset 0 1px 2px oklch(1 0 0 / .55);
+  animation:breathe 5.2s var(--exp) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* =========================================================
+   DAWN BLOCK  (upper, warm paper, daybook lineage)
+   ========================================================= */
+.dawn{position:relative; z-index:6; padding:54px 28px 0; flex:none}
+
+.head{display:flex; align-items:center; gap:10px}
+.head .who{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--body)}
+.head .now{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--dim)}
+
+/* big day number, the daybook signature, dawn-lit */
+.toprow{display:flex; align-items:flex-start; justify-content:space-between; margin-top:14px}
+.daynum{position:relative; font-family:var(--serif); font-weight:500; font-size:78px; line-height:.82; letter-spacing:-.03em; color:var(--ink)}
+.daynum .liv{position:absolute; top:8px; right:-15px; width:9px; height:9px; border-radius:50%; background:var(--coral); animation:livedot 2.6s var(--exp) infinite}
+@keyframes livedot{0%,100%{opacity:.5; transform:scale(1)}50%{opacity:1; transform:scale(1.3)}}
+.date{text-align:right; margin-top:8px}
+.date .mo{font-family:var(--mono); font-size:13px; letter-spacing:.04em; color:var(--body)}
+.date .dow{font-family:var(--serif); font-style:italic; font-size:15px; color:var(--dim); margin-top:2px}
+
+/* mixed-brightness greeting paragraph with small colored glyphs */
+.greeting{margin-top:24px; font-family:var(--serif); font-size:21px; line-height:1.52; font-weight:400; color:var(--dim); letter-spacing:-.004em; max-width:31ch}
+.greeting b{color:var(--ink); font-weight:500}
+.ig{display:inline-block; vertical-align:-3px; margin:0 3px 0 2px}
+
+/* the quiet ledger line: a calm fact, not a metric block */
+.ledger{margin-top:20px; display:flex; align-items:center; gap:9px; font-family:var(--mono); font-size:11px; letter-spacing:.01em; color:var(--body); line-height:1.5}
+.ledger .b{width:5px;height:5px;border-radius:50%;background:var(--confident);flex:none}
+.ledger b{color:var(--ink); font-weight:500}
+
+/* =========================================================
+   RISING SHEET  (the triage, white, lifts on load)
+   ========================================================= */
+.sheet-wrap{position:relative; z-index:6; flex:1 1 auto; min-height:0; margin-top:22px; display:flex}
+.sheet{
+  position:relative; width:100%;
+  background:var(--sheet); border-radius:28px 28px 0 0;
+  box-shadow:0 -20px 56px -28px oklch(0.30 0.03 56 / .5);
+  padding:8px 18px 22px; overflow-y:auto; scrollbar-width:none;
+  transform:translateY(30px); opacity:0;
+  animation:sheetRise .72s var(--exp) .28s forwards;
+}
+.sheet::-webkit-scrollbar{display:none}
+@keyframes sheetRise{to{transform:none; opacity:1}}
+.grab{width:38px;height:5px;border-radius:5px;background:var(--hair2);margin:8px auto 12px}
+
+.sheet-head{display:flex; align-items:baseline; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); padding:2px 6px 12px}
+.sheet-head .n{color:var(--coral)}
+
+#rows{display:flex; flex-direction:column; gap:12px}
+.row{
+  border-radius:20px; padding:15px; background:var(--card); border:1px solid var(--hair);
+  box-shadow:var(--shadow); position:relative; cursor:pointer;
+  opacity:0; transform:translateY(10px); animation:rise .56s var(--exp) forwards;
+}
+.row:nth-child(1){animation-delay:.50s}
+.row:nth-child(2){animation-delay:.58s}
+.row:nth-child(3){animation-delay:.66s}
+@keyframes rise{to{opacity:1; transform:none}}
+.row:focus-visible{outline:3px solid var(--slow); outline-offset:3px}
+.row .top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+.pill{font-family:var(--mono); font-size:10px; letter-spacing:.04em; text-transform:uppercase; padding:4px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; line-height:1}
+.pill .dot{width:6px;height:6px;border-radius:50%}
+.pill.coral{color:var(--coral); background:var(--coral-bg)} .pill.coral .dot{background:var(--coral)}
+.pill.uncertain{color:var(--uncertain); background:var(--uncertain-bg)} .pill.uncertain .dot{background:var(--uncertain)}
+.pill.confident{color:var(--confident); background:var(--confident-bg)} .pill.confident .dot{background:var(--confident)}
+.pill.alt{color:var(--body); background:oklch(0.34 0.02 56 / .06)}
+.row .when{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--dim)}
+.row .title{font-family:var(--sans); font-size:16.5px; font-weight:600; line-height:1.26; letter-spacing:-.2px; color:var(--ink); margin-top:11px}
+.row .why{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:var(--body); margin-top:6px}
+.row .foot{display:flex; align-items:center; gap:9px; margin-top:13px}
+.row .who{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--dim)}
+.row .go{margin-left:auto; width:36px; height:36px; border-radius:50%; background:var(--ink); color:var(--paper); display:flex; align-items:center; justify-content:center; flex:none; transition:transform .2s var(--exp); pointer-events:none}
+.row:active .go{transform:scale(.92)}
+
+/* avatars */
+.av{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:10px;color:oklch(0.985 0.008 80);font-family:var(--sans)}
+.av.dana{background:linear-gradient(135deg,oklch(0.62 0.14 32),oklch(0.5 0.13 18))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.56 0.11 168),oklch(0.46 0.10 184))}
+
+/* ---- the lead row, leading with the draining window ---- */
+.row.lead{display:flex; gap:14px; align-items:flex-start}
+.row.lead .ring{flex:none; margin-top:2px}
+.row.lead .body{flex:1; min-width:0}
+.win-ring{display:block}
+.win-ring .track{stroke:var(--coral-bg); fill:none}
+.win-ring .drain{stroke:var(--coral); fill:none; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center}
+.win-ring-wrap{position:relative; width:56px; height:56px; animation:ringbreath 3.4s var(--exp) infinite}
+@keyframes ringbreath{0%,100%{transform:scale(1); opacity:1}50%{transform:scale(1.035); opacity:.92}}
+.win-ring-wrap .cen{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px}
+.win-ring-wrap .cen .t{font-family:var(--mono); font-size:13px; font-weight:500; color:var(--coral); line-height:1; font-variant-numeric:tabular-nums}
+.win-ring-wrap .cen .l{font-family:var(--mono); font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--coral); opacity:.78}
+
+/* ---- calm signal (Crestview cooling), lower density ---- */
+.signal{margin:14px 6px 0; padding:14px 16px; border-radius:18px; background:var(--sunken); border:1px solid var(--hair)}
+.signal .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--body); display:flex; align-items:center; gap:7px}
+.signal .lbl .d{width:6px;height:6px;border-radius:50%;background:var(--slow)}
+.signal .txt{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:var(--body); margin-top:7px}
+.signal .txt b{color:var(--ink); font-weight:500}
+
+/* =========================================================
+   THE FIVE-MINUTE WINDOW  (centerpiece sheet)
+   ========================================================= */
+.scrim{position:absolute; inset:0; background:oklch(0.20 0.02 56 / .42); opacity:0; pointer-events:none; transition:opacity .34s var(--exp); z-index:90}
+.scrim.on{opacity:1; pointer-events:auto}
+
+.win{
+  position:absolute; left:0; right:0; bottom:0; z-index:91;
+  background:var(--paper); border-radius:26px 26px 0 0;
+  box-shadow:0 -22px 60px -24px oklch(0.20 0.03 56 / .5);
+  transform:translateY(102%); transition:transform .46s var(--exp);
+  max-height:92%; overflow-y:auto; scrollbar-width:none; padding:8px 20px 24px;
+}
+.win::-webkit-scrollbar{display:none}
+.win.on{transform:none}
+
+.win-top{display:flex; align-items:center; gap:10px; margin-top:4px}
+.win-top .who{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--body)}
+.win-top .x{margin-left:auto; width:34px; height:34px; border-radius:50%; background:oklch(0.34 0.02 56 / .06); border:none; color:var(--body); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.win-top .x:focus-visible{outline:3px solid var(--slow); outline-offset:2px}
+
+/* big draining ring as the hero of the sheet */
+.bigring{display:flex; align-items:center; gap:18px; margin:18px 2px 4px}
+.bigring-wrap{position:relative; width:96px; height:96px; flex:none; animation:ringbreath 3.4s var(--exp) infinite}
+.bigring-wrap svg{display:block}
+.bigring-wrap .track{stroke:var(--coral-bg); fill:none}
+.bigring-wrap .drain{stroke:var(--coral); fill:none; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center}
+.bigring-wrap .cen{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px}
+.bigring-wrap .cen .t{font-family:var(--mono); font-size:22px; font-weight:500; color:var(--coral); line-height:1; font-variant-numeric:tabular-nums}
+.bigring-wrap .cen .l{font-family:var(--mono); font-size:8px; letter-spacing:.12em; text-transform:uppercase; color:var(--coral); opacity:.8}
+.bigring .lede{font-family:var(--serif); font-size:18px; line-height:1.45; color:var(--ink)}
+.bigring .lede b{font-weight:600}
+.bigring .lede .sub{display:block; font-size:14px; color:var(--body); margin-top:6px; line-height:1.45}
+
+/* lead facts row */
+.facts{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0}
+.fact{display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:11px; background:var(--card); border:1px solid var(--hair); font-family:var(--mono); font-size:11px; color:var(--body); box-shadow:var(--shadow)}
+.fact .tick{width:14px;height:14px;border-radius:4px;background:var(--confident-bg);display:flex;align-items:center;justify-content:center;flex:none}
+.fact.warm .tick{background:var(--coral-bg)}
+
+.confchip{display:inline-flex; align-items:center; gap:7px; margin:16px 0 0; padding:6px 12px; border-radius:999px; font-family:var(--mono); font-size:11px; letter-spacing:.03em; text-transform:uppercase; color:var(--confident); background:var(--confident-bg)}
+.confchip .dot{width:7px;height:7px;border-radius:50%;background:var(--confident)}
+
+/* Leo's pre-drafted first text */
+.draft-h{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--body); display:flex; align-items:center; gap:8px; margin:18px 2px 9px}
+.draft-h .orb{width:16px;height:16px}
+.bubble{
+  position:relative; background:var(--card); border:1px solid var(--hair); border-radius:18px 18px 18px 6px;
+  padding:14px 16px; box-shadow:var(--shadow);
+  font-family:var(--serif); font-size:15.5px; line-height:1.5; color:var(--ink);
+}
+.bubble .sig{display:block; margin-top:6px; font-style:italic; color:var(--body)}
+.bubble .meta{display:flex; align-items:center; gap:7px; margin-top:11px; padding-top:11px; border-top:1px solid var(--hair); font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--dim)}
+.bubble .meta .d{width:6px;height:6px;border-radius:50%;background:var(--confident)}
+
+/* actions */
+.review-note{display:flex; align-items:center; justify-content:center; gap:8px; font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); margin:18px 0 12px}
+.review-note .lk{width:6px;height:6px;border-radius:50%;background:var(--confident)}
+.acts{display:flex; flex-direction:column; gap:10px}
+.btn{height:50px; border-radius:14px; border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .18s var(--exp), filter .18s var(--exp)}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:3px solid var(--slow); outline-offset:2px}
+.btn-p{background:var(--coral); color:var(--on-state)}
+.btn-p:hover{filter:brightness(1.06)}
+.btn-s{background:transparent; color:var(--body); border:1px solid var(--hair2); height:46px; font-weight:500}
+.btn-s:hover{background:oklch(0.34 0.02 56 / .04)}
+.route{display:flex; gap:10px}
+.route .btn{flex:1}
+
+/* resolve-to-Sent, restrained */
+.sent{position:absolute; inset:0; background:var(--paper); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:0 40px; opacity:0; pointer-events:none; transition:opacity .4s var(--exp); z-index:92; text-align:center}
+.sent.on{opacity:1; pointer-events:auto}
+.sent .mark{width:60px;height:60px;border-radius:50%;background:var(--confident-bg);display:flex;align-items:center;justify-content:center;transform:scale(.6);opacity:0}
+.sent.on .mark{animation:markin .5s var(--exp) .04s forwards}
+@keyframes markin{to{transform:scale(1);opacity:1}}
+.sent .t{font-family:var(--serif); font-size:21px; color:var(--ink); opacity:0; transform:translateY(8px)}
+.sent.on .t{animation:rise .44s var(--exp) .26s forwards}
+.sent .s{font-family:var(--serif); font-size:15.5px; line-height:1.5; color:var(--body); max-width:29ch; opacity:0; transform:translateY(8px)}
+.sent.on .s{animation:rise .44s var(--exp) .36s forwards}
+.sent .meta{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--dim); opacity:0; transform:translateY(8px)}
+.sent.on .meta{animation:rise .44s var(--exp) .46s forwards}
+.sent .close{margin-top:6px; height:46px; padding:0 26px; border-radius:14px; background:var(--ink); color:var(--paper); border:none; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; opacity:0}
+.sent.on .close{animation:rise .44s var(--exp) .54s forwards}
+.sent .close:focus-visible{outline:3px solid var(--slow); outline-offset:2px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important}
+  .orb,.daynum .liv,.win-ring-wrap,.bigring-wrap{animation:none}
+  .row,.sheet,.sent .mark,.sent .t,.sent .s,.sent .meta,.sent .close{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" role="application" aria-label="Leo morning command center">
+  <div class="notch"></div>
+  <div class="statusbar"><span>6:18</span><span class="ic"><span>5G</span><span>92</span></span></div>
+
+  <main class="screen">
+    <!-- ===== DAWN BLOCK ===== -->
+    <section class="dawn">
+      <div class="head">
+        <span class="orb" aria-hidden="true"></span>
+        <span class="who">Leo · your helper</span>
+        <span class="now">TUE 6:18AM</span>
+      </div>
+
+      <div class="toprow">
+        <div class="daynum">22<span class="liv" aria-hidden="true"></span></div>
+        <div class="date">
+          <div class="mo">JUN '26</div>
+          <div class="dow">Tuesday</div>
+        </div>
+      </div>
+
+      <p class="greeting">
+        <b>Good morning, Dana.</b> Three things need you, and one
+        <!-- live window glyph (coral) -->
+        <svg class="ig" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="12" cy="13" r="8" stroke="oklch(0.585 0.155 32)" stroke-width="1.8"/>
+          <path d="M12 9v4l2.5 1.6" stroke="oklch(0.585 0.155 32)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 3.5h6" stroke="oklch(0.585 0.155 32)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <b>cannot wait.</b> A
+        <!-- counter glyph (amber) -->
+        <svg class="ig" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="3.6" y="5" width="16.8" height="14" rx="3" stroke="oklch(0.605 0.125 74)" stroke-width="1.8"/>
+          <path d="M3.6 9.4h16.8" stroke="oklch(0.605 0.125 74)" stroke-width="1.8"/>
+          <path d="M8 3v3.4M16 3v3.4" stroke="oklch(0.605 0.125 74)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <b>reply on Oak St</b> is due at ten, and
+        <!-- people glyph (green) -->
+        <svg class="ig" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="9" cy="8" r="3" stroke="oklch(0.54 0.10 166)" stroke-width="1.8"/>
+          <path d="M3.8 19c0-2.9 2.3-5 5.2-5s5.2 2.1 5.2 5" stroke="oklch(0.54 0.10 166)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M16 6.5a3 3 0 0 1 0 5.4M17.5 19c0-2 -.7-3.6-1.8-4.6" stroke="oklch(0.54 0.10 166)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <b>Marcus</b> has a buyer who has gone quiet.
+      </p>
+
+      <p class="ledger">
+        <span class="b" aria-hidden="true"></span>
+        Overnight Leo took care of <b>47</b> things and woke you for <b>0</b>.
+      </p>
+    </section>
+
+    <!-- ===== RISING TRIAGE SHEET ===== -->
+    <div class="sheet-wrap">
+      <div class="sheet">
+        <div class="grab" aria-hidden="true"></div>
+        <div class="sheet-head">Needs you <span aria-hidden="true">·</span> <span class="n">3 to do</span></div>
+
+        <div id="rows">
+          <!-- 1. The five-minute window lead (centerpiece entry) -->
+          <div class="row lead" id="rowWindow" role="button" tabindex="0" aria-haspopup="dialog"
+               aria-label="New buyer for 88 Linden, already approved for a loan, four minutes twelve seconds left to reply first. Open the message Leo wrote for you.">
+            <div class="ring" aria-hidden="true">
+              <div class="win-ring-wrap">
+                <!-- static-accurate: 4:12 of 5:00 left = 84% remaining -->
+                <svg class="win-ring" width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="track" cx="28" cy="28" r="24" stroke-width="5"/>
+                  <!-- circumference = 2*pi*24 = 150.8; 84% drawn = 126.7 dash, 24.1 gap -->
+                  <circle class="drain" cx="28" cy="28" r="24" stroke-width="5"
+                          stroke-dasharray="126.7 150.8" stroke-dashoffset="0"/>
+                </svg>
+                <div class="cen"><span class="t">4:12</span><span class="l">left</span></div>
+              </div>
+            </div>
+            <div class="body">
+              <div class="top">
+                <span class="pill coral"><span class="dot"></span>Reply now</span>
+                <span class="pill alt">New buyer</span>
+              </div>
+              <div class="title">New buyer for 88 Linden, came in 90 seconds ago</div>
+              <p class="why">Ready to buy and already loan-approved. The first agent to reply usually wins. Leo has written a first message for you.</p>
+              <div class="foot">
+                <span class="who"><span class="av dana" aria-hidden="true">D</span>Yours to take</span>
+                <span class="go" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Oak St counter due 10am -->
+          <div class="row" role="button" tabindex="0" aria-label="Your reply to the buyer on 142 Oak Street is ready, due 10am">
+            <div class="top">
+              <span class="pill uncertain"><span class="dot"></span>Reply ready</span>
+              <span class="pill alt">Your sale</span>
+              <span class="when">Due 10:00am</span>
+            </div>
+            <div class="title">Your reply on 142 Oak St is ready</div>
+            <p class="why">Leo wrote a reply offering the buyer $612k. It looks good, but two numbers in it could not be double-checked. Read it before you send.</p>
+            <div class="foot">
+              <span class="who"><span class="av dana" aria-hidden="true">D</span>Leo wrote it for you</span>
+              <span class="go" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 3. Marcus lead going quiet -->
+          <div class="row" role="button" tabindex="0" aria-label="Marcus has a buyer who has not replied in 3 days, your help could fix it">
+            <div class="top">
+              <span class="pill confident"><span class="dot"></span>Teammate</span>
+              <span class="pill alt">Marcus</span>
+              <span class="when">No reply in 3 days</span>
+            </div>
+            <div class="title">Marcus's Birchwood buyer has gone quiet</div>
+            <p class="why">No reply since Friday. Marcus has not noticed yet. A quick message from you could help.</p>
+            <div class="foot">
+              <span class="who"><span class="av marcus" aria-hidden="true">M</span>Your team</span>
+              <span class="go" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- calm signal: Crestview cooling -->
+        <section class="signal" aria-label="Heads up, the Crestview sale is slowing down">
+          <div class="lbl"><span class="d" aria-hidden="true"></span>Just a heads up</div>
+          <p class="txt">The <b>Crestview</b> sale is slowing down a little, but it is not stuck. The buyer has been replying more slowly this week. Nothing to do yet. Leo is keeping an eye on it and will flag it here if it slows down more.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== THE FIVE-MINUTE WINDOW SHEET ===== -->
+  <div class="scrim" id="scrim"></div>
+  <section class="win" id="winSheet" role="dialog" aria-modal="true" aria-label="Reply now to the new buyer for 88 Linden" aria-hidden="true">
+    <div class="grab" aria-hidden="true"></div>
+
+    <div class="win-top">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="who">Leo · 88 Linden · new buyer</span>
+      <button class="x" id="winClose" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="bigring">
+      <div class="bigring-wrap" aria-hidden="true">
+        <!-- static-accurate, agrees with 4:12 left = 84% remaining. r=44, C=276.5; 84% = 232.3 dash -->
+        <svg width="96" height="96" viewBox="0 0 96 96">
+          <circle class="track" cx="48" cy="48" r="44" stroke-width="6"/>
+          <circle class="drain" cx="48" cy="48" r="44" stroke-width="6"
+                  stroke-dasharray="232.3 276.5" stroke-dashoffset="0"/>
+        </svg>
+        <div class="cen"><span class="t">4:12</span><span class="l">left</span></div>
+      </div>
+      <p class="lede"><b>Reply in the next four minutes</b> and you are seven times more likely to win this buyer.<span class="sub">After that, Leo will hand it to the next free agent so the buyer still hears back fast.</span></p>
+    </div>
+
+    <div class="facts" aria-label="What we know about this buyer">
+      <span class="fact"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="oklch(0.54 0.10 166)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>Loan-approved up to $540k</span>
+      <span class="fact"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="oklch(0.54 0.10 166)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>Found you on your website</span>
+      <span class="fact warm"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="oklch(0.585 0.155 32)" stroke-width="3.4"><path d="M12 7v6M12 16.5v.01"/></svg></span>Also looking at 2 other homes</span>
+    </div>
+
+    <span class="confchip"><span class="dot" aria-hidden="true"></span>We are fairly sure this is a real buyer</span>
+
+    <div class="draft-h"><span class="orb" aria-hidden="true"></span>Here is a first message Leo wrote, in your style</div>
+    <div class="bubble">
+      Hi Priya, this is Dana with Real. Saw you just looked at 88 Linden, lovely block. I can show you the place this afternoon if you would like a look before the weekend rush.
+      <span class="sig">Want me to send this as is, or pass this buyer to a teammate?</span>
+      <span class="meta"><span class="d" aria-hidden="true"></span>Written to match Dana's last 40 first messages</span>
+    </div>
+
+    <div class="review-note"><span class="lk" aria-hidden="true"></span>Nothing is sent until you tap Send</div>
+    <div class="acts">
+      <button class="btn btn-p" id="sendBtn">Send this message</button>
+      <div class="route">
+        <button class="btn btn-s" id="routeBtn">Pass to a teammate</button>
+        <button class="btn btn-s" id="tuneBtn">Edit first</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- resolve-to-Sent -->
+  <div class="sent" id="sent" role="status" aria-hidden="true">
+    <div class="mark" aria-hidden="true">
+      <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="oklch(0.54 0.10 166)" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div class="t">Message sent</div>
+    <p class="s">Your message is on its way to Priya, with time to spare. Leo will show you her reply here the moment it comes in.</p>
+    <div class="meta">88 LINDEN · 6:19AM · SAVED TO THIS BUYER</div>
+    <button class="close" id="sentClose">Back to today</button>
+  </div>
+</div>
+
+<div class="caption">V14 DAWN DAYBOOK x FIVE-MINUTE WINDOW</div>
+
+<script>
+  document.documentElement.classList.add('js');
+  var rowWindow = document.getElementById('rowWindow');
+  var scrim = document.getElementById('scrim');
+  var winSheet = document.getElementById('winSheet');
+  var winClose = document.getElementById('winClose');
+  var sendBtn = document.getElementById('sendBtn');
+  var routeBtn = document.getElementById('routeBtn');
+  var tuneBtn = document.getElementById('tuneBtn');
+  var sent = document.getElementById('sent');
+  var sentClose = document.getElementById('sentClose');
+
+  function openWin(){
+    scrim.classList.add('on');
+    winSheet.classList.add('on');
+    winSheet.setAttribute('aria-hidden','false');
+    setTimeout(function(){ winClose.focus(); }, 60);
+  }
+  function closeWin(){
+    scrim.classList.remove('on');
+    winSheet.classList.remove('on');
+    winSheet.setAttribute('aria-hidden','true');
+    rowWindow.focus();
+  }
+  function activate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fn(); }
+    });
+  }
+
+  activate(rowWindow, openWin);
+  // every row advertises role=button + tabindex, so every row must honor
+  // Enter/Space. rowWindow opens the sheet; the rest press in place for now.
+  document.querySelectorAll('#rows .row[role="button"]').forEach(function(r){
+    if(r === rowWindow) return;
+    activate(r, function(){
+      r.style.transform = 'scale(.99)';
+      setTimeout(function(){ r.style.transform = ''; }, 130);
+    });
+  });
+  winClose.addEventListener('click', closeWin);
+  scrim.addEventListener('click', closeWin);
+  tuneBtn.addEventListener('click', closeWin);
+
+  function resolveSent(label, msg){
+    winSheet.classList.remove('on');
+    scrim.classList.remove('on');
+    winSheet.setAttribute('aria-hidden','true');
+    document.querySelector('#sent .t').textContent = label;
+    document.querySelector('#sent .s').textContent = msg;
+    sent.classList.add('on');
+    sent.setAttribute('aria-hidden','false');
+    setTimeout(function(){ sentClose.focus(); }, 600);
+  }
+
+  sendBtn.addEventListener('click', function(){
+    resolveSent('Message sent', 'Your message is on its way to Priya, with time to spare. Leo will show you her reply here the moment it comes in.');
+  });
+  routeBtn.addEventListener('click', function(){
+    resolveSent('Passed to your team', 'Leo passed 88 Linden to the next free teammate and noted the time, so nobody has to start from scratch.');
+  });
+
+  sentClose.addEventListener('click', function(){
+    sent.classList.remove('on');
+    sent.setAttribute('aria-hidden','true');
+    // mark the lead handled, restrained: settle the ring + swap state
+    var pill = rowWindow.querySelector('.pill.coral');
+    if(pill){ pill.className='pill confident'; pill.innerHTML='<span class="dot"></span>Done'; }
+    var ring = rowWindow.querySelector('.win-ring-wrap');
+    if(ring){
+      ring.style.animation='none';
+      ring.querySelector('.drain').setAttribute('stroke','oklch(0.54 0.10 166)');
+      ring.querySelector('.track').setAttribute('stroke','var(--confident-bg)');
+      ring.querySelector('.cen .t').style.color='var(--confident)';
+      ring.querySelector('.cen .t').textContent='6:19';
+      ring.querySelector('.cen .l').style.color='var(--confident)';
+      ring.querySelector('.cen .l').textContent='sent';
+    }
+    var why = rowWindow.querySelector('.why');
+    if(why){ why.textContent='Replied at 6:19am, with time to spare. Leo is watching for Priya to reply.'; }
+    rowWindow.style.opacity='.6';
+    rowWindow.focus();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && winSheet.classList.contains('on')) closeWin();
+  });
+</script>
+</body>
+</html>

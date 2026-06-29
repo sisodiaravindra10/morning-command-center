@@ -1,0 +1,582 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inspiration 01 - Leo Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #1c1b1f;
+    --ink-soft: #2a2730;
+    --grey: #9a98a3;
+    --grey-soft: #b7b5bf;
+    --grey-line: #ececef;
+    --grey-faint: #f4f3f6;
+    --card: #ffffff;
+    --peach: #ffe7d4;
+    --peach-deep: #ffd2b0;
+    --pill: #f6f5f8;
+    --shadow-card: 0 18px 40px -22px rgba(60, 40, 30, 0.28);
+    --shadow-soft: 0 10px 30px -16px rgba(60, 40, 30, 0.22);
+    --shadow-tab: 0 16px 36px -14px rgba(50, 40, 60, 0.28);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    background: #eceaec;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 40px 16px;
+    color: var(--ink);
+  }
+
+  .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8b8890;
+    font-weight: 500;
+  }
+
+  /* ---------- iPhone frame ---------- */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: #0c0c0e;
+    border-radius: 46px;
+    padding: 11px;
+    box-shadow:
+      0 50px 100px -40px rgba(40, 30, 30, 0.45),
+      0 0 0 2px rgba(255, 255, 255, 0.04) inset;
+    position: relative;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background: #ffffff;
+    isolation: isolate;
+  }
+
+  /* soft peach radial glow near top */
+  .screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 60% at 75% -8%, var(--peach-deep) 0%, var(--peach) 26%, rgba(255, 231, 212, 0) 58%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 128px;
+    height: 30px;
+    background: #0c0c0e;
+    border-radius: 0 0 18px 18px;
+    z-index: 40;
+  }
+
+  /* ---------- status bar ---------- */
+  .statusbar {
+    position: relative;
+    z-index: 30;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 34px;
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .statusbar .time { letter-spacing: 0.01em; }
+  .statusbar .sys {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .statusbar .sys svg { display: block; }
+
+  /* ---------- content wrapper ---------- */
+  .content {
+    position: relative;
+    z-index: 10;
+    height: calc(100% - 50px);
+    padding: 6px 22px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- header row ---------- */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  .icon-btn {
+    border: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .grid-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+  }
+  .grid-btn:hover { background: #fffaf6; }
+  .grid-btn:active { transform: scale(0.94); }
+
+  .dots { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .dots span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .pts-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px 0 11px;
+    border-radius: 20px;
+    background: var(--pill);
+  }
+  .pts-pill .num { font-weight: 700; font-size: 15px; color: var(--ink); }
+  .pts-pill .pts { font-weight: 500; font-size: 10px; color: var(--grey); margin-left: -1px; }
+
+  .bell-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+  }
+  .bell-btn:hover { background: #fffaf6; }
+  .bell-btn:active { transform: scale(0.94); }
+  .bell-btn .badge {
+    position: absolute; top: 9px; right: 10px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ff4d4f;
+    border: 2px solid #fff;
+  }
+
+  .avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    object-fit: cover;
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* ---------- heading ---------- */
+  .heading {
+    margin-top: 26px;
+    line-height: 1.12;
+  }
+  .heading .h1 {
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .heading .h2 {
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- stat row ---------- */
+  .statrow {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .statrow .big {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .statrow .divider {
+    width: 1px;
+    height: 46px;
+    background: var(--grey-line);
+  }
+  .statrow .big-grey {
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--grey-soft);
+    letter-spacing: -0.02em;
+  }
+  .statrow .label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--grey);
+  }
+  .statrow .label b { display: block; font-weight: 600; color: var(--ink-soft); }
+  .statrow .cal-btn {
+    margin-left: auto;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1.5px solid var(--grey-line);
+    display: grid; place-items: center;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  }
+  .statrow .cal-btn:hover { border-color: var(--peach-deep); background: #fff8f2; }
+  .statrow .cal-btn:active { transform: scale(0.93); }
+
+  /* ---------- primary card ---------- */
+  .session-card {
+    margin-top: 24px;
+    background: var(--card);
+    border-radius: 26px;
+    padding: 22px 22px 18px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+  }
+  .session-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .session-top .name { font-size: 19px; font-weight: 700; color: var(--ink); }
+  .session-top .role { font-size: 13px; font-weight: 500; color: var(--grey); margin-top: 3px; }
+
+  .orb {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: radial-gradient(circle at 32% 28%, #fff1d8 0%, #ffb368 20%, #ff8a4c 44%, #6b8eef 72%, #8b5cf6 100%);
+    filter: blur(0.3px) saturate(1.05);
+    box-shadow:
+      0 10px 24px -10px rgba(255, 130, 80, 0.5),
+      inset -6px -8px 16px rgba(120, 70, 200, 0.25),
+      inset 6px 8px 14px rgba(255, 255, 255, 0.55);
+  }
+
+  .session-cols {
+    margin-top: 22px;
+    display: flex;
+    gap: 46px;
+  }
+  .session-cols .col .k { font-size: 12px; font-weight: 500; color: var(--grey); }
+  .session-cols .col .v { font-size: 16px; font-weight: 600; color: var(--ink); margin-top: 5px; }
+
+  .hairline {
+    height: 1px;
+    background: var(--grey-line);
+    margin: 18px 0 16px;
+  }
+
+  .start-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: opacity 0.18s ease;
+  }
+  .start-row:hover { opacity: 0.78; }
+  .start-row:active { transform: scale(0.99); }
+  .start-row .txt { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .start-row .arrow {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--ink);
+    display: grid; place-items: center;
+    transition: transform 0.18s ease;
+  }
+  .start-row:hover .arrow { transform: translateX(2px); }
+
+  /* ---------- peeking bottom cards ---------- */
+  .mini-row {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .mini-card {
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px 0;
+    box-shadow: 0 -2px 20px -16px rgba(60,40,30,0.3), 0 14px 30px -22px rgba(60,40,30,0.22);
+    height: 96px;
+    overflow: hidden;
+  }
+  .mini-card .k { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .mini-card .sub { font-size: 11px; font-weight: 500; color: var(--grey); margin-top: 2px; }
+  .mini-card .big {
+    font-size: 40px; font-weight: 800; color: var(--ink);
+    letter-spacing: -0.02em; margin-top: 8px;
+  }
+  .mini-card.alt .big { color: var(--peach-deep); }
+
+  /* ---------- bottom tab bar ---------- */
+  .tabbar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 22px;
+    z-index: 35;
+    width: 248px;
+    height: 64px;
+    background: #ffffff;
+    border-radius: 32px;
+    box-shadow: var(--shadow-tab);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+  }
+  .tab {
+    width: 46px; height: 46px;
+    border: none; background: transparent;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    cursor: pointer;
+    color: var(--grey-soft);
+    transition: transform 0.18s ease, color 0.18s ease, background 0.18s ease;
+  }
+  .tab:hover { color: var(--ink-soft); }
+  .tab:active { transform: scale(0.9); }
+  .tab.active { color: #fff; background: var(--ink); }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 134px; height: 5px;
+    border-radius: 3px;
+    background: rgba(20, 18, 24, 0.32);
+    z-index: 36;
+  }
+
+  /* ---------- entrance motion (gated) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .anim { opacity: 0; transform: translateY(14px); animation: rise 0.62s cubic-bezier(0.22, 0.8, 0.3, 1) forwards; }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.12s; }
+    .d3 { animation-delay: 0.20s; }
+    .d4 { animation-delay: 0.30s; }
+    .d5 { animation-delay: 0.40s; }
+    .d6 { animation-delay: 0.48s; }
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .orb { animation: floaty 6s ease-in-out infinite; }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(4deg); }
+    }
+  }
+</style>
+
+<div class="caption">INSPIRATION 01 - LEO COMMAND CENTER / SOFT WARM</div>
+
+<div class="phone">
+  <div class="screen">
+    <div class="notch"></div>
+
+    <!-- status bar -->
+    <div class="statusbar">
+      <span class="time">9:00 am</span>
+      <span class="sys">
+        <!-- signal -->
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#1c1b1f"/>
+          <rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="#1c1b1f"/>
+          <rect x="10" y="3" width="3" height="9" rx="1" fill="#1c1b1f"/>
+          <rect x="15" y="0.5" width="3" height="11.5" rx="1" fill="#1c1b1f"/>
+        </svg>
+        <!-- wifi -->
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8.5 1.2C5.4 1.2 2.6 2.4 0.6 4.4L8.5 12 16.4 4.4C14.4 2.4 11.6 1.2 8.5 1.2Z" fill="#1c1b1f"/>
+        </svg>
+        <!-- battery -->
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#1c1b1f" stroke-opacity="0.4" fill="none"/>
+          <rect x="2.2" y="2.2" width="17" height="8.6" rx="2" fill="#1c1b1f"/>
+          <rect x="24" y="4" width="2" height="5" rx="1" fill="#1c1b1f" fill-opacity="0.4"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="content">
+      <!-- header -->
+      <div class="header anim d1">
+        <div class="header-left">
+          <button class="icon-btn grid-btn" aria-label="Menu">
+            <span class="dots"><span></span><span></span><span></span><span></span></span>
+          </button>
+          <div class="pts-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 4h10v3a5 5 0 0 1-10 0V4Z" fill="#F5A623"/>
+              <path d="M7 5H4.5a1 1 0 0 0-1 1c0 1.8 1.3 3.2 3 3.4M17 5h2.5a1 1 0 0 1 1 1c0 1.8-1.3 3.2-3 3.4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              <path d="M10 12h4v3h-4z" fill="#F5A623"/>
+              <path d="M8 20h8a0 0 0 0 1 0 0v0a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v0Z" fill="#F5A623"/>
+              <rect x="9" y="18" width="6" height="2" rx="1" fill="#F5A623"/>
+            </svg>
+            <span class="num">78%</span>
+            <span class="pts">to cap</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn bell-btn" aria-label="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3a6 6 0 0 0-6 6c0 3.5-1.2 5-2 6h16c-.8-1-2-2.5-2-6a6 6 0 0 0-6-6Z" stroke="#1c1b1f" stroke-width="1.6" stroke-linejoin="round" fill="none"/>
+              <path d="M10 20a2 2 0 0 0 4 0" stroke="#1c1b1f" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="badge"></span>
+          </button>
+          <img class="avatar" src="https://picsum.photos/seed/danareyes88/120/120" alt="Profile" />
+        </div>
+      </div>
+
+      <!-- heading -->
+      <div class="heading anim d2">
+        <div class="h1">Hello, Dana</div>
+        <div class="h2">This morning</div>
+      </div>
+
+      <!-- stat row -->
+      <div class="statrow anim d2">
+        <span class="big">03</span>
+        <span class="divider"></span>
+        <span class="big-grey">12</span>
+        <span class="label">Deals <b>need you</b>today</span>
+        <button class="icon-btn cal-btn" aria-label="Calendar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="5" width="17" height="15" rx="3" stroke="#1c1b1f" stroke-width="1.6" fill="none"/>
+            <path d="M3.5 9.5h17" stroke="#1c1b1f" stroke-width="1.6"/>
+            <path d="M8 3v4M16 3v4" stroke="#1c1b1f" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- primary session card -->
+      <div class="session-card anim d3">
+        <div class="session-top">
+          <div>
+            <div class="name">Leo</div>
+            <div class="role">Your AI chief of staff</div>
+          </div>
+          <div class="orb" id="orb"></div>
+        </div>
+
+        <div class="session-cols">
+          <div class="col">
+            <div class="k">Next brief</div>
+            <div class="v">Now</div>
+          </div>
+          <div class="col">
+            <div class="k">Last brief</div>
+            <div class="v">6m ago</div>
+          </div>
+        </div>
+
+        <div class="hairline"></div>
+
+        <div class="start-row" id="startRow">
+          <span class="txt">Start the morning brief</span>
+          <span class="arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12h13M13 6l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- peeking mini cards -->
+      <div class="mini-row anim d4">
+        <div class="mini-card">
+          <div class="k">Pipeline health</div>
+          <div class="sub">Overall</div>
+          <div class="big">92%</div>
+        </div>
+        <div class="mini-card alt">
+          <div class="k">Handled overnight</div>
+          <div class="sub">Today</div>
+          <div class="big">47</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom tab bar -->
+    <div class="tabbar anim d6">
+      <button class="tab active" aria-label="Home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1v-8.8Z"/>
+        </svg>
+      </button>
+      <button class="tab" aria-label="Explore">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M3.5 12h17M12 3.5c2.3 2.3 3.5 5.3 3.5 8.5s-1.2 6.2-3.5 8.5c-2.3-2.3-3.5-5.3-3.5-8.5S9.7 5.8 12 3.5Z" stroke="currentColor" stroke-width="1.7" fill="none"/>
+        </svg>
+      </button>
+      <button class="tab" aria-label="Calendar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3.5" y="5" width="17" height="15" rx="3" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M3.5 9.5h17" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="tab" aria-label="Workout">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 9v6M7 7v10M17 7v10M20 9v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M7 12h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+</div>
+
+<!-- orb gradient via SVG so we can blend orange -> blue -> violet -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <radialGradient id="orbGrad" cx="32%" cy="28%" r="85%">
+      <stop offset="0%" stop-color="#fff0d6"/>
+      <stop offset="22%" stop-color="#ffb066"/>
+      <stop offset="48%" stop-color="#ff8a4c"/>
+      <stop offset="70%" stop-color="#5b8def"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </radialGradient>
+  </defs>
+</svg>

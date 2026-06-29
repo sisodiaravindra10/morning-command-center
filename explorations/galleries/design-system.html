@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo Command Center - Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   LEO COMMAND CENTER - DESIGN SYSTEM REFERENCE
+   One self-contained file. CSS-only motion. No pure black/white. No em-dashes.
+   ========================================================================= */
+:root{
+  /* ---- AI-state palette (OKLCH) : the one meaning-bearing channel ---- */
+  --confident: oklch(0.80 0.11 168);   /* seaglass  - calm, low-arousal positive */
+  --uncertain: oklch(0.82 0.12 72);    /* amber     - asks rather than asserts */
+  --urgent:    oklch(0.73 0.16 28);    /* coral     - the single time-critical item */
+  --thinking:  oklch(0.66 0.16 262);   /* cobalt    - Leo at work */
+  --silent:    oklch(0.64 0.018 258);  /* ghost     - handled, suppressed */
+
+  --confident-deep: oklch(0.52 0.10 168);
+  --uncertain-deep: oklch(0.58 0.12 72);
+  --urgent-deep:    oklch(0.55 0.16 28);
+  --cobalt-deep:    oklch(0.42 0.15 262);
+
+  /* ---- neutrals : dark canvas, tinted toward 260 (never pure black) ---- */
+  --canvas:  oklch(0.155 0.022 260);
+  --canvas2: oklch(0.12 0.018 262);
+  --card:    oklch(0.20 0.024 260);
+  --raise:   oklch(0.235 0.026 260);
+  --inset:   oklch(0.13 0.02 260);
+  --ink:     oklch(0.96 0.008 250);
+  --body:    oklch(0.80 0.014 255);
+  --muted:   oklch(0.64 0.018 258);
+  --soft:    oklch(0.50 0.02 260);
+
+  /* ---- hairlines : low-alpha ink, never a heavy border ---- */
+  --hair:  oklch(0.96 0.01 250 / .09);
+  --hair2: oklch(0.96 0.01 250 / .15);
+  --hair3: oklch(0.96 0.01 250 / .04);
+
+  --on-urgent: oklch(0.18 0.04 28);
+  --on-cobalt: oklch(0.97 0.01 250);
+
+  /* ---- type : the three voices ---- */
+  --serif: 'Newsreader', Georgia, serif;     /* human + Leo */
+  --sans:  'Inter', system-ui, -apple-system, sans-serif; /* interface */
+  --mono:  'JetBrains Mono', ui-monospace, monospace;     /* machine */
+
+  /* ---- motion grammar ---- */
+  --exp: cubic-bezier(.16,1,.3,1);
+
+  /* ---- space + radii scale ---- */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 18px; --s5: 24px; --s6: 36px; --s7: 56px; --s8: 88px;
+  --r-row: 0px; --r-chip: 8px; --r-card: 24px; --r-pill: 9999px;
+
+  --maxw: 1180px;
+  --nav-w: 232px;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  font-family:var(--sans);
+  color:var(--body);
+  background:
+    radial-gradient(130% 80% at 50% -8%, oklch(0.22 0.045 262), oklch(0.13 0.02 260) 52%, oklch(0.10 0.016 260) 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  line-height:1.5;
+}
+a{ color:inherit; text-decoration:none; }
+
+/* =================== LAYOUT SHELL =================== */
+.shell{ max-width:var(--maxw); margin:0 auto; padding:0 24px; display:flex; gap:48px; align-items:flex-start; }
+.nav{
+  position:sticky; top:0; align-self:flex-start;
+  width:var(--nav-w); flex:none; height:100vh;
+  padding:34px 0 24px; overflow-y:auto; scrollbar-width:none;
+  display:flex; flex-direction:column;
+}
+.nav::-webkit-scrollbar{ display:none; }
+.nav-brand{ display:flex; align-items:center; gap:11px; margin-bottom:30px; padding-right:14px; }
+.nav-brand .nb-name{ font-family:var(--sans); font-weight:600; font-size:14px; color:var(--ink); letter-spacing:-.1px; line-height:1.2; }
+.nav-brand .nb-sub{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); margin-top:2px; }
+.nav ol{ list-style:none; counter-reset:nav; }
+.nav li{ counter-increment:nav; }
+.nav a{
+  display:flex; gap:11px; align-items:baseline;
+  font-family:var(--sans); font-size:13.5px; color:var(--muted);
+  padding:8px 14px 8px 0; border-left:1px solid var(--hair); padding-left:16px;
+  transition:color .2s var(--exp), border-color .2s var(--exp);
+}
+.nav a::before{ content:counter(nav,decimal-leading-zero); font-family:var(--mono); font-size:10.5px; color:var(--soft); flex:none; }
+.nav a:hover{ color:var(--ink); border-color:var(--hair2); }
+.nav-foot{ margin-top:auto; padding-top:22px; font-family:var(--mono); font-size:10px; color:var(--soft); letter-spacing:.06em; line-height:1.7; }
+
+.main{ flex:1; min-width:0; padding:40px 0 120px; }
+
+/* =================== ORB (Leo) =================== */
+.orb{
+  width:var(--orb,18px); height:var(--orb,18px); border-radius:50%; flex:none;
+  background:radial-gradient(62% 62% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));
+  box-shadow:0 0 11px oklch(0.64 0.17 250 / .5), inset 0 1px 2px oklch(1 0 0 / .5);
+  animation:breathe 5s var(--exp) infinite;
+}
+@keyframes breathe{ 0%,100%{ transform:scale(1); filter:brightness(1); } 50%{ transform:scale(1.08); filter:brightness(1.16); } }
+
+/* =================== HEADER =================== */
+.hero{ padding:56px 0 40px; border-bottom:1px solid var(--hair); position:relative; }
+.hero .eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--soft); display:flex; align-items:center; gap:12px; }
+.hero-orb{ --orb:38px; }
+.hero-orb-wrap{ display:flex; align-items:center; gap:16px; margin-bottom:26px; }
+.hero-orb-wrap .ttl{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+.hero-orb-wrap .ttl b{ color:var(--confident); font-weight:500; }
+.hero h1{
+  font-family:var(--serif); font-weight:400; font-size:clamp(38px,6vw,68px); line-height:1.02; letter-spacing:-1.2px; color:var(--ink);
+  max-width:16ch;
+}
+.hero h1 em{ font-style:italic; color:var(--confident); }
+.hero .lede{ font-family:var(--serif); font-size:clamp(18px,2.4vw,22px); line-height:1.5; color:var(--body); max-width:54ch; margin-top:24px; }
+.hero .meta-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:30px; }
+.tag{
+  font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  padding:6px 12px; border-radius:var(--r-pill); border:1px solid var(--hair2); color:var(--muted);
+  display:inline-flex; align-items:center; gap:7px;
+}
+.tag .d{ width:7px; height:7px; border-radius:50%; }
+
+/* =================== SECTIONS =================== */
+section{ padding:62px 0 8px; border-top:1px solid var(--hair); }
+section:first-of-type{ border-top:none; }
+.sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:8px; }
+.sec-num{ font-family:var(--mono); font-size:12px; color:var(--soft); letter-spacing:.1em; }
+.sec-head h2{ font-family:var(--sans); font-weight:600; font-size:clamp(24px,3vw,32px); letter-spacing:-.6px; color:var(--ink); }
+.sec-sub{ font-family:var(--serif); font-size:18px; line-height:1.55; color:var(--body); max-width:64ch; margin:14px 0 36px; }
+.sec-sub.tight{ margin-bottom:24px; }
+.kicker{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); margin:34px 0 16px; }
+
+/* principle callout */
+.rule-note{
+  display:flex; gap:14px; align-items:flex-start;
+  background:var(--inset); border:1px solid var(--hair); border-radius:16px; padding:18px 20px; margin:28px 0;
+}
+.rule-note .rn-ic{ flex:none; width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:color-mix(in oklch, var(--confident) 14%, transparent); color:var(--confident); }
+.rule-note p{ font-family:var(--sans); font-size:14.5px; line-height:1.6; color:var(--body); }
+.rule-note p b{ color:var(--ink); font-weight:600; }
+.rule-note code{ font-family:var(--mono); font-size:12.5px; color:var(--confident); background:oklch(0.96 0.01 250 / .06); padding:1px 6px; border-radius:5px; }
+
+/* =================== COLOR SWATCHES =================== */
+.swatch-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(232px,1fr)); gap:14px; }
+.swatch{
+  background:var(--card); border:1px solid var(--hair); border-radius:18px; overflow:hidden;
+  transition:transform .3s var(--exp), border-color .3s var(--exp);
+}
+.swatch:hover{ transform:translateY(-3px); border-color:var(--hair2); }
+.sw-chip{ height:96px; position:relative; }
+.sw-chip .glow{ position:absolute; inset:0; opacity:.0; }
+.sw-body{ padding:14px 16px 16px; }
+.sw-role{ font-family:var(--sans); font-weight:600; font-size:14.5px; color:var(--ink); display:flex; align-items:center; gap:8px; }
+.sw-role .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+.sw-mean{ font-family:var(--serif); font-size:13.5px; line-height:1.5; color:var(--muted); margin-top:7px; }
+.sw-val{ font-family:var(--mono); font-size:11px; color:var(--soft); margin-top:11px; letter-spacing:.01em; word-break:break-all; }
+.sw-var{ font-family:var(--mono); font-size:10.5px; color:var(--confident); margin-top:3px; }
+
+/* =================== TYPE SPECIMENS =================== */
+.voice-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+.voice{
+  background:var(--card); border:1px solid var(--hair); border-radius:20px; padding:28px 30px;
+  display:grid; grid-template-columns:170px 1fr; gap:30px; align-items:start;
+}
+.voice .v-meta .v-tag{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); }
+.voice .v-meta h3{ font-family:var(--sans); font-weight:600; font-size:16px; color:var(--ink); margin-top:8px; }
+.voice .v-meta .v-font{ font-family:var(--mono); font-size:11px; color:var(--confident); margin-top:6px; }
+.voice .v-meta .v-why{ font-family:var(--sans); font-size:13px; line-height:1.55; color:var(--muted); margin-top:14px; }
+.voice .v-spec > * + *{ margin-top:14px; }
+.spec-row{ border-top:1px solid var(--hair3); padding-top:14px; }
+.spec-row:first-child{ border-top:none; padding-top:0; }
+.spec-row .lbl{ font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); margin-bottom:6px; }
+.sp-serif{ font-family:var(--serif); color:var(--ink); }
+.sp-sans{ font-family:var(--sans); color:var(--ink); }
+.sp-mono{ font-family:var(--mono); color:var(--ink); }
+.sp-display{ font-size:34px; line-height:1.05; letter-spacing:-.5px; font-weight:400; }
+.sp-body{ font-size:17px; line-height:1.5; }
+.sp-label{ font-size:12px; letter-spacing:.06em; }
+
+.scale-table{ width:100%; border-collapse:collapse; margin-top:4px; }
+.scale-table th{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); text-align:left; padding:0 14px 12px 0; font-weight:500; border-bottom:1px solid var(--hair); }
+.scale-table td{ padding:13px 14px 13px 0; border-bottom:1px solid var(--hair3); vertical-align:baseline; }
+.scale-table .nm{ font-family:var(--mono); font-size:12px; color:var(--confident); }
+.scale-table .px{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+.scale-table .use{ font-family:var(--sans); font-size:13px; color:var(--muted); }
+.scale-table .samp{ color:var(--ink); }
+
+/* =================== SPACE / RADII / ELEVATION =================== */
+.tri-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:18px; }
+.panel{ background:var(--card); border:1px solid var(--hair); border-radius:20px; padding:24px; }
+.panel > .p-h{ font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); margin-bottom:20px; }
+.space-row{ display:flex; align-items:center; gap:14px; margin-bottom:11px; }
+.space-bar{ height:14px; border-radius:4px; background:linear-gradient(90deg, var(--cobalt-deep), var(--thinking)); flex:none; }
+.space-row .sn{ font-family:var(--mono); font-size:11px; color:var(--muted); }
+.space-row .sv{ font-family:var(--mono); font-size:11px; color:var(--soft); margin-left:auto; }
+.radii-row{ display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap; }
+.radii-demo{ width:74px; height:74px; background:var(--raise); border:1px solid var(--hair2); }
+.radii-cap{ font-family:var(--mono); font-size:10px; color:var(--soft); text-align:center; margin-top:8px; }
+.elev-stack > *{ margin-bottom:16px; }
+.elev{ height:48px; border-radius:14px; background:var(--card); border:1px solid var(--hair); display:flex; align-items:center; padding:0 16px; font-family:var(--mono); font-size:11px; color:var(--muted); }
+.elev.e1{ box-shadow:0 1px 2px oklch(0 0 0 / .3); }
+.elev.e2{ box-shadow:0 10px 30px -16px oklch(0 0 0 / .6); }
+.elev.e3{ box-shadow:0 0 0 1px var(--hair2), 0 20px 50px -20px oklch(0 0 0 / .7), 0 0 30px -10px oklch(0.64 0.17 250 / .25); }
+
+/* =================== THE FIVE STATES =================== */
+.states-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(330px,1fr)); gap:18px; }
+.state-card{ background:var(--card); border:1px solid var(--hair); border-radius:22px; padding:22px; display:flex; flex-direction:column; }
+.state-card .sc-head{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.state-card .sc-dot{ width:11px; height:11px; border-radius:50%; flex:none; }
+.state-card .sc-name{ font-family:var(--sans); font-weight:600; font-size:17px; color:var(--ink); }
+.state-card .sc-feel{ font-family:var(--serif); font-style:italic; font-size:14.5px; color:var(--muted); margin-bottom:18px; }
+.state-stage{
+  background:var(--inset); border:1px solid var(--hair); border-radius:16px; padding:18px;
+  min-height:140px; display:flex; flex-direction:column; justify-content:center; margin-top:auto;
+}
+.sc-caption{ font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; color:var(--soft); margin-top:14px; line-height:1.6; }
+.sc-caption b{ color:var(--body); font-weight:500; }
+
+/* state: thinking - named shimmer */
+.mini-think .mt-label{ font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--thinking); display:flex; align-items:center; gap:8px; }
+.mt-spin{ width:11px; height:11px; border:1.8px solid var(--thinking); border-right-color:transparent; border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.mt-sub{ font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:10px; }
+.skel{ height:9px; border-radius:5px; margin-top:11px; background:linear-gradient(90deg, var(--card) 25%, oklch(0.96 0.01 250 / .08) 37%, var(--card) 63%); background-size:400% 100%; animation:shimmer 1.5s linear infinite; }
+@keyframes shimmer{ 0%{ background-position:100% 0; } 100%{ background-position:0 0; } }
+.skel.w1{ width:80%; } .skel.w2{ width:54%; }
+
+/* state: confident - calm reveal + source chip */
+.mini-conf .mc-line{ font-family:var(--serif); font-size:16px; line-height:1.45; color:var(--ink); animation:rise .7s var(--exp) both; }
+.mini-conf .mc-line b{ font-style:normal; color:var(--confident); }
+@keyframes rise{ 0%{ opacity:0; transform:translateY(8px); } 100%{ opacity:1; transform:none; } }
+.src-chip{
+  font-family:var(--mono); font-size:11px; color:var(--muted); background:var(--card);
+  border:1px solid var(--hair); padding:5px 9px; border-radius:8px; display:inline-flex; align-items:center; gap:6px;
+  margin-top:13px; align-self:flex-start; animation:rise .7s .15s var(--exp) both;
+}
+.src-chip .sd{ width:6px; height:6px; border-radius:50%; background:var(--confident); }
+
+/* state: uncertain - lighter weight + range + verify */
+.mini-unc .mu-line{ font-family:var(--serif); font-weight:400; font-size:16px; line-height:1.5; color:var(--body); }
+.mini-unc .mu-range{ font-family:var(--mono); font-size:14px; color:var(--uncertain); font-weight:500; }
+.mini-unc .mu-verify{ font-family:var(--sans); font-size:12.5px; color:var(--uncertain); margin-top:11px; display:flex; align-items:center; gap:7px; }
+
+/* state: wrong - acknowledge / correct / escalate */
+.mini-wrong .mw-step{ display:flex; gap:11px; align-items:flex-start; padding:7px 0; }
+.mini-wrong .mw-num{ font-family:var(--mono); font-size:10px; color:var(--urgent); border:1px solid color-mix(in oklch, var(--urgent) 40%, transparent); border-radius:50%; width:19px; height:19px; display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px; }
+.mini-wrong .mw-txt{ font-family:var(--sans); font-size:13px; line-height:1.45; color:var(--body); }
+.mini-wrong .mw-txt em{ font-family:var(--serif); font-style:italic; color:var(--ink); }
+
+/* state: silent - silence ledger line */
+.mini-silent .ms-line{ display:flex; align-items:center; gap:12px; }
+.ms-ic{ width:32px; height:32px; border-radius:10px; background:oklch(0.64 0.018 258 / .14); color:var(--silent); display:flex; align-items:center; justify-content:center; flex:none; }
+.ms-txt{ font-family:var(--sans); font-size:13.5px; line-height:1.4; color:var(--muted); }
+.ms-txt b{ font-family:var(--mono); font-weight:500; font-size:12.5px; color:var(--ink); }
+.ms-sub{ font-family:var(--mono); font-size:10.5px; color:var(--soft); margin-top:12px; letter-spacing:.02em; }
+
+/* =================== COMPONENTS GALLERY =================== */
+.comp-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:18px; align-items:start; }
+.comp{ background:var(--card); border:1px solid var(--hair); border-radius:20px; padding:22px; }
+.comp .c-h{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); margin-bottom:6px; }
+.comp .c-desc{ font-family:var(--sans); font-size:12.5px; color:var(--muted); line-height:1.5; margin-bottom:18px; }
+.comp-stage{ background:var(--inset); border:1px solid var(--hair); border-radius:14px; padding:18px; }
+
+/* orb sizes */
+.orb-row{ display:flex; align-items:center; gap:22px; }
+.orb-lg{ --orb:40px; } .orb-md{ --orb:26px; } .orb-sm{ --orb:16px; }
+
+/* status / source / confidence chips */
+.chip-wrap{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+  padding:4px 10px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:6px;
+}
+.chip .d{ width:6px; height:6px; border-radius:50%; background:currentColor; flex:none; }
+.chip.conf{ color:var(--confident); background:color-mix(in oklch, var(--confident) 13%, transparent); }
+.chip.unc{ color:var(--uncertain); background:color-mix(in oklch, var(--uncertain) 14%, transparent); }
+.chip.urg{ color:var(--urgent); background:color-mix(in oklch, var(--urgent) 14%, transparent); }
+.chip.think{ color:var(--thinking); background:color-mix(in oklch, var(--thinking) 16%, transparent); }
+.chip.sil{ color:var(--silent); background:oklch(0.64 0.018 258 / .14); }
+.chip.alt{ color:var(--muted); border:1px solid var(--hair2); }
+.chip.alt.team{ color:oklch(0.72 0.10 285); border-color:oklch(0.72 0.10 285 / .35); }
+.source-chip{
+  font-family:var(--mono); font-size:11px; color:var(--muted); background:var(--card);
+  border:1px solid var(--hair); padding:5px 9px; border-radius:8px; display:inline-flex; align-items:center; gap:6px;
+}
+.source-chip svg{ opacity:.6; }
+
+/* triage card (no side-stripe; leading dot + altitude badge) */
+.triage{ background:var(--card); border:1px solid var(--hair); border-radius:18px; padding:17px 17px 18px; }
+.tr-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:11px; }
+.tr-dot{ width:9px; height:9px; border-radius:50%; flex:none; background:var(--urgent); }
+.tr-h{ font-family:var(--sans); font-weight:600; font-size:16px; line-height:1.3; color:var(--ink); letter-spacing:-.1px; }
+.tr-why{ font-family:var(--sans); font-size:13.5px; line-height:1.5; color:var(--body); margin-top:8px; }
+.tr-chips{ display:flex; gap:7px; flex-wrap:wrap; margin-top:13px; }
+
+/* buttons */
+.btn-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.btn{
+  height:44px; padding:0 18px; border-radius:13px; font-family:var(--sans); font-size:14px; font-weight:600;
+  border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  transition:transform .16s var(--exp), filter .16s var(--exp);
+}
+.btn:active{ transform:scale(.97); } .btn:hover{ filter:brightness(1.08); }
+.btn-primary{ background:var(--thinking); color:var(--on-cobalt); }
+.btn-urgent{ background:var(--urgent); color:var(--on-urgent); }
+.btn-ghost{ background:transparent; color:var(--body); border:1px solid var(--hair2); }
+
+/* pulse strip EKG */
+.pulse-head{ display:flex; justify-content:space-between; align-items:baseline; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--soft); margin-bottom:12px; }
+.pulse-head b{ color:var(--uncertain); font-weight:500; }
+.pulse-strips{ display:flex; gap:6px; }
+.vs{ flex:1; height:30px; overflow:hidden; border-radius:5px; position:relative; }
+.vs svg{ position:absolute; left:0; top:0; height:100%; width:auto; }
+.vscan{ animation:vscan 1.7s linear infinite; }
+@keyframes vscan{ from{ transform:translateX(0); } to{ transform:translateX(-77px); } }
+.vs.s2 .vscan{ animation-duration:2.1s; } .vs.s3 .vscan{ animation-duration:1.4s; }
+.vs.quiet svg{ transform:scaleY(.12); opacity:.45; } .vs.quiet .vscan{ animation-play-state:paused; }
+
+/* disclosure L1/L2/L3 */
+.disc{ display:flex; flex-direction:column; gap:0; }
+.disc-level{ border-top:1px solid var(--hair); padding:16px 2px; }
+.disc-level:first-child{ border-top:none; padding-top:2px; }
+.disc-tag{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; color:var(--soft); margin-bottom:9px; display:flex; align-items:center; gap:8px; }
+.disc-tag .lv{ color:var(--thinking); }
+.l1-row{ display:flex; align-items:center; gap:11px; }
+.l1-row .l1-dot{ width:9px; height:9px; border-radius:50%; background:var(--urgent); flex:none; }
+.l1-row .l1-count{ font-family:var(--mono); font-size:13px; color:var(--ink); }
+.l1-row .l1-lbl{ font-family:var(--sans); font-size:13.5px; color:var(--muted); }
+.l2-why{ font-family:var(--sans); font-size:14px; line-height:1.45; color:var(--body); }
+.l2-meta{ font-family:var(--mono); font-size:11px; color:var(--uncertain); margin-top:7px; letter-spacing:.02em; }
+.l3-trace{ }
+.trace-row{ display:flex; align-items:center; gap:11px; padding:9px 0; border-top:1px solid var(--hair3); font-family:var(--mono); font-size:11.5px; color:var(--muted); }
+.trace-row:first-child{ border-top:none; }
+.trace-row .k{ color:var(--soft); }
+.trace-row .v{ margin-left:auto; color:var(--body); }
+
+/* =================== CONFIDENCE RULE =================== */
+.conf-compare{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px; }
+.conf-col{ background:var(--card); border:1px solid var(--hair); border-radius:20px; padding:24px; }
+.conf-col.bad{ border-color:color-mix(in oklch, var(--urgent) 26%, var(--hair)); }
+.conf-col.good{ border-color:color-mix(in oklch, var(--confident) 26%, var(--hair)); }
+.conf-col .cc-tag{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+.conf-col.bad .cc-tag{ color:var(--urgent); }
+.conf-col.good .cc-tag{ color:var(--confident); }
+.fake-pct{ font-family:var(--mono); font-size:30px; color:var(--soft); letter-spacing:-1px; position:relative; display:inline-block; }
+.fake-pct::after{ content:""; position:absolute; left:-4px; right:-4px; top:50%; height:2px; background:var(--urgent); transform:rotate(-7deg); }
+.cc-note{ font-family:var(--sans); font-size:13px; line-height:1.55; color:var(--muted); margin-top:16px; }
+.conf-ladder{ display:flex; flex-direction:column; gap:10px; }
+.cl-item{ display:flex; align-items:center; gap:12px; }
+.cl-item .cl-chip{ width:120px; flex:none; }
+.cl-item .cl-mean{ font-family:var(--sans); font-size:13px; color:var(--body); }
+
+/* =================== ORCHESTRATION =================== */
+.orch-diagram{ background:var(--card); border:1px solid var(--hair); border-radius:24px; padding:34px 24px; margin-top:8px; overflow:hidden; }
+.orch-leo{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:8px; }
+.orch-leo .ol-orb{ --orb:48px; }
+.orch-leo .ol-name{ font-family:var(--sans); font-weight:600; font-size:16px; color:var(--ink); }
+.orch-leo .ol-role{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--soft); }
+.orch-svg{ width:100%; height:64px; display:block; }
+.orch-workers{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:12px; margin-top:4px; }
+.worker{ background:var(--inset); border:1px solid var(--hair); border-radius:14px; padding:14px; text-align:center; }
+.worker .w-name{ font-family:var(--mono); font-size:11.5px; color:var(--ink); letter-spacing:.01em; }
+.worker .w-job{ font-family:var(--sans); font-size:11.5px; color:var(--muted); margin-top:6px; line-height:1.4; }
+.worker .w-dot{ width:7px; height:7px; border-radius:50%; margin:0 auto 9px; }
+
+.tier-table{ width:100%; border-collapse:collapse; margin-top:30px; }
+.tier-table th{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); text-align:left; padding:0 16px 13px 0; font-weight:500; border-bottom:1px solid var(--hair2); }
+.tier-table td{ padding:16px 16px 16px 0; border-bottom:1px solid var(--hair3); vertical-align:top; }
+.tier-name{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.04em; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
+.tier-name .d{ width:8px; height:8px; border-radius:50%; flex:none; }
+.tier-treat{ font-family:var(--sans); font-size:13.5px; color:var(--body); line-height:1.5; }
+.tier-form{ font-family:var(--mono); font-size:11px; color:var(--muted); }
+
+.disc-levels{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:8px; }
+.dl-card{ background:var(--inset); border:1px solid var(--hair); border-radius:16px; padding:18px; }
+.dl-card .dl-lv{ font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--thinking); }
+.dl-card .dl-name{ font-family:var(--sans); font-weight:600; font-size:14px; color:var(--ink); margin-top:7px; }
+.dl-card .dl-body{ font-family:var(--sans); font-size:12.5px; line-height:1.55; color:var(--muted); margin-top:8px; }
+.dl-card .dl-eg{ font-family:var(--mono); font-size:11px; color:var(--body); margin-top:11px; padding-top:11px; border-top:1px solid var(--hair); }
+
+/* =================== MOTION GRAMMAR =================== */
+.motion-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; }
+.motion-card{ background:var(--card); border:1px solid var(--hair); border-radius:18px; padding:22px; }
+.motion-card .m-h{ font-family:var(--sans); font-weight:600; font-size:15px; color:var(--ink); }
+.motion-card .m-val{ font-family:var(--mono); font-size:12px; color:var(--confident); margin-top:7px; }
+.motion-card .m-body{ font-family:var(--sans); font-size:13px; line-height:1.55; color:var(--muted); margin-top:11px; }
+.ease-demo{ height:48px; position:relative; margin-top:16px; border-radius:10px; background:var(--inset); border:1px solid var(--hair); overflow:hidden; }
+.ease-ball{ position:absolute; top:50%; left:8px; width:18px; height:18px; border-radius:50%; margin-top:-9px;
+  background:radial-gradient(60% 60% at 35% 30%, oklch(0.92 0.08 200), var(--thinking) 60%);
+  animation:slide 2.6s var(--exp) infinite alternate; }
+@keyframes slide{ from{ left:8px; } to{ left:calc(100% - 26px); } }
+.dur-track{ height:8px; border-radius:5px; background:var(--inset); overflow:hidden; margin-top:14px; }
+.dur-fill{ height:100%; background:linear-gradient(90deg, var(--cobalt-deep), var(--thinking)); border-radius:5px; animation:fill 2.4s var(--exp) infinite; transform-origin:left; }
+@keyframes fill{ 0%{ transform:scaleX(0); } 60%,100%{ transform:scaleX(1); } }
+
+/* =================== ANTI-SLOP =================== */
+.slop-list{ display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:12px; margin-top:8px; }
+.slop-item{ display:flex; gap:14px; align-items:flex-start; background:var(--card); border:1px solid var(--hair); border-radius:16px; padding:16px 18px; }
+.slop-x{ flex:none; width:22px; height:22px; border-radius:7px; background:color-mix(in oklch, var(--urgent) 15%, transparent); color:var(--urgent); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.slop-item .si-txt{ font-family:var(--sans); font-size:14px; line-height:1.5; color:var(--body); }
+.slop-item .si-txt b{ color:var(--ink); font-weight:600; }
+
+/* =================== FOOTER =================== */
+.foot{ border-top:1px solid var(--hair); margin-top:64px; padding:46px 0 10px; display:flex; flex-wrap:wrap; gap:24px; justify-content:space-between; align-items:flex-end; }
+.foot .f-left{ display:flex; align-items:center; gap:14px; }
+.foot .f-orb{ --orb:30px; }
+.foot .f-name{ font-family:var(--serif); font-size:19px; color:var(--ink); }
+.foot .f-sub{ font-family:var(--mono); font-size:10.5px; color:var(--soft); letter-spacing:.08em; margin-top:4px; }
+.foot-link{
+  font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink);
+  display:inline-flex; align-items:center; gap:9px; padding:12px 20px; border-radius:13px;
+  border:1px solid var(--hair2); transition:border-color .2s var(--exp), transform .2s var(--exp), color .2s;
+}
+.foot-link:hover{ border-color:var(--confident); color:var(--confident); transform:translateX(3px); }
+
+/* =================== RESPONSIVE =================== */
+@media (max-width: 900px){
+  .shell{ flex-direction:column; gap:0; }
+  .nav{ position:static; width:100%; height:auto; padding:24px 0 8px; flex-direction:row; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--hair); }
+  .nav-brand{ margin-bottom:0; margin-right:auto; }
+  .nav ol{ display:flex; flex-wrap:wrap; gap:2px 4px; }
+  .nav li{ display:none; }
+  .nav-foot{ display:none; }
+  .main{ padding-top:24px; }
+  .voice{ grid-template-columns:1fr; gap:18px; }
+  .conf-compare{ grid-template-columns:1fr; }
+}
+@media (max-width: 560px){
+  .shell{ padding:0 16px; }
+  .hero h1{ font-size:36px; }
+}
+
+/* =================== REDUCED MOTION : authored first, honored everywhere ====== */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  .orb{ animation:none; } .vscan{ animation:none; } .ease-ball{ animation:none; left:calc(50% - 9px); }
+  .dur-fill{ animation:none; transform:scaleX(1); } .skel{ animation:none; background:var(--card); }
+  .mc-line, .src-chip{ animation:none; opacity:1; transform:none; }
+  .mt-spin{ animation:none; border-right-color:var(--thinking); opacity:.5; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ==================== STICKY NAV ==================== -->
+  <nav class="nav" aria-label="Section navigation">
+    <div class="nav-brand">
+      <span class="orb" style="--orb:22px"></span>
+      <div>
+        <div class="nb-name">Leo Command Center</div>
+        <div class="nb-sub">Design System</div>
+      </div>
+    </div>
+    <ol>
+      <li><a href="#foundations-color">Color</a></li>
+      <li><a href="#foundations-type">Type</a></li>
+      <li><a href="#foundations-scale">Space, radii, elevation</a></li>
+      <li><a href="#states">The five AI states</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#confidence">Confidence rule</a></li>
+      <li><a href="#orchestration">Orchestration</a></li>
+      <li><a href="#motion">Motion grammar</a></li>
+      <li><a href="#anti-slop">Anti-slop checklist</a></li>
+    </ol>
+    <div class="nav-foot">
+      v2.0 - non-slop rebuild<br>
+      OKLCH - CSS-only motion<br>
+      no em-dashes
+    </div>
+  </nav>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="hero">
+      <div class="hero-orb-wrap">
+        <span class="orb hero-orb" aria-hidden="true"></span>
+        <div>
+          <div class="eyebrow" style="margin-bottom:4px">Design system reference</div>
+          <div class="ttl">A calm, trust-first AI triage app - voiced by <b>Leo</b></div>
+        </div>
+      </div>
+      <h1>Design <em>trust,</em> not dashboards.</h1>
+      <p class="lede">The visual and behavioral system behind the Leo morning command center: the first screen a real-estate Team Lead opens each day, surfacing only the two or three decisions that need a human. Every choice here serves one job: to make an AI feel calm, legible, and worth trusting. Color carries the AI's confidence. Type carries who is speaking. Motion never hides content.</p>
+      <div class="meta-row">
+        <span class="tag"><span class="d" style="background:var(--confident)"></span>5 AI states</span>
+        <span class="tag"><span class="d" style="background:var(--thinking)"></span>3 type voices</span>
+        <span class="tag"><span class="d" style="background:var(--uncertain)"></span>3 disclosure levels</span>
+        <span class="tag"><span class="d" style="background:var(--urgent)"></span>4 signal tiers</span>
+        <span class="tag">CSS-only motion</span>
+      </div>
+    </header>
+
+    <!-- 2. FOUNDATIONS - COLOR -->
+    <section id="foundations-color">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Color</h2></div>
+      <p class="sec-sub">Color encodes the AI's confidence state, never decoration. There is exactly one meaning-bearing color channel here: the AI-state palette. Seaglass is confident. Amber is uncertain. Coral is urgent or wrong. Cobalt is thinking. Ghost-slate is silent. Confidence is always shown twice (color plus type-weight or position) so it survives a glance and color-blindness. Every neutral is tinted toward the canvas hue. We never use pure black or pure white.</p>
+
+      <div class="rule-note">
+        <span class="rn-ic" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l5.5 3v4c0 3.3-2.3 5.4-5.5 6-3.2-.6-5.5-2.7-5.5-6v-4L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.6 8.2l1.7 1.7L10.6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <p><b>The rule.</b> Use <code>OKLCH</code>. Reduce chroma near the lightness extremes. Tint every neutral toward the skin's hue (here, blue at <code>262</code>). If a color is not carrying AI-state meaning, it is a neutral. No color is ever applied for prettiness alone.</p>
+      </div>
+
+      <div class="kicker">AI-state palette - the meaning channel</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--confident)"></div>
+          <div class="sw-body">
+            <div class="sw-role"><span class="dot" style="background:var(--confident)"></span>Confident</div>
+            <div class="sw-mean">Seaglass green. A calm, low-arousal positive. Leo is sure, and says so quietly.</div>
+            <div class="sw-val">oklch(0.80 0.11 168)</div>
+            <div class="sw-var">--confident</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--uncertain)"></div>
+          <div class="sw-body">
+            <div class="sw-role"><span class="dot" style="background:var(--uncertain)"></span>Uncertain</div>
+            <div class="sw-mean">Amber. Leo asks rather than asserts. Paired with lighter type weight.</div>
+            <div class="sw-val">oklch(0.82 0.12 72)</div>
+            <div class="sw-var">--uncertain</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--urgent)"></div>
+          <div class="sw-body">
+            <div class="sw-role"><span class="dot" style="background:var(--urgent)"></span>Urgent / Wrong</div>
+            <div class="sw-mean">Coral. Reserved for the single time-critical or irreversible item, and for an honest correction.</div>
+            <div class="sw-val">oklch(0.73 0.16 28)</div>
+            <div class="sw-var">--urgent</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--thinking)"></div>
+          <div class="sw-body">
+            <div class="sw-role"><span class="dot" style="background:var(--thinking)"></span>Thinking</div>
+            <div class="sw-mean">Cobalt. Leo at work. Also Leo's brand identity and the primary action color.</div>
+            <div class="sw-val">oklch(0.66 0.16 262)</div>
+            <div class="sw-var">--thinking</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--silent)"></div>
+          <div class="sw-body">
+            <div class="sw-role"><span class="dot" style="background:var(--silent)"></span>Silent</div>
+            <div class="sw-mean">Ghost slate. Handled, suppressed, deliberately not interrupting you. The color of restraint.</div>
+            <div class="sw-val">oklch(0.64 0.018 258)</div>
+            <div class="sw-var">--silent</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kicker">Neutrals and canvas - tinted, never pure</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--canvas)"></div>
+          <div class="sw-body">
+            <div class="sw-role">Canvas</div>
+            <div class="sw-mean">The dawn-dark backdrop. Onyx tinted blue, so the screen feels like early morning.</div>
+            <div class="sw-val">oklch(0.155 0.022 260)</div>
+            <div class="sw-var">--canvas</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--card)"></div>
+          <div class="sw-body">
+            <div class="sw-role">Card surface</div>
+            <div class="sw-mean">A triage card, lifted one step from the canvas with the same blue tint.</div>
+            <div class="sw-val">oklch(0.20 0.024 260)</div>
+            <div class="sw-var">--card</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--inset)"></div>
+          <div class="sw-body">
+            <div class="sw-role">Inset</div>
+            <div class="sw-mean">Recessed wells: the Silence Ledger, source chips, mini-stages.</div>
+            <div class="sw-val">oklch(0.13 0.02 260)</div>
+            <div class="sw-var">--inset</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--ink)"></div>
+          <div class="sw-body">
+            <div class="sw-role">Ink (text)</div>
+            <div class="sw-mean">The brightest text. Near-white, but warmed off pure white at 0.96 L.</div>
+            <div class="sw-val">oklch(0.96 0.008 250)</div>
+            <div class="sw-var">--ink</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--body)"></div>
+          <div class="sw-body">
+            <div class="sw-role">Body</div>
+            <div class="sw-mean">Reading text and Leo's narration. Soft, never harsh against the dark.</div>
+            <div class="sw-val">oklch(0.80 0.014 255)</div>
+            <div class="sw-var">--body</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--muted)"></div>
+          <div class="sw-body">
+            <div class="sw-role">Muted</div>
+            <div class="sw-mean">Secondary copy, labels, mono metadata that should recede.</div>
+            <div class="sw-val">oklch(0.64 0.018 258)</div>
+            <div class="sw-var">--muted</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kicker">Hairlines - structure without weight</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--card)"><div style="position:absolute;inset:0;border-top:1px solid var(--hair);top:50%"></div></div>
+          <div class="sw-body">
+            <div class="sw-role">Hairline</div>
+            <div class="sw-mean">The default divider between triage rows. Low-alpha ink, so the structure whispers.</div>
+            <div class="sw-val">oklch(0.96 0.01 250 / .09)</div>
+            <div class="sw-var">--hair</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="sw-chip" style="background:var(--card)"><div style="position:absolute;inset:0;border-top:1px solid var(--hair2);top:50%"></div></div>
+          <div class="sw-body">
+            <div class="sw-role">Hairline strong</div>
+            <div class="sw-mean">Ghost-button outlines and the few borders that must read at a glance.</div>
+            <div class="sw-val">oklch(0.96 0.01 250 / .15)</div>
+            <div class="sw-var">--hair2</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. FOUNDATIONS - TYPE -->
+    <section id="foundations-type">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Type: the three voices</h2></div>
+      <p class="sec-sub">A human-to-AI product has three speakers, so we type them differently. The split is the signature of the whole system. You should be able to tell who is talking with the screen turned upside down. Serif is only ever the human and Leo. Mono is only ever the machine. Sans is the neutral interface between them.</p>
+
+      <div class="voice-grid">
+        <article class="voice">
+          <div class="v-meta">
+            <div class="v-tag">Voice 01 - human</div>
+            <h3>The voice you trust</h3>
+            <div class="v-font">Newsreader, serif</div>
+            <p class="v-why">Serif is reserved for the human and for Leo's own sentences: the morning greeting, the narration, the calm states, the apology. A serif reads as a person speaking, not a system emitting. It is the warmth in the room.</p>
+          </div>
+          <div class="v-spec">
+            <div class="spec-row"><div class="lbl">Display - greeting</div><div class="sp-serif sp-display">Good morning, Dana.</div></div>
+            <div class="spec-row"><div class="lbl">Body - Leo's narration</div><div class="sp-serif sp-body">Overnight I cleared 47 tasks. Three things need you before your 9:30 listing.</div></div>
+            <div class="spec-row"><div class="lbl">Italic - rationale aside</div><div class="sp-serif sp-body" style="font-style:italic">I would counter at $612k. The comps support it.</div></div>
+          </div>
+        </article>
+
+        <article class="voice">
+          <div class="v-meta">
+            <div class="v-tag">Voice 02 - interface</div>
+            <h3>The structure</h3>
+            <div class="v-font">Inter, sans</div>
+            <p class="v-why">Sans is the interface itself: card titles, the one-line why, buttons, body structure. It is the neutral connective tissue, the part of the screen that is neither person nor machine. Clear, quiet, unremarkable on purpose.</p>
+          </div>
+          <div class="v-spec">
+            <div class="spec-row"><div class="lbl">Display - section</div><div class="sp-sans sp-display" style="font-weight:600;letter-spacing:-.6px">Needs you</div></div>
+            <div class="spec-row"><div class="lbl">Body - card title</div><div class="sp-sans sp-body" style="font-weight:600">Maplewood escrow has an unanswered inspection objection.</div></div>
+            <div class="spec-row"><div class="lbl">Body - the why</div><div class="sp-sans" style="font-size:14.5px;color:var(--body)">The objection deadline is tomorrow at 8am. Missing it lets the buyer walk with their deposit.</div></div>
+          </div>
+        </article>
+
+        <article class="voice">
+          <div class="v-meta">
+            <div class="v-tag">Voice 03 - machine</div>
+            <h3>The machine layer</h3>
+            <div class="v-font">JetBrains Mono</div>
+            <p class="v-why">Mono is only ever machine-emitted tokens: agent names, confidence tags, timestamps, source traces, counts. The monospace look signals "this is data the system produced," and it keeps numbers from masquerading as prose. The confidence word here is colored to its state.</p>
+          </div>
+          <div class="v-spec">
+            <div class="spec-row"><div class="lbl">Label - agent + confidence</div><div class="sp-mono sp-label" style="text-transform:uppercase">NEGOTIATION PREP - <span style="color:var(--confident)">HIGH CONFIDENCE</span></div></div>
+            <div class="spec-row"><div class="lbl">Meta - source trace</div><div class="sp-mono" style="font-size:12px;color:var(--muted)">Inspection report - p.4 - Doc QA agent</div></div>
+            <div class="spec-row"><div class="lbl">Count - the ledger</div><div class="sp-mono" style="font-size:13px;color:var(--ink)">47 handled - 6 suppressed - synced 5:41a</div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="kicker">Type scale</div>
+      <div class="panel">
+        <table class="scale-table">
+          <thead><tr><th style="width:120px">Token</th><th style="width:90px">Size</th><th style="width:200px">Role</th><th>Specimen</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">display</td><td class="px">33-68px</td><td class="use">Greeting, hero (serif)</td><td class="samp" style="font-family:var(--serif);font-size:28px">Three need you.</td></tr>
+            <tr><td class="nm">title</td><td class="px">19px</td><td class="use">Card headline (sans 600)</td><td class="samp" style="font-family:var(--sans);font-size:19px;font-weight:600">Buyer countered $24k under ask.</td></tr>
+            <tr><td class="nm">body</td><td class="px">14.5-18px</td><td class="use">The why, narration</td><td class="samp" style="font-family:var(--sans);font-size:15px;color:var(--body)">The comps support a counter.</td></tr>
+            <tr><td class="nm">meta</td><td class="px">11-13px</td><td class="use">Machine tokens (mono)</td><td class="samp" style="font-family:var(--mono);font-size:12px;color:var(--muted)">14 comps - 2 unknowns flagged</td></tr>
+            <tr><td class="nm">label</td><td class="px">10.5px</td><td class="use">Eyebrows, tags (mono caps)</td><td class="samp" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)">Ranked by what is at stake</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. SPACE / RADII / ELEVATION -->
+    <section id="foundations-scale">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Space, radii, elevation</h2></div>
+      <p class="sec-sub tight">One radius scale per skin. Generous spacing, because a calm screen needs room to breathe (the first fold reserves at least 55% of the viewport for one focus). Elevation is restrained: surfaces lift with soft shadow and a faint cobalt halo, never a hard drop shadow.</p>
+      <div class="tri-grid">
+        <div class="panel">
+          <div class="p-h">Spacing scale</div>
+          <div class="space-row"><span class="space-bar" style="width:4px"></span><span class="sn">s1</span><span class="sv">4px</span></div>
+          <div class="space-row"><span class="space-bar" style="width:8px"></span><span class="sn">s2</span><span class="sv">8px</span></div>
+          <div class="space-row"><span class="space-bar" style="width:12px"></span><span class="sn">s3</span><span class="sv">12px - between items</span></div>
+          <div class="space-row"><span class="space-bar" style="width:18px"></span><span class="sn">s4</span><span class="sv">18px</span></div>
+          <div class="space-row"><span class="space-bar" style="width:24px"></span><span class="sn">s5</span><span class="sv">24px - gutter</span></div>
+          <div class="space-row"><span class="space-bar" style="width:36px"></span><span class="sn">s6</span><span class="sv">36px</span></div>
+          <div class="space-row"><span class="space-bar" style="width:56px"></span><span class="sn">s7</span><span class="sv">56px - section</span></div>
+        </div>
+        <div class="panel">
+          <div class="p-h">Corner radii</div>
+          <div class="radii-row">
+            <div><div class="radii-demo" style="border-radius:0"></div><div class="radii-cap">row - 0px</div></div>
+            <div><div class="radii-demo" style="border-radius:8px"></div><div class="radii-cap">chip - 8px</div></div>
+            <div><div class="radii-demo" style="border-radius:24px"></div><div class="radii-cap">card - 24px</div></div>
+            <div><div class="radii-demo" style="border-radius:9999px;width:74px;height:30px"></div><div class="radii-cap">pill - full</div></div>
+          </div>
+          <p class="cc-note" style="margin-top:24px">Triage rows are hairline-separated boxes with no radius at all. Boxiness is reserved for cards. Pills are reserved for chips and tags.</p>
+        </div>
+        <div class="panel">
+          <div class="p-h">Elevation</div>
+          <div class="elev-stack">
+            <div class="elev e1">e1 - inset wells, resting</div>
+            <div class="elev e2">e2 - lifted card</div>
+            <div class="elev e3">e3 - focus + cobalt halo</div>
+          </div>
+          <p class="cc-note" style="margin-top:20px">Shadows are soft and downward only, tinted to the canvas. The top elevation adds a faint Leo-cobalt glow, the only place light "comes from" Leo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. THE FIVE AI STATES -->
+    <section id="states">
+      <div class="sec-head"><span class="sec-num">05</span><h2>The five AI states</h2></div>
+      <p class="sec-sub">An AI is never just on or off. It is thinking, sure, unsure, occasionally wrong, or deliberately quiet. Each state has a color, a feeling, and one honest microinteraction. These are live, CSS-only mini-examples. Hover is not required: motion runs on the document timeline so it always renders, even under a strict content-security policy.</p>
+
+      <div class="states-grid">
+        <!-- thinking -->
+        <article class="state-card">
+          <div class="sc-head"><span class="sc-dot" style="background:var(--thinking)"></span><span class="sc-name">Thinking</span></div>
+          <div class="sc-feel">"Leo is working, and I can see what on."</div>
+          <div class="state-stage">
+            <div class="mini-think">
+              <div class="mt-label"><span class="mt-spin"></span>Negotiation Prep agent</div>
+              <div class="mt-sub">Re-checking 14 comps for 142 Oak St</div>
+              <div class="skel w1"></div>
+              <div class="skel w2"></div>
+            </div>
+          </div>
+          <div class="sc-caption"><b>Feels like:</b> a colleague at the whiteboard. <b>Microinteraction:</b> named skeleton shimmer, not a spinner. The work has a name and a target.</div>
+        </article>
+
+        <!-- confident -->
+        <article class="state-card">
+          <div class="sc-head"><span class="sc-dot" style="background:var(--confident)"></span><span class="sc-name">Confident</span></div>
+          <div class="sc-feel">"Sure, and quiet about it."</div>
+          <div class="state-stage">
+            <div class="mini-conf">
+              <div class="mc-line">Counter sent at <b>$612k</b>. I will alert you the moment they reply.</div>
+              <span class="src-chip"><span class="sd"></span>Negotiation Prep - 14 comps</span>
+            </div>
+          </div>
+          <div class="sc-caption"><b>Feels like:</b> handled, no fanfare. <b>Microinteraction:</b> calm 700ms rise into place plus a source chip. No celebration, no confetti.</div>
+        </article>
+
+        <!-- uncertain -->
+        <article class="state-card">
+          <div class="sc-head"><span class="sc-dot" style="background:var(--uncertain)"></span><span class="sc-name">Uncertain</span></div>
+          <div class="sc-feel">"I have a guess, not an answer."</div>
+          <div class="state-stage">
+            <div class="mini-unc">
+              <div class="mu-line">Likely worth between <span class="mu-range">$598k - $624k</span>. The buyer's agent hinted at a deadline I cannot verify.</div>
+              <div class="mu-verify">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.4 5.4a1.7 1.7 0 1 1 2.3 1.6c-.5.2-.7.5-.7 1M7 10.2v.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Want me to confirm before sending?
+              </div>
+            </div>
+          </div>
+          <div class="sc-caption"><b>Feels like:</b> an honest hedge. <b>Microinteraction:</b> lighter type weight, a range instead of a point, and explicit verify copy. Amber asks.</div>
+        </article>
+
+        <!-- wrong -->
+        <article class="state-card">
+          <div class="sc-head"><span class="sc-dot" style="background:var(--urgent)"></span><span class="sc-name">Wrong</span></div>
+          <div class="sc-feel">"I got one wrong. Here is the fix."</div>
+          <div class="state-stage">
+            <div class="mini-wrong">
+              <div class="mw-step"><span class="mw-num">1</span><span class="mw-txt"><em>Acknowledge.</em> I sent the Alvarez follow-up before you approved it.</span></div>
+              <div class="mw-step"><span class="mw-num">2</span><span class="mw-txt"><em>Correct.</em> Paused the other 4 in that batch. Undo is open for 14s.</span></div>
+              <div class="mw-step"><span class="mw-num">3</span><span class="mw-txt"><em>Escalate.</em> From now I route anything client-facing to you first.</span></div>
+            </div>
+          </div>
+          <div class="sc-caption"><b>Feels like:</b> a teammate owning a mistake. <b>Microinteraction:</b> acknowledge, correct, escalate. A real apology with an undo window, not an error toast.</div>
+        </article>
+
+        <!-- silent -->
+        <article class="state-card">
+          <div class="sc-head"><span class="sc-dot" style="background:var(--silent)"></span><span class="sc-name">Silent</span></div>
+          <div class="sc-feel">"I handled it and chose not to bother you."</div>
+          <div class="state-stage">
+            <div class="mini-silent">
+              <div class="ms-line">
+                <span class="ms-ic"><svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M3 8.5l3.2 3.2L14 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="ms-txt"><b>47 handled</b> overnight - chose not to interrupt you on <b>6</b></span>
+              </div>
+              <div class="ms-sub">tap a row to see Leo's reasoning</div>
+            </div>
+          </div>
+          <div class="sc-caption"><b>Feels like:</b> a quiet ledger of trust. <b>Microinteraction:</b> the Silence Ledger line. Silence is a designed result, not an empty state.</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. COMPONENTS -->
+    <section id="components">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Components</h2></div>
+      <p class="sec-sub">The core kit, built live. Every component obeys the no-side-stripe rule: AI state is encoded by a leading dot, a tag, or a background tint, never a colored left edge on a card.</p>
+
+      <div class="comp-grid">
+        <!-- orb -->
+        <div class="comp">
+          <div class="c-h">Leo orb</div>
+          <div class="c-desc">Leo's brand presence in every header. A radial cobalt-to-seaglass sphere with a soft glow and a slow 5s breathe. Reduced-motion stops the breath.</div>
+          <div class="comp-stage">
+            <div class="orb-row">
+              <div style="text-align:center"><span class="orb orb-lg"></span><div style="font-family:var(--mono);font-size:10px;color:var(--soft);margin-top:10px">header</div></div>
+              <div style="text-align:center"><span class="orb orb-md"></span><div style="font-family:var(--mono);font-size:10px;color:var(--soft);margin-top:10px">inline</div></div>
+              <div style="text-align:center"><span class="orb orb-sm"></span><div style="font-family:var(--mono);font-size:10px;color:var(--soft);margin-top:10px">eyebrow</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- status chips -->
+        <div class="comp">
+          <div class="c-h">Status chips</div>
+          <div class="c-desc">Mono, low-alpha state-color fill. The state word is colored, the dot repeats it. Confidence read twice.</div>
+          <div class="comp-stage">
+            <div class="chip-wrap">
+              <span class="chip conf"><span class="d"></span>High confidence</span>
+              <span class="chip unc"><span class="d"></span>Medium - your call</span>
+              <span class="chip urg"><span class="d"></span>18h left</span>
+              <span class="chip think"><span class="d"></span>Thinking</span>
+              <span class="chip sil"><span class="d"></span>Handled</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- source / confidence chips -->
+        <div class="comp">
+          <div class="c-h">Source + altitude chips</div>
+          <div class="c-desc">Source chips trace a claim back to its origin. Altitude badges mark whose deal it is: yours, or a teammate's.</div>
+          <div class="comp-stage">
+            <div class="chip-wrap" style="margin-bottom:10px">
+              <span class="chip alt">My deal</span>
+              <span class="chip alt team">Team - Marcus</span>
+            </div>
+            <div class="chip-wrap">
+              <span class="source-chip"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y=".8" width="8" height="9.4" rx="1.3" stroke="currentColor"/><path d="M3.4 3.4h4.2M3.4 5.5h4.2M3.4 7.6h2.6" stroke="currentColor" stroke-linecap="round"/></svg>Inspection report - p.4</span>
+              <span class="source-chip">Doc QA agent</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- triage card -->
+        <div class="comp" style="grid-column:span 1">
+          <div class="c-h">Triage card - with altitude badge</div>
+          <div class="c-desc">The unit of the screen. Leading state dot, altitude badge, confidence chip, one-line why, source trace, and actions. No side-stripe.</div>
+          <div class="comp-stage">
+            <article class="triage">
+              <div class="tr-top">
+                <span class="tr-dot"></span>
+                <span class="chip alt">My deal</span>
+                <span class="chip conf"><span class="d"></span>High</span>
+                <span class="chip urg" style="margin-left:auto"><span class="d"></span>18h left</span>
+              </div>
+              <div class="tr-h">Maplewood escrow has an unanswered inspection objection.</div>
+              <div class="tr-why">The objection deadline is tomorrow at 8am. Missing it lets the buyer walk with their deposit.</div>
+              <div class="tr-chips">
+                <span class="source-chip">Inspection report - p.4</span>
+                <span class="source-chip">Doc QA agent</span>
+              </div>
+              <div class="btn-row" style="margin-top:15px">
+                <button class="btn btn-urgent" style="flex:1">Review and respond</button>
+                <button class="btn btn-ghost">Snooze</button>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- buttons -->
+        <div class="comp">
+          <div class="c-h">Buttons</div>
+          <div class="c-desc">Primary is cobalt (Leo's action). Urgent is coral, used once per screen at most. Ghost is hairline-outlined for secondary moves.</div>
+          <div class="comp-stage">
+            <div class="btn-row" style="margin-bottom:10px">
+              <button class="btn btn-primary">Send Leo's counter</button>
+              <button class="btn btn-ghost">Edit</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-urgent">Review and respond</button>
+              <button class="btn btn-ghost">I'll handle it</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- pulse strip -->
+        <div class="comp">
+          <div class="c-h">Pulse strip - EKG row</div>
+          <div class="c-desc">The pipeline's vital signs, folded into the header. Each strip is one deal. A flatlined strip in amber is the deal going quiet.</div>
+          <div class="comp-stage">
+            <div class="pulse-head"><span>Pipeline pulse</span><span>12 deals - <b>1 going quiet</b></span></div>
+            <div class="pulse-strips" id="pulseStrips"></div>
+          </div>
+        </div>
+
+        <!-- disclosure -->
+        <div class="comp" style="grid-column:1 / -1">
+          <div class="c-h">Disclosure pattern - L1 / L2 / L3</div>
+          <div class="c-desc">Progressive disclosure in three levels. A glyph and a count at rest. One line of why on glance. The full trace to source on tap. Nothing is hidden that you need; everything else earns its way in.</div>
+          <div class="comp-stage">
+            <div class="disc">
+              <div class="disc-level">
+                <div class="disc-tag"><span class="lv">L1</span> glyph + count</div>
+                <div class="l1-row"><span class="l1-dot"></span><span class="l1-count">1</span><span class="l1-lbl">urgent item on the Maplewood deal</span></div>
+              </div>
+              <div class="disc-level">
+                <div class="disc-tag"><span class="lv">L2</span> one-line why + mono meta</div>
+                <div class="l2-why">The objection deadline is tomorrow at 8am. Missing it lets the buyer walk.</div>
+                <div class="l2-meta">Doc QA agent - flagged 5:38a - confidence HIGH</div>
+              </div>
+              <div class="disc-level">
+                <div class="disc-tag"><span class="lv">L3</span> full trace to source</div>
+                <div class="l3-trace">
+                  <div class="trace-row"><span class="k">Source</span><span class="v">Inspection report, p.4</span></div>
+                  <div class="trace-row"><span class="k">Skill</span><span class="v">Compliance QA</span></div>
+                  <div class="trace-row"><span class="k">Reasoning</span><span class="v">Objection unanswered past 48h</span></div>
+                  <div class="trace-row"><span class="k">Deadline</span><span class="v">Jun 22, 8:00a</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CONFIDENCE RULE -->
+    <section id="confidence">
+      <div class="sec-head"><span class="sec-num">07</span><h2>Calibrated confidence</h2></div>
+      <p class="sec-sub">Confidence is categorical, never false precision. A number like "99.73% sure" is a lie dressed as math: it implies a measurement that does not exist and erodes trust the first time it is wrong. Leo speaks in honest bands a human can reason about, and shows the band twice (a word and a color).</p>
+      <div class="conf-compare">
+        <div class="conf-col bad">
+          <div class="cc-tag"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Never</div>
+          <div class="fake-pct">99.73% confident</div>
+          <p class="cc-note">Fake precision. There is no model that knows it is 99.73 rather than 99.74 sure, and the decimal invites a trust it has not earned. Pure performance, zero meaning.</p>
+        </div>
+        <div class="conf-col good">
+          <div class="cc-tag"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7.3l2.6 2.6L11 4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Always</div>
+          <div class="conf-ladder">
+            <div class="cl-item"><span class="cl-chip"><span class="chip conf" style="width:100%;justify-content:center"><span class="d"></span>High</span></span><span class="cl-mean">Act on it. Leo would proceed.</span></div>
+            <div class="cl-item"><span class="cl-chip"><span class="chip unc" style="width:100%;justify-content:center"><span class="d"></span>Medium</span></span><span class="cl-mean">Your call. Leo has a recommendation.</span></div>
+            <div class="cl-item"><span class="cl-chip"><span class="chip sil" style="width:100%;justify-content:center"><span class="d"></span>Range</span></span><span class="cl-mean">A band, like $598k to $624k, not a point.</span></div>
+          </div>
+          <p class="cc-note">Words and ranges a human can weigh. The color repeats the word, so the band survives a glance and color-blindness.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. ORCHESTRATION -->
+    <section id="orchestration">
+      <div class="sec-head"><span class="sec-num">08</span><h2>Orchestration</h2></div>
+      <p class="sec-sub">Under the calm front door, Leo is an orchestrator running 100+ background skills. Six named skill-workers do the labor; Leo ranks their findings across the lead's deals and the team's by one currency, what is at stake, and surfaces only the exceptions. The diagram below is CSS and SVG, no images.</p>
+
+      <div class="orch-diagram">
+        <div class="orch-leo">
+          <span class="orb ol-orb"></span>
+          <div class="ol-name">Leo</div>
+          <div class="ol-role">Orchestrator - ranks by what is at stake</div>
+        </div>
+        <svg class="orch-svg" viewBox="0 0 600 64" preserveAspectRatio="none" aria-hidden="true">
+          <g stroke="var(--hair2)" stroke-width="1.2" fill="none">
+            <path d="M300 0 C300 26 90 18 90 56"/>
+            <path d="M300 0 C300 26 174 18 174 56"/>
+            <path d="M300 0 C300 30 258 20 258 56"/>
+            <path d="M300 0 C300 30 342 20 342 56"/>
+            <path d="M300 0 C300 26 426 18 426 56"/>
+            <path d="M300 0 C300 26 510 18 510 56"/>
+          </g>
+        </svg>
+        <div class="orch-workers">
+          <div class="worker"><span class="w-dot" style="background:var(--thinking)"></span><div class="w-name">Listing Research</div><div class="w-job">Comps, history, photos, MLS drift</div></div>
+          <div class="worker"><span class="w-dot" style="background:var(--urgent)"></span><div class="w-name">Compliance QA</div><div class="w-job">Documents, objections, deadlines</div></div>
+          <div class="worker"><span class="w-dot" style="background:var(--confident)"></span><div class="w-name">Negotiation Prep</div><div class="w-job">Counters, comps, leverage</div></div>
+          <div class="worker"><span class="w-dot" style="background:var(--thinking)"></span><div class="w-name">Scheduling</div><div class="w-job">Showings, calendars, conflicts</div></div>
+          <div class="worker"><span class="w-dot" style="background:var(--uncertain)"></span><div class="w-name">Lead Qualification</div><div class="w-job">Buyer intent and drift signals</div></div>
+          <div class="worker"><span class="w-dot" style="background:var(--confident)"></span><div class="w-name">Market Analysis</div><div class="w-job">Price moves, inventory, thresholds</div></div>
+        </div>
+      </div>
+
+      <div class="kicker">The three disclosure levels</div>
+      <div class="disc-levels">
+        <div class="dl-card">
+          <div class="dl-lv">Level 1</div>
+          <div class="dl-name">Glyph + count</div>
+          <div class="dl-body">A state dot and a number, the whole story at a glance. What is the single focus, and how many total.</div>
+          <div class="dl-eg">[ urgent dot ] 1 - 3 total</div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-lv">Level 2</div>
+          <div class="dl-name">One-line why + metric</div>
+          <div class="dl-body">The reason, in one sentence, with the machine metadata that backs it. Earned on glance or hover.</div>
+          <div class="dl-eg">Deadline tomorrow 8am - HIGH</div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-lv">Level 3</div>
+          <div class="dl-name">Full trace to source</div>
+          <div class="dl-body">Source document, owning skill, reasoning, and timestamps. Everything Leo used, on tap.</div>
+          <div class="dl-eg">Inspection report p.4 - Compliance QA</div>
+        </div>
+      </div>
+
+      <div class="kicker">The four signal tiers</div>
+      <table class="tier-table">
+        <thead><tr><th style="width:150px">Tier</th><th>Treatment</th><th style="width:180px">Form</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="tier-name" style="color:var(--urgent)"><span class="d" style="background:var(--urgent)"></span>NEEDS YOU</span></td>
+            <td class="tier-treat">The two or three decisions that genuinely require a human. The whole point of the screen. Ranked first, by what is at stake.</td>
+            <td class="tier-form">Full triage card, action buttons</td>
+          </tr>
+          <tr>
+            <td><span class="tier-name" style="color:var(--uncertain)"><span class="d" style="background:var(--uncertain)"></span>FYI</span></td>
+            <td class="tier-treat">Worth knowing, nothing time-sensitive. Collapsed into a single digest line below the fold.</td>
+            <td class="tier-form">Digest count - "12 updates worth knowing"</td>
+          </tr>
+          <tr>
+            <td><span class="tier-name" style="color:var(--confident)"><span class="d" style="background:var(--confident)"></span>HANDLED</span></td>
+            <td class="tier-treat">Leo did it and is telling you, so you can audit the trust. The Silence Ledger.</td>
+            <td class="tier-form">Ledger line - "47 handled overnight"</td>
+          </tr>
+          <tr>
+            <td><span class="tier-name" style="color:var(--silent)"><span class="d" style="background:var(--silent)"></span>NOISE</span></td>
+            <td class="tier-treat">Below your thresholds. Suppressed entirely, but counted, so silence stays accountable.</td>
+            <td class="tier-form">A number only - "chose not to interrupt you on 6"</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 9. MOTION GRAMMAR -->
+    <section id="motion">
+      <div class="sec-head"><span class="sec-num">09</span><h2>Motion grammar</h2></div>
+      <p class="sec-sub">Motion enhances; it never reveals. Content is visible by default, and every animation is CSS-driven on the document timeline, never a requestAnimationFrame loop. The deliberate engineering note: under a strict content-security policy or a throttled background tab, a JS animation engine can stall and the content vanishes with it. CSS always renders. So entrance, reveal, and state motion never depend on JS, and the whole system degrades gracefully to a fully readable screen.</p>
+
+      <div class="motion-grid">
+        <div class="motion-card">
+          <div class="m-h">Easing</div>
+          <div class="m-val">cubic-bezier(.16, 1, .3, 1)</div>
+          <div class="m-body">One ease-out curve everywhere. Things arrive quickly, then settle, the way a calm hand sets something down.</div>
+          <div class="ease-demo"><span class="ease-ball"></span></div>
+        </div>
+        <div class="motion-card">
+          <div class="m-h">Durations</div>
+          <div class="m-val">100-300ms UI - 600-900ms entrance</div>
+          <div class="m-body">UI feedback is near-instant. Entrances breathe over 600 to 900ms. Cinematic moments (the dawn sweep) run 2 to 4s.</div>
+          <div class="dur-track"><span class="dur-fill"></span></div>
+        </div>
+        <div class="motion-card">
+          <div class="m-h">Skeletons over spinners</div>
+          <div class="m-val">named shimmer, with a target</div>
+          <div class="m-body">A loading state shows the shape of what is coming and names the skill doing the work, so waiting feels like progress, not a void.</div>
+        </div>
+        <div class="motion-card">
+          <div class="m-h">Content visible by default</div>
+          <div class="m-val">no reveal-on-scroll dependency</div>
+          <div class="m-body">Nothing is hidden behind a JS reveal. Staggered entrance uses animation-delay with fill-mode both, so content always ends visible.</div>
+        </div>
+        <div class="motion-card">
+          <div class="m-h">Reduced motion, authored first</div>
+          <div class="m-val">prefers-reduced-motion: reduce</div>
+          <div class="m-body">The reduced-motion path was written before the animated one. Every animation collapses to instant; the orb stops breathing; nothing is lost.</div>
+        </div>
+        <div class="motion-card">
+          <div class="m-h">All motion is CSS, not JS</div>
+          <div class="m-val">graceful degradation by design</div>
+          <div class="m-body">Transform and opacity only, will-change only where it animates. JS may layer flourishes for a live demo, but never as the thing that makes content appear.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. ANTI-SLOP -->
+    <section id="anti-slop">
+      <div class="sec-head"><span class="sec-num">10</span><h2>Anti-slop checklist</h2></div>
+      <p class="sec-sub">The rules this system refuses to break. Each one is a common AI-design tell we deliberately reject. This page was self-reviewed against every line.</p>
+      <div class="slop-list">
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No side-stripe borders.</b> A colored left edge on a card is an AI tell. State is a leading dot, a tag, or a background tint.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No gradient text.</b> Text is one ink color. Gradients live in the orb and surfaces, never in type.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No pure black or white.</b> Every neutral is tinted toward the canvas hue, in OKLCH, with chroma reduced near the extremes.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No fake precision.</b> Confidence is categorical (High, Medium, ranges), never an invented percentage.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No celebration on confident.</b> Being right is the baseline. No confetti, no badges, no fanfare for doing the job.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No em-dashes or en-dashes.</b> Hyphen only, throughout. A period, comma, colon, or parentheses does the rest.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No motion that hides content.</b> No reveal-on-scroll that can strand a reader behind a stalled JS engine.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No three-voice violations.</b> Serif only for human and Leo, mono only for machine tokens. The split is the signature.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No decorative status dots.</b> A colored dot always means AI state. It is never used as a bullet or ornament.</div></div>
+        <div class="slop-item"><span class="slop-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><div class="si-txt"><b>No filler content.</b> Real names, real-feeling deals. No "Acme", no "John Doe", no invented fake-precise metrics.</div></div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="foot">
+      <div class="f-left">
+        <span class="orb f-orb"></span>
+        <div>
+          <div class="f-name">Leo Command Center</div>
+          <div class="f-sub">Design system v2.0 - design trust, not dashboards</div>
+        </div>
+      </div>
+      <a class="foot-link" href="./landing.html">
+        Back to the landing page
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 3.5L13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+/* The ONLY JS: build the EKG pulse strips (decorative-but-meaningful, CSS-animated).
+   Per the system's own rule, this is additive and never load-bearing: if it does not
+   run, the strip is simply empty and nothing else on the page is affected. */
+(function(){
+  var strips = document.getElementById('pulseStrips');
+  if(!strips) return;
+  var cyc = 'h20 l3 -2 l3 4 l5 -16 l4 20 l4 -9 l3 3 h35';
+  var d = 'M0 26 '; for(var i=0;i<9;i++) d += cyc + ' ';
+  var speeds = ['','s2','s3','','s2','','s3',''];
+  for(var k=0;k<8;k++){
+    var quiet = (k===4);
+    var el = document.createElement('div');
+    el.className = 'vs ' + (quiet ? 'quiet' : speeds[k]);
+    el.innerHTML = '<svg viewBox="0 0 693 52" preserveAspectRatio="none" fill="none">'
+      + '<g class="vscan"><path d="' + d + '" stroke="var(' + (quiet ? '--uncertain' : '--confident')
+      + ')" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/></g></svg>';
+    strips.appendChild(el);
+  }
+})();
+</script>
+</body>
+</html>

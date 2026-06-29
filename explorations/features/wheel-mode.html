@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Wheel Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --amber:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --ghost:oklch(0.60 0.018 258);
+  --on:oklch(0.99 0 0); --on-warm:oklch(0.18 0.04 60);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.21 0.035 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+
+.phone{position:relative; width:393px; height:800px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:12px; left:50%; transform:translateX(-50%); width:118px; height:32px; background:#000; border-radius:20px; z-index:40}
+.statusbar{position:absolute; top:18px; left:0; right:0; padding:0 34px; display:flex; justify-content:space-between; align-items:center; z-index:35; font-family:var(--mono); font-size:12px; color:var(--body); letter-spacing:.02em}
+.statusbar .dots{display:flex; gap:5px; align-items:center}
+.statusbar .bars{display:flex; gap:2px; align-items:flex-end; height:11px}
+.statusbar .bars i{width:3px; background:var(--body); border-radius:1px}
+.statusbar .bars i:nth-child(1){height:4px}.statusbar .bars i:nth-child(2){height:6px}.statusbar .bars i:nth-child(3){height:8px}.statusbar .bars i:nth-child(4){height:11px}
+.batt{width:22px;height:11px;border:1.3px solid var(--body);border-radius:3px;position:relative}
+.batt::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--body);border-radius:0 1px 1px 0}
+.batt i{position:absolute;inset:1.5px;width:70%;background:var(--body);border-radius:1px}
+
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:58px 26px 22px}
+
+/* header */
+.hdr{display:flex;align-items:center;justify-content:space-between}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.orb{width:13px;height:13px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.9 0.05 200), oklch(0.6 0.13 250) 46%, oklch(0.34 0.10 270));box-shadow:0 0 9px oklch(0.6 0.13 250 / .4);animation:breathe 6s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.count{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--body);background:oklch(0.96 0.01 250 / .07);border:1px solid var(--hair2);border-radius:999px;padding:5px 12px;transition:transform .3s var(--exp),color .3s,background .3s}
+.count.pop{animation:chippop .42s var(--exp)}
+@keyframes chippop{0%{transform:scale(1)}38%{transform:scale(1.16)}100%{transform:scale(1)}}
+
+/* center card */
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0}
+.cards{position:relative;flex:none}
+.dcard{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:0;opacity:0;transform:translateY(10px) scale(.98);transition:opacity .34s var(--exp),transform .42s var(--exp);pointer-events:none}
+.dcard.active{position:relative;opacity:1;transform:none;pointer-events:auto}
+/* no-JS fallback: every decision stays readable as a stacked list (motion is enhancement only) */
+.no-js .cards{display:flex;flex-direction:column;gap:22px;height:auto!important}
+.no-js .dcard{position:relative;inset:auto;opacity:1;transform:none;pointer-events:auto}
+.ey{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase}
+.ey .sd{width:7px;height:7px;border-radius:50%}
+.statetag{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-left:auto}
+.line{font-family:var(--serif);font-size:25px;line-height:1.36;color:var(--ink);margin-top:18px;letter-spacing:-.2px}
+.line em{font-style:italic}
+.sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
+.act{margin-top:24px}
+.act button{width:100%;height:54px;border-radius:15px;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .16s var(--exp),filter .2s}
+.act button:hover{filter:brightness(1.06)}
+.act button:active{transform:scale(.975)}
+.act .alt{margin-top:9px;height:46px;background:transparent;color:var(--body);border:1px solid var(--hair2);font-size:13.5px;font-weight:500}
+.act .alt:hover{filter:none;background:oklch(0.96 0.01 250 / .05)}
+
+/* per-state action colors */
+.s-confident .act .go{background:var(--confident);color:var(--on-warm)}
+.s-amber .act .go{background:var(--amber);color:var(--on-warm)}
+.s-coral .act .go{background:var(--coral);color:var(--on)}
+.s-cobalt .act .go{background:var(--cobalt);color:var(--on)}
+
+/* the wheel */
+.wheelwrap{position:relative;height:200px;flex:none;margin:0 -26px -22px;overflow:hidden}
+.hint{position:absolute;top:6px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);z-index:3;transition:opacity .4s}
+/* tick mark showing the detent at top */
+.detent{position:absolute;top:30px;left:50%;transform:translateX(-50%);width:2px;height:13px;background:var(--hair2);border-radius:2px;z-index:4}
+.detent::after{content:"";position:absolute;top:15px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--hair2)}
+/* wheel element top-edge at 70px => center at 370px below wrap top; top dot lands ~70px under the detent */
+.wheel{position:absolute;left:50%;top:70px;width:600px;height:600px;margin-left:-300px;border-radius:50%;transition:transform .58s var(--exp);will-change:transform}
+.wheel.tick{animation:detentick .5s var(--exp)}
+@keyframes detentick{0%{}54%{transform:rotate(var(--rot)) scale(1.02)}100%{}}
+.ringline{position:absolute;inset:0;border-radius:50%;border:1px dashed oklch(0.96 0.01 250 / .08)}
+.seg{position:absolute;top:50%;left:50%;width:0;height:0}
+.seg .knob{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card);border:1.5px solid var(--hair2);transition:transform .5s var(--exp),opacity .5s var(--exp),background .45s var(--exp),border-color .45s var(--exp);transform:rotate(calc(-1 * var(--rot)))}
+.seg .knob .core{width:13px;height:13px;border-radius:50%;background:var(--c,var(--ghost));box-shadow:0 0 0 0 transparent;transition:transform .4s var(--exp),box-shadow .4s}
+.seg .knob:hover{transform:rotate(calc(-1 * var(--rot))) scale(1.07)}
+.seg .knob:active{transform:rotate(calc(-1 * var(--rot))) scale(.94)}
+/* active segment */
+.seg.active .knob{background:color-mix(in oklch, var(--c) 20%, var(--card));border-color:var(--c);box-shadow:0 0 22px -4px var(--c)}
+.seg.active .knob .core{transform:scale(1.18);box-shadow:0 0 10px 1px var(--c)}
+/* resolved segment fills seaglass then collapses out */
+.seg.resolved .knob{background:var(--confident);border-color:var(--confident);box-shadow:0 0 18px -4px var(--confident)}
+.seg.resolved .knob .core{background:var(--on-warm);transform:scale(0)}
+.seg.resolved .knob .chk{opacity:1;transform:scale(1)}
+.seg .chk{position:absolute;opacity:0;transform:scale(.4);color:var(--on-warm);transition:opacity .35s var(--exp) .12s,transform .35s var(--exp) .12s;display:flex}
+.seg.dropped{pointer-events:none}
+.seg.dropped .knob{opacity:0;transform:rotate(calc(-1 * var(--rot))) scale(.4)}
+
+/* finished collapse */
+.clear{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;opacity:0;pointer-events:none;transition:opacity .6s var(--exp);z-index:20;padding:30px;background:linear-gradient(to bottom, transparent, var(--canvas) 30%)}
+.clear.show{opacity:1;pointer-events:auto}
+.clear .seal{width:96px;height:96px;border-radius:50%;background:color-mix(in oklch, var(--confident) 18%, var(--card));border:1.5px solid var(--confident);display:flex;align-items:center;justify-content:center;color:var(--confident);box-shadow:0 0 40px -8px var(--confident);animation:sealin .6s var(--exp)}
+@keyframes sealin{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.clear .big{font-family:var(--serif);font-size:30px;color:var(--ink)}
+.clear .small{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+
+/* fallback nav */
+.nav{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:30px;z-index:8;transition:opacity .4s}
+.nav button{width:40px;height:40px;border-radius:50%;background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);color:var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .16s var(--exp),background .2s}
+.nav button:hover{background:oklch(0.96 0.01 250 / .11)}
+.nav button:active{transform:scale(.9)}
+.nav button:disabled{opacity:.3;cursor:default}
+
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer;transition:transform .15s var(--exp),background .2s}
+.controls button:hover{background:oklch(0.96 0.01 250 / .11)} .controls button:active{transform:scale(.96)}
+
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+
+@media (prefers-reduced-motion: reduce){
+  .orb{animation:none}
+  .wheel,.seg .knob,.dcard,.clear,.count{transition:none}
+  .wheel.tick,.clear .seal,.count.pop{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="cap">Wheel Mode · one-handed triage</div>
+
+<div class="phone">
+  <div class="island"></div>
+  <div class="statusbar">
+    <span>6:14</span>
+    <span class="dots"><span class="bars"><i></i><i></i><i></i><i></i></span><span class="batt"><i></i></span></span>
+  </div>
+
+  <div class="screen">
+    <div class="hdr">
+      <div class="hi"><span class="orb"></span>Leo · this morning</div>
+      <div class="count" id="count">5 left</div>
+    </div>
+
+    <div class="stage">
+      <div class="cards" id="cards"><!-- JS rebuilds these into the one-thumb wheel view; static copy below keeps every decision readable without JS -->
+        <div class="dcard s-coral active">
+          <div class="ey"><span class="sd" style="background:var(--coral)"></span>Own deal · 14 Marlow St<span class="statetag" style="background:oklch(0.73 0.16 28 / .16);color:var(--coral)">Urgent</span></div>
+          <div class="line">The appraisal came in <em>$22k under</em>. Buyer goes silent at noon if we don't respond.</div>
+          <div class="sub">CONFIDENCE: needs you · STAKE: highest open</div>
+          <div class="act"><button class="go">Open the counter Leo drafted</button><button class="alt">Call the listing agent first</button></div>
+        </div>
+        <div class="dcard s-amber">
+          <div class="ey"><span class="sd" style="background:var(--amber)"></span>Team · Priya · Oak Knoll<span class="statetag" style="background:oklch(0.82 0.12 72 / .16);color:var(--amber)">Uncertain</span></div>
+          <div class="line">Priya's buyer wants to drop their inspection contingency. I'm <em>not sure that's wise</em> here.</div>
+          <div class="sub">CONFIDENCE: uncertain · I'd flag the risk</div>
+          <div class="act"><button class="go">Review my note to Priya</button><button class="alt">Let Priya handle it</button></div>
+        </div>
+        <div class="dcard s-cobalt">
+          <div class="ey"><span class="sd" style="background:var(--cobalt)"></span>Pipeline · 9 leads<span class="statetag" style="background:oklch(0.66 0.16 262 / .18);color:oklch(0.78 0.12 262)">Thinking</span></div>
+          <div class="line">I'm still <em>scoring last night's leads</em>. One looks like a same-week close.</div>
+          <div class="sub">CONFIDENCE: working · ready in a moment</div>
+          <div class="act"><button class="go">Peek at the front-runner</button><button class="alt">Wait for the full ranking</button></div>
+        </div>
+        <div class="dcard s-amber">
+          <div class="ey"><span class="sd" style="background:var(--amber)"></span>Team · Marcus · renewal<span class="statetag" style="background:oklch(0.82 0.12 72 / .16);color:var(--amber)">Uncertain</span></div>
+          <div class="line">Marcus' client asked about a rate I can't verify. <em>Could be a Fair-Housing snag</em>.</div>
+          <div class="sub">CONFIDENCE: uncertain · I redlined it</div>
+          <div class="act"><button class="go">Read the redline</button><button class="alt">Send Marcus a heads-up</button></div>
+        </div>
+        <div class="dcard s-confident">
+          <div class="ey"><span class="sd" style="background:var(--confident)"></span>Own deal · closing Fri<span class="statetag" style="background:oklch(0.80 0.11 168 / .15);color:var(--confident)">Confident</span></div>
+          <div class="line">Wire instructions for Friday's close <em>match the title company</em>. Clean to confirm.</div>
+          <div class="sub">CONFIDENCE: high · verified twice</div>
+          <div class="act"><button class="go">Confirm the wire</button><button class="alt">Re-check the source</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wheelwrap">
+      <div class="hint" id="hint">Thumb the dial · tap a dot to spin</div>
+      <div class="detent"></div>
+      <div class="wheel" id="wheel"><div class="ringline"></div><!-- segments injected --></div>
+      <div class="nav" id="nav">
+        <button id="prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 7 10l5.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button id="next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M7.5 4 13 10l-5.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <div class="clear" id="clear">
+      <div class="seal"><svg width="46" height="46" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 10 17l9-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="big">You are clear.</div>
+      <div class="small">5 decided · Leo handled 41 more without you</div>
+    </div>
+  </div>
+</div>
+
+<div class="controls"><button id="replay">↻ Replay the morning</button></div>
+
+<script>
+// JS is present: drop the no-JS fallback so the enhanced one-thumb wheel view takes over.
+document.documentElement.classList.remove('no-js');
+// ---- the five morning decisions, each colored by its AI-state ----
+const STATES = {
+  coral:    {c:'var(--coral)',    tag:'Urgent',    tagbg:'oklch(0.73 0.16 28 / .16)',  tagink:'var(--coral)'},
+  amber:    {c:'var(--amber)',    tag:'Uncertain', tagbg:'oklch(0.82 0.12 72 / .16)',  tagink:'var(--amber)'},
+  cobalt:   {c:'var(--cobalt)',   tag:'Thinking',  tagbg:'oklch(0.66 0.16 262 / .18)', tagink:'oklch(0.78 0.12 262)'},
+  confident:{c:'var(--confident)',tag:'Confident', tagbg:'oklch(0.80 0.11 168 / .15)', tagink:'var(--confident)'}
+};
+const DECISIONS = [
+  {st:'coral',  eyebrow:'Own deal · 14 Marlow St',  line:'The appraisal came in <em>$22k under</em>. Buyer goes silent at noon if we don’t respond.', sub:'CONFIDENCE: needs you · STAKE: highest open', go:'Open the counter Leo drafted', alt:'Call the listing agent first'},
+  {st:'amber',  eyebrow:'Team · Priya · Oak Knoll', line:'Priya’s buyer wants to drop their inspection contingency. I’m <em>not sure that’s wise</em> here.', sub:'CONFIDENCE: uncertain · I’d flag the risk', go:'Review my note to Priya', alt:'Let Priya handle it'},
+  {st:'cobalt', eyebrow:'Pipeline · 9 leads',        line:'I’m still <em>scoring last night’s leads</em>. One looks like a same-week close.', sub:'CONFIDENCE: working · ready in a moment', go:'Peek at the front-runner', alt:'Wait for the full ranking'},
+  {st:'amber',  eyebrow:'Team · Marcus · renewal', line:'Marcus’ client asked about a rate I can’t verify. <em>Could be a Fair-Housing snag</em>.', sub:'CONFIDENCE: uncertain · I redlined it', go:'Read the redline', alt:'Send Marcus a heads-up'},
+  {st:'confident', eyebrow:'Own deal · closing Fri',  line:'Wire instructions for Friday’s close <em>match the title company</em>. Clean to confirm.', sub:'CONFIDENCE: high · verified twice', go:'Confirm the wire', alt:'Re-check the source'}
+];
+
+const wheel = document.getElementById('wheel');
+const cardsWrap = document.getElementById('cards');
+const countChip = document.getElementById('count');
+const hint = document.getElementById('hint');
+const clearPanel = document.getElementById('clear');
+const navWrap = document.getElementById('nav');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+
+const RADIUS = 300;      // how far each knob sits from the wheel center
+const ARC = 27;          // degrees BETWEEN adjacent dots (detent step); fan width scales with count
+let state = [];          // {data, resolved, segEl, cardEl, idx}
+let activeId = 0;        // id of currently centered decision
+
+function build(){
+  wheel.innerHTML = '<div class="ringline"></div>';
+  cardsWrap.innerHTML = '';
+  state = DECISIONS.map((d, i) => {
+    // segment (lives on the wheel)
+    const seg = document.createElement('div');
+    seg.className = 'seg';
+    seg.style.setProperty('--c', STATES[d.st].c);
+    seg.innerHTML = '<div class="knob"><span class="core"></span><span class="chk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 10 17l9-10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>';
+    seg.addEventListener('click', () => onSegmentTap(i));
+    wheel.appendChild(seg);
+    // center card
+    const card = document.createElement('div');
+    card.className = 'dcard s-' + d.st;
+    const s = STATES[d.st];
+    card.innerHTML =
+      '<div class="ey"><span class="sd" style="background:'+s.c+'"></span>'+d.eyebrow+
+        '<span class="statetag" style="background:'+s.tagbg+';color:'+s.tagink+'">'+s.tag+'</span></div>'+
+      '<div class="line">'+d.line+'</div>'+
+      '<div class="sub">'+d.sub+'</div>'+
+      '<div class="act"><button class="go">'+d.go+'</button><button class="alt">'+d.alt+'</button></div>';
+    card.querySelector('.go').addEventListener('click', () => resolve(i));
+    card.querySelector('.alt').addEventListener('click', () => resolve(i));
+    cardsWrap.appendChild(card);
+    return {data:d, resolved:false, segEl:seg, cardEl:card, idx:i};
+  });
+  sizeCards();
+  activeId = 0;
+  layout(false);
+  showCard(0);
+  updateCount();
+  clearPanel.classList.remove('show');
+  navWrap.style.opacity = '1';
+  hint.style.opacity = '1';
+  applyA11yRoles();
+}
+
+// boot-time sweep: make click-bound non-button/non-anchor controls keyboard-operable.
+// here the primary interactive items are the .seg wheel dots (divs with click handlers).
+// real <button>/<a> elements are skipped so we never double-bind native activation.
+function applyA11yRoles(){
+  const sel = '[onclick], .seg';
+  document.querySelectorAll(sel).forEach(el => {
+    if(el.tagName === 'BUTTON' || el.tagName === 'A') return;
+    if(!el.hasAttribute('role')) el.setAttribute('role', 'button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+  });
+}
+
+// give the card stack a fixed height = tallest card, so absolute cards don't collapse the stage
+function sizeCards(){
+  cardsWrap.style.height = 'auto';
+  let max = 0;
+  state.forEach(s => { s.cardEl.style.position='relative'; s.cardEl.style.opacity='1'; max = Math.max(max, s.cardEl.offsetHeight); s.cardEl.style.opacity=''; s.cardEl.style.position=''; });
+  cardsWrap.style.height = max + 'px';
+}
+
+// place each live segment on the wheel at a fixed detent spacing (ARC degrees apart),
+// indexed by its order so the wheel keeps a stable geometry; rotation does the snapping.
+// the fan is centered so the middle decision is straight up at rest.
+function layout(animate){
+  const live = state.filter(s => !s.dropped);
+  const n = live.length;
+  const mid = (n - 1) / 2;
+  live.forEach((s, k) => {
+    s.slot = k;                          // position in the live order
+    const ang = (k - mid) * ARC;         // each dot's home angle on the wheel
+    s.angle = ang;
+    const rad = (ang - 90) * Math.PI / 180; // -90 so 0deg points up
+    const x = Math.cos(rad) * RADIUS;
+    const y = Math.sin(rad) * RADIUS;
+    const knob = s.segEl.querySelector('.knob');
+    knob.style.left = x + 'px';
+    knob.style.top  = y + 'px';
+  });
+  // rotate the wheel so the ACTIVE decision's dot snaps up to the detent at top.
+  // because rotation re-centers on the active item, you always see prior decisions
+  // curving away on one side and upcoming ones on the other - a one-thumb rolodex.
+  const act = state.find(s => s.idx === activeId && !s.dropped);
+  const rot = act ? -act.angle : 0;
+  wheel.style.setProperty('--rot', rot + 'deg');
+  // counter-rotate knobs so they stay upright
+  state.forEach(s => s.segEl.querySelector('.knob').style.setProperty('--rot', rot+'deg'));
+  if(animate){
+    wheel.style.transform = 'rotate(' + rot + 'deg)';
+    wheel.classList.remove('tick'); void wheel.offsetWidth; wheel.classList.add('tick');
+  } else {
+    wheel.style.transition = 'none';
+    wheel.style.transform = 'rotate(' + rot + 'deg)';
+    void wheel.offsetWidth;
+    wheel.style.transition = '';
+  }
+  // re-flag active
+  state.forEach(s => s.segEl.classList.toggle('active', s.idx === activeId && !s.dropped));
+}
+
+function showCard(id){
+  state.forEach(s => s.cardEl.classList.toggle('active', s.idx === id));
+  refreshNav();
+}
+
+function setActive(id){
+  if(id === activeId) return;
+  activeId = id;
+  hint.style.opacity = '0';
+  layout(true);
+  showCard(id);
+}
+
+function onSegmentTap(id){
+  if(state[id].resolved) return;
+  setActive(id);
+}
+
+// neighbor order among LIVE segments, for next/prev fallback
+function liveOrder(){ return state.filter(s => !s.dropped).map(s => s.idx); }
+function step(dir){
+  const order = liveOrder();
+  if(order.length <= 1) return;
+  const at = order.indexOf(activeId);
+  const nx = order[(at + dir + order.length) % order.length];
+  setActive(nx);
+}
+function refreshNav(){
+  const order = liveOrder();
+  const single = order.length <= 1;
+  prevBtn.disabled = single; nextBtn.disabled = single;
+}
+
+function resolve(id){
+  const s = state[id];
+  if(s.resolved) return;
+  s.resolved = true;
+  s.segEl.classList.add('resolved');     // fills seaglass + shows check
+  s.cardEl.classList.remove('active');
+  updateCount();
+
+  const wasActive = (activeId === id);
+  // after the seaglass fill reads, drop it off and tighten the wheel
+  setTimeout(() => {
+    s.dropped = true;
+    s.segEl.classList.add('dropped');      // collapses the filled knob out
+    const remaining = liveOrder();
+    if(remaining.length === 0){ finish(); return; }
+    // if we just resolved the centered card, advance to the next still-open decision
+    if(wasActive || !remaining.includes(activeId)){
+      const after = remaining.find(i => i > id);
+      activeId = (after !== undefined) ? after : remaining[remaining.length - 1];
+    }
+    layout(true);                          // remaining dots re-space + snap to new active
+    showCard(activeId);
+  }, 620);
+}
+
+function updateCount(){
+  const left = state.filter(s => !s.resolved).length;
+  countChip.textContent = left === 0 ? 'all clear' : (left + ' left');
+  countChip.classList.remove('pop'); void countChip.offsetWidth; countChip.classList.add('pop');
+  if(left === 1){ countChip.style.color = 'var(--confident)'; }
+  else { countChip.style.color = ''; }
+}
+
+function finish(){
+  navWrap.style.opacity = '0';
+  hint.style.opacity = '0';
+  // collapse the wheel to a single seaglass check, dead center
+  wheel.style.transition = 'transform .6s var(--exp), opacity .6s var(--exp)';
+  wheel.style.transform = 'rotate(0deg) scale(.2)';
+  wheel.style.opacity = '0';
+  setTimeout(() => clearPanel.classList.add('show'), 260);
+}
+
+prevBtn.addEventListener('click', () => step(-1));
+nextBtn.addEventListener('click', () => step(1));
+
+// one document-level handler: Enter/Space activates our role="button" non-native controls.
+// native <button>/<a> handle their own keys; typing in fields is never intercepted.
+document.addEventListener('keydown', (e) => {
+  if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+  const el = document.activeElement;
+  if(!el) return;
+  const tag = el.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable) return;
+  if(tag === 'BUTTON' || tag === 'A') return;
+  if(el.getAttribute('role') !== 'button') return;
+  e.preventDefault();
+  el.click();
+});
+document.getElementById('replay').addEventListener('click', () => {
+  wheel.style.transition = 'none';
+  wheel.style.opacity = '1';
+  wheel.style.transform = '';
+  build();
+});
+
+window.addEventListener('load', build);
+// build immediately too (fonts may delay load); content visible by default
+build();
+</script>
+</body>
+</html>

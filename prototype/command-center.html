@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en" data-mode="signal" data-altitude="me" data-spec="off" data-morning="calm" data-screen="today">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Real · morning command center · team lead (mobile)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Real · morning command center · real-estate team lead · mobile-first.
+   Design language (de-branded) from the "Transcript Spine" DESIGN.md:
+   dark work surface · warm paper read-band · ONE signal-amber accent
+   for the live present. Discipline: 4px scale · transform/opacity-only
+   motion · ease-out tokens · mono labels · no pure #000/#fff · AA · RM.
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left}
+ul{list-style:none}
+:focus-visible{outline:2px solid var(--signal);outline-offset:2px;border-radius:2px}
+
+:root{
+  /* Re-skinned to our dark premium system: periwinkle (calm/AI/interactive) + warm sand (needs you). */
+  --canvas:#0A0B10; --p1:#15171F; --p2:#1C1E29; --p3:#22242F; --p4:#282B37;
+  --line:rgba(174,194,246,0.12); --line-soft:rgba(174,194,246,0.06);
+  --ink:#F1F3FA; --ink-muted:#BCC1D2; --ink-subtle:#828AA0;
+  /* the warm paper read-band collapses into our dark surface */
+  --paper:#15171F; --paper-soft:#1C1E29; --paper-line:rgba(174,194,246,0.12);
+  --paper-ink:#F1F3FA; --paper-body:#BCC1D2; --paper-muted:#828AA0;
+  --signal:#AEC2F6; --signal-hi:#CBD6FB; --signal-ink:#0B0C12;
+  --signal-wash:rgba(174,194,246,.12); --signal-line:rgba(174,194,246,.32);
+  --good:#9BB4E5; --good-wash:rgba(155,180,229,.12);
+  --warn:#C9AC85; --danger:#E7C79C; --danger-wash:rgba(231,199,156,.14); --danger-line:rgba(231,199,156,.42);
+  --info:#AEC2F6; --info-wash:rgba(174,194,246,.12);
+  --r:8px; --r-md:13px; --r-lg:18px; --r-paper:14px;
+  --ease-out:cubic-bezier(.22,1,.36,1); --ease-snap:cubic-bezier(.19,1,.22,1); --ease-io:cubic-bezier(.65,0,.35,1);
+  --dur-fast:120ms; --dur-med:220ms; --dur-slow:360ms; --dur-sheet:440ms;
+  --font:"Inter",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+  --serif:"Host Grotesk","Inter",system-ui,sans-serif;
+}
+html,body{height:100%}
+body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #17191F 0%, var(--canvas) 55%),var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:30px 16px 60px;gap:20px}
+
+/* ---- presenter chrome ---- */
+.presenter{width:100%;max-width:900px;display:flex;flex-direction:column;gap:16px}
+.ph-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.ph-title h1{font-family:var(--serif);font-weight:500;font-size:24px;letter-spacing:-.01em;line-height:1.1}
+.ph-title h1 span{color:var(--ink-subtle);font-size:15px}
+.ph-title p{color:var(--ink-muted);font-size:13.5px;margin-top:6px;max-width:52ch;line-height:1.55}
+.ph-title p b{color:var(--ink-muted);font-weight:600}
+.ph-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ctl-group{display:flex;align-items:center;gap:8px}
+.ctl-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:none;color:var(--ink-subtle)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--p1)}
+.seg button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:none;padding:7px 12px;color:var(--ink-subtle);transition:color var(--dur-fast),background var(--dur-fast)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--canvas)}
+.seg.amber button[aria-pressed=true]{background:var(--signal);color:var(--signal-ink)}
+.ph-screens{display:flex;gap:6px;flex-wrap:wrap}
+.ph-screens button{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle);border:1px dashed var(--line);border-radius:var(--r);padding:6px 10px;transition:color var(--dur-fast),border-color var(--dur-fast)}
+.ph-screens button:hover{color:var(--ink)}
+.ph-screens button.cur{color:var(--signal);border-color:var(--signal-line);border-style:solid}
+
+/* ---- device ---- */
+.device{width:390px;height:844px;flex:0 0 auto;position:relative;background:var(--canvas);border-radius:46px;box-shadow:0 0 0 11px #1b1c20,0 0 0 13px #2a2c31,0 40px 90px -30px rgba(0,0,0,.9);overflow:hidden}
+.device::after{content:"";position:absolute;inset:0;border-radius:46px;pointer-events:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--canvas)}
+.statusbar{height:48px;flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 7px;font-family:var(--mono);font-size:13px;font-weight:500;position:relative;z-index:5}
+.statusbar .right{display:flex;align-items:center;gap:6px}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#000;border-radius:16px}
+.batt{width:24px;height:12px;border:1px solid var(--ink-muted);border-radius:3px;position:relative;display:inline-block}
+.batt::before{content:"";position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:72%;background:var(--ink);border-radius:1px}
+.batt::after{content:"";position:absolute;right:-3px;top:3.5px;height:4px;width:2px;background:var(--ink-muted);border-radius:0 1px 1px 0}
+
+/* ---- command bar ---- */
+.appbar{flex:0 0 auto;padding:4px 18px 10px;display:flex;flex-direction:column;gap:11px}
+.appbar-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.greet{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.05}
+.greet .sub{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:none;color:var(--ink-subtle);margin-top:5px;font-weight:500}
+.avatar{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-weight:600;font-size:13px;color:var(--signal-ink);background:linear-gradient(150deg,var(--signal-hi),var(--signal));border:1px solid var(--signal-line)}
+.iconbtn{width:34px;height:34px;border-radius:var(--r);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-muted);transition:color var(--dur-fast),border-color var(--dur-fast);position:relative;flex:0 0 auto}
+.iconbtn:hover{color:var(--ink);border-color:var(--ink-subtle)}
+.iconbtn .bdg{position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--signal);color:var(--signal-ink);font-family:var(--mono);font-size:8.5px;font-weight:600;display:grid;place-items:center}
+.appbar-tools{display:flex;align-items:center;gap:8px}
+
+/* ---- trust ledger strip ---- */
+.ledger{padding:1px 2px 0}
+.lg-txt{font-size:12.5px;color:var(--ink-muted);font-variant-numeric:tabular-nums;line-height:1.4}
+.lg-txt b{color:var(--ink);font-weight:600}
+.lg-need{color:var(--signal-hi);font:inherit;font-variant-numeric:tabular-nums}
+.lg-need b{color:var(--signal-hi)}
+
+/* ---- cover-for-me pinned chip ---- */
+.cover-chip{display:flex;align-items:center;gap:10px;margin:0 18px;padding:10px 12px;border:1px solid var(--signal-line);background:var(--signal-wash);border-radius:var(--r-md);cursor:pointer}
+.cover-chip .ci{width:26px;height:26px;border-radius:50%;background:var(--signal);color:var(--signal-ink);display:grid;place-items:center;flex:0 0 auto;font-size:13px}
+.cover-chip .ct{flex:1;font-size:12.5px;color:var(--ink)}
+.cover-chip .ct b{font-weight:600}
+.cover-chip .cgo{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:none;color:var(--signal-hi)}
+#cover-chip{display:none}
+html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
+
+/* ---- triage: focus card + collapsed queue ---- */
+.triage{display:flex;flex-direction:column;gap:9px}
+.tcard{position:relative;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);transition:border-color var(--dur-med),opacity var(--dur-med),transform var(--dur-med)}
+.tcard .row-line{display:none;width:100%;align-items:center;gap:10px;padding:12px 13px}
+.tcard .rl-t{flex:1;font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.tcard .rl-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:none;color:var(--ink-subtle);flex:0 0 auto}
+.tcard .rl-go{color:var(--ink-subtle);font-size:12px;flex:0 0 auto}
+.sevdot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.sevdot.red{background:var(--danger)}
+.sevdot.amber{background:var(--signal)}
+.tcard .fbody{padding:13px 14px 12px}
+.tcard h3{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.32;margin:0 0 4px}
+.tcard .agent-tag{margin-bottom:7px}
+.tcard.row .fbody{display:none}
+.tcard.row .row-line{display:flex}
+[data-spec=on] .tcard.row .spec-pin{display:none}
+.tcard.focus[data-sev="red"]{border-color:var(--danger-line);background:linear-gradient(180deg,rgba(231,199,156,.05),var(--p1))}
+.tcard.focus[data-sev="amber"]{border-color:var(--signal-line)}
+.tcard.gone{opacity:0;transform:scale(.97)}
+.change{display:block;width:100%;text-align:center;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line-soft);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle)}
+.change:hover{color:var(--signal-hi)}
+[data-morning="calm"] .tcard.exc{display:none}
+
+/* ---- guardrails all-clear (calm rest state) ---- */
+.allclear{display:flex;align-items:center;gap:10px;width:100%;padding:11px 13px;border:1px dashed var(--line);border-radius:var(--r-md)}
+[data-morning="heavy"] .allclear{display:none}
+.allclear .ac-dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-wash);flex:0 0 auto}
+.allclear .ac-t{font-size:12.5px;color:var(--ink-muted);font-weight:500}
+.allclear .ac-sub{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle)}
+
+/* ---- FYI strip (resolved, not a decision) ---- */
+.fyi{position:relative;display:flex;align-items:center;gap:10px;width:100%;padding:10px 13px;border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--line-soft)}
+.fyi .fyi-tick{width:18px;height:18px;border-radius:50%;background:var(--good-wash);color:var(--good);display:grid;place-items:center;font-size:11px;flex:0 0 auto}
+.fyi .fyi-t{flex:1;font-size:12px;color:var(--ink-muted);text-align:left}
+.fyi .fyi-t b{color:var(--ink);font-weight:600}
+.fyi .fyi-go{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:none;color:var(--ink-subtle);flex:0 0 auto}
+
+/* ---- dashboard glance (collapsible; Pulse auto-expands) ---- */
+.glance{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.glance-head{display:flex;align-items:center;width:100%;gap:10px;padding:12px 14px}
+.glance-head .gl-t{flex:1;font-family:var(--mono);font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums;text-align:left}
+.glance-head .chev{color:var(--ink-subtle);font-family:var(--mono);font-size:13px;transition:transform var(--dur-med)}
+.glance[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.glance-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dur-slow) var(--ease-out)}
+.glance[aria-expanded="true"] .glance-body{grid-template-rows:1fr}
+.glance-body>div{overflow:hidden}
+
+/* ---- altitude ---- */
+.altitude{display:flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:0 18px}
+.altitude button{flex:1;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:none;padding:9px 0;color:var(--ink-subtle);display:flex;align-items:center;justify-content:center;gap:7px;transition:color var(--dur-fast),background var(--dur-fast)}
+.altitude button+button{border-left:1px solid var(--line)}
+.altitude button[aria-pressed=true]{background:var(--p2);color:var(--ink)}
+.altitude .cnt{font-size:10px;color:var(--ink-subtle)}
+.altitude button[aria-pressed=true] .cnt{color:var(--signal)}
+
+.scroll{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:14px 18px 26px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{width:0}
+.screen{display:none;flex-direction:column;gap:13px}
+.screen.is-active{display:flex;animation:screenIn var(--dur-slow) var(--ease-out)}
+@keyframes screenIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:none;color:var(--ink-subtle);display:flex;align-items:center;justify-content:space-between;margin:6px 2px 0}
+.section-label .mini{color:var(--ink-subtle);text-transform:none;letter-spacing:0;font-size:11px}
+.section-label .mini.act{color:var(--signal-hi);cursor:pointer}
+
+/* ============ DASHBOARD DECK (top-class, at top) ============ */
+.deck{display:flex;flex-direction:column;gap:11px}
+.hero{background:linear-gradient(165deg,var(--p2),var(--p1));border:1px solid var(--line);border-radius:var(--r-lg);padding:15px 16px;position:relative;overflow:hidden}
+.hero .he{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:none;color:var(--ink-subtle);display:flex;align-items:center;gap:7px}
+.hero .hv{display:flex;align-items:flex-end;gap:9px;margin-top:8px}
+.hero .hn{font-family:var(--mono);font-size:31px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:.95}
+.hero .hd{font-family:var(--mono);font-size:11px;color:var(--good);margin-bottom:4px;display:flex;align-items:center;gap:3px}
+.hero .hbar{position:absolute;right:14px;top:14px;display:flex;align-items:flex-end;gap:3px;height:34px}
+.hero .hbar span{width:4px;background:var(--signal);border-radius:1px;opacity:.55}
+.hero .hbar span:last-child{opacity:1}
+.hero .hsub{display:flex;gap:14px;margin-top:13px;flex-wrap:wrap}
+.hero .hsub div{font-size:11px;color:var(--ink-muted)}
+.hero .hsub b{font-family:var(--mono);color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+[data-mode=pulse] .kpi-grid{grid-template-columns:repeat(4,1fr)}
+[data-mode=pulse] .kpi-grid .kpi-x{display:flex}
+.kpi-grid .kpi-x{display:none}
+.kpi{background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:11px 12px;flex-direction:column}
+.kpi .n{font-family:var(--mono);font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .n.amber{color:var(--signal-hi)}.kpi .n.good{color:var(--good)}.kpi .n.bad{color:var(--danger)}
+.kpi .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:none;color:var(--ink-subtle);margin-top:3px}
+.kpi .spark{margin-top:7px;display:none}
+[data-mode=pulse] .kpi .spark{display:inline-flex}
+/* day rail */
+.day-rail{display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none}
+.day-rail::-webkit-scrollbar{height:0}
+.drc{flex:0 0 auto;min-width:108px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 11px;cursor:pointer;transition:border-color var(--dur-fast)}
+.drc:hover{border-color:var(--ink-subtle)}
+.drc.now{border-color:var(--signal-line);background:var(--signal-wash)}
+.drc .dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--ink-subtle)}
+.drc.now .dt{color:var(--signal-hi)}
+.drc .de{font-size:12px;font-weight:600;margin-top:4px;line-height:1.25}
+.drc .dp{font-size:11px;color:var(--ink-muted);margin-top:5px}
+/* swarm pulse */
+.swarm{display:flex;align-items:center;gap:12px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:11px 13px}
+.swarm .sw-wave{display:inline-flex;align-items:flex-end;gap:2px;height:22px;flex:0 0 auto}
+.swarm .sw-wave span{width:3px;border-radius:1px;background:var(--ink-subtle);opacity:.5;animation:sw 1.8s var(--ease-io) infinite}
+.swarm .sw-wave span:nth-child(3n){background:var(--signal);opacity:.9}
+@keyframes sw{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+.swarm .sw-t{flex:1;font-size:12px;color:var(--ink-muted);line-height:1.4}
+.swarm .sw-t b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ============ TRIAGE CARD ============ */
+.card{position:relative;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:13px 14px 12px;transition:border-color var(--dur-med),transform var(--dur-med);will-change:transform}
+.card:active{transform:scale(.992)}
+.card.tappable{cursor:pointer}
+.card.tappable:hover{border-color:var(--ink-subtle)}
+.card.alert{border-color:var(--danger-line);background:linear-gradient(180deg,rgba(231,199,156,.05),var(--p1))}
+.topline{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.agent-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:none;color:var(--ink-subtle);display:flex;align-items:center;gap:6px}
+.agent-tag .tdot{width:5px;height:5px;border-radius:50%;background:var(--ink-subtle)}
+.card .ts{font-family:var(--mono);font-size:9.5px;color:var(--ink-subtle);margin-left:auto;letter-spacing:.04em}
+.chip{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:none;padding:3px 7px 2px;border-radius:var(--r);border:1px solid;display:inline-flex;align-items:center;gap:5px}
+.chip .cd{width:5px;height:5px;border-radius:50%}
+.chip.needs{color:var(--signal-hi);border-color:var(--signal-line);background:var(--signal-wash)}.chip.needs .cd{background:var(--signal)}
+.chip.risk{color:var(--danger);border-color:var(--danger-line);background:var(--danger-wash)}.chip.risk .cd{background:var(--danger)}
+.chip.done{color:var(--good);border-color:rgba(155,180,229,.4);background:var(--good-wash)}.chip.done .cd{background:var(--good)}
+.chip.think{color:var(--info);border-color:rgba(174,194,246,.4);background:var(--info-wash)}.chip.think .cd{background:var(--info);animation:breathe 1.6s var(--ease-io) infinite}
+.chip.watch{color:var(--ink-muted);border-color:var(--line)}.chip.watch .cd{background:var(--ink-subtle)}
+@keyframes breathe{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.25)}}
+.card h3{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.32;margin-bottom:4px}
+.card .ctx{font-size:12.5px;color:var(--ink-muted);line-height:1.5}
+.card .ctx b{color:var(--ink);font-weight:600}
+.wave{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
+.wave span{width:2.5px;background:var(--signal);border-radius:1px;opacity:.85}
+.wave.muted span{background:var(--ink-subtle);opacity:.5}
+.conf{display:flex;align-items:center;gap:8px;margin-top:10px;font-family:var(--mono);font-size:10.5px;color:var(--ink-muted)}
+.conf b{color:var(--signal-hi);font-weight:600}
+.actions{display:flex;gap:8px;margin-top:12px}
+.btn{font-family:var(--font);font-size:13px;font-weight:600;padding:9px 14px;border-radius:var(--r);transition:transform var(--dur-fast),background var(--dur-fast),border-color var(--dur-fast),color var(--dur-fast);display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-amber{background:var(--signal);color:var(--signal-ink)}.btn-amber:hover{background:var(--signal-hi)}
+.btn-ghost{border:1px solid var(--line);color:var(--ink-muted)}.btn-ghost:hover{border-color:var(--ink-subtle);color:var(--ink)}
+.btn-danger{background:var(--danger);color:var(--signal-ink)}
+.btn-full{flex:1}.btn-sm{font-size:12px;padding:7px 11px}
+.pulse-spark{margin-top:9px}
+[data-mode=signal] .pulse-spark{display:none}
+
+/* delegation inline chip */
+.deleg{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border:1px dashed var(--signal-line);border-radius:var(--r);background:var(--signal-wash);font-size:11.5px;color:var(--ink)}
+.deleg .di{color:var(--signal-hi);font-size:13px}
+.deleg .dgo{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:4px 8px}
+
+/* two-altitude "handling" collapsed row */
+.handling{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px dashed var(--line);border-radius:var(--r-md);color:var(--ink-muted);cursor:pointer}
+.handling .hpic{width:26px;height:26px;border-radius:50%;background:var(--p3);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--ink);flex:0 0 auto}
+.handling .ht{flex:1;font-size:12.5px}
+.handling .ht b{color:var(--ink);font-weight:600}
+.handling .hgo{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:none;color:var(--ink-subtle)}
+
+/* silent / handled drawer + provenance */
+.handled{border:1px dashed var(--line);border-radius:var(--r-md);overflow:hidden}
+.handled-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;width:100%}
+.handled-head .tick{width:18px;height:18px;border-radius:50%;background:var(--good-wash);display:grid;place-items:center;flex:0 0 auto}
+.handled-head .tick svg{width:10px;height:10px;stroke:var(--good)}
+.handled-head .lbl{font-size:12.5px;color:var(--ink-muted)}
+.handled-head .lbl b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.handled-head .chev{margin-left:auto;color:var(--ink-subtle);transition:transform var(--dur-med);font-family:var(--mono);font-size:13px}
+.handled[aria-expanded=true] .chev{transform:rotate(180deg)}
+.handled-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dur-slow) var(--ease-out)}
+.handled[aria-expanded=true] .handled-body{grid-template-rows:1fr}
+.handled-body>div{overflow:hidden}
+.handled-list{padding:0 14px 12px}
+.handled-list li{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px dashed var(--line-soft);font-size:12px;color:var(--ink-muted);cursor:pointer}
+.handled-list li:hover{color:var(--ink)}
+.handled-list li .mtick{color:var(--good);font-size:11px}
+.handled-list li .prov{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle);margin-left:auto;border:1px solid var(--line);border-radius:var(--r);padding:2px 6px;flex:0 0 auto}
+
+/* reconciler diff */
+.recon .rsys{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px dashed var(--line-soft)}
+.recon .rlogo{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;font-family:var(--mono);font-size:9px;font-weight:600;flex:0 0 auto;border:1px solid var(--line);transition:box-shadow var(--dur-med),border-color var(--dur-med)}
+.recon .rlogo.wb{border-color:var(--good);box-shadow:0 0 0 3px var(--good-wash)}
+.recon .rname{font-size:13px;font-weight:500;flex:1}
+.recon .rname .rst{font-family:var(--mono);font-size:10.5px;color:var(--ink-muted);display:block;margin-top:2px}
+.recon .rstate{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:none;padding:2px 7px;border-radius:var(--r);border:1px solid}
+.recon .rstate.stale{color:var(--danger);border-color:var(--danger-line)}
+.recon .rstate.truth{color:var(--good);border-color:rgba(155,180,229,.4)}
+
+/* voice outbox bubbles */
+.vbubble{border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;margin-bottom:10px}
+.vbubble .vh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.vbubble .vch{width:22px;height:22px;border-radius:6px;background:var(--p3);display:grid;place-items:center;color:var(--ink-muted);flex:0 0 auto}
+.vbubble .vto{font-size:12px;font-weight:600;flex:1}
+.vbubble .vwhy{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:2px 6px}
+.vbubble .vmsg{font-family:var(--serif);font-size:13.5px;color:var(--ink);line-height:1.45;background:var(--p2);border-radius:var(--r);padding:9px 11px}
+.vbubble.confirmed{border-color:rgba(155,180,229,.4)}
+.vbubble .vfoot{display:flex;align-items:center;gap:8px;margin-top:9px}
+
+/* paper read band */
+.paper{background:var(--paper);color:var(--paper-body);border-radius:var(--r-paper);padding:15px 16px;margin:6px 0 14px;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.paper .pey{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:none;color:var(--paper-muted);display:flex;align-items:center;gap:6px;margin-bottom:9px}
+.paper p{font-family:var(--serif);font-size:15px;line-height:1.5;color:var(--paper-ink);margin-bottom:9px}
+.paper p:last-child{margin-bottom:0}
+.paper .cite{font-family:var(--mono);font-size:10px;color:var(--paper-muted);margin-top:2px}
+.paper .hl{background:rgba(174,194,246,.20);padding:0 3px;border-radius:2px;color:var(--paper-ink)}
+.paper.strike p .gone{text-decoration:line-through;color:var(--paper-muted);opacity:.7}
+
+.opt{display:flex;flex-direction:column;gap:10px;margin:4px 0 6px}
+.opt-card{border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;cursor:pointer;transition:border-color var(--dur-fast),background var(--dur-fast)}
+.opt-card:hover{border-color:var(--ink-subtle)}
+.opt-card.reco{border-color:var(--signal-line);background:var(--signal-wash)}
+.opt-card .ot{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.opt-card .od{font-size:12px;color:var(--ink-muted);line-height:1.45}
+.opt-card .tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:1px 6px;margin-left:auto}
+.takeover{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border:1px dashed var(--line);border-radius:var(--r-md);color:var(--ink-muted);font-size:13px;font-weight:500;margin-top:2px;transition:color var(--dur-fast),border-color var(--dur-fast)}
+.takeover:hover{color:var(--ink);border-color:var(--ink-subtle)}
+.split-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px dashed var(--line-soft)}
+.split-row .pic{width:30px;height:30px;border-radius:50%;background:var(--p3);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;flex:0 0 auto}
+.split-row .nm{font-size:13.5px;font-weight:500;flex:1}
+.split-row .load{flex:0 0 70px;height:5px;background:var(--p3);border-radius:3px;overflow:hidden}
+.split-row .load i{display:block;height:100%;background:var(--signal)}
+.split-row .cn{font-family:var(--mono);font-size:11px;color:var(--ink-muted);width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.learn{display:flex;gap:10px;align-items:flex-start;background:var(--info-wash);border:1px solid rgba(174,194,246,.3);border-radius:var(--r-md);padding:12px 13px;margin-top:14px}
+.learn .li{width:18px;height:18px;flex:0 0 auto;color:var(--info);margin-top:1px}
+.learn p{font-size:12.5px;color:var(--ink);line-height:1.5}
+.learn p b{color:var(--info)}
+
+/* blast radius (pause-all) */
+.blast{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px dashed var(--line-soft)}
+.blast .bn{font-family:var(--mono);font-size:21px;font-weight:600;width:40px;text-align:right;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.blast .bn.held{color:var(--signal-hi)}.blast .bn.paused{color:var(--danger)}.blast .bn.safe{color:var(--good)}
+.blast .bt{font-size:13px;font-weight:500}
+.blast .bt span{display:block;font-size:11px;color:var(--ink-muted);margin-top:2px;font-weight:400}
+.resume-chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:none;color:var(--ink-muted);border:1px solid var(--line);border-radius:var(--r);padding:6px 10px;margin-top:14px}
+
+/* day spine */
+.spine{position:relative;padding-left:30px;margin-top:4px}
+.spine::before{content:"";position:absolute;left:9px;top:6px;bottom:10px;width:1px;background:var(--line)}
+.tick{position:relative;padding:0 0 20px}
+.tick .node{position:absolute;left:-25px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--canvas);border:1.5px solid var(--ink-subtle)}
+.tick.past .node{background:var(--ink-subtle)}
+.tick.now .node{background:var(--signal);border-color:var(--signal);animation:playhead 2.4s var(--ease-io) infinite}
+@keyframes playhead{0%,100%{box-shadow:0 0 0 3px var(--signal-wash)}50%{box-shadow:0 0 0 7px rgba(174,194,246,.06)}}
+.tick .tm{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ink-subtle);text-transform:none}
+.tick.now .tm{color:var(--signal-hi)}
+.tick .ev{font-size:14px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+.tick.past .ev{color:var(--ink-muted);font-weight:500}
+.tick .prep{margin-top:8px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;font-size:12.5px;color:var(--ink-muted);line-height:1.5;cursor:pointer;transition:border-color var(--dur-fast)}
+.tick .prep:hover{border-color:var(--ink-subtle)}
+.tick .prep .pl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:none;color:var(--signal-hi);display:block;margin-bottom:5px}
+.now-flag{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:none;color:var(--signal-ink);background:var(--signal);padding:2px 7px;border-radius:var(--r);margin-left:8px}
+
+/* team rows + region */
+.agent-row{display:flex;align-items:center;gap:12px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;cursor:pointer;transition:border-color var(--dur-fast)}
+.agent-row:hover{border-color:var(--ink-subtle)}
+.agent-row .pic{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-weight:600;font-size:13px;background:var(--p3);border:1px solid var(--line)}
+.agent-row .meta{flex:1;min-width:0}
+.agent-row .nm{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.agent-row .ml{font-size:12px;color:var(--ink-muted);margin-top:2px}
+.agent-row .ml.flag{color:var(--signal-hi)}.agent-row .ml.bad{color:var(--danger)}
+.agent-row .right{flex:0 0 auto;text-align:right}
+.flag-pill{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:none;padding:2px 6px;border-radius:var(--r);border:1px solid var(--signal-line);color:var(--signal-hi);background:var(--signal-wash)}
+.sla{font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;color:var(--danger);font-weight:600}
+.region-rollup{background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.rrow{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.rrow+.rrow{border-top:1px solid var(--line-soft)}
+.rrow .rn{font-size:13.5px;font-weight:600;flex:1}
+.rrow .rbar{height:6px;flex:0 0 92px;background:var(--p3);border-radius:3px;overflow:hidden;display:flex}
+.rrow .rbar i{height:100%}
+.rrow .rstat{font-family:var(--mono);font-size:10.5px;color:var(--ink-muted);flex:0 0 auto;font-variant-numeric:tabular-nums}
+
+/* leads */
+.lead-banner{background:linear-gradient(180deg,var(--p2),var(--p1));border:1px solid var(--signal-line);border-radius:var(--r-md);padding:14px}
+.lead{display:flex;align-items:center;gap:12px;padding:12px 13px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);transition:border-color var(--dur-fast)}
+.lead.sel{border-color:var(--signal);background:var(--signal-wash)}
+.lead .cbx{width:20px;height:20px;border:1.5px solid var(--line);border-radius:5px;flex:0 0 auto;display:grid;place-items:center;transition:background var(--dur-fast),border-color var(--dur-fast)}
+.lead.sel .cbx{background:var(--signal);border-color:var(--signal)}
+.lead .cbx svg{width:11px;height:11px;stroke:var(--signal-ink);opacity:0;transition:opacity var(--dur-fast)}
+.lead.sel .cbx svg{opacity:1}
+.lead .li{flex:1;min-width:0}
+.lead .ln{font-size:14px;font-weight:600}
+.lead .lm{font-size:12px;color:var(--ink-muted);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.icp{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 7px;border-radius:var(--r);flex:0 0 auto;text-align:center}
+.icp.hi{color:var(--good);background:var(--good-wash);border:1px solid rgba(155,180,229,.35)}
+.icp.mid{color:var(--signal-hi);background:var(--signal-wash);border:1px solid var(--signal-line)}
+.icp.lo{color:var(--ink-subtle);border:1px solid var(--line)}
+
+/* tab bar */
+.tabbar{flex:0 0 auto;display:flex;border-top:1px solid var(--line);background:rgba(10,11,13,.86);backdrop-filter:blur(12px);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;color:var(--ink-subtle);transition:color var(--dur-fast);position:relative}
+.tab svg{width:22px;height:22px;stroke-width:1.6}
+.tab .tl{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:none}
+.tab[aria-selected=true]{color:var(--ink)}
+.tab .badge{position:absolute;top:0;left:50%;transform:translateX(6px);min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--signal);color:var(--signal-ink);font-family:var(--mono);font-size:8.5px;font-weight:600;display:grid;place-items:center}
+
+/* scrim + sheets */
+.scrim{position:absolute;inset:0;background:rgba(6,7,8,.62);opacity:0;pointer-events:none;transition:opacity var(--dur-med);z-index:40}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:90%;background:var(--p1);border-top:1px solid var(--line);border-radius:22px 22px 0 0;transform:translateY(101%);transition:transform var(--dur-sheet) var(--ease-out);z-index:50;display:none;flex-direction:column;overflow:hidden}
+.sheet.mounted{display:flex}
+.sheet.show{transform:none}
+.sheet .grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:10px auto 4px;flex:0 0 auto}
+.sheet-head{padding:8px 20px 12px;display:flex;align-items:flex-start;gap:10px}
+.sheet-head .sh-meta{flex:1}
+.sheet-head .sh-ag{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:none;color:var(--ink-subtle);display:flex;align-items:center;gap:6px}
+.sheet-head .sh-ag .d{width:5px;height:5px;border-radius:50%;background:var(--ink-subtle);display:inline-block}
+.sheet-head h2{font-size:18px;font-weight:600;letter-spacing:-.015em;margin-top:7px;line-height:1.25}
+.sheet-head .x{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-muted);flex:0 0 auto}
+.sheet-body{padding:4px 20px 22px;overflow-y:auto}
+.sheet-body::-webkit-scrollbar{width:0}
+
+/* toast */
+.toast-wrap{position:absolute;left:14px;right:14px;bottom:84px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--p3);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;display:flex;align-items:center;gap:11px;transform:translateY(140%);opacity:0;transition:transform var(--dur-med) var(--ease-out),opacity var(--dur-med);box-shadow:0 18px 40px -16px rgba(0,0,0,.85);pointer-events:auto}
+.toast.show{transform:none;opacity:1}
+.toast .ti{width:20px;height:20px;flex:0 0 auto}
+.toast .tm{flex:1;font-size:12.5px;line-height:1.4}.toast .tm b{font-weight:600}
+.toast .sub{color:var(--ink-muted);font-size:11px;display:block;margin-top:1px}
+.toast .undo{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:6px 9px;flex:0 0 auto}
+.toast .ring{--p:0;width:18px;height:18px;flex:0 0 auto;border-radius:50%;background:conic-gradient(var(--signal) calc(var(--p)*1%),var(--line) 0)}
+
+/* teach receipt (override-that-teaches) */
+.teach{position:absolute;left:14px;right:14px;bottom:84px;background:var(--p3);border:1px solid var(--info);border-radius:var(--r-md);padding:13px 14px;z-index:62;transform:translateY(150%);opacity:0;pointer-events:none;transition:transform var(--dur-med) var(--ease-out),opacity var(--dur-med);box-shadow:0 18px 40px -16px rgba(0,0,0,.85)}
+.teach.show{transform:none;opacity:1;pointer-events:auto}
+.teach .te{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:none;color:var(--info);display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.teach .trule{font-size:13px;color:var(--ink);line-height:1.4;margin-bottom:11px}
+.teach .trule b{font-weight:600}
+.teach .tfoot{display:flex;align-items:center;gap:8px}
+.teach .scope{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle);border:1px solid var(--line);border-radius:var(--r);padding:3px 7px;margin-left:auto}
+
+/* orchestration funnel */
+.funnel{display:flex;flex-direction:column;align-items:center;padding:6px 0}
+.f-cloud{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;max-width:240px;margin:0 auto 4px}
+.f-cloud i{width:7px;height:7px;border-radius:50%;background:var(--ink-subtle);opacity:.45}
+.f-cloud i.live{background:var(--signal);opacity:1}
+.f-gate{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-muted);border:1px dashed var(--line);border-radius:var(--r);padding:7px 12px;margin:10px auto;display:inline-flex;gap:8px}
+.f-arrow{color:var(--ink-subtle);font-size:14px;margin:2px 0}
+.f-surfaced{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.f-surfaced .fc{width:28px;height:36px;border-radius:5px;border:1px solid var(--signal-line);background:var(--signal-wash)}
+.f-cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:none;color:var(--ink-subtle);margin-top:6px}
+.f-cap.amber{color:var(--signal-hi)}
+.legend .lrow{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-bottom:1px dashed var(--line-soft)}
+.legend .lrow:last-child{border-bottom:0}
+.legend .lvis{width:30px;flex:0 0 auto;display:grid;place-items:center;padding-top:3px}
+.legend .lt{font-size:13.5px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.legend .ld{font-size:12px;color:var(--ink-muted);line-height:1.45}
+
+/* spec mode */
+.spec-pin{position:absolute;width:20px;height:20px;border-radius:50%;background:var(--signal);color:var(--signal-ink);font-family:var(--mono);font-size:10px;font-weight:700;display:none;place-items:center;z-index:25;box-shadow:0 0 0 3px var(--canvas),0 0 0 4px var(--signal-line)}
+[data-spec=on] .spec-pin{display:grid;animation:pinPop var(--dur-med) var(--ease-out)}
+@keyframes pinPop{from{transform:scale(0)}to{transform:scale(1)}}
+.spec-pop{position:absolute;left:14px;right:14px;bottom:84px;background:var(--p3);border:1px solid var(--signal-line);border-radius:var(--r-md);padding:14px 15px;z-index:65;transform:translateY(20px);opacity:0;pointer-events:none;transition:transform var(--dur-med) var(--ease-out),opacity var(--dur-med);box-shadow:0 18px 40px -16px rgba(0,0,0,.85)}
+.spec-pop.show{transform:none;opacity:1;pointer-events:auto}
+.spec-pop .se{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:none;color:var(--signal-hi);display:flex;gap:7px;margin-bottom:8px}
+.spec-pop h4{font-size:14.5px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+.spec-pop dl{display:grid;grid-template-columns:auto 1fr;gap:5px 11px;font-size:12px}
+.spec-pop dt{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:none;color:var(--ink-subtle);padding-top:2px}
+.spec-pop dd{color:var(--ink-muted);line-height:1.45}.spec-pop dd b{color:var(--ink);font-weight:600}
+.spec-pop .x{position:absolute;top:10px;right:11px;color:var(--ink-subtle);font-family:var(--mono);font-size:13px}
+
+.caption{max-width:600px;text-align:center;color:var(--ink-subtle);font-size:12px;line-height:1.6}
+.caption b{color:var(--ink-muted);font-weight:600}.caption code{font-family:var(--mono);color:var(--signal-hi);font-size:11px}
+
+/* ============================================================
+   CRAFT LAYER · depth · type · entrance choreography · live AI-state motion
+   (before the reduced-motion guard so RM still overrides everything)
+   ============================================================ */
+body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#08090b 100%);background-attachment:fixed;font-feature-settings:"cv05","ss01";letter-spacing:-.005em}
+.device{box-shadow:0 0 0 11px #1a1b1f,0 0 0 12px #2c2e34,0 1px 0 13px rgba(255,255,255,.05),0 50px 110px -34px rgba(0,0,0,.95),0 18px 44px -22px rgba(0,0,0,.7)}
+/* flat-on-dark per the design system (Runway/Linear discipline): depth comes from panel
+   steps + 1px borders, NOT shadows. Only the sheet, a true overlay, is allowed to lift. */
+.sheet{box-shadow:0 -26px 64px -22px rgba(0,0,0,.82)}
+.greet,.ph-title h1,.hero .hn,.sheet-head h2,.tcard h3{font-optical-sizing:auto}
+.tcard h3,.card h3,.sheet-head h2{text-wrap:balance}
+.hn{letter-spacing:-.035em}
+/* signature amber action: gentle gradient + warm glow */
+.btn-amber{background:linear-gradient(180deg,var(--signal-hi),var(--signal))}
+.btn-amber:hover{background:linear-gradient(180deg,#E2EAFD,var(--signal-hi))}
+
+/* entrance choreography — staggered rise on screen activation */
+.screen.is-active>*{animation:kRise var(--dur-slow) var(--ease-out) backwards}
+.screen.is-active>*:nth-child(2){animation-delay:.05s}
+.screen.is-active>*:nth-child(3){animation-delay:.09s}
+.screen.is-active>*:nth-child(4){animation-delay:.13s}
+.screen.is-active>*:nth-child(5){animation-delay:.17s}
+.screen.is-active>*:nth-child(n+6){animation-delay:.21s}
+.triage .tcard{animation:kRise var(--dur-slow) var(--ease-out) backwards}
+.triage .tcard:nth-child(2){animation-delay:.06s}
+.triage .tcard:nth-child(3){animation-delay:.1s}
+.triage .tcard:nth-child(n+4){animation-delay:.14s}
+@keyframes kRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* uncertainty: confidence wave breathes like an equalizer (focus + sheets only) */
+.conf .wave span{transform-origin:bottom;animation:kEq 1.5s var(--ease-io) infinite}
+.conf .wave span:nth-child(2){animation-delay:.12s}.conf .wave span:nth-child(3){animation-delay:.24s}
+.conf .wave span:nth-child(4){animation-delay:.36s}.conf .wave span:nth-child(5){animation-delay:.48s}
+@keyframes kEq{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+/* thinking: light sweep across the chip */
+.chip.think{position:relative;overflow:hidden}
+.chip.think::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 42%,rgba(174,194,246,.28) 50%,transparent 58%);transform:translateX(-120%);animation:kSweep 2.3s var(--ease-io) infinite}
+@keyframes kSweep{to{transform:translateX(120%)}}
+
+/* LEGEND live demos */
+.dlive{display:grid;place-items:center;width:26px;height:26px}
+.d-think{width:9px;height:9px;border-radius:50%;background:var(--info);animation:breathe 1.6s var(--ease-io) infinite}
+.d-unc{width:10px;height:10px;border-radius:50%;background:var(--signal);position:relative}
+.d-unc::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--signal);animation:kRing 1.9s var(--ease-out) infinite}
+@keyframes kRing{0%{transform:scale(.55);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+.d-conf{width:20px;height:20px;border-radius:50%;background:var(--good-wash);display:grid;place-items:center}
+.d-conf path{stroke:var(--good);stroke-dasharray:26;stroke-dashoffset:26;animation:kDraw 2.6s var(--ease-out) infinite}
+@keyframes kDraw{0%{stroke-dashoffset:26}30%,72%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.d-silent{width:9px;height:9px;border-radius:50%;background:var(--ink-subtle);animation:kFade 2.6s ease-in-out infinite}
+@keyframes kFade{0%,100%{opacity:.28}50%{opacity:.7}}
+.d-wrong{width:10px;height:10px;border-radius:50%;background:var(--danger);animation:kSettle 2.8s var(--ease-out) infinite}
+@keyframes kSettle{0%,16%,100%{transform:translateX(0)}4%{transform:translateX(-2.5px)}8%{transform:translateX(2.5px)}12%{transform:translateX(-1px)}}
+
+/* ORCHESTRATION flow + cloud pulse */
+.funnel{position:relative}
+.f-flow{position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);pointer-events:none}
+.f-flow i{position:absolute;left:50%;width:5px;height:5px;border-radius:50%;background:var(--signal-hi);transform:translateX(-50%);opacity:0;animation:kFlow 2.6s var(--ease-io) infinite}
+@keyframes kFlow{0%{top:8%;opacity:0;transform:translateX(-50%) scale(.5)}14%{opacity:1}86%{opacity:1}100%{top:80%;opacity:0;transform:translateX(-50%) scale(1)}}
+.f-cloud i.live{animation:kCloud 2s var(--ease-io) infinite}
+@keyframes kCloud{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.5)}}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+@media (max-width:440px){body{padding:14px 0 40px}.device{transform:scale(.92);transform-origin:top center}}
+
+/* ============================================================
+   IMPECCABLE POLISH, dark premium craft pass (overrides above).
+   Raised-card recipe (top-lit gradient + soft shadow + 1px highlight),
+   focus-card lift, accent glow, leftover-red fixes, micro-interactions.
+   ============================================================ */
+.tcard,.card,.glance,.lead-banner,.legend{
+  background:linear-gradient(178deg,#1C1E29 0%,#131420 100%);
+  box-shadow:0 16px 36px -24px rgba(0,0,0,.66),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.kpi,.drc,.agent-row,.lead,.swarm{box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
+/* the one focus card: lifted off the queue with a faint accent edge */
+.tcard.focus{box-shadow:0 24px 52px -22px rgba(0,0,0,.74),inset 0 1px 0 rgba(255,255,255,.06)}
+.tcard.focus[data-sev="amber"]{background:linear-gradient(178deg,#20243A 0%,#14151F 68%);border-color:var(--signal-line)}
+.tcard.focus[data-sev="red"]{background:linear-gradient(178deg,rgba(231,199,156,.08),#15171F 60%);border-color:var(--danger-line)}
+.card.alert{background:linear-gradient(178deg,rgba(231,199,156,.08),#15171F 60%);border-color:var(--danger-line)}
+/* greeting: display presence */
+.greet{font-size:25px;font-weight:600;letter-spacing:-.02em}
+/* Leo's presence: a soft periwinkle glow on the orb-avatar */
+.avatar{box-shadow:0 0 16px -2px rgba(174,194,246,.45)}
+/* micro-interactions: lift on hover, settle on press */
+.tcard:not(.row):hover,.card.tappable:hover,.lead:hover,.drc:hover,.agent-row:hover,.glance-head:hover,.fyi:hover,.cover-chip:hover{border-color:rgba(174,194,246,.24)}
+.btn:active{transform:scale(.985)}
+
+/* ============================================================
+   UI ENHANCEMENT PASS · component craft within the dark system.
+   Additive only: transform/opacity + subtle panel-step gradients,
+   reduced-motion and touch guarded, no side-stripes, no gradient text.
+   ============================================================ */
+/* primary action: the one glowing affordance, a premium periwinkle lift */
+.btn-amber{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 20px -10px rgba(174,194,246,.55)}
+.btn-amber:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 26px -10px rgba(174,194,246,.72)}
+/* a faint top sheen on the smaller surfaces, a step below the lifted cards
+   so the hierarchy (focus card, then queue, then rows) still reads clearly */
+.agent-row,.lead,.drc,.region-rollup,.kpi,.swarm,.handling,.allclear,.fyi,.opt-card,.vbubble{
+  background-image:linear-gradient(178deg,rgba(255,255,255,.022),rgba(255,255,255,0) 62%);
+}
+/* the focus card's state dot earns a soft focal halo: the eye lands on the one thing */
+.tcard.focus .sevdot.amber{box-shadow:0 0 0 4px var(--signal-wash)}
+.tcard.focus .sevdot.red{box-shadow:0 0 0 4px var(--danger-wash)}
+/* the trust ledger count, the morning's first proof, gets a little machine-layer presence */
+.lg-txt>b:first-child{font-family:var(--mono);font-size:13.5px;letter-spacing:-.01em}
+.lg-need{border-bottom:1px solid var(--signal-line);padding-bottom:1px}
+.lg-need:hover{color:#E2EAFD;border-color:var(--signal-hi)}
+/* the day-rail "now" card: a soft periwinkle glow so the present reads at a glance */
+.drc.now{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 22px -12px rgba(174,194,246,.55)}
+/* alive on hover, pointer devices only so touch never sticks */
+@media (hover:hover){
+  .tcard,.card,.agent-row,.lead,.drc,.cover-chip{
+    transition:border-color var(--dur-med),transform var(--dur-med) var(--ease-out),box-shadow var(--dur-med);
+  }
+  .tcard:not(.row):hover,.card.tappable:hover,.agent-row:hover,.lead:hover,.drc:hover,.cover-chip:hover{
+    transform:translateY(-2px);
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="presenter">
+  <div class="ph-top">
+    <div class="ph-title">
+      <h1>Real <span>· morning command center · team lead</span></h1>
+      <p>The first screen <b>Dana</b> opens each morning. Leo and its 100+ agents work overnight; the screen shows what needs a human and confirms what didn't. <b>Agents propose, the human disposes.</b> Mobile-first · one periwinkle signal accent, warm sand for what needs you · dashboard at top, triage below.</p>
+    </div>
+    <div class="ph-controls">
+      <div class="ctl-group"><span class="ctl-label">Theme</span>
+        <div class="seg" id="theme-seg"><button data-mode="signal" aria-pressed="true">Signal</button><button data-mode="pulse" aria-pressed="false">Pulse</button></div></div>
+      <div class="ctl-group"><span class="ctl-label">Spec</span>
+        <div class="seg amber" id="spec-seg"><button data-spec="off" aria-pressed="true">Off</button><button data-spec="on" aria-pressed="false">Annotate</button></div></div>
+      <div class="ctl-group"><span class="ctl-label">Morning</span>
+        <div class="seg" id="morning-seg"><button data-morning="calm" aria-pressed="true">Calm</button><button data-morning="heavy" aria-pressed="false">Heavy</button></div></div>
+    </div>
+  </div>
+  <nav class="ph-screens" id="screen-jump" aria-label="Jump to screen">
+    <button data-go="today" class="cur">Today</button>
+    <button data-go="day">Day · timeline</button>
+    <button data-go="team">Team</button>
+    <button data-go="leads">Leads</button>
+    <button data-go="legend">AI states</button>
+    <button data-go="orch">Orchestration</button>
+  </nav>
+</header>
+
+<div class="device" role="application" aria-label="Real mobile app">
+  <div class="island" aria-hidden="true"></div>
+  <div class="app">
+    <div class="statusbar"><span>6:52</span><span class="right">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="var(--ink)" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="var(--ink)" stroke-width="1.4" aria-hidden="true"><path d="M1 4.2C3 2.2 5.4 1 8 1s5 1.2 7 3.2"/><path d="M3.3 6.7C4.6 5.4 6.2 4.7 8 4.7s3.4.7 4.7 2"/><circle cx="8" cy="9.4" r="1.1" fill="var(--ink)" stroke="none"/></svg>
+      <span class="batt" aria-label="battery"></span></span>
+    </div>
+
+    <div class="appbar">
+      <div class="appbar-row">
+        <h2 class="greet">Good morning, Dana<span class="sub">Sat 27 Jun</span></h2>
+        <div class="appbar-tools">
+          <button class="iconbtn" id="pause-btn" aria-label="Pause all agents" title="Pause all agents"><span class="bdg">14</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="7" y="6" width="3.4" height="12" rx="1"/><rect x="13.6" y="6" width="3.4" height="12" rx="1"/></svg></button>
+          <button class="iconbtn" id="orch-btn" aria-label="Orchestration" title="How agents are orchestrated">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4v3.6M10.4 13.5 6.6 16M13.6 13.5 17.4 16"/></svg></button>
+          <div class="avatar" aria-label="Dana">DR</div>
+        </div>
+      </div>
+      <div class="ledger" id="ledger" aria-label="Trust ledger">
+        <span class="lg-txt"><b>47</b> handled overnight&ensp;·&ensp;<button class="lg-need" id="lg-need"><b id="need-n">2</b> need you</button>&ensp;·&ensp;<b>1</b> corrected</span>
+      </div>
+    </div>
+
+    <div class="cover-chip exc-chip" data-sheet="handoff" id="cover-chip">
+      <span class="ci">↪</span>
+      <span class="ct"><b>Handoff:</b> Sofia's out till Mon · I rerouted 9 deals, <b>2 need your call</b></span>
+      <span class="cgo">open</span>
+    </div>
+
+    <div class="altitude" id="altitude" role="tablist" aria-label="Altitude">
+      <button data-alt="me" aria-pressed="true" role="tab">My deals <span class="cnt">· 4</span></button>
+      <button data-alt="team" aria-pressed="false" role="tab">My team <span class="cnt">· 3</span></button>
+    </div>
+
+    <main class="scroll" id="scroll">
+
+      <!-- ================= TODAY ================= -->
+      <section class="screen is-active" data-screen="today">
+
+        <!-- ME ALTITUDE -->
+        <div data-altblock="me" style="display:flex;flex-direction:column;gap:12px">
+          <div class="section-label">Needs your judgment <span class="mini" id="needs-mini">one at a time</span></div>
+
+          <!-- TRIAGE: one focus card + collapsed queue. Ordered by severity.
+               .exc = conditional exception handler (heavy mornings only). JS assigns .focus / .row. -->
+          <div class="triage" id="triage">
+
+            <article class="tcard exc" data-card="anomaly" data-sev="red" style="position:relative">
+              <span class="spec-pin" data-spec-id="anomaly" style="top:-7px;left:-7px">7</span>
+              <button class="row-line"><span class="sevdot red"></span><span class="rl-t">Bulk export paused on Marcus's account</span><span class="rl-tag">security</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip risk"><span class="cd"></span>I acted defensively</span><span class="ts">03:11</span></div>
+                <div class="agent-tag"><span class="tdot" style="background:var(--danger)"></span>Security agent</div>
+                <h3>I paused a 3 AM bulk export on Marcus's account and locked the session.</h3>
+                <p class="ctx">412 client records, heading to an unrecognized device in another state. I stopped it. <b>Was I right?</b></p>
+                <div class="actions">
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Confirmed, session stays locked","sub":"Marcus must re-verify · security notified","undo":true}'>Keep it locked</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="anomaly">Details</button>
+                </div>
+                <button class="change" data-teach='{"rule":"Marcus runs bulk exports Friday afternoons from his laptop, do not flag those.","scope":"Marcus · bulk export"}'>It was actually Marcus &rarr; teach me</button>
+              </div>
+            </article>
+
+            <article class="tcard exc" data-card="fairhousing" data-sev="red" style="position:relative">
+              <span class="spec-pin" data-spec-id="fairhousing" style="top:-7px;left:-7px">2</span>
+              <button class="row-line"><span class="sevdot red"></span><span class="rl-t">Held an outreach line that reads as steering</span><span class="rl-tag">fair-housing</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip risk"><span class="cd"></span>I caught myself</span><span class="ts">05:58</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Outreach agent · <span style="color:var(--danger)">hold</span></div>
+                <h3>I almost sent an outreach line that reads as steering.</h3>
+                <p class="ctx">My draft described the "kind of people" in the area, a <b>Fair Housing</b> risk. I held it and rewrote it.</p>
+                <div class="actions">
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Approved the compliant rewrite","sub":"Sent · original draft logged for audit","undo":true}'>Approve safe version</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="fairhousing">See change</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="tcard exc" data-card="reconciler" data-sev="amber" style="position:relative">
+              <span class="spec-pin" data-spec-id="reconciler" style="top:-7px;left:-7px">3</span>
+              <button class="row-line"><span class="sevdot amber"></span><span class="rl-t">3 systems disagree on the Marsh deal</span><span class="rl-tag">sync</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip needs"><span class="cd"></span>Needs adjudication</span><span class="ts">06:08</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Reconciler agent</div>
+                <h3>Three systems disagree on the Marsh deal's status.</h3>
+                <p class="ctx">MLS <b>Pending</b>, CRM <b>Active</b>, dotloop has an <b>unsigned addendum</b>. I think dotloop is current.</p>
+                <div class="conf"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> <b>78% sure</b> dotloop is the truth</div>
+                <div class="actions">
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Marsh deal reconciled","sub":"MLS, CRM &amp; dotloop now all read Under contract","undo":true}'>Trust dotloop · fix all 3</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="reconciler">Review</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="tcard exc" data-card="handoff" data-sev="amber" style="position:relative">
+              <button class="row-line"><span class="sevdot amber"></span><span class="rl-t">Cover for Sofia (out) · 2 need you</span><span class="rl-tag">handoff</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip needs"><span class="cd"></span>Handoff</span><span class="ts">05:40</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Handoff agent</div>
+                <h3>Sofia's out till Monday. I rerouted 9 deals; 2 need your call.</h3>
+                <p class="ctx">The routine ones are auto-covered. Two are <b>relationships</b>, not just records.</p>
+                <div class="actions"><button class="btn btn-amber btn-full" data-sheet="handoff">Review the 2</button></div>
+              </div>
+            </article>
+
+            <article class="tcard" data-card="mehta" data-sev="amber" style="position:relative">
+              <span class="spec-pin" data-spec-id="uncertain" style="top:-7px;left:-7px">1</span>
+              <button class="row-line"><span class="sevdot amber"></span><span class="rl-t">Crestview deal quiet 4 days · nudge or hold?</span><span class="rl-tag">my deal</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip needs"><span class="cd"></span>Needs you</span><span class="ts">06:14</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Deal-risk agent</div>
+                <h3>The Crestview deal has gone quiet, 4 days, no reply.</h3>
+                <p class="ctx">$635K · Westlake. Warm, then silent after the inspection report.</p>
+                <div class="conf"><span class="wave" aria-hidden="true"><span style="height:5px"></span><span style="height:9px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:11px"></span></span> <b>62% sure</b> a soft nudge helps</div>
+                <div class="actions">
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Soft nudge queued to the Crestview buyers","sub":"No-pressure check-in · goes out 9:05 AM","undo":true}'>Send the nudge</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="mehta">Change</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="tcard" data-card="voiceoutbox" data-sev="amber" style="position:relative">
+              <span class="spec-pin" data-spec-id="voice" style="top:-7px;left:-7px">6</span>
+              <button class="row-line"><span class="sevdot amber"></span><span class="rl-t">3 messages need your voice</span><span class="rl-tag">outbox</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip needs"><span class="cd"></span>Send as you · 3</span><span class="ts">06:31</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Comms agents</div>
+                <h3>3 messages are drafted but need your actual voice.</h3>
+                <p class="ctx">A counter-offer, a grieving seller, and one of <b>Jenna's</b> replies that's off-brand.</p>
+                <div class="actions">
+                  <button class="btn btn-amber btn-full" data-sheet="voiceoutbox">Open outbox</button>
+                  <button class="btn btn-ghost btn-sm" data-dispose data-toast='{"msg":"Approved all 3 as drafted","sub":"I’ll watch for replies and brief you","undo":true}'>Approve all</button>
+                </div>
+              </div>
+            </article>
+
+          </div><!-- /triage -->
+
+          <!-- guardrails resting state (calm mornings) -->
+          <button class="allclear" id="allclear" data-toast='{"msg":"Guardrails active · all clear","sub":"Security, fair-housing, source-of-truth & handoff are watching. Nothing to surface."}'>
+            <span class="ac-dot"></span><span class="ac-t">Guardrails: all clear</span><span class="ac-sub">security · fair-housing · sync · handoff</span>
+          </button>
+
+          <!-- FYI: resolved, not a decision -->
+          <button class="fyi" data-sheet="khanna">
+            <span class="spec-pin" data-spec-id="confident" style="top:-7px;left:-7px">4</span>
+            <span class="fyi-tick">✓</span><span class="fyi-t"><b>Bennett pack ready to sign</b> · no action needed</span><span class="fyi-go">view</span>
+          </button>
+
+          <!-- DASHBOARD glance (collapsed by default; Pulse auto-expands) -->
+          <div class="glance" id="glance" aria-expanded="false">
+            <button class="glance-head" id="glance-toggle" aria-controls="glance-body">
+              <span class="gl-t">$14.2M pipeline&ensp;·&ensp;22 live&ensp;·&ensp;on track</span><span class="chev">▾</span>
+            </button>
+            <div class="glance-body" id="glance-body"><div>
+              <div class="deck" style="padding:0 12px 13px">
+                <div class="hero">
+                  <div class="he">◆ live pipeline · you + 6</div>
+                  <div class="hbar" aria-hidden="true"><span style="height:13px"></span><span style="height:19px"></span><span style="height:11px"></span><span style="height:24px"></span><span style="height:17px"></span><span style="height:30px"></span><span style="height:34px"></span></div>
+                  <div class="hv"><span class="hn">$14.2M</span><span class="hd">▲ 8% wk</span></div>
+                  <div class="hsub"><div><b>22</b> live deals</div><div><b>4</b> closing this wk</div><div><b>62%</b> win rate</div></div>
+                </div>
+                <div class="kpi-grid">
+                  <div class="kpi"><div class="n amber" id="kpi-need">2</div><div class="k">Need you</div></div>
+                  <div class="kpi"><div class="n good">8.5h</div><div class="k">AI saved · overnight</div></div>
+                  <div class="kpi kpi-x"><div class="n">94%</div><div class="k">SLA met</div></div>
+                  <div class="kpi kpi-x"><div class="n bad">1</div><div class="k">At risk</div></div>
+                </div>
+                <div class="day-rail">
+                  <div class="drc now" data-go="day"><div class="dt">NOW · 6:52</div><div class="de">Command center</div><div class="dp">clear in ~6 min</div></div>
+                  <div class="drc" data-go="day"><div class="dt">09:00</div><div class="de">Oak St call</div><div class="dp">Brief ready</div></div>
+                  <div class="drc" data-go="day"><div class="dt">11:00</div><div class="de">Showing · Lakeside</div><div class="dp">Comps + leave-behind</div></div>
+                  <div class="drc" data-go="day"><div class="dt">16:00</div><div class="de">Bennett close</div><div class="dp">Pack ready</div></div>
+                </div>
+              </div>
+            </div></div>
+          </div>
+
+          <!-- Review activity (silent-handled + who/what approved) -->
+          <div class="section-label" style="margin-top:2px">Review activity <span class="mini">who &amp; what the agents did</span></div>
+          <div class="handled" id="handled" aria-expanded="false" style="position:relative">
+            <span class="spec-pin" data-spec-id="silent" style="top:7px;right:8px;left:auto">5</span>
+            <button class="handled-head" id="handled-toggle" aria-controls="handled-body" aria-expanded="false">
+              <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></span>
+              <span class="lbl"><b>47</b> handled overnight · <b>8.5h</b> saved</span><span class="chev">▾</span>
+            </button>
+            <div class="handled-body" id="handled-body"><div><ul class="handled-list">
+              <li data-prov="Market-Watch agent · authorized by: standing policy ‘refresh comps daily’"><span class="mtick">✓</span> Pulled fresh comps for 3 listings<span class="prov">why</span></li>
+              <li data-prov="Qualifier agent · authorized by: ‘auto-reply within SLA, no commitments’"><span class="mtick">✓</span> Replied to 12 portal enquiries in SLA<span class="prov">why</span></li>
+              <li data-prov="Scheduler agent · authorized by: ‘book against open calendar slots’"><span class="mtick">✓</span> Booked 4 viewings, synced calendars<span class="prov">why</span></li>
+              <li data-prov="Doc-prep agent · authorized by: ‘chase missing docs, draft only’"><span class="mtick">✓</span> Chased 6 pending documents<span class="prov">why</span></li>
+              <li style="color:var(--ink-subtle);cursor:default">…43 more · <span style="color:var(--signal-hi)">view full log</span></li>
+            </ul></div></div>
+          </div>
+        </div>
+
+        <!-- TEAM ALTITUDE -->
+        <div data-altblock="team" style="display:none;flex-direction:column;gap:13px">
+          <div class="section-label">Your team needs you <span class="mini">patterns, not 60 cards</span></div>
+
+          <article class="card">
+            <div class="topline"><span class="chip risk"><span class="cd"></span>SLA breach</span><span class="ts">live</span></div>
+            <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Response-watch agent</div>
+            <h3>A hot lead has waited <span style="color:var(--danger)">3h 12m</span> on Marcus.</h3>
+            <p class="ctx">ICP 91% · $720K North Hills. Marcus is in a showing. Reassign or ping him?</p>
+            <div class="actions"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Sofia","sub":"Marcus notified · context handed over","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Nudged Marcus by text","sub":"“Hot lead waiting 3h, want me to cover?”"}'>Nudge Marcus</button></div>
+          </article>
+
+          <article class="card tappable" data-sheet="roundrobin" style="position:relative">
+            <span class="spec-pin" data-spec-id="roundrobin" style="top:-7px;left:-7px">8</span>
+            <div class="topline"><span class="chip needs"><span class="cd"></span>Review split</span><span class="ts">06:02</span></div>
+            <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Lead-routing agent</div>
+            <h3>12 new leads overnight. I round-robined them across 6.</h3>
+            <p class="ctx">Balanced for load + ICP. <b>2 high-ICP</b> held for your call. Review?</p>
+            <div class="actions"><button class="btn btn-amber btn-full" data-sheet="roundrobin">Review &amp; adjust</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Round-robin approved","sub":"12 leads assigned · agents notified","undo":true}'>Approve all</button></div>
+          </article>
+
+          <!-- agent-coaching nudge -->
+          <article class="card tappable" data-sheet="coaching" style="position:relative">
+            <span class="spec-pin" data-spec-id="coaching" style="top:-7px;left:-7px">9</span>
+            <div class="topline"><span class="chip needs"><span class="cd"></span>Coaching</span><span class="ts">06:20</span></div>
+            <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Team-coach agent</div>
+            <h3>Jenna's lead has stalled 6 days. Want to nudge her?</h3>
+            <p class="ctx">I drafted a short, supportive message in your voice. Soften or send.</p>
+            <div class="actions"><button class="btn btn-amber btn-full" data-sheet="coaching">Review message</button></div>
+          </article>
+
+          <!-- two-altitude: handling collapsed -->
+          <div class="handling" data-toast='{"msg":"Elena is handling 4 items","sub":"All within her band · nothing needs you"}'>
+            <span class="hpic">E</span><span class="ht"><b>Elena</b> is handling 4, all within her band</span><span class="hgo">peek</span>
+          </div>
+
+          <div class="section-label" style="margin-top:4px">Team pulse <span class="mini">6 agents</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="agent-row" data-toast='{"msg":"Opened Marcus’s pipeline","sub":"4 deals · SLA breach open"}'><span class="pic">M</span><div class="meta"><div class="nm">Marcus <span class="flag-pill">needs you</span></div><div class="ml bad">Hot lead 3h · 1 deal stalling</div></div><div class="right"><span class="sla">3:12</span></div></div>
+            <div class="agent-row" data-toast='{"msg":"Opened Jenna’s pipeline","sub":"3 deals · 1 stalled lead"}'><span class="pic">J</span><div class="meta"><div class="nm">Jenna</div><div class="ml flag">1 lead stalling · coaching suggested</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:9px"></span><span style="height:5px"></span><span style="height:7px"></span></span></div></div>
+            <div class="agent-row" data-toast='{"msg":"Opened Priya’s pipeline","sub":"3 deals · healthy"}'><span class="pic">P</span><div class="meta"><div class="nm">Priya</div><div class="ml">3 deals · all healthy</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:6px"></span><span style="height:9px"></span><span style="height:12px"></span></span></div></div>
+          </div>
+
+          <div class="section-label" style="margin-top:4px">By region <span class="mini act" data-go="team">full team →</span></div>
+          <div class="region-rollup">
+            <div class="rrow"><span class="rn">North Hills</span><span class="rbar"><i style="width:18%;background:var(--danger)"></i><i style="width:82%;background:var(--good)"></i></span><span class="rstat">9 · 1 risk</span></div>
+            <div class="rrow"><span class="rn">Westlake</span><span class="rbar"><i style="width:40%;background:var(--signal)"></i><i style="width:60%;background:var(--good)"></i></span><span class="rstat">6 · 2 watch</span></div>
+            <div class="rrow"><span class="rn">Downtown</span><span class="rbar"><i style="width:100%;background:var(--good)"></i></span><span class="rstat">4 · clear</span></div>
+          </div>
+          <button class="btn btn-ghost btn-full" data-report style="margin-top:2px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg> Download team report</button>
+        </div>
+      </section>
+
+      <!-- ================= DAY ================= -->
+      <section class="screen" data-screen="day">
+        <div class="section-label">Your day <span class="mini">agents prepped each stop</span></div>
+        <div class="spine">
+          <div class="tick past"><span class="node"></span><div class="tm">07:30 · done</div><div class="ev">School-run + inbox triage</div></div>
+          <div class="tick now"><span class="node"></span><div class="tm">Now · 6:52<span class="now-flag">live</span></div><div class="ev">Morning command center</div>
+            <div class="prep" data-toast='{"msg":"4 items need you before 9","sub":"~11 min to clear at this altitude"}'><span class="pl">Scheduler agent</span>Clear 38-min window before your 9:00. Enough to clear the 4 and prep Bennett's close.</div></div>
+          <div class="tick"><span class="node"></span><div class="tm">09:00</div><div class="ev">Call · Oak St counter-offer</div>
+            <div class="prep" data-toast='{"msg":"Oak St brief opened","sub":"Hold $612K · 3 objection-handlers ready"}'><span class="pl">Negotiator · brief ready</span>Their last 3 objections, your floor, and the comp that wins the call.</div></div>
+          <div class="tick"><span class="node"></span><div class="tm">11:00</div><div class="ev">Showing · Lakeside</div>
+            <div class="prep" data-toast='{"msg":"Showing brief opened","sub":"Comps + objections + leave-behind"}'><span class="pl">Comps + Listing agent</span>Comps pulled, buyer must-haves matched to 3 rooms, leave-behind on your phone.</div></div>
+          <div class="tick"><span class="node"></span><div class="tm">16:00</div><div class="ev">Closing · Bennett</div>
+            <div class="prep" data-toast='{"msg":"Closing pack ready","sub":"11 docs checked · e-sign queued"}'><span class="pl">Doc-prep · ready</span>Pack assembled and checked hours ago. Nothing to chase.</div></div>
+        </div>
+      </section>
+
+      <!-- ================= TEAM (deep) ================= -->
+      <section class="screen" data-screen="team">
+        <div class="section-label">Team · this week <span class="mini">you + 6 agents</span></div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kpi"><div class="n">22</div><div class="k">Live deals</div></div>
+          <div class="kpi"><div class="n amber">3</div><div class="k">Need you</div></div>
+          <div class="kpi"><div class="n good">94%</div><div class="k">SLA met</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:2px">
+          <div class="agent-row"><span class="pic">M</span><div class="meta"><div class="nm">Marcus <span class="flag-pill">needs you</span></div><div class="ml bad">SLA breach · 3h 12m</div></div><div class="right"><span class="sla">3:12</span></div></div>
+          <div class="agent-row"><span class="pic">S</span><div class="meta"><div class="nm">Sofia <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· out till Mon</span></div><div class="ml">5 deals · auto-covered</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:7px"></span><span style="height:10px"></span><span style="height:13px"></span></span></div></div>
+          <div class="agent-row"><span class="pic">J</span><div class="meta"><div class="nm">Jenna</div><div class="ml flag">1 stalling · coaching suggested</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:9px"></span><span style="height:5px"></span><span style="height:7px"></span></span></div></div>
+          <div class="agent-row"><span class="pic">P</span><div class="meta"><div class="nm">Priya</div><div class="ml">3 deals · healthy</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:6px"></span><span style="height:9px"></span><span style="height:12px"></span></span></div></div>
+          <div class="agent-row"><span class="pic">E</span><div class="meta"><div class="nm">Elena</div><div class="ml">4 deals · 1 closing Mon</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:8px"></span><span style="height:11px"></span><span style="height:7px"></span></span></div></div>
+          <div class="agent-row"><span class="pic">D</span><div class="meta"><div class="nm">Diego <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· new</span></div><div class="ml">2 deals · agents full-assist</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:5px"></span><span style="height:7px"></span><span style="height:6px"></span></span></div></div>
+        </div>
+        <div class="section-label" style="margin-top:6px">By region</div>
+        <div class="region-rollup">
+          <div class="rrow"><span class="rn">North Hills</span><span class="rbar"><i style="width:18%;background:var(--danger)"></i><i style="width:82%;background:var(--good)"></i></span><span class="rstat">9 · 1 risk</span></div>
+          <div class="rrow"><span class="rn">Westlake</span><span class="rbar"><i style="width:40%;background:var(--signal)"></i><i style="width:60%;background:var(--good)"></i></span><span class="rstat">6 · 2 watch</span></div>
+          <div class="rrow"><span class="rn">Downtown</span><span class="rbar"><i style="width:100%;background:var(--good)"></i></span><span class="rstat">4 · clear</span></div>
+        </div>
+        <button class="btn btn-ghost btn-full" data-report style="margin-top:4px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg> Download team report</button>
+      </section>
+
+      <!-- ================= LEADS ================= -->
+      <section class="screen" data-screen="leads">
+        <div class="lead-banner">
+          <div class="agent-tag" style="margin-bottom:8px"><span class="tdot" style="background:var(--signal)"></span>Lead-routing agent</div>
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:4px">12 new leads, round-robined across 6.</h3>
+          <p class="ctx" style="margin-bottom:12px">Balanced for load + ICP. Tap a lead to reassign, or <b>long-press to select</b> several for a bulk move.</p>
+          <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-sheet="roundrobin">Review split</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Round-robin approved","sub":"12 leads assigned","undo":true}'>Approve</button></div>
+        </div>
+        <div class="section-label">New leads <span class="mini">ICP-scored</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px" id="lead-list">
+          <div class="lead" data-lead><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="li"><div class="ln">Carter family · held for you</div><div class="lm"><span>$880K · referral</span><span style="color:var(--signal-hi)">· unassigned</span></div></div><span class="icp hi">ICP 96%</span></div>
+          <div class="lead" data-lead><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="li"><div class="ln">Alyssa K.</div><div class="lm"><span>$720K · North Hills</span><span>· Marcus</span></div></div><span class="icp hi">ICP 91%</span></div>
+          <div class="lead" data-lead><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="li"><div class="ln">Ryan S.</div><div class="lm"><span>$540K · Westlake</span><span>· Sofia</span></div></div><span class="icp mid">ICP 74%</span></div>
+          <div class="lead" data-lead><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="li"><div class="ln">Frank R.</div><div class="lm"><span>$660K · Lakeside</span><span>· Priya</span></div></div><span class="icp mid">ICP 68%</span></div>
+          <div class="lead" data-lead><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg></span><div class="li"><div class="ln">Mia J.</div><div class="lm"><span>$310K · Eastside</span><span>· Jenna</span></div></div><span class="icp lo">ICP 38%</span></div>
+        </div>
+      </section>
+
+      <!-- ================= LEGEND ================= -->
+      <section class="screen" data-screen="legend">
+        <div class="section-label">How Leo speaks <span class="mini">one voice, five states</span></div>
+        <div class="card legend" style="padding:4px 14px">
+          <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-think"></span></span></div><div><div class="lt">Thinking</div><div class="ld">A calm breathing dot, never a blocking spinner. "Market-Watch is reading 14 comps…"</div></div></div>
+          <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-unc"></span></span></div><div><div class="lt">Uncertain <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· the hand-up</span></div><div class="ld">Surfaces its own doubt + two options. Never guesses on your behalf, judgment returns to the human.</div></div></div>
+          <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-conf"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span></span></div><div><div class="lt">Confident</div><div class="ld">"Done. Here's what changed." Always reversible, an 8-second Undo. Confidence is never arrogance.</div></div></div>
+          <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-silent"></span></span></div><div><div class="lt">Silent</div><div class="ld">The default for ~90% of work. Collapsed into "47 handled." Earns trust by not interrupting.</div></div></div>
+          <div class="lrow"><div class="lvis"><span class="dlive"><span class="d-wrong"></span></span></div><div><div class="lt">Wrong / corrected</div><div class="ld">Owns the miss, you correct it, it visibly learns and logs for audit. Caught a Fair-Housing risk before sending.</div></div></div>
+        </div>
+        <p class="ctx" style="padding:0 4px;color:var(--ink-subtle)">Turn on <b style="color:var(--signal-hi)">Annotate</b> (top right) to read the microinteraction spec pinned on the live screens.</p>
+      </section>
+
+      <!-- ================= ORCHESTRATION ================= -->
+      <section class="screen" data-screen="orch">
+        <div class="section-label">Orchestration <span class="mini">how Leo's 100+ become 4</span></div>
+        <div class="card"><div class="funnel">
+          <div class="f-flow" aria-hidden="true"><i></i><i style="animation-delay:.9s"></i><i style="animation-delay:1.8s"></i></div>
+          <div class="f-cloud" aria-hidden="true" id="f-cloud"></div>
+          <div class="f-cap">100+ agents working</div><div class="f-arrow">↓</div>
+          <div class="f-gate">filter · confidence × stakes × needs-your-voice</div><div class="f-arrow">↓</div>
+          <div class="f-surfaced"><span class="fc"></span><span class="fc"></span><span class="fc"></span><span class="fc"></span></div>
+          <div class="f-cap amber">4 surfaced to you</div>
+        </div></div>
+        <div class="card" style="padding:14px"><div class="agent-tag" style="margin-bottom:9px"><span class="tdot"></span>The rule, in one line</div>
+          <p class="ctx" style="font-size:13.5px">An agent earns a pixel only when it is <b>uncertain</b>, the stakes are <b>high</b>, or it needs your <b>voice</b>. Everything else is <b>silent</b> (handled), <b>watching</b>, or routed to a <b>teammate</b>. Signal hierarchy is enforced by the orchestrator, not by you scrolling.</p></div>
+        <div class="card" style="padding:14px"><div class="agent-tag" style="margin-bottom:9px"><span class="tdot"></span>Accountability for the silence</div>
+          <p class="ctx" style="font-size:13.5px">The trust ledger at the top accounts for what was <b>deliberately not shown</b>: every silently-handled action carries a tappable provenance stamp (which policy authorized it), and any correction <b>tightens that policy</b>, not just a dismiss.</p></div>
+      </section>
+    </main>
+
+    <nav class="tabbar" role="tablist" aria-label="Sections">
+      <button class="tab" data-go="today" aria-selected="true"><span class="badge">4</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h10M4 18h7" stroke-linecap="round"/></svg><span class="tl">Today</span></button>
+      <button class="tab" data-go="day" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2" stroke-linecap="round"/></svg><span class="tl">Day</span></button>
+      <button class="tab" data-go="team" aria-selected="false"><span class="badge">3</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="9" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 7a3 3 0 0 1 0 5.5M15.5 19a5.5 5.5 0 0 0-1.6-3.9" stroke-linecap="round"/></svg><span class="tl">Team</span></button>
+      <button class="tab" data-go="leads" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 8h14M5 12h14M5 16h9" stroke-linecap="round"/><circle cx="18" cy="16" r="3"/></svg><span class="tl">Leads</span></button>
+    </nav>
+
+    <!-- bulk bar -->
+    <div class="teach" id="bulkbar" style="border-color:var(--signal-line)">
+      <div class="tfoot" style="margin:0"><span style="font-size:12.5px;font-weight:600"><span id="bulk-count">0</span> selected</span><span style="flex:1"></span>
+        <button class="btn btn-ghost btn-sm" data-toast='{"msg":"Auto-balanced across the team","sub":"Re-routed by load + ICP","undo":true}'>Auto-balance</button>
+        <button class="btn btn-amber btn-sm" data-toast='{"msg":"Reassigned to Priya","sub":"Context handed over","undo":true}'>Reassign →</button></div>
+    </div>
+
+    <div class="scrim" id="scrim"></div>
+
+    <!-- ===== SHEETS (rendered from JS) ===== -->
+    <div id="sheet-host"></div>
+
+    <!-- teach receipt -->
+    <div class="teach" id="teach">
+      <div class="te">◆ you overrode the agent, teach it?</div>
+      <div class="trule" id="teach-rule"></div>
+      <div class="tfoot">
+        <button class="btn btn-ghost btn-sm" id="teach-once">Just this once</button>
+        <button class="btn btn-amber btn-sm" id="teach-always">Always, teach it</button>
+        <span class="scope" id="teach-scope">applies to: my deals</span>
+      </div>
+    </div>
+
+    <!-- spec popover -->
+    <div class="spec-pop" id="spec-pop" role="dialog" aria-label="Microinteraction spec">
+      <button class="x" data-spec-close>✕</button>
+      <div class="se" id="sp-eyebrow">◆ microinteraction</div>
+      <h4 id="sp-title"></h4>
+      <dl><dt>Trigger</dt><dd id="sp-trigger"></dd><dt>Says</dt><dd id="sp-says"></dd><dt>Why</dt><dd id="sp-why"></dd></dl>
+    </div>
+
+    <div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
+  </div>
+</div>
+
+<p class="caption">One connected app. <b>Dashboard at top</b> → triage below · toggle <b>Signal ↔ Pulse</b> (calm vs stats-dense) · switch <b>My deals ↔ My team</b> · tap the <b>pause</b> glyph for blast-radius · open <code>Annotate</code> to read the 9 microinteraction specs. Every action is live, adjudicate the Marsh conflict, open the voice outbox, override an agent and watch it offer to <b>learn</b>.</p>
+
+<script>
+(function(){
+  const root=document.documentElement, $=(s,c)=>(c||document).querySelector(s), $$=(s,c)=>[...(c||document).querySelectorAll(s)];
+  const rm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- SHEETS content ---------- */
+  const SHEETS={
+    anomaly:{ag:'Security agent · 03:11',agc:'var(--danger)',title:'Bulk export · paused & locked',body:`
+      <div class="paper"><div class="pey">◆ what i saw + what i did</div>
+        <p>At 3:11 AM, Marcus's account began exporting <span class="hl">412 client records</span> to a device I've never seen, geolocated 1,400 miles away.</p>
+        <p>I paused the export and locked the session immediately. Nothing left your systems. This is reversible.</p>
+        <p class="cite">· Defensive action taken · logged for audit · awaiting your confirmation</p></div>
+      <div class="actions" style="margin-top:0">
+        <button class="btn btn-danger btn-full" data-toast='{"msg":"Confirmed · session stays locked","sub":"Marcus must re-verify. Security team notified.","undo":true}'>Confirm, keep it locked</button>
+        <button class="btn btn-ghost" data-teach='{"rule":"Marcus runs bulk exports Friday afternoons from his laptop, don’t flag those.","scope":"Marcus · bulk export"}'>It was Marcus</button></div>`},
+
+    fairhousing:{ag:'Listing-outreach agent · compliance hold',agc:'var(--danger)',title:'I held a line that reads as steering',body:`
+      <div class="paper strike"><div class="pey">◆ my first draft · held, not sent</div>
+        <p><span class="gone">"You'll love this neighborhood, a tight-knit community of families just like yours, the right kind of people."</span></p>
+        <p class="cite">· Flagged: "like yours" / "the right kind of people" can imply steering by protected class. Fair Housing risk.</p></div>
+      <div class="paper"><div class="pey">◆ rewritten · safe to send</div>
+        <p>"You'll love this neighborhood, <span class="hl">walkable, great schools nearby, quiet evenings.</span> Want a viewing this weekend?"</p>
+        <p class="cite">· Describes the property, not the people. Compliant.</p></div>
+      <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Approved the compliant version","sub":"Sent · original draft logged for audit","undo":true}'>Approve &amp; send</button><button class="btn btn-ghost" data-learn>Edit first</button></div>
+      <div class="learn"><svg class="li" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="4"/></svg><p><b>Why this never auto-sent:</b> all AI-drafted outreach passes a Fair-Housing guardrail before any send. High-risk language is held for a human, always, and logged either way.</p></div>`},
+
+    reconciler:{ag:'Reconciler agent · 06:08',title:'Marsh deal · 3 systems disagree',body:`
+      <p class="ctx" style="margin-bottom:12px">A silent divergence like this kills closings. Here's the conflict and which source I trust.</p>
+      <div class="recon" id="recon">
+        <div class="rsys"><span class="rlogo" data-sys>MLS</span><span class="rname">MLS<span class="rst">last touched 6 days ago</span></span><span class="rstate stale">Pending</span></div>
+        <div class="rsys"><span class="rlogo" data-sys>FUB</span><span class="rname">CRM · Follow Up Boss<span class="rst">auto-set by a stage rule</span></span><span class="rstate stale">Active</span></div>
+        <div class="rsys" style="border-bottom:0"><span class="rlogo" data-sys>DL</span><span class="rname">dotloop<span class="rst">addendum uploaded 2h ago, unsigned</span></span><span class="rstate truth">Under contract</span></div>
+      </div>
+      <div class="conf" style="margin:14px 0 10px"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> I'm <b>78% sure</b> dotloop is current, it's the freshest + a real document</div>
+      <button class="btn btn-amber btn-full" id="recon-accept">Trust dotloop · write back to all 3</button>
+      <button class="takeover" style="margin-top:10px" data-toast='{"msg":"Opened the three records","sub":"Decide field-by-field"}'>Let me decide each field</button>`},
+
+    mehta:{ag:'Deal-risk agent · 06:14',title:'The Crestview deal · $635K',body:`
+      <div class="paper"><div class="pey">◆ my read</div>
+        <p>The Crestview buyers were warm, two viewings, asked about parking and the school zone. Then the inspection report landed and they went quiet. <span class="hl">Four days, no reply.</span></p>
+        <p>I've seen this 38 times in your pipeline. A gentle nudge recovers it ~<b>62%</b> of the time; the other 38% read a nudge as pressure and walk.</p>
+        <p class="cite">· Confidence 62% · 38 similar inspection-stage exits</p></div>
+      <div class="section-label" style="margin:0 0 10px">Your call</div>
+      <div class="opt">
+        <button class="opt-card reco" data-toast='{"msg":"Soft nudge queued to the Crestview buyers","sub":"No-pressure check-in · goes out 9:05 AM","undo":true}'><div class="ot">Send a soft nudge <span class="tag">agent leans here</span></div><div class="od">Warm, low-pressure, references the school zone they liked, not the report.</div></button>
+        <button class="opt-card" data-toast='{"msg":"Holding 24h · still watching","sub":"I’ll re-surface if they re-engage","undo":true}'><div class="ot">Hold 24h, keep watching</div><div class="od">Give them room. I'll flag the moment they revisit the listing.</div></button></div>
+      <button class="takeover" data-teach='{"rule":"On quiet buyers after inspection, hold and flag me sooner, don’t auto-nudge.","scope":"my deals · inspection stage"}'>I'll call them myself, take it off the agents</button>`},
+
+    voiceoutbox:{ag:'Comms agents · 06:31',title:'Send as you · 3 held',body:`
+      <p class="ctx" style="margin-bottom:12px">Drafted, but each needs <b>your</b> voice. Nothing sends until you say so.</p>
+      <div class="vbubble" id="vb-1"><div class="vh"><span class="vch">$</span><span class="vto">Oak St · counter-offer</span><span class="vwhy">high-stakes</span></div><div class="vmsg">"We hear you on the number. We can hold at $612K with a 30-day close, and we'd rather move fast with you than re-list."</div><div class="vfoot"><button class="btn btn-amber btn-sm" data-vsend="vb-1">Send as me</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Opened to edit","sub":"Your edits teach the tone model"}'>Edit</button></div></div>
+      <div class="vbubble" id="vb-2"><div class="vh"><span class="vch">♥</span><span class="vto">Bennett · condolences + close</span><span class="vwhy">emotional</span></div><div class="vmsg">"I know this week's been heavy. No rush at all, when you're ready, everything's set for the close. Thinking of you."</div><div class="vfoot"><button class="btn btn-amber btn-sm" data-vsend="vb-2">Send as me</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Opened to edit"}'>Edit</button></div></div>
+      <div class="vbubble" id="vb-3"><div class="vh"><span class="vch">J</span><span class="vto">Jenna's reply · sounds off-brand</span><span class="vwhy">sub-agent</span></div><div class="vmsg">"Per my last email, the home's still available, please advise." <span style="color:var(--ink-subtle);font-style:italic">· too curt for your team's voice</span></div><div class="vfoot"><button class="btn btn-amber btn-sm" data-vsend="vb-3">Take it &amp; rewrite</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Left it with Jenna","sub":"Flagged the tone for her"}'>Leave it</button></div></div>`},
+
+    khanna:{ag:'Doc-prep agent · 04:40 · done',agc:'var(--good)',title:'Bennett closing pack',body:`
+      <div class="paper"><div class="pey">◆ what i did while you slept</div>
+        <p>Assembled all 11 closing documents, cross-checked names and figures against the agreement, and fixed <b>2 signature blocks</b> on the wrong page.</p>
+        <p class="cite">· Closing today 4 PM · verified · ready for e-sign</p></div>
+      <button class="btn btn-amber btn-full" data-toast='{"msg":"Sent for e-sign to the Bennetts","sub":"DocuSign · 3 signers · I’ll track it","undo":true}'>Send all 11 for e-sign</button>`},
+
+    roundrobin:{ag:'Lead-routing agent · 06:02',title:'12 leads · round-robin split',body:`
+      <p class="ctx" style="margin-bottom:12px">Balanced for load + ICP. Tap a count to move, or auto-balance. <b>2 high-ICP held for you.</b></p>
+      <div><div class="split-row"><span class="pic">M</span><span class="nm">Marcus <span style="font-family:var(--mono);font-size:9px;color:var(--danger)">· heavy</span></span><span class="load"><i style="width:90%"></i></span><span class="cn">1</span></div>
+      <div class="split-row"><span class="pic">S</span><span class="nm">Sofia <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· out</span></span><span class="load"><i style="width:20%"></i></span><span class="cn">0</span></div>
+      <div class="split-row"><span class="pic">J</span><span class="nm">Jenna</span><span class="load"><i style="width:48%"></i></span><span class="cn">3</span></div>
+      <div class="split-row"><span class="pic">P</span><span class="nm">Priya</span><span class="load"><i style="width:40%"></i></span><span class="cn">3</span></div>
+      <div class="split-row"><span class="pic">E</span><span class="nm">Elena</span><span class="load"><i style="width:52%"></i></span><span class="cn">3</span></div>
+      <div class="split-row" style="border-bottom:0"><span class="pic">D</span><span class="nm">Diego <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· new</span></span><span class="load"><i style="width:25%"></i></span><span class="cn">2</span></div></div>
+      <div class="actions" style="margin-top:14px"><button class="btn btn-amber btn-full" data-toast='{"msg":"Split approved · 12 assigned","sub":"Agents notified with context","undo":true}'>Approve split</button><button class="btn btn-ghost" data-toast='{"msg":"Auto-balanced by load + ICP","sub":"Sofia’s out → her share went to Diego + Elena","undo":true}'>Auto-balance</button></div>
+      <button class="takeover" style="margin-top:10px" data-toast='{"msg":"Switched to manual assign","sub":"Tap any lead to choose its agent"}'>Assign manually instead</button>`},
+
+    coaching:{ag:'Team-coach agent · 06:20',title:'Coach Jenna · stalled lead',body:`
+      <div class="paper"><div class="pey">◆ drafted in your voice · human to human</div>
+        <p>"Hey Jenna, saw the Lawson lead's gone quiet. Want me to jump on a call with you, or should I have the agent draft a re-engage note for you to send? No stress, happens to all of us."</p>
+        <p class="cite">· Supportive, specific, offers help not blame</p></div>
+      <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Sent to Jenna","sub":"by text · I’ll watch the lead too","undo":true}'>Send to Jenna</button><button class="btn btn-ghost" data-toast='{"msg":"Softened the tone","sub":"Re-drafted: warmer, shorter"}'>Soften</button></div>
+      <button class="takeover" style="margin-top:10px" data-toast='{"msg":"Noted, I’ll handle Jenna","sub":"Removed from your queue"}'>I've got context, I'll talk to her</button>`},
+
+    handoff:{ag:'Handoff agent · Sofia out till Mon',title:'Cover for Sofia · 11 deals',body:`
+      <p class="ctx" style="margin-bottom:12px">I auto-rerouted the routine ones. <b>2 need your call</b>, they're relationships, not just records.</p>
+      <div class="vbubble"><div class="vh"><span class="vch">★</span><span class="vto">$820K Hawthorne listing</span><span class="vwhy">her relationship</span></div><div class="vmsg" style="font-family:var(--font);font-size:12.5px;color:var(--ink-muted)">Sofia's biggest client. Route to you, or to Priya (knows the family)?</div><div class="vfoot"><button class="btn btn-amber btn-sm" data-toast='{"msg":"You’ll cover the Hawthorne listing","sub":"Client told Sofia’s out, you’re point","undo":true}'>I'll take it</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Routed to Priya","sub":"Briefed with full history","undo":true}'>→ Priya</button></div></div>
+      <div class="vbubble"><div class="vh"><span class="vch">⚖</span><span class="vto">Castle Dr negotiation · mid-counter</span><span class="vwhy">live decision</span></div><div class="vmsg" style="font-family:var(--font);font-size:12.5px;color:var(--ink-muted)">A counter is due today. Needs someone with authority on the number.</div><div class="vfoot"><button class="btn btn-amber btn-sm" data-toast='{"msg":"You’ll handle the Castle Dr counter","sub":"Negotiator briefed you","undo":true}'>I'll take it</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Routed to Elena","sub":"With the negotiation brief","undo":true}'>→ Elena</button></div></div>
+      <div class="handling" style="cursor:default;margin-top:4px"><span class="hpic">✓</span><span class="ht"><b>9 routine deals</b> auto-routed silently, showings, doc chases, follow-ups</span></div>`},
+
+    pause:{ag:'Orchestrator · all agents',title:'Pause all agents?',body:`
+      <p class="ctx" style="margin-bottom:14px">Here's exactly what goes quiet, and what stays on for safety.</p>
+      <div><div class="blast"><span class="bn held">14</span><div class="bt">In-flight actions held<span>drafts, comp pulls, doc prep, frozen mid-step</span></div></div>
+      <div class="blast"><span class="bn paused">3</span><div class="bt">Client-facing replies paused<span>nothing auto-sends to a client while paused</span></div></div>
+      <div class="blast" style="border-bottom:0"><span class="bn safe">2</span><div class="bt">Showings still auto-confirm<span>safety-listed: confirmed viewings must not silently drop</span></div></div></div>
+      <div class="resume-chip">⟳ auto-resumes in 2h unless you extend</div>
+      <div class="actions" style="margin-top:14px"><button class="btn btn-danger btn-full" data-toast='{"msg":"All agents paused","sub":"14 held · 3 replies paused · resumes in 2h","undo":true}'>Pause everything</button><button class="btn btn-ghost" data-close>Keep running</button></div>`}
+  };
+
+  /* mount + open sheets */
+  const host=$('#sheet-host'), scrim=$('#scrim');let openSheet=null;
+  function buildSheet(id){const d=SHEETS[id];if(!d)return null;
+    const el=document.createElement('div');el.className='sheet';el.id='sheet-'+id;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');
+    el.innerHTML=`<span class="grab"></span><div class="sheet-head"><div class="sh-meta"><span class="sh-ag"><span class="d" style="background:${d.agc||'var(--ink-subtle)'}"></span>${d.ag}</span><h2>${d.title}</h2></div><button class="x" data-close>✕</button></div><div class="sheet-body">${d.body}</div>`;
+    host.appendChild(el);return el;}
+  function sheetOpen(id){let el=$('#sheet-'+id)||buildSheet(id);if(!el)return;
+    el.classList.add('mounted');el.querySelector('.sheet-body').scrollTop=0;openSheet=el;scrim.classList.add('show');
+    requestAnimationFrame(()=>el.classList.add('show'));}
+  function sheetClose(){if(openSheet){const el=openSheet;el.classList.remove('show');setTimeout(()=>el.classList.remove('mounted'),460);openSheet=null;}scrim.classList.remove('show');}
+
+  /* ---------- navigation ---------- */
+  const scroll=$('#scroll');
+  function go(name){$$('.screen').forEach(s=>s.classList.toggle('is-active',s.dataset.screen===name));
+    $$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.go===name));
+    $$('#screen-jump button').forEach(t=>t.classList.toggle('cur',t.dataset.go===name));
+    $('#altitude').style.display=(name==='today')?'flex':'none';
+    root.dataset.screen=name;
+    scroll.scrollTop=0;}
+  $$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.go)));
+  $('#screen-jump').addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.go);});
+  $('#orch-btn').addEventListener('click',()=>go('orch'));
+  $('#pause-btn').addEventListener('click',()=>sheetOpen('pause'));
+
+  /* ---------- theme + spec ---------- */
+  $('#theme-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.mode=b.dataset.mode;$$('#theme-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));syncGlance();});
+  $('#spec-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});
+
+  /* ---------- altitude ---------- */
+  $('#altitude').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.altitude=b.dataset.alt;
+    $$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    $$('[data-altblock]').forEach(x=>x.style.display=(x.dataset.altblock===b.dataset.alt)?'flex':'none');scroll.scrollTop=0;});
+
+  /* ---------- ledger: only 'need you' is interactive (jump to queue) ---------- */
+  $('#lg-need').addEventListener('click',()=>{root.dataset.altitude='me';$$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.alt==='me'));$$('[data-altblock]').forEach(x=>x.style.display=x.dataset.altblock==='me'?'flex':'none');const t=$('#triage');if(t)t.scrollIntoView({block:'start',behavior:'smooth'});});
+
+  /* ---------- triage: one focus card + collapsed queue ---------- */
+  const triage=$('#triage');
+  function visibleCards(){return $$('.tcard',triage).filter(c=>c.offsetParent!==null && !c.classList.contains('gone'));}
+  function layoutTriage(){$$('.tcard',triage).forEach(c=>c.classList.remove('focus','row'));const cards=visibleCards();cards.forEach((c,i)=>{c.classList.toggle('focus',i===0);c.classList.toggle('row',i!==0);});
+    const n=cards.length;const nn=$('#need-n');if(nn)nn.textContent=n;const kn=$('#kpi-need');if(kn)kn.textContent=n;
+    const nm=$('#needs-mini');if(nm)nm.textContent=n?(n+' to clear · one at a time'):'all clear';
+    const ac=document.querySelector('#altitude button[data-alt="me"] .cnt');if(ac)ac.textContent='· '+n;
+    const tb=document.querySelector('.tab[data-go="today"] .badge');if(tb)tb.textContent=n;}
+  function promote(card){if(!card)return;triage.insertBefore(card,triage.firstElementChild);layoutTriage();$('#scroll').scrollTo({top:0,behavior:'smooth'});}
+  function disposeCard(card){if(!card)return;card.classList.add('gone');setTimeout(()=>{card.style.display='none';layoutTriage();},240);}
+
+  /* ---------- morning scenario (calm default / heavy) ---------- */
+  $('#morning-seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.morning=b.dataset.morning;
+    $$('#morning-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    $$('.tcard.exc',triage).forEach(c=>{c.style.display='';c.classList.remove('gone');});
+    layoutTriage();$('#scroll').scrollTo({top:0,behavior:'smooth'});});
+
+  /* ---------- dashboard glance (collapsed; Pulse auto-expands) ---------- */
+  const glance=$('#glance');
+  $('#glance-toggle').addEventListener('click',()=>{glance.setAttribute('aria-expanded',glance.getAttribute('aria-expanded')!=='true');});
+  function syncGlance(){if(glance)glance.setAttribute('aria-expanded',String(root.dataset.mode==='pulse'));}
+
+  /* ---------- handled drawer + provenance ---------- */
+  const handled=$('#handled'),ht=$('#handled-toggle');
+  ht.addEventListener('click',()=>{const open=handled.getAttribute('aria-expanded')==='true';handled.setAttribute('aria-expanded',!open);ht.setAttribute('aria-expanded',!open);});
+  $$('#handled-body li[data-prov]').forEach(li=>li.addEventListener('click',()=>toast({msg:'Authorized action',sub:li.dataset.prov})));
+
+  /* ---------- global delegated clicks ---------- */
+  document.addEventListener('click',e=>{
+    // specific inner controls FIRST (they live inside data-sheet cards, must win over card-open)
+    const pin=e.target.closest('.spec-pin'); if(pin){e.stopPropagation();openSpec(pin.dataset.specId);return;}
+    if(e.target.closest('[data-spec-close]')){closeSpec();return;}
+    if(e.target.closest('[data-close]')||e.target===scrim){sheetClose();return;}
+    const rl=e.target.closest('.row-line'); if(rl){promote(rl.closest('.tcard'));return;}
+    const dp=e.target.closest('[data-dispose]'); if(dp){if(dp.dataset.toast){try{toast(JSON.parse(dp.dataset.toast));}catch(_){}}disposeCard(dp.closest('.tcard'));return;}
+    const ra=e.target.closest('#recon-accept'); if(ra){runReconcile();return;}
+    const vs=e.target.closest('[data-vsend]'); if(vs){const b=$('#'+vs.dataset.vsend);if(b)b.classList.add('confirmed');toast({msg:'Sent in your voice',sub:'I’ll watch for the reply and brief you',undo:true});return;}
+    const sn=e.target.closest('[data-snooze]'); if(sn){toast({msg:'Holding the Crestview deal 24h',sub:'I’ll re-surface if they re-engage',undo:true});return;}
+    const dl=e.target.closest('[data-deleg]'); if(dl){toast({msg:'Suggested: delegate to Sofia',sub:'She’s out, try Priya?',undo:true});return;}
+    const ln=e.target.closest('[data-learn]'); if(ln){sheetClose();setTimeout(()=>showTeach('On flagged outreach, always show me the rewrite before sending.','outreach · all agents'),120);return;}
+    const tc=e.target.closest('[data-teach]'); if(tc){try{const d=JSON.parse(tc.dataset.teach);sheetClose();showTeach(d.rule,d.scope);}catch(_){}return;}
+    const rp=e.target.closest('[data-report]'); if(rp){runReport(rp);return;}
+    const tt=e.target.closest('[data-toast]'); if(tt){try{toast(JSON.parse(tt.dataset.toast));}catch(_){toast({msg:tt.dataset.toast});}return;}
+    // broad catch-alls LAST: open a card's sheet, then navigation
+    const op=e.target.closest('[data-sheet]'); if(op){sheetOpen(op.dataset.sheet);return;}
+    const gx=e.target.closest('[data-go]'); if(gx&&!e.target.closest('.tab')&&!e.target.closest('#screen-jump')){go(gx.dataset.go);return;}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){sheetClose();closeSpec();hideTeach();$('#bulkbar').classList.remove('show');}});
+
+  /* ---------- reconciler write-back shimmer ---------- */
+  function runReconcile(){const logos=$$('#recon [data-sys]');logos.forEach((l,i)=>setTimeout(()=>{l.classList.add('wb');},i*180));
+    setTimeout(()=>{sheetClose();toast({msg:'Marsh deal reconciled',sub:'MLS, CRM & dotloop now all read “Under contract”',undo:true});},logos.length*180+260);}
+
+  /* ---------- toasts ---------- */
+  const tw=$('#toast-wrap');
+  function toast(o){sheetClose();const t=document.createElement('div');t.className='toast';
+    t.innerHTML=`<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.4" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span class="tm"><b>${o.msg}</b>${o.sub?`<span class="sub">${o.sub}</span>`:''}</span>${o.undo?'<span class="ring" aria-hidden="true"></span><button class="undo">Undo</button>':''}`;
+    tw.appendChild(t);requestAnimationFrame(()=>t.classList.add('show'));
+    let done=false;const kill=()=>{if(done)return;done=true;t.classList.remove('show');setTimeout(()=>t.remove(),260);};
+    const dur=o.undo?8000:3400;
+    if(o.undo){const ring=t.querySelector('.ring'),undo=t.querySelector('.undo'),start=performance.now();
+      const tk=now=>{if(done)return;const p=Math.min(100,(now-start)/dur*100);if(ring)ring.style.setProperty('--p',p);p<100?requestAnimationFrame(tk):kill();};
+      if(!rm)requestAnimationFrame(tk);else if(ring)ring.style.setProperty('--p',100);
+      undo.addEventListener('click',()=>{kill();toast({msg:'Undone',sub:'Nothing was sent.'});});}
+    setTimeout(kill,dur+200);}
+
+  /* ---------- teach receipt ---------- */
+  const teach=$('#teach');let teachTimer=null;
+  function showTeach(rule,scope){$('#teach-rule').innerHTML='I’ll infer: <b>“'+rule+'”</b>';$('#teach-scope').textContent='applies to: '+(scope||'my deals');
+    teach.classList.add('show');clearTimeout(teachTimer);teachTimer=setTimeout(()=>{hideTeach();},9000);}
+  function hideTeach(){teach.classList.remove('show');}
+  $('#teach-once').addEventListener('click',()=>{hideTeach();toast({msg:'Got it, just this once',sub:'I won’t change how I behave.'});});
+  $('#teach-always').addEventListener('click',()=>{hideTeach();toast({msg:'Learned. Agent updated.',sub:'Calibration adjusting · reversible anytime',undo:true});});
+
+  /* ---------- report ---------- */
+  function runReport(btn){const o=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span style="font-family:var(--mono);font-size:11px;letter-spacing:.1em">PREPARING…</span>';
+    setTimeout(()=>{btn.disabled=false;btn.innerHTML=o;toast({msg:'Team report ready',sub:'PDF · this week · saved to Files'});},1300);}
+
+  /* ---------- leads bulk ---------- */
+  const bulk=$('#bulkbar'),bc=$('#bulk-count');
+  function refreshBulk(){const n=$$('.lead.sel').length;bc.textContent=n;bulk.classList.toggle('show',n>0);}
+  $$('[data-lead]').forEach(l=>{let timer=null;const toggle=()=>{l.classList.toggle('sel');refreshBulk();};
+    l.addEventListener('pointerdown',()=>{timer=setTimeout(()=>{toggle();timer=null;},360);});
+    l.addEventListener('pointerup',()=>{if(timer){clearTimeout(timer);timer=null;if($$('.lead.sel').length>0)toggle();else toast({msg:'Opened '+l.querySelector('.ln').textContent,sub:'Long-press to select for bulk move'});}});
+    l.addEventListener('pointerleave',()=>{if(timer){clearTimeout(timer);timer=null;}});});
+
+  /* ---------- spec popover ---------- */
+  const SPECS={
+    uncertain:{n:1,title:'The uncertainty hand-up',trigger:'Deal-risk agent detects a 4-day silence post-inspection.',says:'"I’m 62% sure a nudge helps, two reads, your call."',why:'Surfacing its own doubt + two options returns judgment to the human. Chosen over a confident auto-nudge that risks the 38% who walk.'},
+    fairhousing:{n:2,title:'Fair-Housing tripwire (wrong → save)',trigger:'AI-drafted outreach hits a protected-class / steering phrase.',says:'"I almost sent this, held it, rewrote it." + audit log.',why:'Agents speak at scale, so they can steer at scale. The classifier verdict IS the interaction. Red used once. The corrected item is the demo’s emotional centerpiece.'},
+    reconciler:{n:3,title:'Source-of-truth reconciler',trigger:'MLS, CRM & dotloop disagree on a deal’s state.',says:'"I think dotloop is current (78%), fix all three?"',why:'No CRM adjudicates a conflict between systems. On Accept it write-backs with a shimmer across the three logos, uncertain → confident → silent.'},
+    confident:{n:4,title:'Confident, but reversible',trigger:'Doc-prep finishes the closing pack overnight.',says:'"Done. Here’s what changed." + an 8-second Undo ring.',why:'Confidence without an escape hatch reads as arrogance. The Undo makes "act on my behalf" safe to trust.'},
+    silent:{n:5,title:'Silent → reveal + who-approved',trigger:'~90% of agent work completes with no decision.',says:'One line: "47 handled · 8.5h saved." Each carries a provenance stamp.',why:'The hardest microinteraction is the one that doesn’t happen. Trust is the count + the ability to ask "what authorized this?"'},
+    voice:{n:6,title:'Voice-required outbox',trigger:'Comms agents draft messages that need the lead’s tone.',says:'"3 drafted, a counter, a grieving seller, a sub-agent’s off-brand reply."',why:'Routing by needs-your-voice (not by channel) is the differentiator. Includes a sub-agent item, the manage altitude.'},
+    anomaly:{n:7,title:'Anomaly: acted-then-uncertain',trigger:'3 AM bulk export to an unknown device.',says:'"I paused it and locked the session, was I right?"',why:'The agent took the safe, reversible action first, then asks. On "It was Marcus," a false positive becomes a teach-loop, not a recurring nag.'},
+    roundrobin:{n:8,title:'Round-robin (propose / dispose)',trigger:'12 leads arrive overnight; routing agent assigns by load + ICP.',says:'"I split these. 2 high-ICP I held for you. Review?"',why:'Auto-action with a held exception beats both pure-automation and pure-manual. The hold is the trust signal. Manual + bulk + auto-balance all available.'},
+    coaching:{n:9,title:'Agent-coaching nudge',trigger:'A sub-agent’s lead stalls 6 days.',says:'AI drafts the human-to-human coaching message in your voice.',why:'CRMs surface rep metrics; none draft the manager’s message. "Soften" re-drafts; "I’ve got context" hands it back to the human.'}
+  };
+  const pop=$('#spec-pop');
+  function openSpec(id){const s=SPECS[id];if(!s)return;$('#sp-eyebrow').textContent='◆ microinteraction '+s.n+' / 9';$('#sp-title').textContent=s.title;$('#sp-trigger').textContent=s.trigger;$('#sp-says').textContent=s.says;$('#sp-why').textContent=s.why;pop.classList.add('show');}
+  function closeSpec(){pop.classList.remove('show');}
+
+  /* ---------- orchestration cloud ---------- */
+  const fc=$('#f-cloud');if(fc){let h='';for(let i=0;i<60;i++){h+=(i%17===0)?'<i class="live"></i>':'<i></i>';}fc.innerHTML=h;}
+  layoutTriage();syncGlance();
+})();
+</script>
+</body>
+</html>

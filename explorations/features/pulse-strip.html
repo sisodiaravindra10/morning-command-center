@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Pulse Strip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.80 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 86px; -webkit-font-smoothing:antialiased; gap:14px}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:760px; max-height:calc(100dvh - 150px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); overflow-y:auto; padding:54px 22px 30px; scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 11px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.lede{font-family:var(--serif);font-size:21px;line-height:1.3;margin-top:14px;color:var(--ink)}
+.lede .q{color:var(--confident)}
+.sec{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin:24px 0 8px}
+
+/* pulse strips */
+.strip{display:flex;align-items:center;gap:12px;padding:11px 2px;border-top:1px solid var(--hair);cursor:pointer}
+.strip:first-of-type{border-top:none}
+.strip .lab{width:84px;flex:none}
+.strip .nm{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip .vl{font-family:var(--mono);font-size:10px;color:var(--soft);margin-top:2px}
+.wave{flex:1;height:38px;position:relative;overflow:hidden;border-radius:6px}
+.wave svg{position:absolute;left:0;top:0;height:100%;width:auto;transform-origin:left center;transition:transform 1.3s var(--exp), opacity 1.1s ease}
+.wave .scan{animation:scan 1.9s linear infinite}
+.strip .stat{width:18px;flex:none;display:flex;justify-content:center}
+.strip .dot{width:7px;height:7px;border-radius:50%;background:var(--confident);box-shadow:0 0 7px var(--confident);transition:all .8s ease}
+@keyframes scan{from{transform:translateX(0)}to{transform:translateX(-77px)}}
+.strip.fast .scan{animation-duration:1.5s}
+.strip.slow .scan{animation-duration:2.4s}
+
+/* the flatline state */
+.strip.quiet .wave svg{transform:scaleY(.05);opacity:.4}
+.strip.quiet .scan{animation-play-state:paused}
+.strip.quiet .nm{color:var(--uncertain)}
+.strip.quiet .dot{background:var(--uncertain);box-shadow:none;transform:scale(.8)}
+.strip .flatline{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--uncertain);opacity:0;transition:opacity .9s ease .4s}
+.strip.quiet .flatline{opacity:.55}
+
+/* Leo's line on flatline */
+.leo{margin-top:18px;padding:16px 18px;border-radius:16px;background:var(--inset);border:1px solid var(--hair);display:flex;gap:12px;align-items:flex-start;opacity:0;transform:translateY(10px);transition:opacity .5s var(--exp), transform .5s var(--exp)}
+.leo.show{opacity:1;transform:none}
+.leo p{font-family:var(--serif);font-style:italic;font-size:15.5px;line-height:1.5;color:var(--ink)}
+.leo .act{font-family:var(--sans);font-style:normal;font-weight:600;font-size:13.5px;color:var(--cobalt);margin-top:10px;display:inline-block}
+
+/* expand drivers */
+.drv{max-height:0;overflow:hidden;transition:max-height .5s var(--exp);padding-left:96px}
+.strip.open + .drv{max-height:120px}
+.drv-in{padding:4px 0 14px}
+.drv-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);padding:5px 0}
+.drv-row .bad{color:var(--uncertain)}
+
+.controls{display:flex;gap:8px}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 15px;cursor:pointer}
+.controls button:hover{background:oklch(0.96 0.01 250 / .12);color:var(--ink)}
+@media (prefers-reduced-motion: reduce){ .scan,.orb{animation:none} }
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · The Pulse Strip</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="hi"><span class="orb"></span>Leo · deal vital signs</div>
+  <div class="lede">Eight deals breathing. <span class="q">Seven are steady.</span></div>
+  <div class="sec">Your pipeline, at a glance</div>
+  <div id="strips"></div>
+  <div class="leo" id="leo"><span class="orb" style="margin-top:3px"></span><div><p id="leo-text"></p><span class="act">Find out why →</span></div></div>
+</div></div>
+<div class="controls">
+  <button id="trigger">▶ A deal goes quiet</button>
+  <button id="reset">↻ Reset</button>
+</div>
+<script>
+const DEALS=[
+  {nm:'Maplewood Dr',vl:'$840k · escrow',spd:'fast'},
+  {nm:'142 Oak St',vl:'$612k · counter',spd:''},
+  {nm:'Birch Ln',vl:'$1.2M · listing',spd:'slow'},
+  {nm:'Cedar Ct',vl:'$705k · closing Tue',spd:''},
+  {nm:'Crestview Ave',vl:'$960k · escrow',spd:'fast',target:true},
+  {nm:'Elm & 4th',vl:'$528k · accepted',spd:'slow'},
+  {nm:'Harbor Rd',vl:'$1.05M · listing',spd:''},
+  {nm:'Pine Hollow',vl:'$430k · offer out',spd:'fast'}
+];
+function cycle(){ return 'h20 l3 -2 l3 4 l5 -16 l4 20 l4 -9 l3 3 h35'; }
+function path(){ let d='M0 26 '; for(let i=0;i<9;i++) d+=cycle()+' '; return d; }
+const wrap=document.getElementById('strips');
+DEALS.forEach((dl,i)=>{
+  const s=document.createElement('div'); s.className='strip '+(dl.spd||''); s.dataset.i=i; if(dl.target)s.dataset.target='1';
+  s.innerHTML=`<div class="lab"><div class="nm">${dl.nm}</div><div class="vl">${dl.vl}</div></div>
+    <div class="wave"><svg viewBox="0 0 693 52" preserveAspectRatio="none" fill="none"><g class="scan"><path d="${path()}" stroke="var(--confident)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></g></svg><div class="flatline"></div></div>
+    <div class="stat"><span class="dot"></span></div>`;
+  const drv=document.createElement('div'); drv.className='drv'; drv.innerHTML=`<div class="drv-in"><div class="drv-row"><span>Buyer's-agent reply latency</span><span class="bad">3d 4h</span></div><div class="drv-row"><span>Inspection contingency slack</span><span class="bad">18h</span></div><div class="drv-row"><span>Lender last contact</span><span>2d ago</span></div></div>`;
+  s.addEventListener('click',()=>s.classList.toggle('open'));
+  wrap.appendChild(s); wrap.appendChild(drv);
+});
+const tgt=()=>document.querySelector('.strip[data-target]');
+document.getElementById('trigger').addEventListener('click',()=>{
+  const s=tgt(); s.classList.add('quiet');
+  document.querySelector('.lede').innerHTML='Eight deals breathing. <span class="q" style="color:var(--uncertain)">One just went quiet.</span>';
+  setTimeout(()=>{ document.getElementById('leo-text').textContent='Crestview has gone quiet the way deals do before they fall apart. No reply from the buyer’s agent in 3 days, and the contingency clears in 18 hours.'; document.getElementById('leo').classList.add('show'); s.scrollIntoView({behavior:'smooth',block:'center'}); }, 900);
+});
+document.getElementById('reset').addEventListener('click',()=>{
+  const s=tgt(); s.classList.remove('quiet','open'); document.getElementById('leo').classList.remove('show');
+  document.querySelector('.lede').innerHTML='Eight deals breathing. <span class="q">Seven are steady.</span>';
+});
+
+/* a11y: make click-bound non-native elements keyboard-operable */
+(function(){
+  const isNative=el=>{ const t=el.tagName; return t==='BUTTON'||t==='A'; };
+  const targets=new Set();
+  document.querySelectorAll('[onclick]').forEach(el=>{ if(!isNative(el)) targets.add(el); });
+  document.querySelectorAll('.strip').forEach(el=>{ if(!isNative(el)) targets.add(el); });
+  targets.forEach(el=>{
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+    const el=e.target;
+    if(!el||!targets.has(el)) return;
+    const tag=el.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||el.isContentEditable) return;
+    e.preventDefault();
+    el.click();
+  });
+})();
+</script>
+</body>
+</html>

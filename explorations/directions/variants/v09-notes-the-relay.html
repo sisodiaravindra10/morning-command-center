@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V09 Notes Board x The Relay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* warm paper board, never pure white */
+  --paper:oklch(0.965 0.016 84);
+  --board:oklch(0.948 0.018 82);
+  --card:oklch(0.992 0.005 88);
+  --sunken:oklch(0.945 0.014 80);
+  --hair:oklch(0.32 0.02 60 / 0.10);
+  --hair2:oklch(0.32 0.02 60 / 0.17);
+  --shadow:0 14px 30px -16px oklch(0.45 0.05 60 / 0.30);
+  --shadow-lift:0 20px 44px -18px oklch(0.42 0.06 50 / 0.40);
+
+  /* ink, never pure black */
+  --ink:oklch(0.255 0.02 60);
+  --body:oklch(0.45 0.017 62);
+  --muted:oklch(0.59 0.013 66);
+  --soft:oklch(0.70 0.012 72);
+
+  /* sticky tints == confidence state (lineage colors, warmed for light) */
+  --sticky-coral:oklch(0.885 0.072 38);     /* urgent  · counter due  */
+  --sticky-coral-edge:oklch(0.70 0.13 32);
+  --sticky-green:oklch(0.905 0.072 142);     /* confident · new lead   */
+  --sticky-green-edge:oklch(0.62 0.12 158);
+  --sticky-amber:oklch(0.915 0.082 92);      /* uncertain · going quiet*/
+  --sticky-amber-edge:oklch(0.66 0.12 78);
+  --sticky-lav:oklch(0.905 0.052 300);       /* calm · watching        */
+  --sticky-lav-edge:oklch(0.58 0.10 295);
+
+  --confident:oklch(0.52 0.11 160);
+  --uncertain:oklch(0.58 0.13 70);
+  --coral:oklch(0.54 0.17 30);
+  /* one interactive accent: deep cobalt, for the single relay path */
+  --cobalt:oklch(0.50 0.14 262);
+  --cobalt-bg:oklch(0.93 0.05 264);
+  --on-state:oklch(0.985 0.01 90);
+
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(120% 70% at 78% -8%, oklch(0.93 0.028 66 / .85), transparent 58%),
+    oklch(0.895 0.02 78);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center; min-height:100dvh;
+  padding:26px 16px 52px; -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+/* variant caption */
+.caption{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  font-family:var(--mono); font-size:10px; letter-spacing:.17em; text-transform:uppercase;
+  color:oklch(0.42 0.02 60 / .72); white-space:nowrap;
+}
+
+/* phone shell (chrome only) */
+.phone{
+  position:relative; width:393px; height:852px; max-height:calc(100dvh - 92px);
+  background:var(--board); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.18 0.012 60), 0 0 0 12px oklch(0.34 0.012 60), 0 44px 96px -26px oklch(0.30 0.03 60 / .55);
+  overflow:hidden; isolation:isolate;
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.18 0.012 60); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink)}
+.statusbar .ic{display:flex; gap:7px; opacity:.78}
+
+.screen{position:absolute; inset:0; overflow-y:auto; scrollbar-width:none; padding:52px 17px 26px;
+  background:
+    radial-gradient(140% 60% at 50% -6%, oklch(0.985 0.012 86), transparent 50%),
+    var(--board);
+}
+.screen::-webkit-scrollbar{display:none}
+
+/* breathing Leo orb (the only idle motion) */
+.orb{
+  width:23px;height:23px;border-radius:50%;flex:none;
+  background:radial-gradient(62% 62% at 34% 30%, oklch(0.93 0.06 180), oklch(0.60 0.13 200) 46%, oklch(0.42 0.11 230));
+  box-shadow:0 0 10px oklch(0.60 0.13 200 / .30), inset 0 1px 2px oklch(0.99 0.008 88 / .55);
+  animation:breathe 5.2s var(--exp) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.075)}}
+
+/* avatars */
+.av{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;color:oklch(0.985 0.008 88);font-family:var(--sans)}
+.av.dana{background:linear-gradient(135deg,oklch(0.58 0.13 26),oklch(0.47 0.12 14))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.55 0.12 168),oklch(0.45 0.10 182))}
+.av.priya{background:linear-gradient(135deg,oklch(0.56 0.13 152),oklch(0.46 0.12 178))}
+
+/* ---- header ---- */
+.head{display:flex; align-items:center; gap:11px; padding:8px 8px 4px}
+.head .hi{font-family:var(--serif); font-size:23px; color:var(--ink); letter-spacing:-.2px}
+.head .now{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--muted)}
+.lede{font-family:var(--serif); font-size:16.5px; line-height:1.5; color:var(--body); padding:6px 8px 0; max-width:34ch}
+.lede em{font-style:italic; color:var(--ink)}
+
+.board-head{display:flex; align-items:baseline; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--soft); padding:20px 8px 14px}
+.board-head .n{color:var(--coral)}
+
+/* ---- the deal board: stickies, varied tilt + size (no identical grid) ---- */
+.board{display:flex; flex-direction:column; gap:16px; padding:0 4px}
+.sticky{
+  position:relative; border-radius:6px 16px 14px 16px; padding:15px 16px 14px;
+  box-shadow:var(--shadow); cursor:pointer;
+  opacity:0; transform:translateY(13px) rotate(var(--tilt,0deg));
+  animation:rise .56s var(--exp) forwards;
+  transition:transform .26s var(--exp), box-shadow .26s var(--exp);
+}
+.sticky::before{ /* the pinned tape strip, paper texture cue (chrome, not a side-stripe) */
+  content:""; position:absolute; top:-7px; left:50%; width:54px; height:15px;
+  transform:translateX(-50%) rotate(calc(var(--tilt,0deg) * -1.4));
+  background:oklch(0.99 0.01 86 / .62); border:1px solid oklch(0.30 0.02 60 / .07);
+  border-radius:2px; box-shadow:0 2px 4px oklch(0.4 0.03 60 / .14);
+}
+.sticky:nth-child(1){animation-delay:.06s}
+.sticky:nth-child(2){animation-delay:.13s}
+.sticky:nth-child(3){animation-delay:.20s}
+.sticky:nth-child(4){animation-delay:.27s}
+@keyframes rise{to{opacity:1; transform:translateY(0) rotate(var(--tilt,0deg))}}
+.sticky:hover{transform:translateY(-2px) rotate(0deg); box-shadow:var(--shadow-lift)}
+.sticky:focus-visible{outline:3px solid var(--cobalt); outline-offset:3px}
+
+.sticky.coral{background:var(--sticky-coral); --edge:var(--sticky-coral-edge); --tilt:-1.3deg}
+.sticky.green{background:var(--sticky-green); --edge:var(--sticky-green-edge); --tilt:1.1deg}
+.sticky.amber{background:var(--sticky-amber); --edge:var(--sticky-amber-edge); --tilt:-0.7deg}
+
+/* sticky internals */
+.sticky .top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+.tag{font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; padding:4px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; line-height:1; color:oklch(0.30 0.02 60 / .9); background:oklch(0.99 0.008 88 / .42)}
+.tag .dot{width:6px;height:6px;border-radius:50%; background:var(--edge)}
+.tag.plain{background:oklch(0.30 0.02 60 / .08); color:oklch(0.34 0.02 60 / .85)}
+.tag.plain .dot{display:none}
+.sticky .when{margin-left:auto; font-family:var(--mono); font-size:11px; color:oklch(0.34 0.02 60 / .72)}
+.sticky .addr{font-family:var(--sans); font-size:18px; font-weight:600; line-height:1.22; letter-spacing:-.2px; color:oklch(0.22 0.02 50); margin-top:12px}
+.sticky .addr .hl{color:var(--edge)}
+.sticky .note{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:oklch(0.33 0.018 56); margin-top:6px}
+.sticky .foot{display:flex; align-items:center; gap:9px; margin-top:13px}
+.sticky .who{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:10.5px; letter-spacing:.02em; color:oklch(0.36 0.02 58 / .85)}
+.sticky .go{margin-left:auto; width:36px; height:36px; border-radius:50%; background:oklch(0.24 0.02 52); color:var(--paper); border:none; display:flex; align-items:center; justify-content:center; flex:none; transition:transform .2s var(--exp); pointer-events:none}
+.sticky:active .go{transform:scale(.92)}
+
+/* the live 5-minute window on the green lead sticky */
+.window{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; color:oklch(0.34 0.13 150); background:oklch(0.99 0.008 88 / .5); padding:4px 9px; border-radius:999px}
+.window .ring{width:13px;height:13px;flex:none}
+.window .ring circle{fill:none;stroke-width:2.6;stroke-linecap:round}
+.window .ring .bg{stroke:oklch(0.62 0.12 158 / .28)}
+.window .ring .fg{stroke:var(--sticky-green-edge);stroke-dasharray:34;stroke-dashoffset:0;transform:rotate(-90deg);transform-origin:center;animation:tick 300s linear forwards}
+@keyframes tick{from{stroke-dashoffset:0}to{stroke-dashoffset:34}}
+
+/* the busy badge on the lead the relay acts on */
+.busy{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; color:oklch(0.40 0.10 70); background:oklch(0.99 0.008 88 / .46); padding:4px 9px; border-radius:999px}
+.busy .d{width:6px;height:6px;border-radius:50%;background:var(--sticky-amber-edge);animation:winp 1.8s var(--exp) infinite}
+@keyframes winp{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+/* ---- calm signal: a lavender index-card, lower density (not a sticky clone) ---- */
+.signal-head{font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--soft); padding:22px 8px 12px}
+.signal{
+  margin:0 4px; padding:15px 16px; border-radius:14px;
+  background:var(--sticky-lav); border:1px solid oklch(0.45 0.06 295 / .14);
+}
+.signal .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:oklch(0.42 0.10 295); display:flex; align-items:center; gap:7px}
+.signal .lbl .d{width:6px;height:6px;border-radius:50%;background:var(--sticky-lav-edge)}
+.signal .txt{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:oklch(0.33 0.02 290); margin-top:8px}
+.signal .txt b{color:oklch(0.26 0.03 290); font-weight:600}
+
+/* ---- the quiet ledger line ---- */
+.ledger{margin:22px 8px 6px; display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--muted); line-height:1.55}
+.ledger .b{width:5px;height:5px;border-radius:50%;background:var(--soft);flex:none}
+.ledger b{color:var(--ink); font-weight:500}
+
+/* round accent + FAB (lineage signature) */
+.fab{
+  position:absolute; right:18px; bottom:20px; z-index:60;
+  width:58px; height:58px; border-radius:50%; border:none; cursor:pointer;
+  background:oklch(0.24 0.02 52); color:var(--paper);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 16px 32px -12px oklch(0.30 0.04 50 / .6);
+  transition:transform .2s var(--exp), filter .2s var(--exp);
+}
+.fab:hover{filter:brightness(1.18)}
+.fab:active{transform:scale(.93)}
+.fab:focus-visible{outline:3px solid var(--cobalt); outline-offset:3px}
+.fab .ring2{position:absolute; inset:-7px; border-radius:50%; border:1.5px solid oklch(0.24 0.02 52 / .26); animation:halo 4.4s var(--exp) infinite}
+@keyframes halo{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.12);opacity:.12}}
+
+/* =========================================================
+   THE RELAY  (centerpiece sheet)
+   ========================================================= */
+.scrim{position:absolute; inset:0; background:oklch(0.20 0.02 60 / .42); opacity:0; pointer-events:none; transition:opacity .34s var(--exp); z-index:90}
+.scrim.on{opacity:1; pointer-events:auto}
+
+.sheet{
+  position:absolute; left:0; right:0; bottom:0; z-index:91;
+  background:var(--paper); border-radius:26px 26px 0 0;
+  box-shadow:0 -22px 60px -24px oklch(0.20 0.03 60 / .5);
+  transform:translateY(102%); transition:transform .46s var(--exp);
+  max-height:92%; overflow-y:auto; scrollbar-width:none; padding:8px 20px 24px;
+}
+.sheet::-webkit-scrollbar{display:none}
+.sheet.on{transform:none}
+.grab{width:38px;height:5px;border-radius:5px;background:var(--hair2);margin:8px auto 14px}
+
+.sh-head{display:flex; align-items:center; gap:10px}
+.sh-head .who{font-family:var(--mono); font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted)}
+.sh-head .x{margin-left:auto; width:34px; height:34px; border-radius:50%; background:oklch(0.30 0.02 60 / .06); border:none; color:var(--body); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.sh-head .x:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px}
+
+.sh-incoming{margin:14px 0 0; padding:13px 15px; border-radius:14px; background:var(--sunken); border:1px solid var(--hair)}
+.sh-incoming .tagrow{display:flex; align-items:center; gap:8px}
+.sh-incoming .addr{font-family:var(--serif); font-size:18px; line-height:1.25; color:var(--ink); margin-top:9px}
+.sh-incoming .addr b{font-weight:600}
+.sh-incoming .sub{font-family:var(--sans); font-size:13px; color:var(--body); margin-top:5px; line-height:1.45}
+
+.sh-lede{font-family:var(--serif); font-size:18px; line-height:1.46; color:var(--ink); margin:16px 2px 2px}
+.sh-lede em{font-style:italic; color:var(--cobalt)}
+
+/* relay stage: Dana -> Priya, the arc draw + traveling token */
+.stage{position:relative; height:150px; margin:14px 0 2px}
+.stage svg.arc-svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+.arctrack{fill:none; stroke:var(--hair2); stroke-width:1.5; stroke-dasharray:3 6}
+.arc{fill:none; stroke:var(--cobalt); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:300; stroke-dashoffset:300; transition:stroke-dashoffset 1.5s var(--exp)}
+.stage.relayed .arc{stroke-dashoffset:0}
+/* the token travels the arc via offset-path, carrying the context */
+.token{position:absolute; left:0; top:0; width:18px; height:18px; border-radius:50%;
+  background:radial-gradient(60% 60% at 35% 30%, oklch(0.95 0.05 250), var(--cobalt) 62%);
+  box-shadow:0 0 12px oklch(0.50 0.14 262 / .5); opacity:0;
+  offset-path:path("M48 124 Q172 8 296 124"); offset-distance:0%; offset-rotate:0deg}
+.stage.relayed .token{animation:travel 1.5s var(--exp) forwards}
+@keyframes travel{0%{offset-distance:0%;opacity:0;transform:scale(.6)}12%{opacity:1;transform:scale(1)}88%{opacity:1;transform:scale(1)}100%{offset-distance:100%;opacity:0;transform:scale(.6)}}
+.dir{position:absolute; top:4px; left:50%; transform:translateX(-50%); display:flex; gap:120px; font-family:var(--mono); font-size:9.5px; letter-spacing:.11em; text-transform:uppercase}
+.dir .from{color:var(--muted)} .dir .to{color:var(--cobalt)}
+.person{position:absolute; top:74px; display:flex; flex-direction:column; align-items:center; gap:7px; width:120px}
+.person.l{left:-4px} .person.r{right:-4px}
+.bigav{width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:19px; color:var(--on-state); position:relative; transition:transform .5s var(--exp), box-shadow .5s var(--exp)}
+.bigav.dana{background:linear-gradient(135deg,oklch(0.58 0.13 26),oklch(0.47 0.12 14))}
+.bigav.priya{background:linear-gradient(135deg,oklch(0.56 0.13 152),oklch(0.46 0.12 178))}
+.stage.relayed .bigav.dana{transform:scale(.9); opacity:.62}
+.stage.relayed .bigav.priya{transform:scale(1.07); box-shadow:0 0 0 3px oklch(0.62 0.12 158 / .32), 0 0 22px oklch(0.62 0.12 158 / .30)}
+.person .nm{font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink); text-align:center}
+.person .rl{font-family:var(--mono); font-size:9px; letter-spacing:.02em; color:var(--muted); text-align:center; line-height:1.4}
+
+/* why-Priya: by territory + load */
+.why{margin:8px 2px 0; padding:12px 14px; border-radius:13px; background:var(--cobalt-bg); border:1px solid oklch(0.50 0.14 262 / .18)}
+.why .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--cobalt); margin-bottom:7px}
+.why p{font-family:var(--serif); font-size:14.5px; line-height:1.5; color:var(--ink)}
+.why b{font-style:normal; color:var(--cobalt); font-weight:600; font-family:var(--sans); font-size:13.5px}
+
+/* the context that travels with the hand-off */
+.ctx{margin:16px 2px 0}
+.ctx .hd{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--soft); margin-bottom:10px; display:flex; align-items:center; gap:8px}
+.ctx .hd::before{content:""; flex:none; width:6px; height:6px; border-radius:50%; background:var(--cobalt)}
+.ctxlist{display:flex; flex-direction:column; gap:9px}
+.ci{display:flex; align-items:center; gap:11px; font-family:var(--sans); font-size:13.5px; color:var(--body)}
+.ci .ic{flex:none; width:24px; height:24px; border-radius:7px; background:var(--card); border:1px solid var(--hair); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; color:var(--cobalt)}
+.ci .meta{font-family:var(--mono); font-size:10.5px; color:var(--soft); margin-left:auto}
+.ci .clk{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; color:var(--uncertain); margin-left:auto}
+.ci .clk .ring{width:13px;height:13px;flex:none}
+.ci .clk .ring circle{fill:none;stroke-width:2.6;stroke-linecap:round}
+.ci .clk .ring .bg{stroke:oklch(0.58 0.13 70 / .26)}
+.ci .clk .ring .fg{stroke:var(--uncertain);stroke-dasharray:34;stroke-dashoffset:0;transform:rotate(-90deg);transform-origin:center;animation:tick 300s linear forwards}
+
+/* the relayed confirmation, restrained (no celebration) */
+.done{margin:16px 2px 0; padding:15px 16px; border-radius:14px; background:oklch(0.92 0.06 152); border:1px solid oklch(0.55 0.10 158 / .26);
+  opacity:0; transform:translateY(8px); height:0; padding-top:0; padding-bottom:0; margin-top:0; overflow:hidden;
+  transition:opacity .5s var(--exp) .15s, transform .5s var(--exp) .15s}
+.stage.relayed ~ .done{opacity:1; transform:translateY(0); height:auto; padding:15px 16px; margin-top:16px}
+.done .h{font-family:var(--serif); font-size:17px; color:oklch(0.36 0.10 158); display:flex; align-items:center; gap:9px}
+.done .h .ck{width:18px;height:18px;flex:none}
+.done .h .ck circle{fill:none;stroke:oklch(0.46 0.10 158);stroke-width:2}
+.done .h .ck path{fill:none;stroke:oklch(0.46 0.10 158);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:18;stroke-dashoffset:18;transition:stroke-dashoffset .5s var(--exp) .9s}
+.stage.relayed ~ .done .h .ck path{stroke-dashoffset:0}
+.done p{font-family:var(--sans); font-size:13px; color:oklch(0.34 0.04 156); margin-top:7px; line-height:1.5}
+
+/* actions */
+.review-note{display:flex; align-items:center; justify-content:center; gap:8px; font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:20px 0 12px}
+.review-note .lk{width:6px;height:6px;border-radius:50%;background:var(--cobalt)}
+.acts{display:flex; flex-direction:column; gap:10px}
+.btn{height:50px; border-radius:14px; border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .18s var(--exp), filter .18s var(--exp)}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px}
+.btn-p{background:var(--cobalt); color:var(--on-state)}
+.btn-p:hover{filter:brightness(1.1)}
+.btn-s{background:transparent; color:var(--body); border:1px solid var(--hair2); height:46px; font-weight:500}
+.btn-s:hover{background:oklch(0.30 0.02 60 / .04)}
+/* after relay: a single calm take-back */
+.acts.before{display:flex}
+.stage.relayed ~ .acts.before{display:none}
+.acts.after{display:none}
+.stage.relayed ~ .acts.after{display:flex}
+.btn-take{background:transparent; color:var(--uncertain); border:1px solid oklch(0.58 0.13 70 / .4); height:46px; font-weight:500}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important}
+  .orb,.fab .ring2,.busy .d,.window .ring .fg{animation:none}
+  .sticky{opacity:1; transform:rotate(var(--tilt,0deg))}
+  .arc{stroke-dashoffset:0} .token{display:none}
+  .stage.relayed ~ .done{opacity:1; transform:none; height:auto; padding:15px 16px; margin-top:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" role="application" aria-label="Leo morning command center, deal board">
+  <div class="notch"></div>
+  <div class="statusbar"><span>8:42</span><span class="ic"><span>5G</span><span>100</span></span></div>
+
+  <main class="screen" id="screen">
+    <header class="head">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="hi">Good morning, Dana</span>
+      <span class="now">TUE 8:42</span>
+    </header>
+    <p class="lede">Three things need you this morning. Everything else can wait. <em>Start at the top.</em></p>
+
+    <div class="board-head">Your deals<span aria-hidden="true">·</span><span class="n">3 need you</span></div>
+
+    <div class="board">
+      <!-- 1. counter due, coral = urgent -->
+      <article class="sticky coral" role="button" tabindex="0" aria-label="142 Oak Street: your reply to the buyer is due by 10am. Open the draft.">
+        <div class="top">
+          <span class="tag"><span class="dot" aria-hidden="true"></span>Reply due 10am</span>
+          <span class="tag plain">Your deal</span>
+          <span class="when">10:00am</span>
+        </div>
+        <div class="addr">142 Oak St <span class="hl">reply is ready</span></div>
+        <p class="note">I wrote a reply to the buyer for you. It looks good, but there are two things I could not double-check. Read it before you send it.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>Written for you</span>
+          <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </article>
+
+      <!-- 2. new lead, you are busy: THE RELAY entry, amber = uncertain who takes it -->
+      <article class="sticky amber" id="stickyRelay" role="button" tabindex="0" aria-haspopup="dialog" aria-label="New buyer for 88 Linden, already approved for a loan, but you are out showing a home. Open to hand it to a teammate.">
+        <div class="top">
+          <span class="tag"><span class="dot" aria-hidden="true"></span>New buyer</span>
+          <span class="busy"><span class="d" aria-hidden="true"></span>You are out showing a home</span>
+          <span class="when">40s ago</span>
+        </div>
+        <div class="addr">88 Linden buyer is <span class="hl">loan-approved</span></div>
+        <p class="note">They just reached out and are ready to talk. Best to call in the next 5 minutes. You are at Cedar Park until 10:15, so someone needs to call now.</p>
+        <div class="foot">
+          <span class="who"><span class="orb" aria-hidden="true" style="width:16px;height:16px"></span>I can hand it to a teammate</span>
+          <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </article>
+
+      <!-- 3. teammate going quiet, green = confident next step (a nudge) -->
+      <article class="sticky green" role="button" tabindex="0" aria-label="Marcus has a Birchwood buyer who has gone quiet. A friendly check-in from you would help.">
+        <div class="top">
+          <span class="tag"><span class="dot" aria-hidden="true"></span>No reply in 3 days</span>
+          <span class="tag plain">Team · Marcus</span>
+          <span class="when">3 days quiet</span>
+        </div>
+        <div class="addr">Marcus's <span class="hl">Birchwood</span> buyer went quiet</div>
+        <p class="note">No reply since Friday, and Marcus has not noticed. A quick check-in from you would help.</p>
+        <div class="foot">
+          <span class="who"><span class="av marcus" aria-hidden="true">M</span>Your team</span>
+          <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </article>
+    </div>
+
+    <div class="signal-head">Worth a glance</div>
+    <section class="signal" aria-label="Heads up: the Crestview deal is slowing down a little">
+      <div class="lbl"><span class="d" aria-hidden="true"></span>Slowing down a little</div>
+      <p class="txt">The <b>Crestview</b> deal is slowing down a bit, but it is not stuck. The buyer is replying slower this week. Nothing to do yet. I am keeping an eye on it and will flag it here if it slows down more.</p>
+    </section>
+
+    <p class="ledger">
+      <span class="b" aria-hidden="true"></span>
+      Overnight I took care of <b>47</b> things and did not need to wake you for any of them. You can see all of them on the Activity page.
+    </p>
+  </main>
+
+  <button class="fab" id="ask" aria-label="Ask Leo">
+    <span class="ring2" aria-hidden="true"></span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-12.2 7.5L3 21l2-5.8A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+  </button>
+
+  <!-- ===== THE RELAY SHEET ===== -->
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Hand the 88 Linden buyer to a teammate" aria-hidden="true">
+    <div class="grab" aria-hidden="true"></div>
+
+    <div class="sh-head">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="who">Leo · while you are out showing a home</span>
+      <button class="x" id="sheetClose" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="sh-incoming">
+      <div class="tagrow"><span class="tag"><span class="dot" aria-hidden="true" style="background:var(--sticky-amber-edge)"></span>New buyer</span><span class="busy"><span class="d" aria-hidden="true"></span>You are busy</span></div>
+      <div class="addr"><b>88 Linden Ave</b></div>
+      <p class="sub">Reached out 40 seconds ago, already approved for a loan. You are showing a home at Cedar Park until 10:15.</p>
+    </div>
+
+    <p class="sh-lede">Someone needs to call them now. Want me to <em>hand this to Priya</em>?</p>
+
+    <div class="stage" id="stage">
+      <svg class="arc-svg" viewBox="0 0 345 132" aria-hidden="true">
+        <path class="arctrack" d="M48 124 Q172 8 296 124"/>
+        <path class="arc" d="M48 124 Q172 8 296 124"/>
+      </svg>
+      <div class="dir"><span class="from">From</span><span class="to">To</span></div>
+      <div class="token" aria-hidden="true"></div>
+      <div class="person l"><span class="bigav dana" aria-hidden="true">D</span><div class="nm">You</div><div class="rl">showing a home<br>until 10:15</div></div>
+      <div class="person r"><span class="bigav priya" aria-hidden="true">P</span><div class="nm">Priya Nair</div><div class="rl">free now</div></div>
+    </div>
+
+    <div class="why">
+      <div class="lbl">Why Priya</div>
+      <p>She works the same area as 88 Linden, so it is a good fit. She has only <b>2 buyers</b> in progress, the fewest on the team right now. And she has been the <b>quickest to reply</b> this week, usually within 3 minutes.</p>
+    </div>
+
+    <div class="ctx">
+      <div class="hd">What she gets along with it</div>
+      <div class="ctxlist">
+        <div class="ci"><span class="ic" aria-hidden="true">L</span>The buyer's details and where they came from<span class="meta">88 Linden · Zillow</span></div>
+        <div class="ci"><span class="ic" aria-hidden="true">N</span>A first message to send, already written<span class="meta">ready</span></div>
+        <div class="ci"><span class="ic" aria-hidden="true">C</span>How long is left to call
+          <span class="clk"><svg class="ring" viewBox="0 0 14 14" aria-hidden="true"><circle class="bg" cx="7" cy="7" r="5.4"/><circle class="fg" cx="7" cy="7" r="5.4"/></svg>4:20 left</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="done" role="status">
+      <div class="h"><svg class="ck" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.3 L9 13 L14.2 7"/></svg>Priya has it.</div>
+      <p>She has the buyer's details, the first message to send, and how long is left to call. I will let you know the moment she replies. You do not need to leave your showing.</p>
+    </div>
+
+    <div class="review-note"><span class="lk" aria-hidden="true"></span>Nothing happens until you decide</div>
+    <div class="acts before">
+      <button class="btn btn-p" id="relayBtn">Hand it to Priya</button>
+      <button class="btn btn-s" id="selfBtn">I will handle it myself</button>
+    </div>
+    <div class="acts after">
+      <button class="btn btn-take" id="takeBtn">Take it back</button>
+    </div>
+  </section>
+</div>
+
+<div class="caption">V09 NOTES BOARD x THE RELAY</div>
+
+<script>
+  document.documentElement.classList.add('js');
+  var stickyRelay = document.getElementById('stickyRelay');
+  var scrim = document.getElementById('scrim');
+  var sheet = document.getElementById('sheet');
+  var sheetClose = document.getElementById('sheetClose');
+  var stage = document.getElementById('stage');
+  var relayBtn = document.getElementById('relayBtn');
+  var selfBtn = document.getElementById('selfBtn');
+  var takeBtn = document.getElementById('takeBtn');
+  var shLede = sheet.querySelector('.sh-lede');
+  var ledeDefault = shLede.innerHTML;
+
+  function openSheet(){
+    scrim.classList.add('on');
+    sheet.classList.add('on');
+    sheet.setAttribute('aria-hidden','false');
+    setTimeout(function(){ sheetClose.focus(); }, 60);
+  }
+  function closeSheet(){
+    scrim.classList.remove('on');
+    sheet.classList.remove('on');
+    sheet.setAttribute('aria-hidden','true');
+    stickyRelay.focus();
+  }
+  function activate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fn(); }
+    });
+  }
+
+  activate(stickyRelay, openSheet);
+  sheetClose.addEventListener('click', closeSheet);
+  scrim.addEventListener('click', closeSheet);
+
+  // the centerpiece: draw the arc, send the token, hand to Priya
+  relayBtn.addEventListener('click', function(){
+    stage.classList.add('relayed');
+    // restrained: move focus to the take-back once the hand-off settles
+    setTimeout(function(){ takeBtn.focus(); }, 1500);
+  });
+  // mutually exclusive: claiming it yourself dismisses the relay proposal
+  selfBtn.addEventListener('click', function(){
+    shLede.innerHTML = 'You are handling <em>88 Linden</em> yourself. I will hold your showing notes until you are done.';
+    closeSheet();
+  });
+  takeBtn.addEventListener('click', function(){
+    stage.classList.remove('relayed');
+    void stage.offsetWidth;
+  });
+
+  // the FAB opens the same relay context as the morning's live decision
+  document.getElementById('ask').addEventListener('click', openSheet);
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && sheet.classList.contains('on')) closeSheet();
+  });
+
+  // reset the lede when the sheet is reopened fresh
+  scrim.addEventListener('transitionend', function(){
+    if(!sheet.classList.contains('on') && !stage.classList.contains('relayed')){
+      shLede.innerHTML = ledeDefault;
+    }
+  });
+</script>
+</body>
+</html>

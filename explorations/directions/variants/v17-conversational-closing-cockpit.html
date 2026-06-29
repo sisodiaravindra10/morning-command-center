@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>V17 Conversational x Closing Cockpit: Leo morning command center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm paper surface, never pure white */
+    --paper:   oklch(0.974 0.010 84);
+    --card:    oklch(0.994 0.004 85);
+    --sunken:  oklch(0.953 0.012 81);
+    --hair:    oklch(0.30 0.02 60 / 0.09);
+    --hair-2:  oklch(0.30 0.02 60 / 0.16);
+    --shadow:  0 14px 34px -18px oklch(0.45 0.04 60 / 0.30);
+    --shadow-lift: 0 22px 48px -22px oklch(0.42 0.05 60 / 0.38);
+
+    /* warm ink, never pure */
+    --ink:   oklch(0.255 0.020 60);
+    --body:  oklch(0.455 0.016 62);
+    --muted: oklch(0.595 0.012 65);
+    --faint: oklch(0.700 0.010 68);
+
+    /* color encodes a closing-gate state, not decoration */
+    --done:       oklch(0.54 0.10 168);   /* cleared, green */
+    --done-tint:  oklch(0.95 0.030 168);
+    --attn:       oklch(0.58 0.13 70);    /* attention, amber */
+    --attn-tint:  oklch(0.957 0.040 78);
+    --pending:    oklch(0.74 0.012 70);   /* not yet, dim */
+    --alarm:      oklch(0.53 0.17 28);    /* wire-fraud, red */
+    --alarm-tint: oklch(0.955 0.030 32);
+
+    --accent:     oklch(0.50 0.13 262);   /* the single primary action */
+    --accent-ink: oklch(0.985 0.006 262);
+
+    --r-card: 20px;
+    --r-chip: 9px;
+    --r-btn:  13px;
+
+    --serif: "Newsreader", Georgia, serif;
+    --sans:  "Inter", system-ui, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, monospace;
+
+    --ease: cubic-bezier(.16,1,.3,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.93 0.018 76) 0%, oklch(0.90 0.016 70) 60%, oklch(0.872 0.014 68) 100%);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    padding:34px 16px 56px;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ---- variant caption ---- */
+  .caption{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:oklch(0.42 0.02 65);
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .caption .tick{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--accent);
+    display:inline-block;
+  }
+
+  /* ---- phone frame (chrome only) ---- */
+  .phone{
+    width:393px;
+    max-width:100%;
+    height:842px;
+    border-radius:54px;
+    background:oklch(0.22 0.012 60);
+    padding:11px;
+    box-shadow:
+      0 2px 2px oklch(0.30 0.02 60 / 0.4),
+      0 40px 80px -28px oklch(0.32 0.03 60 / 0.55);
+    position:relative;
+  }
+  .screen{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:44px;
+    background:var(--paper);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .statusbar{
+    height:50px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:0 28px 8px;
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+    letter-spacing:0.01em;
+  }
+  .statusbar .right{ display:flex; gap:7px; align-items:center; }
+  .statusbar .right svg{ display:block; }
+  .notch{
+    position:absolute;
+    top:13px; left:50%; transform:translateX(-50%);
+    width:118px; height:30px;
+    background:oklch(0.22 0.012 60);
+    border-radius:18px;
+    z-index:5;
+  }
+
+  /* scroll body */
+  .body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:6px 22px 30px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .body::-webkit-scrollbar{ width:0; }
+
+  /* ---- Leo opens the morning, conversationally ---- */
+  .leo-head{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    margin:8px 0 2px;
+  }
+  .orb{
+    width:30px;height:30px;border-radius:50%;
+    flex:0 0 auto;
+    background:
+      radial-gradient(circle at 35% 32%, oklch(0.74 0.07 168) 0%, oklch(0.52 0.10 168) 58%, oklch(0.42 0.09 170) 100%);
+    position:relative;
+    animation:breathe 5.6s var(--ease) infinite;
+  }
+  .orb::after{
+    content:"";
+    position:absolute; inset:-5px;
+    border-radius:50%;
+    border:1px solid var(--done);
+    opacity:0.22;
+    animation:ring 5.6s var(--ease) infinite;
+  }
+  @keyframes breathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
+  @keyframes ring{ 0%,100%{ transform:scale(1); opacity:0.22; } 50%{ transform:scale(1.18); opacity:0.05; } }
+
+  .leo-name{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--muted);
+  }
+  .leo-time{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.04em;
+    color:var(--faint); margin-left:auto;
+  }
+
+  /* the spoken summary: mixed weight, bright words carry the signal */
+  .spoken{
+    font-family:var(--serif);
+    font-size:24px;
+    line-height:1.44;
+    letter-spacing:-0.005em;
+    color:var(--faint);
+    font-weight:400;
+    margin:14px 0 4px;
+  }
+  .spoken .lead{ color:var(--body); }
+  .spoken b{ font-weight:600; color:var(--ink); }
+  .spoken .due{ color:oklch(0.40 0.10 65); font-weight:600; }
+  .spoken .open{ color:oklch(0.36 0.09 168); font-weight:600; }
+  .spoken .soft{ color:oklch(0.40 0.10 65); font-weight:600; }
+  .ava-inline{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:23px;height:23px;border-radius:50%;
+    vertical-align:-5px; margin:0 1px;
+    font-family:var(--sans); font-size:10px; font-weight:600;
+    color:oklch(0.30 0.03 60); letter-spacing:0;
+  }
+  .ava-m{ background:oklch(0.86 0.05 70); }
+
+  .read-line{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.06em;
+    color:var(--muted); margin:16px 0 2px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .read-line .dot{ width:4px;height:4px;border-radius:50%; background:var(--faint); }
+
+  /* ===================================================================
+     CENTERPIECE: the Closing Day Cockpit
+     a runway of closing-day gates for the deal that closes today.
+     =================================================================== */
+  .cockpit{
+    margin:14px 0 6px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .cockpit-head{
+    padding:18px 19px 4px;
+  }
+  .cockpit-eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--muted);
+    margin-bottom:12px;
+  }
+  .cockpit-eyebrow .live{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--done);
+    box-shadow:0 0 0 0 oklch(0.54 0.10 168 / 0.35);
+    animation:soft-pulse 3.6s var(--ease) infinite;
+  }
+  @keyframes soft-pulse{
+    0%{ box-shadow:0 0 0 0 oklch(0.54 0.10 168 / 0.35); }
+    70%,100%{ box-shadow:0 0 0 8px oklch(0.54 0.10 168 / 0); }
+  }
+  .deal-row{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
+  }
+  .deal-name{
+    font-family:var(--serif); font-size:27px; font-weight:500;
+    letter-spacing:-0.01em; color:var(--ink); line-height:1.05;
+  }
+  .deal-sub{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--muted); margin-top:5px;
+  }
+  .eta{ text-align:right; flex:0 0 auto; }
+  .eta .lbl{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted);
+  }
+  .eta .clk{
+    font-family:var(--serif); font-size:22px; font-weight:500;
+    color:oklch(0.42 0.11 70); line-height:1.1; margin-top:3px;
+    font-feature-settings:"tnum" 1;
+  }
+
+  /* progress meter for the runway, fills as gates clear */
+  .progress{
+    margin:16px 19px 0;
+    display:flex; align-items:center; gap:10px;
+  }
+  .progress .track{
+    flex:1; height:5px; border-radius:3px;
+    background:var(--sunken); overflow:hidden;
+  }
+  .progress .track i{
+    display:block; height:100%;
+    width:100%;
+    background:var(--done);
+    transform-origin:left center;
+    transform:scaleX(0.62);   /* 3 of ~5 cleared; advances on resolve */
+    transition:transform .7s var(--ease);
+  }
+  .progress .frac{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.03em;
+    color:var(--body); flex:0 0 auto;
+  }
+  .progress .frac b{ color:var(--ink); font-weight:500; }
+
+  /* the runway of gates */
+  .runway{
+    padding:20px 19px 8px;
+    position:relative;
+  }
+  .gate{
+    display:flex; gap:14px;
+    padding-bottom:20px;
+    position:relative;
+  }
+  .gate:last-child{ padding-bottom:2px; }
+  /* connector line between gate nodes; color carries from the cleared gate */
+  .gate:not(:last-child)::before{
+    content:"";
+    position:absolute;
+    left:9px; top:21px; bottom:0;
+    width:2px;
+    background:var(--gline, var(--hair-2));
+  }
+  .gate.done{ --gline:var(--done); }
+
+  .node{
+    width:20px;height:20px;border-radius:50%;
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--nc);
+    background:var(--card);
+    z-index:1; color:var(--nc);
+  }
+  .gate.done{ --nc:var(--done); }
+  .gate.attn{ --nc:var(--attn); }
+  .gate.pending{ --nc:var(--pending); }
+  .gate.attn .node{ animation:node-pulse 2s var(--ease) infinite; }
+  @keyframes node-pulse{
+    0%,100%{ box-shadow:0 0 0 0 oklch(0.58 0.13 70 / 0.45); }
+    60%{ box-shadow:0 0 0 7px oklch(0.58 0.13 70 / 0); }
+  }
+  .node .dotfill{ width:7px;height:7px;border-radius:50%; background:currentColor; }
+
+  .gbody{ flex:1; min-width:0; padding-top:0; }
+  .gtitle{
+    font-family:var(--sans); font-size:14.5px; font-weight:600; color:var(--ink);
+    line-height:1.2;
+  }
+  .gate.pending .gtitle{ color:var(--muted); font-weight:500; }
+  .gmeta{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.02em;
+    color:var(--muted); margin-top:4px;
+  }
+  .gate.done .gmeta b{ color:oklch(0.40 0.08 168); font-weight:500; }
+  .gate.attn .gmeta{ color:oklch(0.45 0.11 70); }
+
+  /* the attention gate is the only interactive one, it opens a panel */
+  .gate.attn .gbody{ cursor:pointer; }
+  .gate.attn .gtap{
+    display:block; width:100%; text-align:left;
+    background:none; border:none; padding:0; color:inherit;
+    border-radius:var(--r-chip);
+  }
+  .gate.attn .gtap:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; }
+
+  /* expanding panel, animated via grid-rows (only opacity/transform inside) */
+  .gexp{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .44s var(--ease);
+  }
+  .gate.open .gexp{ grid-template-rows:1fr; }
+  .gexp > div{ overflow:hidden; }
+  .gexp-in{
+    margin-top:12px;
+    padding:13px 14px;
+    border-radius:14px;
+    background:var(--attn-tint);
+  }
+  .gexp-in p{
+    font-family:var(--sans); font-size:13px; line-height:1.5; color:var(--body);
+    margin:0;
+  }
+  .gexp-in p b{ color:var(--ink); font-weight:600; }
+  .gexp-in .esc{
+    margin-top:12px; width:100%; min-height:46px;
+    border-radius:var(--r-btn);
+    background:var(--attn); color:oklch(0.20 0.04 70);
+    border:none;
+    font-family:var(--sans); font-weight:600; font-size:13.5px;
+    cursor:pointer;
+    transition:transform .16s var(--ease), opacity .3s var(--ease);
+  }
+  .gexp-in .esc:active{ transform:scale(.985); }
+  .gexp-in .esc:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .gexp-in .esc:disabled{
+    background:var(--done-tint); color:oklch(0.36 0.08 168);
+    cursor:default;
+  }
+
+  /* the money step carries a wire-fraud interlock; arming it shows the overlay */
+  .gate.money .gbody{ cursor:pointer; }
+  .gate.money .shield{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.04em;
+    color:oklch(0.40 0.08 168);
+    margin-top:6px;
+  }
+  .gate.money .shield svg{ display:block; }
+
+  /* the fund button lives inside the money gate panel */
+  .gate.money .gtap{
+    display:block; width:100%; text-align:left;
+    background:none; border:none; padding:0; color:inherit; border-radius:var(--r-chip);
+  }
+  .gate.money .gtap:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; }
+  .gexp-in.money-in{ background:var(--done-tint); }
+  .gexp-in.money-in p b{ color:oklch(0.32 0.08 168); }
+  .gexp-in .fund{
+    margin-top:12px; width:100%; min-height:46px;
+    border-radius:var(--r-btn);
+    background:var(--accent); color:var(--accent-ink);
+    border:none;
+    font-family:var(--sans); font-weight:600; font-size:13.5px;
+    cursor:pointer;
+    transition:transform .16s var(--ease);
+  }
+  .gexp-in .fund:active{ transform:scale(.985); }
+  .gexp-in .fund:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+  /* ---- the two lighter signals, conversational, after the cockpit ---- */
+  .next-label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--muted);
+    margin:26px 0 14px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .next-label .rule{ flex:1; height:1px; background:var(--hair); }
+
+  .signal{
+    display:flex; gap:13px;
+    padding:14px 2px;
+    border-top:1px solid var(--hair);
+    width:100%;
+    background:none; text-align:left;
+    cursor:pointer;
+    color:inherit;
+    border-radius:14px;
+    border-left:none; border-right:none; border-bottom:none;
+  }
+  .signal:first-of-type{ border-top:none; }
+  .signal:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+  .signal:active{ transform:scale(.995); }
+  .sig-ava{
+    width:34px;height:34px;border-radius:50%;
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--sans); font-size:11px; font-weight:600;
+    color:oklch(0.30 0.03 60);
+  }
+  .sig-lin{ background:oklch(0.85 0.045 168); }
+  .sig-mar{ background:oklch(0.86 0.05 70); }
+  .sig-main{ flex:1; min-width:0; }
+  .sig-top{ display:flex; align-items:center; gap:9px; margin-bottom:5px; }
+  .sig-name{
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink);
+  }
+  .sig-chip{
+    margin-left:auto;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:3px 8px; border-radius:var(--r-chip);
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .sig-chip .d{ width:5px;height:5px;border-radius:50%; }
+  .chip-open{ color:oklch(0.34 0.09 168); background:var(--done-tint); }
+  .chip-open .d{ background:var(--done); }
+  .chip-soft{ color:oklch(0.40 0.10 65); background:var(--attn-tint); }
+  .chip-soft .d{ background:var(--attn); }
+  .sig-line{
+    font-family:var(--serif); font-size:15px; line-height:1.46; color:var(--body);
+    margin:0;
+  }
+  .sig-line b{ color:var(--ink); font-weight:600; }
+  .sig-foot{
+    display:flex; align-items:center; gap:10px; margin-top:9px;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--muted);
+  }
+  .sig-foot .conf{ margin-left:auto; }
+
+  /* the 5-minute window draining bar (state, not decoration) */
+  .window-bar{
+    height:3px; border-radius:2px;
+    background:var(--sunken);
+    margin-top:10px; overflow:hidden;
+  }
+  .window-bar i{
+    display:block; height:100%;
+    width:100%;
+    background:var(--done);
+    transform-origin:left center;
+    animation:drain 28s linear forwards;
+  }
+  @keyframes drain{ from{ transform:scaleX(1);} to{ transform:scaleX(.16);} }
+
+  /* ---- the quiet ledger line (the silent AI state) ---- */
+  .ledger{
+    margin:24px 0 10px;
+    border-top:1px solid var(--hair);
+    padding-top:18px;
+  }
+  .ledger-row{
+    display:flex; align-items:center; gap:12px;
+    width:100%;
+    background:none; border:none;
+    text-align:left; cursor:pointer;
+    padding:6px 2px;
+    border-radius:var(--r-chip);
+    color:inherit;
+  }
+  .ledger-row:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .ledger-num{
+    font-family:var(--serif); font-size:30px; font-weight:500;
+    color:var(--ink); line-height:1;
+    font-feature-settings:"tnum" 1;
+  }
+  .ledger-copy{ display:flex; flex-direction:column; gap:2px; }
+  .ledger-copy .a{
+    font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--body);
+  }
+  .ledger-copy .b{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.05em; color:var(--muted);
+  }
+  .ledger-copy .b b{ color:oklch(0.40 0.08 65); font-weight:500; }
+  .ledger-chev{
+    margin-left:auto; color:var(--muted);
+    transition:transform .3s var(--ease); flex:0 0 auto;
+  }
+  .ledger.open .ledger-chev{ transform:rotate(180deg); }
+  .ledger-panel{
+    display:grid; grid-template-rows:0fr;
+    transition:grid-template-rows .42s var(--ease);
+  }
+  .ledger.open .ledger-panel{ grid-template-rows:1fr; }
+  .ledger-panel > div{ overflow:hidden; }
+  .near-list{ padding:14px 2px 2px; }
+  .near{
+    display:flex; align-items:flex-start; gap:11px;
+    padding:11px 0;
+    border-top:1px solid var(--hair);
+    opacity:0; transform:translateY(8px);
+  }
+  .ledger.open .near{ animation:fade-up .44s var(--ease) forwards; }
+  .ledger.open .near:nth-child(1){ animation-delay:.05s; }
+  .ledger.open .near:nth-child(2){ animation-delay:.12s; }
+  .ledger.open .near:nth-child(3){ animation-delay:.19s; }
+  .near .mark{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.04em;
+    color:var(--muted); background:var(--sunken);
+    border-radius:6px; padding:3px 7px; flex:0 0 auto; margin-top:1px;
+  }
+  .near .txt{ font-family:var(--sans); font-size:13px; line-height:1.5; color:var(--body); }
+  .near .txt b{ color:var(--ink); font-weight:600; }
+  .near .txt .why{
+    display:block; font-family:var(--mono); font-size:10px; letter-spacing:0.03em;
+    color:var(--muted); margin-top:3px;
+  }
+
+  @keyframes fade-up{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+
+  /* entrance stagger */
+  .rise{ opacity:0; transform:translateY(12px); animation:fade-up .56s var(--ease) forwards; }
+  .rise.d1{ animation-delay:.06s; }
+  .rise.d2{ animation-delay:.16s; }
+  .rise.d3{ animation-delay:.26s; }
+  .rise.d4{ animation-delay:.38s; }
+
+  /* ===================================================================
+     the full-screen wire-fraud interlock: calm, high stakes
+     =================================================================== */
+  .interlock{
+    position:absolute; inset:0;
+    z-index:30;
+    background:oklch(0.97 0.018 32 / 0.0);
+    backdrop-filter:blur(0px);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center; padding:42px 30px;
+    opacity:0; pointer-events:none;
+    transition:opacity .42s var(--ease), backdrop-filter .42s var(--ease);
+  }
+  .interlock.show{
+    opacity:1; pointer-events:auto;
+    background:oklch(0.965 0.020 32 / 0.97);
+    backdrop-filter:blur(6px);
+  }
+  .interlock-inner{
+    transform:translateY(10px) scale(.985);
+    transition:transform .46s var(--ease);
+    display:flex; flex-direction:column; align-items:center;
+    max-width:300px;
+  }
+  .interlock.show .interlock-inner{ transform:translateY(0) scale(1); }
+  .il-ic{
+    width:60px;height:60px;border-radius:50%;
+    border:2px solid var(--alarm);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--alarm); margin-bottom:20px;
+    animation:il-pulse 1.9s var(--ease) infinite;
+  }
+  @keyframes il-pulse{
+    0%,100%{ box-shadow:0 0 0 0 oklch(0.53 0.17 28 / 0.40); }
+    60%{ box-shadow:0 0 0 13px oklch(0.53 0.17 28 / 0); }
+  }
+  .il-eyebrow{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--alarm); margin-bottom:11px;
+  }
+  .interlock h2{
+    margin:0;
+    font-family:var(--serif); font-size:25px; line-height:1.18; font-weight:500;
+    color:oklch(0.30 0.10 28);
+  }
+  .interlock p{
+    margin:14px 0 0;
+    font-family:var(--sans); font-size:13.5px; line-height:1.55;
+    color:oklch(0.40 0.07 32);
+  }
+  .interlock p b{ font-weight:600; color:oklch(0.32 0.10 28); }
+  .il-phone{
+    margin-top:14px;
+    font-family:var(--mono); font-size:13px; letter-spacing:0.02em;
+    color:oklch(0.30 0.10 28);
+    background:var(--alarm-tint);
+    border:1px solid oklch(0.53 0.17 28 / 0.25);
+    border-radius:var(--r-btn);
+    padding:9px 14px;
+  }
+  .il-actions{
+    display:flex; flex-direction:column; gap:10px;
+    margin-top:24px; width:100%;
+  }
+  .interlock .il-btn{
+    min-height:48px; border-radius:var(--r-btn);
+    font-family:var(--sans); font-weight:600; font-size:14px;
+    border:none; cursor:pointer;
+    transition:transform .16s var(--ease);
+  }
+  .interlock .il-btn:active{ transform:scale(.985); }
+  .interlock .il-btn:focus-visible{ outline:2px solid var(--alarm); outline-offset:2px; }
+  .interlock .il-verify{
+    background:oklch(0.30 0.10 28); color:oklch(0.97 0.02 30);
+  }
+  .interlock .il-freeze{
+    background:transparent; color:oklch(0.34 0.10 28);
+    border:1px solid oklch(0.53 0.17 28 / 0.38);
+  }
+
+  /* a tiny live region */
+  .sr-only{
+    position:absolute; width:1px;height:1px;
+    padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; }
+    .rise,.near{ opacity:1 !important; transform:none !important; }
+    .gexp,.ledger-panel{ grid-template-rows:0fr; }
+    .gate.open .gexp,.ledger.open .ledger-panel{ grid-template-rows:1fr; }
+    .window-bar i{ width:34%; }
+    .progress .track i{ transform:scaleX(.62); }
+    .interlock .interlock-inner{ transform:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="caption"><span class="tick" aria-hidden="true"></span>V17 CONVERSATIONAL x CLOSING COCKPIT</div>
+
+  <div class="phone">
+    <div class="notch" aria-hidden="true"></div>
+    <div class="screen">
+
+      <div class="statusbar" aria-hidden="true">
+        <span>7:08</span>
+        <div class="right">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="6" width="3" height="5" rx="1" fill="currentColor"/><rect x="4.5" y="3.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="9" y="1.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor" opacity="0.35"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"/><rect x="22" y="4" width="1.5" height="4" rx="0.75" fill="currentColor" opacity="0.5"/></svg>
+        </div>
+      </div>
+
+      <main class="body">
+
+        <!-- Leo opens the morning -->
+        <div class="leo-head rise d1">
+          <span class="orb" aria-hidden="true"></span>
+          <span class="leo-name">Leo</span>
+          <span class="leo-time">7:08 AM</span>
+        </div>
+
+        <p class="spoken rise d1">
+          <span class="lead">Morning, Dana.</span> A sale finishes today. <b>142 Oak St</b>
+          should hand over the keys around <b>3:40</b>, and it is on track, one step is
+          <span class="soft">waiting on the title office</span>. After that, a buyer for <b>88 Linden</b>
+          got in touch and already has their <span class="open">loan approved</span>, and
+          <span class="ava-inline ava-m" aria-hidden="true">MO</span><b>Marcus</b> has a buyer who
+          <span class="soft">has gone quiet</span>.
+        </p>
+
+        <div class="read-line rise d2"><span class="dot" aria-hidden="true"></span>Today's sale, step by step</div>
+
+        <!-- ============ CENTERPIECE: CLOSING DAY COCKPIT ============ -->
+        <section class="cockpit rise d2" aria-labelledby="cockpit-h">
+          <div class="cockpit-head">
+            <div class="cockpit-eyebrow"><span class="live" aria-hidden="true"></span>Finishing today</div>
+            <div class="deal-row">
+              <div>
+                <div class="deal-name" id="cockpit-h">142 Oak St</div>
+                <div class="deal-sub">Your sale · you represent the buyer</div>
+              </div>
+              <div class="eta">
+                <div class="lbl">Keys expected</div>
+                <div class="clk">3:40 PM</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress" aria-hidden="true">
+            <span class="frac"><b id="frac-done">3</b> of 5 steps done</span>
+            <span class="track"><i id="prog-fill"></i></span>
+          </div>
+
+          <div class="runway" id="runway">
+
+            <!-- cleared -->
+            <div class="gate done">
+              <span class="node" aria-hidden="true">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <div class="gbody">
+                <div class="gtitle">Loan approved for closing</div>
+                <div class="gmeta">Bank gave the go-ahead <b>6:40 AM</b></div>
+              </div>
+            </div>
+
+            <!-- cleared -->
+            <div class="gate done">
+              <span class="node" aria-hidden="true">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <div class="gbody">
+                <div class="gtitle">Final home walk-through</div>
+                <div class="gmeta">Buyer was happy with it <b>8:15 AM</b></div>
+              </div>
+            </div>
+
+            <!-- cleared, and carries the wire shield -->
+            <div class="gate done">
+              <span class="node" aria-hidden="true">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <div class="gbody">
+                <div class="gtitle">Bank transfer details checked</div>
+                <div class="gmeta">Confirmed by phone with the title office <b>8:02 AM</b></div>
+                <span class="gate-shield" aria-hidden="true"></span>
+              </div>
+            </div>
+
+            <!-- ATTENTION: the title gate, the only thing waiting -->
+            <div class="gate attn open" id="gate-attn">
+              <span class="node" aria-hidden="true"><span class="dotfill"></span></span>
+              <div class="gbody">
+                <button class="gtap" id="attn-tap" type="button" aria-expanded="true" aria-controls="attn-panel">
+                  <div class="gtitle">Papers signed at the title office</div>
+                  <div class="gmeta">No update in 92 min · I followed up twice</div>
+                </button>
+                <div class="gexp" id="attn-panel" role="region" aria-label="Why this step is waiting">
+                  <div>
+                    <div class="gexp-in">
+                      <p>I messaged the person at the title office at <b>10:14</b> and <b>11:02</b>, no reply yet.
+                      This is the last thing standing between you and the keys. How sure I am it sorts itself out: <b>fairly sure</b>.</p>
+                      <button class="esc" id="attn-esc" type="button">Call a person at First American</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PENDING: funded, this is the money step, with the interlock -->
+            <div class="gate pending money" id="gate-money">
+              <span class="node" aria-hidden="true"></span>
+              <div class="gbody">
+                <button class="gtap" id="money-tap" type="button" aria-expanded="false" aria-controls="money-panel">
+                  <div class="gtitle">Money sent</div>
+                  <div class="gmeta">Waiting on the signing · money ready to send</div>
+                  <span class="shield">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 16.5 5v4.5c0 4-2.8 6.6-6.5 8-3.7-1.4-6.5-4-6.5-8V5L10 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 10l2 2 4-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Fraud check on
+                  </span>
+                </button>
+                <div class="gexp" id="money-panel" role="region" aria-label="Sending the money">
+                  <div>
+                    <div class="gexp-in money-in">
+                      <p>The bank details are <b>locked in and confirmed by phone</b>. I keep an eye on the
+                      account until the money arrives and will stop the transfer if anything changes.</p>
+                      <button class="fund" id="money-fund" type="button">Send the money to the title office</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- pending tail -->
+            <div class="gate pending">
+              <span class="node" aria-hidden="true"></span>
+              <div class="gbody">
+                <div class="gtitle">Sale filed with the county office</div>
+                <div class="gmeta">Happens after the money is sent</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============ THE TWO LIGHTER SIGNALS ============ -->
+        <div class="next-label rise d3">For later, when you have a minute<span class="rule" aria-hidden="true"></span></div>
+
+        <button class="signal rise d3" type="button" data-deal="88 Linden buyer">
+          <span class="sig-ava sig-lin" aria-hidden="true">LN</span>
+          <span class="sig-main">
+            <span class="sig-top">
+              <span class="sig-name">New buyer for 88 Linden</span>
+              <span class="sig-chip chip-open"><span class="d" aria-hidden="true"></span>Reach out now</span>
+            </span>
+            <span class="sig-line">Got in touch at <b>5:40</b>, loan approved up to <b>$540k</b>. People who hear back
+              within five minutes are far more likely to work with you. I wrote a first message for you.</span>
+            <span class="sig-foot">
+              <span>Best to call in the next 5 minutes</span>
+              <span class="conf">How sure I am: very sure</span>
+            </span>
+            <span class="window-bar" aria-hidden="true"><i></i></span>
+          </span>
+        </button>
+
+        <button class="signal rise d3" type="button" data-deal="Marcus and the Hale buyer">
+          <span class="sig-ava sig-mar" aria-hidden="true">MO</span>
+          <span class="sig-main">
+            <span class="sig-top">
+              <span class="sig-name">Marcus Okafor</span>
+              <span class="sig-chip chip-soft"><span class="d" aria-hidden="true"></span>Gone quiet</span>
+            </span>
+            <span class="sig-line">His buyer, the Hales, has not replied in <b>two days</b>. Not a problem yet,
+              but buyers like this often drop off by day four. A quick note from you would help.</span>
+            <span class="sig-foot">
+              <span>Your team · quiet 2 days</span>
+              <span class="conf">How sure I am: fairly sure</span>
+            </span>
+          </span>
+        </button>
+
+        <!-- ============ THE QUIET LEDGER ============ -->
+        <div class="ledger rise d4" id="ledger">
+          <button class="ledger-row" id="ledger-toggle" type="button"
+                  aria-expanded="false" aria-controls="ledger-panel">
+            <span class="ledger-num" aria-hidden="true">47</span>
+            <span class="ledger-copy">
+              <span class="a">Took care of 47 things overnight, woke you for none</span>
+              <span class="b">3 were close calls. <b>Crestview is going quiet.</b></span>
+            </span>
+            <span class="ledger-chev" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+          <div class="ledger-panel" id="ledger-panel" role="region" aria-label="Close calls I decided not to wake you for">
+            <div>
+              <div class="near-list">
+                <div class="near">
+                  <span class="mark" aria-hidden="true">2:14 AM</span>
+                  <span class="txt"><b>Crestview Dr</b> went quiet after the home inspection.
+                    <span class="why">Keeping an eye on it. I will tell you if there is no reply by afternoon.</span></span>
+                </div>
+                <div class="near">
+                  <span class="mark" aria-hidden="true">3:48 AM</span>
+                  <span class="txt">A <b>new buyer from a listing site</b> looked promising, then matched a name on your do-not-contact list.
+                    <span class="why">Did not reach out. Sent it for a person to check, not to you.</span></span>
+                </div>
+                <div class="near">
+                  <span class="mark" aria-hidden="true">5:06 AM</span>
+                  <span class="txt">Someone asked to move the <b>Oak St signing</b> by a day.
+                    <span class="why">Said no and kept the time. Today's 3:40 finish is still on.</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sr-only" id="live" role="status" aria-live="polite"></div>
+      </main>
+
+      <!-- ============ WIRE-FRAUD INTERLOCK (full-screen) ============ -->
+      <div class="interlock" id="interlock" role="dialog" aria-modal="true"
+           aria-labelledby="il-h" aria-describedby="il-desc" hidden>
+        <div class="interlock-inner">
+          <span class="il-ic" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 28 28" fill="none"><path d="M14 3l11 20H3L14 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 11v6M14 20.4v.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          </span>
+          <div class="il-eyebrow">Fraud check · I stopped the transfer</div>
+          <h2 id="il-h">The bank details just changed.</h2>
+          <p id="il-desc">I did not send the money. A new account showed up after the
+            details were locked in. This is how money gets stolen on closing day.
+            <b>Call to check before any money moves.</b></p>
+          <div class="il-phone" aria-label="First American confirmed phone number">First American · (415) 555-0182</div>
+          <div class="il-actions">
+            <button class="il-btn il-verify" id="il-verify" type="button">I checked by phone, it is correct</button>
+            <button class="il-btn il-freeze" id="il-freeze" type="button">Keep it stopped for now</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+
+  var live = document.getElementById('live');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- attention gate: expand / collapse ---- */
+  var gateAttn = document.getElementById('gate-attn');
+  var attnTap  = document.getElementById('attn-tap');
+  attnTap.addEventListener('click', function(){
+    var open = gateAttn.classList.toggle('open');
+    attnTap.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  /* escalate inside the attention gate */
+  var esc = document.getElementById('attn-esc');
+  esc.addEventListener('click', function(e){
+    e.stopPropagation();
+    esc.disabled = true;
+    esc.textContent = 'Sent to First American';
+    live.textContent = 'Asked a person at First American to look at the stuck title step.';
+  });
+
+  /* ---- money gate: expand / collapse ---- */
+  var gateMoney = document.getElementById('gate-money');
+  var moneyTap  = document.getElementById('money-tap');
+  moneyTap.addEventListener('click', function(){
+    var open = gateMoney.classList.toggle('open');
+    moneyTap.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  /* ---- releasing funds arms the wire-fraud interlock ---- */
+  var interlock = document.getElementById('interlock');
+  var ilVerify  = document.getElementById('il-verify');
+  var ilFreeze  = document.getElementById('il-freeze');
+  var lastFocus = null;
+
+  function openInterlock(trigger){
+    lastFocus = trigger || document.activeElement;
+    interlock.hidden = false;
+    /* let the element paint before transitioning opacity */
+    requestPaint(function(){ interlock.classList.add('show'); });
+    interlock.setAttribute('aria-hidden', 'false');
+    setTimeout(function(){ ilVerify.focus(); }, 60);
+    live.textContent = 'I stopped the transfer. The bank details changed. Call to check before any money moves.';
+  }
+  function closeInterlock(msg){
+    interlock.classList.remove('show');
+    interlock.setAttribute('aria-hidden', 'true');
+    var done = function(){ interlock.hidden = true; };
+    if (reduce){ done(); } else { setTimeout(done, 440); }
+    if (lastFocus && lastFocus.focus){ lastFocus.focus(); }
+    if (msg){ live.textContent = msg; }
+  }
+  /* a one-frame defer that avoids rAF-as-animation (just a paint flush) */
+  function requestPaint(fn){
+    if (reduce){ fn(); return; }
+    setTimeout(fn, 20);
+  }
+
+  document.getElementById('money-fund').addEventListener('click', function(){
+    openInterlock(this);
+  });
+  ilVerify.addEventListener('click', function(){
+    closeInterlock('You checked the details by phone. Sending the money to the confirmed First American account.');
+    advanceFunding();
+  });
+  ilFreeze.addEventListener('click', function(){
+    closeInterlock('Stopped and held. Nothing moved. I will keep it stopped until you say otherwise.');
+  });
+  /* Escape closes the interlock as a freeze (safe default) */
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !interlock.hidden){
+      e.preventDefault();
+      closeInterlock('Stopped and held. Nothing moved.');
+    }
+  });
+
+  /* on a verified release, advance the funding gate and fill the runway */
+  function advanceFunding(){
+    gateMoney.classList.remove('pending', 'money', 'open');
+    gateMoney.classList.add('done');
+    var node = gateMoney.querySelector('.node');
+    node.innerHTML = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    gateMoney.querySelector('.gtitle').textContent = 'Money sent';
+    gateMoney.querySelector('.gmeta').innerHTML = 'Money arrived at the title office <b>confirmed account</b>';
+    /* replace the tappable button with static body (gate is resolved) */
+    var fracDone = document.getElementById('frac-done');
+    fracDone.textContent = '4';
+    var fill = document.getElementById('prog-fill');
+    fill.style.transform = 'scaleX(0.82)';
+  }
+
+  /* ---- the two lighter signals: keyboard + click ---- */
+  document.querySelectorAll('.signal').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      live.textContent = 'Opening ' + btn.getAttribute('data-deal') +
+        '. You would see the draft message, why I suggested it, and a way to undo before anything is sent.';
+    });
+  });
+
+  /* ---- the quiet ledger expand ---- */
+  var ledger = document.getElementById('ledger');
+  var toggle = document.getElementById('ledger-toggle');
+  toggle.addEventListener('click', function(){
+    var open = ledger.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    live.textContent = open
+      ? 'Showing three things I almost woke you for, and what I did instead.'
+      : '';
+  });
+</script>
+</body>
+</html>

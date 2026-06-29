@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo - Your Morning Start - V19 Clean Data x Redline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* clean-data light, fresh tint: cooler paper than V04, more whitespace */
+    --paper:    oklch(0.984 0.006 250);
+    --card:     oklch(0.998 0.003 250);
+    --sunken:   oklch(0.962 0.008 248);
+    --hair:     oklch(0.34 0.03 250 / 0.11);
+    --hair-2:   oklch(0.34 0.03 250 / 0.06);
+    --shadow:   0 16px 38px -20px oklch(0.42 0.05 255 / 0.30);
+    --shadow-sm:0 7px 20px -14px oklch(0.42 0.05 255 / 0.24);
+
+    --ink:   oklch(0.27 0.024 258);
+    --body:  oklch(0.47 0.020 258);
+    --muted: oklch(0.60 0.014 258);
+
+    /* confidence-state accents (state, not decoration) */
+    --green:      oklch(0.60 0.105 162);   /* compliant / clear */
+    --green-text: oklch(0.44 0.095 162);
+    --green-tint: oklch(0.60 0.105 162 / 0.14);
+    --amber:      oklch(0.70 0.125 72);     /* flagged / risky phrase */
+    --amber-text: oklch(0.50 0.115 64);
+    --amber-tint: oklch(0.70 0.125 72 / 0.16);
+    --coral:      oklch(0.57 0.16 28);
+    --coral-text: oklch(0.50 0.15 28);
+    --coral-tint: oklch(0.57 0.16 28 / 0.12);
+
+    /* pastel category surfaces (each pastel = a category) */
+    --sky:     oklch(0.962 0.030 232);   /* own deal / counter */
+    --lilac:   oklch(0.958 0.030 292);   /* new lead */
+    --sand:    oklch(0.962 0.034 80);    /* teammate */
+
+    /* one interactive accent: deep indigo (not SaaS blue) */
+    --accent:      oklch(0.46 0.135 274);
+    --accent-text: oklch(0.42 0.135 274);
+    --accent-ink:  oklch(0.985 0.012 274);
+
+    --r-card:20px; --r-chip:9px; --r-btn:13px; --r-pill:999px;
+    --ease:cubic-bezier(.16,1,.3,1);
+
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --serif:'Newsreader',Georgia,serif;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  body{
+    font-family:var(--sans);
+    background:
+      radial-gradient(120% 64% at 50% -6%, oklch(0.975 0.012 248) 0%, oklch(0.945 0.010 250) 58%, oklch(0.918 0.010 252) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center;
+    padding:34px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .caption{
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:oklch(0.50 0.018 256);
+    margin-bottom:20px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .caption .tick{ width:22px; height:1px; background:oklch(0.50 0.018 256 / .5); }
+
+  /* ===== phone frame (chrome only) ===== */
+  .phone{
+    width:393px; max-width:100%;
+    background:var(--paper);
+    border-radius:48px;
+    padding:11px;
+    box-shadow:
+      0 0 0 1px oklch(0.34 0.03 250 / 0.06),
+      0 52px 92px -42px oklch(0.40 0.05 255 / 0.40);
+    position:relative;
+  }
+  .screen{
+    background:var(--paper);
+    border-radius:38px;
+    overflow:hidden;
+    position:relative;
+    height:838px;
+    display:flex; flex-direction:column;
+  }
+
+  /* status bar */
+  .status{
+    height:44px; flex:none;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 26px;
+    font-family:var(--mono); font-size:13px; font-weight:500;
+    color:var(--ink);
+  }
+  .status .right{ display:flex; align-items:center; gap:6px; }
+  .status .right svg{ display:block; }
+
+  /* ===== scroll body ===== */
+  .body{
+    flex:1; overflow-y:auto; overflow-x:hidden;
+    padding:6px 22px 24px;
+    scrollbar-width:none;
+  }
+  .body::-webkit-scrollbar{ display:none; }
+
+  /* header / Leo line */
+  .head{ padding:10px 2px 2px; }
+  .head .meta{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .head .meta .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 0 4px var(--green-tint);
+    animation:breathe 4.6s var(--ease) infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); opacity:.92; }
+    50%{ transform:scale(1.18); opacity:1; }
+  }
+  .head h1{
+    font-family:var(--serif); font-weight:500;
+    font-size:30px; line-height:1.14; letter-spacing:-0.012em;
+    color:var(--ink);
+    margin-top:13px;
+  }
+  .head h1 em{ font-style:italic; color:var(--body); }
+  .head .sub{
+    font-family:var(--serif); font-size:16px; line-height:1.5;
+    color:var(--body); margin-top:7px; max-width:33ch;
+  }
+
+  /* ===== inline count line (clean-data, NOT a 4-stat grid like V04) ===== */
+  .countline{
+    margin-top:18px;
+    display:flex; align-items:center; gap:0;
+    border-top:1px solid var(--hair);
+    border-bottom:1px solid var(--hair);
+    padding:11px 0;
+  }
+  .cl-item{
+    flex:1; display:flex; flex-direction:column; gap:3px;
+    padding:0 13px;
+    border-left:1px solid var(--hair-2);
+  }
+  .cl-item:first-child{ border-left:none; padding-left:2px; }
+  .cl-item .n{
+    font-family:var(--mono); font-weight:500; font-size:19px; line-height:1;
+    color:var(--ink); letter-spacing:-0.01em;
+    display:flex; align-items:center; gap:5px;
+  }
+  .cl-item .n .ddot{ width:6px; height:6px; border-radius:50%; }
+  .cl-item .l{
+    font-family:var(--sans); font-size:10px; font-weight:500;
+    letter-spacing:.05em; text-transform:uppercase; color:var(--muted);
+  }
+  .cl-item.flag .n{ color:var(--amber-text); }
+  .cl-item.flag .l{ color:var(--amber-text); }
+
+  /* section label */
+  .seclabel{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:26px 2px 12px;
+  }
+  .seclabel .t{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .seclabel .c{
+    font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    color:var(--muted);
+  }
+
+  /* ===== triage cards (pastel category surfaces, varied composition) ===== */
+  .cards{ display:flex; flex-direction:column; gap:14px; }
+
+  .tcard{
+    border-radius:var(--r-card);
+    border:1px solid var(--hair);
+    padding:17px 17px 16px;
+    box-shadow:var(--shadow-sm);
+    position:relative;
+    cursor:pointer;
+    transition:transform .26s var(--ease), box-shadow .26s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tcard:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+  .tcard:active{ transform:scale(0.992); }
+  .tcard.sky{ background:var(--sky); }
+  .tcard.lilac{ background:var(--lilac); }
+  .tcard.sand{ background:var(--sand); }
+
+  .tcard .crow{ display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+  .tcard .sdot{ width:8px; height:8px; border-radius:50%; flex:none; }
+  .tcard.sky   .sdot{ background:var(--accent); box-shadow:0 0 0 4px oklch(0.46 0.135 274 / 0.12); }
+  .tcard.lilac .sdot{ background:var(--green); box-shadow:0 0 0 4px var(--green-tint); }
+  .tcard.sand  .sdot{ background:var(--amber); box-shadow:0 0 0 4px var(--amber-tint); }
+
+  .tcard .cat{
+    font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--body);
+  }
+  .tcard .badge{
+    margin-left:auto;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--body);
+    background:oklch(0.34 0.03 250 / 0.07);
+    padding:3px 8px; border-radius:var(--r-pill);
+  }
+
+  .tcard h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:20px; line-height:1.2; letter-spacing:-0.006em;
+    color:var(--ink);
+  }
+  .tcard .why{
+    font-family:var(--serif); font-size:14.5px; line-height:1.46;
+    color:var(--body); margin-top:5px; max-width:35ch;
+  }
+  .trace{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:13px;
+  }
+  .chip{
+    font-family:var(--mono); font-size:10px; letter-spacing:.05em;
+    color:var(--body);
+    background:oklch(0.998 0.003 250 / 0.7);
+    border:1px solid var(--hair);
+    padding:4px 9px; border-radius:var(--r-chip);
+    display:inline-flex; align-items:center; gap:5px;
+  }
+  .chip .k{ color:var(--muted); }
+  .chip.conf-high{ color:var(--green-text); }
+  .chip.conf-high .k{ color:var(--green-text); opacity:.7; }
+  .chip.conf-mid{ color:var(--amber-text); }
+  .chip.conf-mid .k{ color:var(--amber-text); opacity:.7; }
+
+  /* action footer inside card */
+  .act{ display:flex; align-items:center; gap:9px; margin-top:15px; }
+  .btn{
+    font-family:var(--sans); font-size:13.5px; font-weight:500;
+    border:none; border-radius:var(--r-btn);
+    padding:0 16px; min-height:44px;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    cursor:pointer; -webkit-tap-highlight-color:transparent;
+    transition:transform .2s var(--ease), background .2s var(--ease);
+  }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--accent); color:var(--accent-ink); }
+  .btn-ghost{
+    background:oklch(0.998 0.003 250 / 0.66);
+    border:1px solid var(--hair);
+    color:var(--body);
+  }
+  .btn .win{
+    font-family:var(--mono); font-size:11px;
+    background:oklch(0.985 0.012 274 / 0.22);
+    padding:2px 6px; border-radius:6px;
+  }
+  .btn svg{ display:block; }
+
+  /* the new-lead window timer (microinteraction: draining) */
+  .draining{
+    display:flex; align-items:center; gap:8px; margin-top:12px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    color:var(--green-text);
+  }
+  .draining .ring{ width:18px; height:18px; flex:none; transform:rotate(-90deg); }
+  .draining .ring circle{ fill:none; stroke-width:3; }
+  .draining .ring .bg{ stroke:oklch(0.60 0.105 162 / 0.20); }
+  .draining .ring .fg{
+    stroke:var(--green);
+    stroke-dasharray:44; stroke-dashoffset:6;
+    stroke-linecap:round;
+    animation:drain 300s linear forwards;
+  }
+  @keyframes drain{ to{ stroke-dashoffset:44; } }
+
+  /* ===== THE REDLINE (centerpiece): Fair Housing live diff ===== */
+  .redline{
+    margin-top:8px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    padding:16px 17px 15px;
+    box-shadow:var(--shadow-sm);
+    position:relative;
+  }
+  .rl-head{ display:flex; align-items:center; gap:9px; margin-bottom:4px; }
+  .rl-head .guard{
+    width:9px; height:9px; border-radius:50%; flex:none;
+    background:var(--amber); box-shadow:0 0 0 4px var(--amber-tint);
+    animation:guardPulse 2.8s var(--ease) infinite;
+  }
+  @keyframes guardPulse{
+    0%,100%{ transform:scale(1); opacity:.9; }
+    50%{ transform:scale(1.22); opacity:1; }
+  }
+  .rl-head .t{ font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ink); }
+  .rl-head .stamp{
+    margin-left:auto;
+    font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--amber-text); background:var(--amber-tint);
+    padding:3px 8px; border-radius:var(--r-pill);
+  }
+  .rl-sub{
+    font-family:var(--serif); font-size:14px; line-height:1.45; color:var(--body);
+    margin:2px 0 13px; max-width:36ch;
+  }
+  .rl-sub b{ font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink); }
+
+  /* the draft listing block */
+  .draft{
+    background:var(--sunken);
+    border:1px solid var(--hair-2);
+    border-radius:14px;
+    padding:14px 15px 13px;
+  }
+  .draft .dlbl{
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:9px;
+  }
+  .draft .listing{
+    font-family:var(--serif); font-size:15.5px; line-height:1.62; color:var(--ink);
+  }
+
+  /* the live diff token: risky phrase strikes amber, compliant green underlays */
+  .diff{
+    position:relative; display:inline;
+    border-radius:5px;
+    padding:0 1px;
+  }
+  /* risky phrase (struck through, amber) */
+  .diff .old{
+    position:relative;
+    color:var(--amber-text);
+    background:var(--amber-tint);
+    border-radius:4px; padding:0 3px;
+    white-space:normal;
+  }
+  /* the strike line draws across, left to right */
+  .diff .old::after{
+    content:""; position:absolute; left:2px; right:2px; top:52%;
+    height:1.6px; background:var(--amber-text);
+    transform:scaleX(0); transform-origin:left center;
+    animation:strike .55s var(--ease) 1.15s forwards;
+  }
+  @keyframes strike{ to{ transform:scaleX(1); } }
+  /* compliant rewrite, revealed beneath, green */
+  .diff .new{
+    display:inline-block;
+    color:var(--green-text);
+    background:var(--green-tint);
+    border-radius:4px; padding:0 4px;
+    margin-left:3px;
+    opacity:0; transform:translateY(4px);
+    animation:revealNew .5s var(--ease) 1.7s forwards;
+  }
+  @keyframes revealNew{ to{ opacity:1; transform:translateY(0); } }
+  /* the protected-category tag floats up under the swap */
+  .diff .pcat{
+    display:inline-block; vertical-align:middle;
+    font-family:var(--mono); font-size:9px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--green-text);
+    border:1px solid var(--green-tint);
+    border-radius:var(--r-pill);
+    padding:1px 6px; margin-left:5px;
+    opacity:0; transform:translateY(3px);
+    animation:revealNew .5s var(--ease) 2.05s forwards;
+  }
+
+  /* second flag, lower confidence path: a phrase Leo only suggests softening */
+  .diff.soft .old{ color:var(--amber-text); background:var(--amber-tint); }
+  .diff.soft .old::after{ animation-delay:1.4s; }
+  .diff.soft .new{ animation-delay:1.95s; }
+  .diff.soft .pcat{ animation-delay:2.3s; }
+
+  /* diff verdict footer */
+  .rl-foot{
+    display:flex; align-items:center; gap:10px; margin-top:13px;
+  }
+  .rl-verdict{
+    display:flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+    color:var(--green-text);
+  }
+  .rl-verdict .vdot{
+    width:7px; height:7px; border-radius:50%; background:var(--green);
+    opacity:0; transform:scale(.4);
+    animation:popDot .4s var(--ease) 2.4s forwards;
+  }
+  @keyframes popDot{ to{ opacity:1; transform:scale(1); } }
+  .rl-actions{ margin-left:auto; display:flex; gap:8px; }
+  .btn-sm{
+    font-family:var(--sans); font-size:12.5px; font-weight:500;
+    border:none; border-radius:11px;
+    padding:0 13px; min-height:44px;
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .2s var(--ease), background .2s var(--ease);
+  }
+  .btn-sm:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .btn-sm:active{ transform:scale(0.96); }
+  .btn-accept{ background:var(--green); color:oklch(0.99 0.01 162); }
+  .btn-keep{
+    background:oklch(0.998 0.003 250 / 0.66); border:1px solid var(--hair); color:var(--body);
+  }
+  .btn-sm svg{ display:block; }
+
+  /* a quiet "review before send" guard line */
+  .guardline{
+    display:flex; align-items:center; gap:8px;
+    margin-top:11px; padding-top:11px;
+    border-top:1px solid var(--hair-2);
+    font-family:var(--mono); font-size:10px; letter-spacing:.05em;
+    color:var(--muted);
+  }
+  .guardline svg{ flex:none; color:var(--amber-text); }
+
+  /* ===== calm signal: a deal going quiet (Crestview) ===== */
+  .calm{
+    margin-top:14px;
+    display:flex; align-items:center; gap:13px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    padding:14px 16px;
+    box-shadow:var(--shadow-sm);
+    cursor:pointer;
+    transition:transform .26s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .calm:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+  .calm:active{ transform:scale(0.992); }
+  .calm .spark{ width:58px; height:26px; flex:none; }
+  .calm .spark .live{
+    fill:none; stroke:var(--green); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+    animation:ekg-out 1.3s var(--ease) 1s both;
+  }
+  .calm .spark .flat{
+    fill:none; stroke:var(--amber); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+    opacity:0; animation:ekg-in 1.3s var(--ease) 1.4s both;
+  }
+  @keyframes ekg-out{ from{ opacity:.9; } to{ opacity:0; } }
+  @keyframes ekg-in{ from{ opacity:0; } to{ opacity:.95; } }
+  .calm .ct{ flex:1; }
+  .calm .ct .nm{
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink);
+    display:flex; align-items:center; gap:8px;
+  }
+  .calm .ct .nm .q{
+    font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--amber-text); background:var(--amber-tint);
+    padding:2px 7px; border-radius:var(--r-pill);
+  }
+  .calm .ct .dx{
+    font-family:var(--serif); font-size:13.5px; line-height:1.4; color:var(--body); margin-top:3px;
+  }
+  .calm .arrow{ color:var(--muted); flex:none; }
+
+  /* ===== quiet ledger line ===== */
+  .ledger{
+    margin-top:22px;
+    border-top:1px solid var(--hair);
+    padding-top:16px;
+    display:flex; align-items:flex-start; gap:11px;
+  }
+  .ledger .lic{
+    width:30px; height:30px; flex:none; border-radius:9px;
+    background:var(--sunken);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted);
+  }
+  .ledger .lt{
+    font-family:var(--serif); font-size:14.5px; line-height:1.45; color:var(--body);
+  }
+  .ledger .lt b{ font-weight:600; color:var(--ink); font-family:var(--sans); font-size:13.5px; }
+  .ledger .lm{
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); margin-top:5px;
+  }
+
+  /* ===== bottom nav ===== */
+  .nav{
+    flex:none; height:74px;
+    background:oklch(0.998 0.003 250 / 0.86);
+    backdrop-filter:saturate(1.4) blur(18px);
+    -webkit-backdrop-filter:saturate(1.4) blur(18px);
+    border-top:1px solid var(--hair);
+    display:flex; align-items:stretch; justify-content:space-around;
+    padding:8px 6px 20px;
+  }
+  .nav button{
+    flex:1; background:none; border:none; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    color:var(--muted); min-height:44px;
+    font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:.02em;
+    -webkit-tap-highlight-color:transparent;
+    transition:color .2s var(--ease);
+    border-radius:12px;
+  }
+  .nav button:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .nav button svg{ display:block; }
+  .nav button.on{ color:var(--ink); }
+  .nav button.on svg{ color:var(--accent); }
+
+  /* state-change toast (microinteraction feedback) */
+  .toast{
+    position:absolute; left:50%; bottom:96px; transform:translate(-50%,14px);
+    background:oklch(0.27 0.024 258 / 0.95);
+    color:var(--paper);
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    padding:10px 15px; border-radius:var(--r-pill);
+    box-shadow:var(--shadow);
+    opacity:0; pointer-events:none;
+    transition:opacity .3s var(--ease), transform .3s var(--ease);
+    display:flex; align-items:center; gap:8px;
+    white-space:nowrap; z-index:30;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+  .toast .td{ width:7px; height:7px; border-radius:50%; background:var(--green); }
+
+  /* entrance choreography (transform+opacity only) */
+  .rise{ opacity:0; transform:translateY(12px); animation:rise .58s var(--ease) forwards; }
+  .d1{ animation-delay:.05s; } .d2{ animation-delay:.12s; } .d3{ animation-delay:.19s; }
+  .d4{ animation-delay:.26s; } .d5{ animation-delay:.33s; } .d6{ animation-delay:.40s; }
+  .d7{ animation-delay:.47s; }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+    .rise{ opacity:1; transform:none; }
+    .diff .old::after{ transform:scaleX(1); }
+    .diff .new, .diff .pcat, .rl-verdict .vdot{ opacity:1; transform:none; }
+    .calm .spark .live{ opacity:0; }
+    .calm .spark .flat{ opacity:.95; }
+  }
+</style>
+</head>
+<body>
+  <div class="caption"><span class="tick"></span>V19 Clean Data x Redline (Fair Housing)<span class="tick"></span></div>
+
+  <div class="phone">
+    <div class="screen">
+
+      <div class="status">
+        <span>7:02</span>
+        <span class="right">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="6" width="3" height="5" rx="1" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="1" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg>
+          <svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="20" y="3.5" width="1.6" height="4" rx="0.8" fill="currentColor" opacity="0.5"/></svg>
+        </span>
+      </div>
+
+      <div class="body">
+
+        <!-- header / Leo's voice -->
+        <header class="head rise d1">
+          <div class="meta"><span class="dot" aria-hidden="true"></span> Leo - your helper - checked things while you slept</div>
+          <h1>Good morning, Dana.<br /><em>Three things need you</em> before 10.</h1>
+          <p class="sub">I held one home listing back: it has wording that could break fair housing rules. Everything else is sorted by who is waiting longest.</p>
+        </header>
+
+        <!-- inline count line (clean-data, distinct from V04's stat grid) -->
+        <section class="countline rise d2" aria-label="Your deals at a glance">
+          <div class="cl-item">
+            <div class="n">18</div>
+            <div class="l">Going on</div>
+          </div>
+          <div class="cl-item">
+            <div class="n">3</div>
+            <div class="l">Price replies</div>
+          </div>
+          <div class="cl-item">
+            <div class="n">5</div>
+            <div class="l">Closing soon</div>
+          </div>
+          <div class="cl-item flag">
+            <div class="n">1 <span class="ddot" style="background:var(--amber)"></span></div>
+            <div class="l">Held for you</div>
+          </div>
+        </section>
+
+        <!-- triage cards -->
+        <div class="seclabel rise d3">
+          <span class="t">Needs you</span>
+          <span class="c">3 waiting</span>
+        </div>
+
+        <div class="cards">
+
+          <!-- 1. Counter due (own deal, sky) -->
+          <article class="tcard sky rise d3" role="button" tabindex="0"
+            aria-label="142 Oak Street price reply is due at 10am. Read what I wrote."
+            onclick="openCounter(this)" onkeydown="kbd(event,this)">
+            <div class="crow">
+              <span class="sdot" aria-hidden="true"></span>
+              <span class="cat">Your deal - price reply</span>
+              <span class="badge">Reply by 10:00am</span>
+            </div>
+            <h2>142 Oak St: a price reply is ready for you to read.</h2>
+            <p class="why">The buyer offered 4k less but wants to close sooner. I wrote a reply that holds your price and gives them the earlier date instead.</p>
+            <div class="trace">
+              <span class="chip"><span class="k">based on</span> nearby sales and 3 calls</span>
+              <span class="chip conf-high"><span class="k">how sure</span> very sure</span>
+            </div>
+            <div class="act">
+              <button class="btn btn-primary" onclick="event.stopPropagation(); review(this)">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M9 4l3.5 3.5L9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Read what I wrote
+              </button>
+              <button class="btn btn-ghost" onclick="event.stopPropagation()">Remind me in 30 min</button>
+            </div>
+          </article>
+
+          <!-- 2. New lead, 5-min window (lilac) -->
+          <article class="tcard lilac rise d4" role="button" tabindex="0"
+            aria-label="New buyer at 88 Linden, already approved for a loan. Call in the next five minutes."
+            onclick="connect(this)" onkeydown="kbd(event,this)">
+            <div class="crow">
+              <span class="sdot" aria-hidden="true"></span>
+              <span class="cat">New buyer - ready to buy</span>
+              <span class="badge">Reach out now</span>
+            </div>
+            <h2>A new buyer just asked about 88 Linden. They are already approved for a loan.</h2>
+            <p class="why">People are far more likely to reply if you call in the first five minutes. They are still on the site right now.</p>
+            <div class="draining" aria-label="About five minutes left to reach out">
+              <svg class="ring" viewBox="0 0 18 18" aria-hidden="true"><circle class="bg" cx="9" cy="9" r="7"/><circle class="fg" cx="9" cy="9" r="7"/></svg>
+              <span>About 5 min left to reach out</span>
+            </div>
+            <div class="act">
+              <button class="btn btn-primary" onclick="event.stopPropagation(); connect(this)">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3.2 3.2c-.4 4 3.6 8 7.6 7.6l1.3-1.6-2.3-1.3-1 .9c-1.3-.6-2.5-1.8-3.1-3.1l.9-1L3.3 2.4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                Call now
+              </button>
+              <button class="btn btn-ghost" onclick="event.stopPropagation()"><span class="win">I can</span> say hi for you</button>
+            </div>
+          </article>
+
+          <!-- 3. Teammate going quiet (sand) -->
+          <article class="tcard sand rise d5" role="button" tabindex="0"
+            aria-label="Marcus has a buyer who has gone quiet. Check in or take a look."
+            onclick="openMarcus(this)" onkeydown="kbd(event,this)">
+            <div class="crow">
+              <span class="sdot" aria-hidden="true"></span>
+              <span class="cat">Your team - Marcus</span>
+              <span class="badge">Gone quiet</span>
+            </div>
+            <h2>Marcus has a buyer who has gone quiet.</h2>
+            <p class="why">No reply in 4 days from a buyer who seemed keen. I can write a friendly check-in note for Marcus, or you can step in.</p>
+            <div class="trace">
+              <span class="chip"><span class="k">last contact</span> 4 days ago</span>
+              <span class="chip conf-mid"><span class="k">my take</span> better if a person decides</span>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- THE REDLINE: Fair Housing live diff (centerpiece) -->
+        <div class="seclabel rise d5">
+          <span class="t">Check before it goes out</span>
+          <span class="c">fair housing rules</span>
+        </div>
+
+        <section class="redline rise d6" aria-label="Wording check on the 142 Oak St listing before it goes out">
+          <div class="rl-head">
+            <span class="guard" aria-hidden="true"></span>
+            <span class="t">I spotted two phrases before this went out.</span>
+            <span class="stamp">Held</span>
+          </div>
+          <p class="rl-sub">Your 142 Oak St listing was set to go out at 8:00. <b>Two phrases could break fair housing rules.</b> Here is what I would change them to.</p>
+
+          <div class="draft">
+            <div class="dlbl"><span>Draft listing - 142 Oak St</span><span>changes</span></div>
+            <p class="listing">
+              Bright 3-bed in a
+              <span class="diff" role="group" aria-label="The phrase 'quiet family neighborhood' could break the rules. I would change it to 'low-traffic residential street'. Reason: it points to who has children.">
+                <span class="old">quiet family neighborhood</span><span class="new">low-traffic residential street</span><span class="pcat">who has kids</span></span>,
+              walkable to shops. Move-in ready and
+              <span class="diff soft" role="group" aria-label="The phrase 'perfect for a young couple' could break the rules. I would change it to 'well suited to first-time buyers'. Reason: it points to age.">
+                <span class="old">perfect for a young couple</span><span class="new">well suited to first-time buyers</span><span class="pcat">age</span></span>.
+            </p>
+          </div>
+
+          <div class="rl-foot">
+            <span class="rl-verdict"><span class="vdot" aria-hidden="true"></span> Both changes fix the problem</span>
+            <span class="rl-actions">
+              <button class="btn-sm btn-keep" onclick="keepEditing(this)">I will edit it</button>
+              <button class="btn-sm btn-accept" onclick="acceptRewrite(this)">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.2l3.2 3.2L12 3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Use both
+              </button>
+            </span>
+          </div>
+
+          <div class="guardline">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><path d="M6.5 1l4.5 1.8v3.4c0 2.8-1.9 4.6-4.5 5.3C3.9 10.8 2 9 2 6.2V2.8z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span>Nothing goes out until you say yes. I never send a listing for you.</span>
+          </div>
+        </section>
+
+        <!-- calm signal: a deal going quiet -->
+        <div class="seclabel rise d6">
+          <span class="t">Worth a look</span>
+          <span class="c">nothing to do yet</span>
+        </div>
+
+        <section class="calm rise d7" role="button" tabindex="0"
+          aria-label="The Crestview deal has gone quiet. Take a look."
+          onclick="openCrestview(this)" onkeydown="kbd(event,this)">
+          <svg class="spark" viewBox="0 0 58 26" preserveAspectRatio="none" aria-hidden="true">
+            <path class="live" d="M0,13 L7,7 L14,18 L21,5 L28,16 L35,8 L42,17 L49,9 L58,13"/>
+            <path class="flat" d="M0,15 L20,15 L26,13 L31,17 L38,15 L58,15"/>
+          </svg>
+          <div class="ct">
+            <span class="nm">Crestview <span class="q">quiet</span></span>
+            <p class="dx">No movement for 6 days. Not urgent yet. I am keeping an eye on it for you.</p>
+          </div>
+          <span class="arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </section>
+
+        <!-- quiet ledger line -->
+        <section class="ledger rise d7" aria-label="What I handled while you slept">
+          <span class="lic" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8.5l3.5 3.5L14 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div>
+            <p class="lt"><b>I handled 47 things while you slept.</b> I answered common questions, set up two home visits, and filed paperwork.</p>
+            <p class="lm">I did not wake you once. The listing above was the only thing I would not send without you</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- bottom nav -->
+      <nav class="nav" aria-label="Primary">
+        <button class="on" aria-current="page">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 9.5l7-5.5 7 5.5V18a1 1 0 0 1-1 1h-3v-5h-6v5H5a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Today
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 16l4-5 3 3 4-6 3 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Deals
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="3.2" stroke="currentColor" stroke-width="1.5"/><path d="M5 18c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          People
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Leo
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M11 3v2M11 17v2M3 11h2M17 11h2M5.2 5.2l1.4 1.4M15.4 15.4l1.4 1.4M16.8 5.2l-1.4 1.4M6.6 15.4l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Settings
+        </button>
+      </nav>
+
+      <div class="toast" id="toast" role="status" aria-live="polite">
+        <span class="td" id="toast-dot"></span>
+        <span id="toast-msg">Draft opened</span>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  function kbd(e, el){
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      el.click();
+    }
+  }
+  var toastTimer;
+  function toast(msg, kind){
+    var t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    var dot = document.getElementById('toast-dot');
+    dot.style.background = kind === 'amber'
+      ? 'var(--amber)'
+      : (kind === 'accent' ? 'var(--accent)' : 'var(--green)');
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+  }
+  function openCounter(){ toast('Opening the 142 Oak St price reply', 'green'); }
+  function review(){ toast('Price reply ready, waiting on your call', 'green'); }
+  function connect(){ toast('Calling 88 Linden now', 'accent'); }
+  function openMarcus(){ toast('Wrote a check-in note for Marcus', 'amber'); }
+  function openCrestview(){ toast('Crestview went quiet, opening it', 'amber'); }
+  function acceptRewrite(){ toast('Changes used, wording now follows the rules', 'green'); }
+  function keepEditing(){ toast('Opening the listing so you can edit it', 'accent'); }
+</script>
+</body>
+</html>

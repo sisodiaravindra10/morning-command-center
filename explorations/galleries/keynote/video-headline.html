@@ -1,0 +1,1088 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leo - the morning command center (Headline cut)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    /* AI-state palette (OKLCH) - hues carry meaning, kept recognizable */
+    --seaglass:  oklch(0.62 0.12 168);
+    --amber:     oklch(0.66 0.13 72);
+    --coral:     oklch(0.58 0.18 28);
+    --cobalt:    oklch(0.50 0.17 262);
+    --ghost:     oklch(0.55 0.02 262);
+
+    /* EDITORIAL ground - stark high-contrast near-white newsprint, never pure white */
+    --paper:     oklch(0.975 0.004 95);
+    --paper-2:   oklch(0.955 0.006 92);
+    --ink:       oklch(0.17 0.012 280);   /* near-black grotesk ink, tinted */
+    --ink-soft:  oklch(0.34 0.012 280);
+    --ink-faint: oklch(0.55 0.01 280);
+    --rule:      oklch(0.17 0.012 280 / 0.92);
+    --rule-soft: oklch(0.17 0.012 280 / 0.16);
+    --accent:    var(--coral);            /* the single front-page accent */
+
+    --serif: 'Newsreader', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    /* master runtime - every scene + progress bar references this */
+    --film: 89s;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.20 0.03 280) 0%, transparent 60%),
+      oklch(0.13 0.012 280);
+    min-height: 100vh;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 28px 20px 40px;
+  }
+
+  /* ---------- the video stage (16:9 letterboxed player) ---------- */
+  .stage {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    border: 1px solid oklch(0.4 0.02 280 / 0.5);
+    box-shadow:
+      0 0 0 1px oklch(0 0 0 / 0.5),
+      0 40px 120px -30px oklch(0 0 0 / 0.9),
+      inset 0 1px 0 oklch(1 0 0 / 0.5);
+    isolation: isolate;
+  }
+
+  /* faint newsprint texture - layered tints, no images */
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, oklch(0.17 0.012 280 / 0.018) 0 1px, transparent 1px 3px),
+      radial-gradient(60% 50% at 18% 12%, oklch(0.9 0.02 72 / 0.25), transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  /* gentle paper vignette / press inking at the edges */
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(125% 115% at 50% 45%, transparent 62%, oklch(0.17 0.012 280 / 0.10) 100%);
+    z-index: 60;
+    pointer-events: none;
+  }
+
+  /* ---------- masthead / standing furniture (lives above scenes) ---------- */
+  .furniture {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+  }
+  .masthead {
+    position: absolute;
+    top: clamp(14px, 3.2%, 30px);
+    left: clamp(18px, 4%, 42px);
+    right: clamp(18px, 4%, 42px);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: clamp(7px, 1.4%, 12px);
+    border-bottom: 1.5px solid var(--rule);
+    opacity: 0;
+    animation: furnIn 1.2s var(--ease) 0.3s both;
+  }
+  .masthead .mh-name {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(13px, 1.7vw, 21px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .masthead .mh-name .reg {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 0.5em;
+    letter-spacing: 0.18em;
+    vertical-align: super;
+    color: var(--ink-faint);
+  }
+  .masthead .mh-meta {
+    font-family: var(--mono);
+    font-size: clamp(7px, 0.92vw, 11px);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .footline {
+    position: absolute;
+    bottom: clamp(12px, 2.8%, 26px);
+    left: clamp(18px, 4%, 42px);
+    right: clamp(18px, 4%, 42px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: clamp(6px, 1.2%, 10px);
+    border-top: 1px solid var(--rule-soft);
+    font-family: var(--mono);
+    font-size: clamp(7px, 0.9vw, 10px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    opacity: 0;
+    animation: furnIn 1.2s var(--ease) 0.6s both;
+  }
+  /* live edition counter ticks through the acts via discrete steps */
+  .footline .edition .num { color: var(--ink-soft); }
+  @keyframes furnIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- scene layer system ---------- */
+  .timeline {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+  }
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 9% 7% 8%;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* a left-aligned editorial column variant for some scenes */
+  .scene.col {
+    align-items: flex-start;
+    text-align: left;
+    padding-left: clamp(18px, 5.5%, 56px);
+    padding-right: clamp(18px, 5.5%, 56px);
+  }
+
+  /* ---------- editorial type pieces ---------- */
+  .kicker {
+    font-family: var(--mono);
+    font-size: clamp(9px, 1.1vw, 12px);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9em;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .kicker::before {
+    content: "";
+    width: clamp(18px, 2.4vw, 34px);
+    height: 1.5px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  /* the GIANT black grotesk hero - the front-page headline */
+  .head {
+    font-family: var(--sans);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    text-wrap: balance;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .head.xl  { font-size: clamp(38px, 8.4vw, 104px); }
+  .head.lg  { font-size: clamp(32px, 6.6vw, 82px); }
+  .head.md  { font-size: clamp(26px, 4.8vw, 60px); }
+
+  /* a serif deck / standfirst (Leo + human voice) */
+  .deck {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(16px, 2.5vw, 30px);
+    line-height: 1.28;
+    letter-spacing: -0.005em;
+    color: var(--ink-soft);
+    max-width: 22em;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .accent { color: var(--accent); }
+  .ul-accent {
+    display: inline;
+    background: linear-gradient(var(--accent), var(--accent)) left bottom / 100% 3px no-repeat;
+    padding-bottom: 2px;
+  }
+
+  /* ---------- master keyframes ---------- */
+  @keyframes reveal {
+    0%   { opacity: 0; transform: translateY(16px); filter: blur(2px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  /* headlines "set" like type slamming onto the page - quick overshoot down */
+  @keyframes setType {
+    0%   { opacity: 0; transform: translateY(-22px) scaleY(1.06); filter: blur(3px); }
+    62%  { opacity: 1; transform: translateY(2px) scaleY(0.992); filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0) scaleY(1); }
+  }
+  /* a word slides in from the side like a slug being set */
+  @keyframes slugIn {
+    0%   { opacity: 0; transform: translateX(-0.5em); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes revealHold {
+    0%   { opacity: 0; }
+    7%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes strike {
+    0%   { transform: scaleX(0); opacity: 0; }
+    18%  { opacity: 1; }
+    100% { transform: scaleX(1); opacity: 1; }
+  }
+  @keyframes dissolveOut {
+    0%   { opacity: 1; transform: translateY(0); filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-8px); filter: blur(7px); }
+  }
+  @keyframes stampIn {
+    0%   { opacity: 0; transform: scale(1.5) rotate(-7deg); }
+    55%  { opacity: 1; transform: scale(0.94) rotate(-7deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-7deg); }
+  }
+  @keyframes ruleWipe {
+    0%   { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes plateUp {
+    0%   { opacity: 0; transform: translateY(34px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes colorIn {
+    0%   { opacity: 0; transform: translateY(12px) scaleY(0.5); }
+    100% { opacity: 1; transform: translateY(0) scaleY(1); }
+  }
+  @keyframes entryIn {
+    0%   { opacity: 0; transform: translateX(-14px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scaleIn {
+    0%   { opacity: 0; transform: scale(0.965); filter: blur(2px); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+  @keyframes pulseDot {
+    from { transform: scale(1); opacity: 0.9; }
+    to   { transform: scale(1.35); opacity: 1; }
+  }
+
+  /*
+    SCENE TIMING - identical timeline to the master cut.
+    Each .scene gets revealHold over its window; the last scene HOLDS.
+    Total master = var(--film) = 89s.
+      s1  0    -> 11   ACT 1 open
+      s2  10.5 -> 9    dashboard struck / wrong answer
+      s3  19   -> 7    reframe: triage of exceptions
+      s4  26   -> 7    act2 kicker (three)
+      s5  32.5 -> 11   three editorial plates
+      s6  43   -> 6    visual-dialect color montage
+      s7  49   -> 6    act3 kicker (calmest)
+      s8  55   -> 16   five AI voices as editorial entries
+      s9  70.5 -> 8    silence ledger payoff
+      s10 78   -> 11   thesis + end card, LONG hold
+    Auto-plays from pure CSS; JS only adds pause + replay.
+  */
+  .scene { animation-fill-mode: both; }
+
+  #s1  { animation: revealHold 11s var(--ease) 0s both; }
+  #s2  { animation: revealHold 9s  var(--ease) 10.5s both; }
+  #s3  { animation: revealHold 7s  var(--ease) 19s both; }
+  #s4  { animation: revealHold 7s  var(--ease) 26s both; }
+  #s5  { animation: revealHold 11s var(--ease) 32.5s both; }
+  #s6  { animation: revealHold 6.2s var(--ease) 43s both; }
+  #s7  { animation: revealHold 6s  var(--ease) 49s both; }
+  #s8  { animation: revealHold 16s var(--ease) 55s both; }
+  #s9  { animation: revealHold 8s  var(--ease) 70.5s both; }
+
+  /* the very last scene holds (does not fade out) - long ending */
+  #s10 { animation: holdLast 11s var(--ease) 78s both; }
+  @keyframes holdLast {
+    0%  { opacity: 0; }
+    11% { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  /* ----- ACT 1 ----- */
+  #s1 .k1  { animation: reveal 1.3s var(--ease) 0.7s both; }
+  #s1 .rule1 { animation: ruleWipe 1.1s var(--ease) 2.4s both; transform-origin: left; }
+  #s1 .l1  { animation: setType 1.5s var(--ease) 3.0s both; }
+  #s1 .l1b { animation: setType 1.5s var(--ease) 4.0s both; }
+  #s1 .lfade { animation: dissolveOut 1.6s var(--ease) 9.2s both; }
+
+  #s2 .l3 { animation: reveal 1.4s var(--ease) 11.2s both; }
+  #s2 .strikeword { animation: setType 1.3s var(--ease) 12.2s both; }
+  #s2 .strikebar  { animation: strike 0.85s var(--ease) 14.0s both; transform-origin: left; }
+  #s2 .dissolveword { animation: dissolveOut 1.2s var(--ease) 15.3s both; }
+  #s2 .wrong { animation: stampIn 1.0s cubic-bezier(.2,1.4,.3,1) 16.3s both; }
+  #s2 .wrongkick { animation: reveal 1.0s var(--ease) 17.3s both; }
+
+  #s3 .k3 { animation: reveal 1.2s var(--ease) 19.4s both; }
+  #s3 .rule3 { animation: ruleWipe 1.0s var(--ease) 20.2s both; transform-origin: left; }
+  #s3 .reframe { animation: reveal 1.8s var(--ease) 20.8s both; }
+
+  /* ----- ACT 2 ----- */
+  #s4 .k4 { animation: reveal 1.3s var(--ease) 26.5s both; }
+  #s4 .l4a { animation: setType 1.4s var(--ease) 27.6s both; }
+  #s4 .l4b { animation: setType 1.4s var(--ease) 28.6s both; }
+
+  #s5 .plate1 { animation: plateUp 1.4s var(--ease) 33.0s both; }
+  #s5 .plate2 { animation: plateUp 1.4s var(--ease) 33.7s both; }
+  #s5 .plate3 { animation: plateUp 1.4s var(--ease) 34.4s both; }
+  #s5 .l5     { animation: reveal 1.5s var(--ease) 39.4s both; }
+
+  #s6 .k6     { animation: reveal 1.2s var(--ease) 43.4s both; }
+  #s6 .l6     { animation: reveal 1.3s var(--ease) 44.2s both; }
+  #s6 .col6   { animation: colorIn 0.7s var(--ease) calc(45.3s + var(--i) * 0.22s) both; }
+
+  /* ----- ACT 3 ----- */
+  #s7 .k7 { animation: reveal 1.3s var(--ease) 49.4s both; }
+  #s7 .l7 { animation: setType 1.5s var(--ease) 50.6s both; }
+
+  #s8 .k8 { animation: reveal 1.1s var(--ease) 55.4s both; }
+  #s8 .rule8 { animation: ruleWipe 1.0s var(--ease) 56.0s both; transform-origin: left; }
+  #s8 .entry { animation: entryIn 0.95s var(--ease) calc(56.4s + var(--i) * 2.4s) both; }
+  #s8 .entry .e-rule { animation: ruleWipe 0.8s var(--ease) calc(56.6s + var(--i) * 2.4s) both; transform-origin: left; }
+
+  #s9 .k9 { animation: reveal 1.2s var(--ease) 70.9s both; }
+  #s9 .l9a { animation: setType 1.6s var(--ease) 71.4s both; }
+  #s9 .l9b { animation: setType 1.6s var(--ease) 73.2s both; }
+
+  #s10 .rule10 { animation: ruleWipe 1.4s var(--ease) 78.6s both; transform-origin: left; }
+  #s10 .thesis1 { animation: reveal 2.0s var(--ease) 79.0s both; }
+  #s10 .thesis2 { animation: scaleIn 2.4s var(--ease) 80.8s both; }
+  #s10 .endcard { animation: reveal 1.6s var(--ease) 83.0s both; }
+
+  .dot { animation: pulseDot 3.2s ease-in-out infinite alternate; }
+
+  /* progress bar fills over the same master duration, auto-start via CSS */
+  .progress-fill { animation: fill var(--film) linear 0s both; }
+
+  /* ----- play/pause: freeze the ENTIRE timeline (incl. furniture + progress) ----- */
+  .paused .scene,
+  .paused .scene *,
+  .paused .furniture,
+  .paused .furniture *,
+  .paused .progress-fill,
+  .paused .dot { animation-play-state: paused !important; }
+
+  /* ----- replay: kill all animations one frame, force reflow, release -> restart at 0 ----- */
+  .reset .scene,
+  .reset .scene *,
+  .reset .furniture,
+  .reset .furniture *,
+  .reset .progress-fill,
+  .reset .dot { animation: none !important; }
+
+  /* ---------- ACT 1 / strike-through ---------- */
+  .l3 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(22px, 3.6vw, 44px);
+    color: var(--ink-soft);
+    letter-spacing: -0.01em;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .strikeword {
+    position: relative;
+    display: inline-block;
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(34px, 7vw, 86px);
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    opacity: 0;
+    line-height: 1;
+  }
+  .strikebar {
+    position: absolute;
+    left: -2%; top: 52%;
+    height: clamp(4px, 0.7vw, 8px);
+    width: 104%;
+    background: var(--accent);
+    border-radius: 2px;
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  .wrong {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(28px, 5.6vw, 66px);
+    letter-spacing: -0.03em;
+    color: var(--paper);
+    background: var(--accent);
+    padding: 0.08em 0.34em 0.16em;
+    border-radius: 3px;
+    opacity: 0;
+    display: inline-block;
+    box-shadow: 0 14px 30px -16px oklch(0.58 0.18 28 / 0.8);
+  }
+  .wrongkick {
+    font-family: var(--mono);
+    font-size: clamp(9px, 1.1vw, 12px);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--coral);
+    opacity: 0;
+  }
+
+  .reframe {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(24px, 4.4vw, 56px);
+    line-height: 1.14;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    max-width: 15em;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* a thin standing rule used across editorial scenes */
+  .erule {
+    width: clamp(40px, 8vw, 120px);
+    height: 2px;
+    background: var(--rule);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  /* ---------- ACT 2 - three editorial plates ---------- */
+  .plates {
+    display: flex;
+    gap: clamp(10px, 2.2vw, 26px);
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    max-width: 880px;
+    margin-bottom: 4%;
+  }
+  .plate {
+    flex: 1 1 0;
+    min-width: 0;
+    background: oklch(1 0 0 / 0.5);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: clamp(10px, 1.5vw, 18px) clamp(10px, 1.4vw, 16px) clamp(12px, 1.7vw, 20px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 0.9vw, 10px);
+    opacity: 0;
+    will-change: opacity, transform;
+    text-align: left;
+    position: relative;
+    box-shadow: 0 18px 40px -28px oklch(0.17 0.012 280 / 0.5);
+  }
+  .plate .p-folio {
+    font-family: var(--mono);
+    font-size: clamp(7px, 0.85vw, 10px);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--rule-soft);
+    padding-bottom: clamp(5px, 0.8vw, 8px);
+  }
+  .plate .p-head {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(14px, 1.9vw, 26px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .plate .p-sub {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(10px, 1.1vw, 14px);
+    color: var(--ink-soft);
+    line-height: 1.25;
+  }
+  .plate .p-rows { margin-top: auto; display: flex; flex-direction: column; gap: 5px; padding-top: clamp(6px,1vw,10px); }
+  .plate .prow { height: 1px; background: var(--rule-soft); }
+  .plate .prow.s { width: 64%; }
+  .plate .prow.ss { width: 42%; }
+  .plate .p-tag {
+    align-self: flex-start;
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: clamp(7px, 0.82vw, 9px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 3px;
+  }
+  .plate.quiet   .p-tag { color: var(--seaglass); border: 1px solid oklch(0.62 0.12 168 / 0.5); background: oklch(0.62 0.12 168 / 0.1); }
+  .plate.daybook .p-tag { color: var(--amber);    border: 1px solid oklch(0.66 0.13 72 / 0.5);  background: oklch(0.66 0.13 72 / 0.12); }
+  .plate.headline { background: var(--ink); border-color: var(--ink); }
+  .plate.headline .p-folio { color: oklch(0.7 0.01 280); border-color: oklch(0.7 0.01 280 / 0.3); }
+  .plate.headline .p-head  { color: var(--paper); }
+  .plate.headline .p-head .em { color: var(--accent); }
+  .plate.headline .p-sub   { color: oklch(0.78 0.01 280); }
+  .plate.headline .prow    { background: oklch(0.8 0.01 280 / 0.25); }
+  .plate.headline .p-tag   { color: var(--paper); border: 1px solid oklch(1 0 0 / 0.3); background: oklch(1 0 0 / 0.08); }
+
+  .l5 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(14px, 2.1vw, 26px);
+    color: var(--ink-soft);
+    letter-spacing: -0.005em;
+    max-width: 24em;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .l5 .accent { font-style: italic; color: var(--ink); }
+
+  /* ---------- ACT 2 - color montage (ink bars) ---------- */
+  .l6 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(22px, 4vw, 50px);
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .bars {
+    display: flex;
+    gap: clamp(8px, 1.4vw, 16px);
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: clamp(16px, 3vh, 32px);
+    height: clamp(70px, 13vh, 130px);
+  }
+  .col6 {
+    width: clamp(30px, 4.4vw, 60px);
+    border-radius: 4px 4px 2px 2px;
+    opacity: 0;
+    transform-origin: bottom;
+    will-change: opacity, transform;
+    position: relative;
+    box-shadow: 0 10px 24px -14px oklch(0.17 0.012 280 / 0.4);
+  }
+  .col6 .clab {
+    position: absolute;
+    bottom: -22px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: clamp(6px, 0.72vw, 9px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  /* ---------- ACT 3 - five voices as editorial entries ---------- */
+  .l7 {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(28px, 5.4vw, 68px);
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .l7 .accent { color: var(--accent); }
+
+  .entries {
+    display: flex;
+    flex-direction: column;
+    width: min(86%, 700px);
+    border-top: 1.5px solid var(--rule);
+  }
+  .entry {
+    display: grid;
+    grid-template-columns: clamp(94px, 13vw, 150px) 1fr;
+    align-items: baseline;
+    gap: clamp(12px, 2vw, 26px);
+    padding: clamp(8px, 1.5vh, 15px) 0 clamp(7px, 1.3vh, 13px);
+    position: relative;
+    text-align: left;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .entry .e-rule {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--rule-soft);
+    transform: scaleX(0);
+  }
+  .entry .e-label {
+    font-family: var(--mono);
+    font-size: clamp(9px, 1.05vw, 13px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .entry .e-label .ldot {
+    width: clamp(7px, 0.85vw, 10px);
+    height: clamp(7px, 0.85vw, 10px);
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+  .entry .e-text {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(14px, 1.95vw, 25px);
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+
+  .entry.think   .e-label { color: var(--cobalt); }   .entry.think   .ldot { background: var(--cobalt); }
+  .entry.conf    .e-label { color: var(--seaglass); } .entry.conf    .ldot { background: var(--seaglass); }
+  .entry.uncert  .e-label { color: var(--amber); }    .entry.uncert  .ldot { background: var(--amber); }
+  .entry.wrong   .e-label { color: var(--coral); }    .entry.wrong   .ldot { background: var(--coral); }
+  .entry.silent  .e-label { color: var(--ink-faint); }.entry.silent  .ldot { background: var(--ghost); }
+
+  /* uncertain entry: the type literally gets lighter */
+  .entry.uncert .e-text { color: oklch(0.55 0.01 280 / 0.7); font-weight: 300; }
+  /* silent entry: muted, set back */
+  .entry.silent .e-text { color: var(--ink-soft); }
+
+  /* ---------- ACT 3 - silence ledger ---------- */
+  .k9 {
+    font-family: var(--mono);
+    font-size: clamp(9px, 1.1vw, 12px);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    opacity: 0;
+  }
+  .l9a, .l9b {
+    font-family: var(--sans);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.0;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .l9a { font-size: clamp(24px, 4.4vw, 56px); color: var(--ink); }
+  .l9a .big { color: var(--accent); }
+  .l9b { font-size: clamp(22px, 4vw, 50px); color: var(--ink-soft); margin-top: clamp(8px,1.6vh,18px); }
+  .l9b .big { color: var(--seaglass); }
+
+  /* ---------- ACT 3 - thesis + end card ---------- */
+  .thesis1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(20px, 3.4vw, 42px);
+    line-height: 1.16;
+    letter-spacing: -0.008em;
+    color: var(--ink-soft);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .thesis2 {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(34px, 6.6vw, 82px);
+    line-height: 0.94;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .thesis2 .calm { color: var(--seaglass); }
+
+  .endcard {
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(8px, 1.6vh, 14px);
+    will-change: opacity, transform;
+  }
+  .endcard .ec-rule {
+    width: clamp(60px, 12vw, 150px);
+    height: 1.5px;
+    background: var(--rule);
+  }
+  .endcard .ec-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(14px, 1.8vw, 22px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .endcard .dot {
+    width: clamp(10px, 1.2vw, 14px);
+    height: clamp(10px, 1.2vw, 14px);
+    border-radius: 50%;
+    background: var(--seaglass);
+    box-shadow: 0 0 0 4px oklch(0.62 0.12 168 / 0.18);
+  }
+  .endcard .ec-credit {
+    font-family: var(--mono);
+    font-size: clamp(8px, 0.95vw, 11px);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- controls + progress ---------- */
+  .controls {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .progress {
+    position: relative;
+    height: 3px;
+    width: 100%;
+    border-radius: 99px;
+    background: oklch(0.4 0.02 280 / 0.4);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0 100% 0 0;
+    background: linear-gradient(90deg, var(--coral), var(--amber));
+    border-radius: 99px;
+    will-change: right;
+  }
+  @keyframes fill { from { right: 100%; } to { right: 0%; } }
+
+  .barrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btns { display: flex; gap: 10px; }
+  button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: oklch(0.82 0.01 280);
+    background: oklch(0.22 0.012 280 / 0.7);
+    border: 1px solid oklch(0.42 0.012 280 / 0.7);
+    border-radius: 99px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.12s var(--ease);
+  }
+  button:hover { color: oklch(0.98 0.005 95); border-color: oklch(0.6 0.04 30 / 0.8); background: oklch(0.28 0.02 280 / 0.8); }
+  button:active { transform: scale(0.97); }
+
+  .chapters {
+    display: flex;
+    gap: 26px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: oklch(0.6 0.01 280);
+  }
+  .chapters span::before { color: oklch(0.5 0.04 30); }
+  .chapters span:nth-child(1)::before { content: "01 / "; }
+  .chapters span:nth-child(2)::before { content: "02 / "; }
+  .chapters span:nth-child(3)::before { content: "03 / "; }
+
+  /* ---------- reduced motion: resting front page ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .stage::before { opacity: 0.5; }
+    .scene, .scene *, .furniture, .furniture * { animation: none !important; }
+    .scene { opacity: 0; }
+    .masthead, .footline { opacity: 1 !important; }
+    #s10 { opacity: 1; }
+    #s10 .rule10 { transform: scaleX(1); }
+    #s10 .thesis1, #s10 .thesis2, #s10 .endcard { opacity: 1; transform: none; filter: none; }
+    .progress-fill { right: 0; animation: none; }
+    .dot { animation: none; }
+    .rm-note { display: block; }
+  }
+  .rm-note {
+    display: none;
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    transform: translateY(-200px);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    z-index: 41;
+  }
+
+  @media (max-width: 560px) {
+    .chapters { display: none; }
+    .scene { padding: 13% 7% 11%; }
+  }
+</style>
+
+<div class="page">
+  <main class="stage" aria-label="Leo product film, Headline edition">
+
+    <!-- standing newspaper furniture -->
+    <div class="furniture" aria-hidden="true">
+      <div class="masthead">
+        <div class="mh-name">The Morning Command Center<span class="reg">LEO</span></div>
+        <div class="mh-meta">Vol. I &middot; A film by Ravindra Sisodia</div>
+      </div>
+      <div class="footline">
+        <span class="edition">Edition <span class="num">01</span> &middot; before coffee</span>
+        <span>Set in real time</span>
+      </div>
+    </div>
+
+    <div class="rm-note">reduced motion - front page at rest</div>
+
+    <div class="timeline" id="timeline">
+
+      <!-- ===================== ACT 1 - THE ORIGIN ===================== -->
+      <section class="scene col" id="s1">
+        <p class="kicker k1">A morning, before coffee.</p>
+        <div style="height: clamp(14px,3vh,30px)"></div>
+        <div class="erule rule1"></div>
+        <div style="height: clamp(14px,3vh,30px)"></div>
+        <div class="lfade">
+          <h1 class="head xl l1">A hundred agents</h1>
+          <h1 class="head xl l1b">worked all night.</h1>
+        </div>
+      </section>
+
+      <section class="scene" id="s2">
+        <p class="l3">So I built a</p>
+        <div style="height: clamp(8px,1.6vh,16px)"></div>
+        <p class="dissolveword">
+          <span class="strikeword">dashboard.<span class="strikebar"></span></span>
+        </p>
+        <div style="height: clamp(20px,4vh,44px)"></div>
+        <p class="wrongkick">Correction</p>
+        <div style="height: clamp(8px,1.4vh,14px)"></div>
+        <p class="wrong">Wrong answer.</p>
+      </section>
+
+      <section class="scene col" id="s3">
+        <p class="kicker k3">The reframe</p>
+        <div style="height: clamp(12px,2.4vh,24px)"></div>
+        <div class="erule rule3"></div>
+        <div style="height: clamp(14px,2.8vh,26px)"></div>
+        <p class="reframe">
+          It is not a dashboard.<br />It is a
+          <span class="accent ul-accent">triage of exceptions</span>.
+        </p>
+      </section>
+
+      <!-- ===================== ACT 2 - THE APPROACHES ===================== -->
+      <section class="scene col" id="s4">
+        <p class="kicker k4">I did not trust one idea.</p>
+        <div style="height: clamp(12px,2.6vh,26px)"></div>
+        <h1 class="head lg l4a">I built</h1>
+        <h1 class="head lg l4b">three.</h1>
+      </section>
+
+      <section class="scene" id="s5">
+        <div class="plates">
+          <article class="plate quiet plate1">
+            <div class="p-folio"><span>No. 01</span><span>Dark</span></div>
+            <div class="p-head">Quiet Capital</div>
+            <div class="p-sub">a private statement</div>
+            <div class="p-rows"><div class="prow"></div><div class="prow s"></div><div class="prow ss"></div></div>
+            <span class="p-tag">restraint</span>
+          </article>
+          <article class="plate daybook plate2">
+            <div class="p-folio"><span>No. 02</span><span>Warm</span></div>
+            <div class="p-head">Daybook</div>
+            <div class="p-sub">a warm ledger</div>
+            <div class="p-rows"><div class="prow"></div><div class="prow s"></div><div class="prow ss"></div></div>
+            <span class="p-tag">color as state</span>
+          </article>
+          <article class="plate headline plate3">
+            <div class="p-folio"><span>No. 03</span><span>Bold</span></div>
+            <div class="p-head">Three<br /><span class="em">need you.</span></div>
+            <div class="p-sub">the front page</div>
+            <div class="p-rows"><div class="prow"></div><div class="prow s"></div></div>
+            <span class="p-tag">type is triage</span>
+          </article>
+        </div>
+        <p class="l5">
+          Each one a working app. The choice between them <span class="accent">was the design.</span>
+        </p>
+      </section>
+
+      <section class="scene" id="s6">
+        <p class="kicker k6">The visual dialects</p>
+        <div style="height: clamp(10px,2vh,20px)"></div>
+        <p class="l6">A range, printed.</p>
+        <div class="bars">
+          <span class="col6" style="--i:0; height: 58%; background: var(--cobalt);"><span class="clab">thinking</span></span>
+          <span class="col6" style="--i:1; height: 86%; background: var(--seaglass);"><span class="clab">confident</span></span>
+          <span class="col6" style="--i:2; height: 70%; background: var(--amber);"><span class="clab">uncertain</span></span>
+          <span class="col6" style="--i:3; height: 46%; background: var(--coral);"><span class="clab">wrong</span></span>
+          <span class="col6" style="--i:4; height: 64%; background: oklch(0.55 0.07 320);"><span class="clab">handback</span></span>
+          <span class="col6" style="--i:5; height: 34%; background: var(--ghost);"><span class="clab">silent</span></span>
+        </div>
+      </section>
+
+      <!-- ===================== ACT 3 - THE ONE ===================== -->
+      <section class="scene col" id="s7">
+        <p class="kicker k7">The calmest of the three.</p>
+        <div style="height: clamp(12px,2.6vh,26px)"></div>
+        <h1 class="head md l7">Five voices.<br /><span class="accent">One currency: calm.</span></h1>
+      </section>
+
+      <section class="scene" id="s8">
+        <p class="kicker k8" style="margin-bottom: clamp(10px,2vh,20px);">How the AI speaks &middot; the masthead of states</p>
+        <div class="entries">
+          <div class="erule rule8" style="position:absolute"></div>
+          <div class="entry think" style="--i:0">
+            <span class="e-label"><span class="ldot"></span>Thinking</span>
+            <span class="e-text">it tells you what it is checking</span>
+            <span class="e-rule"></span>
+          </div>
+          <div class="entry conf" style="--i:1">
+            <span class="e-label"><span class="ldot"></span>Confident</span>
+            <span class="e-text">boring on purpose</span>
+            <span class="e-rule"></span>
+          </div>
+          <div class="entry uncert" style="--i:2">
+            <span class="e-label"><span class="ldot"></span>Uncertain</span>
+            <span class="e-text">the type gets lighter</span>
+            <span class="e-rule"></span>
+          </div>
+          <div class="entry wrong" style="--i:3">
+            <span class="e-label"><span class="ldot"></span>Wrong</span>
+            <span class="e-text">it never dead-ends</span>
+            <span class="e-rule"></span>
+          </div>
+          <div class="entry silent" style="--i:4">
+            <span class="e-label"><span class="ldot"></span>Silent</span>
+            <span class="e-text">it shows what it did not interrupt you for</span>
+            <span class="e-rule"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene" id="s9">
+        <p class="k9">The silence ledger</p>
+        <div style="height: clamp(14px,3vh,30px)"></div>
+        <p class="l9a">I handled <span class="big">47</span> things overnight.</p>
+        <p class="l9b">I chose not to wake you for <span class="big">six.</span></p>
+      </section>
+
+      <section class="scene col" id="s10">
+        <div class="erule rule10" style="margin-bottom: clamp(18px,4vh,40px)"></div>
+        <p class="thesis1">The agents are not the product.</p>
+        <div style="height: clamp(12px,2.4vh,26px)"></div>
+        <h1 class="thesis2">The <span class="calm">calm</span><br />is the product.</h1>
+        <div style="height: clamp(28px,6vh,64px)"></div>
+        <div class="endcard">
+          <div class="ec-rule"></div>
+          <div class="ec-brand"><span class="dot"></span>Leo - the morning command center</div>
+          <div class="ec-credit">by Ravindra Sisodia</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="controls">
+    <div class="progress" aria-hidden="true"><div class="progress-fill" id="fill"></div></div>
+    <div class="barrow">
+      <div class="btns">
+        <button id="playpause" aria-label="Play or pause the film">Pause</button>
+        <button id="replay" aria-label="Replay the film from the start">Replay</button>
+      </div>
+      <nav class="chapters" aria-label="chapters">
+        <span>Origin</span>
+        <span>Approaches</span>
+        <span>The One</span>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+  /*
+    The film auto-plays from pure CSS - this script is pure enhancement.
+    If it never runs (CSP, error), the timeline + progress bar still play.
+    Replay: suppress every animation, force reflow, release -> all restart at 0.
+    Pause:  toggle .paused on the page root -> animation-play-state: paused.
+  */
+  (function () {
+    var page = document.querySelector('.page');
+    var playpause = document.getElementById('playpause');
+    var replay = document.getElementById('replay');
+    if (!page || !playpause || !replay) return;
+
+    var paused = false;
+
+    function restart() {
+      page.classList.add('reset');
+      page.classList.remove('paused');
+      paused = false;
+      playpause.textContent = 'Pause';
+      // force reflow with animations suppressed, then release synchronously so
+      // every CSS animation restarts from 0 (no requestAnimationFrame needed)
+      void page.offsetWidth;
+      page.classList.remove('reset');
+    }
+
+    function toggle() {
+      paused = !paused;
+      page.classList.toggle('paused', paused);
+      playpause.textContent = paused ? 'Play' : 'Pause';
+    }
+
+    replay.addEventListener('click', restart);
+    playpause.addEventListener('click', toggle);
+  })();
+</script>

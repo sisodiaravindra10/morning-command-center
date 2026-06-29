@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Quiet Hours Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* base house palette (tinted toward 260), then a warmer DUSK overlay for this screen */
+  --ink:oklch(0.95 0.012 60); --body:oklch(0.82 0.018 50); --muted:oklch(0.62 0.02 55); --soft:oklch(0.50 0.022 58);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262);
+  --ghost:oklch(0.56 0.018 258);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+  /* dusk canvas: deep indigo bleeding into a warm charcoal */
+  --canvas:oklch(0.16 0.045 285);
+  --card:oklch(0.215 0.04 288);
+  --hair:oklch(0.92 0.02 60 / .09); --hair2:oklch(0.92 0.02 60 / .16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(120% 70% at 50% 112%, oklch(0.19 0.05 38 / .55), transparent 56%),
+    radial-gradient(130% 80% at 50% -8%, oklch(0.21 0.06 290), oklch(0.105 0.03 286) 60%, oklch(0.075 0.02 284));
+  font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased;
+}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.58 0.03 60)}
+
+/* ---------- phone frame ---------- */
+.phone{
+  position:relative; width:393px; height:810px; max-height:calc(100dvh - 110px);
+  background:var(--canvas); border-radius:54px; overflow:hidden;
+  box-shadow:0 0 0 11px oklch(0.115 0.025 286), 0 0 0 12px oklch(0.30 0.03 290), 0 40px 100px -22px oklch(0.05 0.04 290 / .85);
+}
+.island{position:absolute; top:13px; left:50%; transform:translateX(-50%); width:120px; height:33px; background:oklch(0.035 0.01 286); border-radius:20px; z-index:60}
+.screen{position:absolute; inset:0; color:var(--ink); overflow:hidden}
+
+/* dusk depth: a low warm horizon glow + a high indigo wash, painted into the screen */
+.sky{position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(120% 46% at 50% 118%, oklch(0.40 0.10 42 / .42), transparent 60%),
+    radial-gradient(120% 60% at 50% -12%, oklch(0.30 0.08 292 / .55), transparent 58%),
+    linear-gradient(180deg, oklch(0.175 0.05 288) 0%, oklch(0.135 0.035 286) 60%, oklch(0.135 0.04 30) 100%);
+}
+/* one slow drifting glow so the dusk feels alive but not busy */
+.sky::after{content:""; position:absolute; left:50%; bottom:-90px; width:340px; height:200px; transform:translateX(-50%);
+  background:radial-gradient(circle, oklch(0.55 0.12 44 / .22), transparent 66%); filter:blur(10px); animation:emberdrift 14s var(--exp) infinite}
+@keyframes emberdrift{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-46%) translateY(-16px) scale(1.07)}}
+
+/* iOS status bar */
+.status{position:absolute; top:0; left:0; right:0; height:54px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 30px 7px; z-index:55; pointer-events:none}
+.status .t{font-family:var(--sans); font-size:15px; font-weight:600; color:var(--ink)}
+.status .r{display:flex; align-items:center; gap:6px}
+.status .r .bat{width:24px; height:12px; border:1px solid oklch(0.92 0.02 60 / .55); border-radius:3px; position:relative; padding:1.5px}
+.status .r .bat::after{content:""; position:absolute; right:-3px; top:3.5px; width:2px; height:5px; border-radius:0 2px 2px 0; background:oklch(0.92 0.02 60 / .55)}
+.status .r .bat i{display:block; height:100%; width:62%; border-radius:1px; background:var(--ink)}
+
+/* ---------- content ---------- */
+.wrap{position:absolute; inset:0; z-index:10; padding:66px 22px 26px; display:flex; flex-direction:column; overflow-y:auto; -webkit-overflow-scrolling:touch}
+.wrap::-webkit-scrollbar{display:none}
+
+.head{display:flex; align-items:center; gap:9px; margin-bottom:3px}
+.head .o{width:14px; height:14px; border-radius:50%; flex:none;
+  background:radial-gradient(60% 60% at 33% 28%, oklch(0.93 0.06 200), oklch(0.66 0.16 262) 46%, oklch(0.35 0.11 272));
+  box-shadow:0 0 12px oklch(0.66 0.16 262 / .55); animation:breathe 6s var(--exp) infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.head .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+.head .lbl b{color:var(--body); font-weight:500}
+
+.title{font-family:var(--serif); font-size:32px; line-height:1.08; letter-spacing:-.01em; color:var(--ink); margin:14px 2px 4px}
+.sub{font-family:var(--sans); font-size:13.5px; line-height:1.5; color:var(--body); margin:0 2px 0}
+.sub b{color:var(--ink); font-weight:600}
+
+.window-tag{display:inline-flex; align-items:center; gap:7px; margin:16px 2px 6px; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--soft)}
+.window-tag .ln{height:1px; flex:1; background:linear-gradient(90deg,var(--hair2),transparent)}
+
+/* ---------- the batched timeline ---------- */
+.timeline{position:relative; margin:6px 0 0; padding-left:24px}
+.timeline::before{content:""; position:absolute; left:6px; top:6px; bottom:14px; width:1.5px;
+  background:linear-gradient(180deg, oklch(0.5 0.04 60 / .35), oklch(0.5 0.04 60 / .12) 70%, transparent)}
+
+.ev{position:relative; padding:12px 0 14px; opacity:0; transform:translateY(10px); animation:rise 1s var(--exp) forwards}
+.ev::before{content:""; position:absolute; left:-23.5px; top:17px; width:9px; height:9px; border-radius:50%;
+  background:var(--ec,var(--confident)); box-shadow:0 0 0 4px oklch(0.16 0.045 285), 0 0 9px var(--ec,var(--confident))}
+.ev .row{display:flex; align-items:baseline; gap:10px}
+.ev .tm{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--soft); flex:none; width:48px}
+.ev .body{flex:1}
+.ev .line{font-family:var(--sans); font-size:14.5px; line-height:1.4; color:var(--ink); font-weight:500}
+.ev .meta{display:flex; align-items:center; gap:8px; margin-top:5px}
+.ev .skill{font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:var(--soft)}
+.ev .badge{font-family:var(--mono); font-size:9px; letter-spacing:.07em; text-transform:uppercase; color:var(--ec,var(--confident));
+  border:1px solid color-mix(in oklch, var(--ec,var(--confident)) 38%, transparent); border-radius:20px; padding:2.5px 8px}
+
+/* one item gently flagged for tomorrow - amber, calm, not urgent */
+.ev.flag{--ec:var(--uncertain)}
+.ev.flag .line{color:var(--ink)}
+.ev.flag .body{background:oklch(0.82 0.12 72 / .07); border:1px solid oklch(0.82 0.12 72 / .2); border-radius:14px; padding:11px 13px; margin-top:-3px}
+.ev.flag .defer{margin-top:9px; font-family:var(--serif); font-style:italic; font-size:13px; line-height:1.4; color:oklch(0.86 0.07 74)}
+
+.ev.e1{animation-delay:.15s} .ev.e2{animation-delay:.35s} .ev.e3{animation-delay:.55s}
+.ev.e4{animation-delay:.75s} .ev.e5{animation-delay:.95s} .ev.e6{animation-delay:1.15s}
+@keyframes rise{to{opacity:1; transform:translateY(0)}}
+
+/* batched count line under the stream */
+.batched{display:flex; align-items:center; gap:9px; margin:4px 2px 0; padding-left:24px;
+  font-family:var(--mono); font-size:11px; color:var(--muted); opacity:0; animation:rise 1s var(--exp) 1.35s forwards}
+.batched .dot{width:6px; height:6px; border-radius:50%; background:var(--ghost); box-shadow:0 0 0 4px oklch(0.56 0.018 258 / .14); flex:none}
+.batched b{color:var(--body); font-weight:500}
+
+/* ---------- the closing exhale ---------- */
+.exhale{margin-top:28px; padding-top:24px; border-top:1px solid var(--hair); display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; padding-bottom:8px}
+.exhale .orbwrap{position:relative; width:54px; height:54px; display:flex; align-items:center; justify-content:center}
+/* the Leo orb, alive, then dims to ghost-slate */
+.exhale .orb{width:17px; height:17px; border-radius:50%;
+  background:radial-gradient(60% 60% at 34% 30%, oklch(0.93 0.07 200), oklch(0.66 0.16 262) 46%, oklch(0.35 0.11 272));
+  box-shadow:0 0 22px oklch(0.66 0.16 262 / .55);
+  animation:breathe 6s var(--exp) infinite, dim 3.2s var(--exp) 2.6s forwards}
+.exhale .ring{position:absolute; inset:0; margin:auto; width:17px; height:17px; border-radius:50%;
+  border:1.5px solid oklch(0.66 0.16 262 / .45); animation:halo 3s var(--exp) infinite, ringfade 3.2s var(--exp) 2.6s forwards}
+/* dim: orb desaturates and cools toward muted ghost-slate, glow dies */
+@keyframes dim{
+  0%{background:radial-gradient(60% 60% at 34% 30%, oklch(0.93 0.07 200), oklch(0.66 0.16 262) 46%, oklch(0.35 0.11 272)); box-shadow:0 0 22px oklch(0.66 0.16 262 / .55)}
+  100%{background:radial-gradient(60% 60% at 34% 30%, oklch(0.66 0.012 258), oklch(0.50 0.014 260) 50%, oklch(0.34 0.014 262)); box-shadow:0 0 10px oklch(0.56 0.018 258 / .25)}
+}
+@keyframes ringfade{to{opacity:0}}
+@keyframes halo{0%{transform:scale(1); opacity:.5}100%{transform:scale(2.7); opacity:0}}
+
+.exhale .l1{font-family:var(--serif); font-size:25px; line-height:1.28; color:var(--ink); max-width:280px}
+.exhale .l2{font-family:var(--serif); font-style:italic; font-size:25px; line-height:1.28; color:oklch(0.74 0.02 60); max-width:280px}
+.exhale .l2.dimmed{color:var(--ghost); transition:color 1.6s var(--exp)}
+.exhale .note{font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); margin-top:2px}
+
+@keyframes rise2{to{opacity:1; transform:translateY(0)}}
+.exhale .orbwrap, .exhale .l1, .exhale .l2, .exhale .note{opacity:0; transform:translateY(8px); animation:rise2 1.2s var(--exp) forwards}
+.exhale .orbwrap{animation-delay:1.55s}
+.exhale .l1{animation-delay:1.85s}
+.exhale .l2{animation-delay:2.25s}
+.exhale .note{animation-delay:2.7s}
+
+/* reduced motion: all visible, no movement, orb shown in dimmed rest state */
+@media (prefers-reduced-motion: reduce){
+  .head .o, .sky::after, .ev, .batched, .exhale .orbwrap, .exhale .l1, .exhale .l2, .exhale .note,
+  .exhale .orb, .exhale .ring{animation:none}
+  .ev, .batched, .exhale .orbwrap, .exhale .l1, .exhale .l2, .exhale .note{opacity:1; transform:none}
+  .exhale .ring{opacity:0}
+  .exhale .orb{background:radial-gradient(60% 60% at 34% 30%, oklch(0.66 0.012 258), oklch(0.50 0.014 260) 50%, oklch(0.34 0.014 262)); box-shadow:0 0 10px oklch(0.56 0.018 258 / .25)}
+  .exhale .l2{color:var(--ghost)}
+}
+
+/* ---------- replay control ---------- */
+.controls{display:flex; gap:8px}
+.controls button{font-family:var(--sans); font-size:13px; font-weight:500; color:var(--body); background:oklch(0.92 0.02 60 / .06); border:1px solid var(--hair2); border-radius:11px; padding:10px 16px; cursor:pointer; transition:color .2s, background .2s}
+.controls button:hover{color:var(--ink); background:oklch(0.92 0.02 60 / .12)}
+.controls button:active{transform:scale(.97)}
+
+/* visible keyboard focus indicator (accent ring) */
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="cap">Quiet Hours Recap - the day, put to bed.</div>
+
+<div class="phone">
+  <div class="island"></div>
+  <div class="status">
+    <span class="t">10:48</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11" aria-hidden="true"><g fill="var(--ink)"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></g></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" aria-hidden="true" fill="none"><path d="M7.5 3.2C9.3 3.2 10.9 3.9 12 5L13.4 3.5C11.9 2 9.8 1.1 7.5 1.1S3.1 2 1.6 3.5L3 5C4.1 3.9 5.7 3.2 7.5 3.2Z" fill="var(--ink)"/><path d="M7.5 6C8.5 6 9.4 6.4 10 7L7.5 9.6L5 7C5.6 6.4 6.5 6 7.5 6Z" fill="var(--ink)"/></svg>
+      <span class="bat"><i></i></span>
+    </span>
+  </div>
+
+  <div class="screen" id="screen">
+    <div class="sky"></div>
+
+    <div class="wrap">
+      <div class="head"><span class="o"></span><span class="lbl">Leo · <b>quiet hours</b></span></div>
+      <h1 class="title">While you<br>were off</h1>
+      <p class="sub">Six things moved after 6pm. <b>Five I handled.</b> One I left for the morning.</p>
+
+      <div class="window-tag"><span>6:02 pm - 10:40 pm</span><span class="ln"></span></div>
+
+      <div class="timeline">
+
+        <div class="ev e1">
+          <div class="row">
+            <span class="tm">6:41 pm</span>
+            <div class="body">
+              <div class="line">Buyer agent replied on Oak St</div>
+              <div class="meta"><span class="skill">leo.thread-watch</span><span class="badge">logged</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ev e2">
+          <div class="row">
+            <span class="tm">7:58 pm</span>
+            <div class="body">
+              <div class="line">Two new leads qualified and queued for 8am</div>
+              <div class="meta"><span class="skill">leo.intake</span><span class="badge">queued</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ev e3">
+          <div class="row">
+            <span class="tm">8:33 pm</span>
+            <div class="body">
+              <div class="line">Crestview inspection scheduled</div>
+              <div class="meta"><span class="skill">leo.scheduling</span><span class="badge">confirmed</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ev e4">
+          <div class="row">
+            <span class="tm">9:15 pm</span>
+            <div class="body">
+              <div class="line">Maplewood seller disclosure filed to the deal</div>
+              <div class="meta"><span class="skill">leo.docs</span><span class="badge">filed</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- the one gentle hold for tomorrow: amber, calm, not urgent -->
+        <div class="ev e5 flag">
+          <div class="row">
+            <span class="tm">9:52 pm</span>
+            <div class="body">
+              <div class="line">Henderson asked to move closing up a day</div>
+              <div class="meta"><span class="skill">leo.read</span><span class="badge">your call</span></div>
+              <div class="defer">No deadline tonight. I held it for your morning - a yes touches the lender and the title company.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ev e6">
+          <div class="row">
+            <span class="tm">10:40 pm</span>
+            <div class="body">
+              <div class="line">Eight routine touches logged to the CRM</div>
+              <div class="meta"><span class="skill">leo.upkeep</span><span class="badge">auto</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="batched"><span class="dot"></span><span><b>31 smaller items</b> batched, none needed you.</span></div>
+
+      <div class="exhale">
+        <div class="orbwrap"><span class="ring"></span><span class="orb" id="orb"></span></div>
+        <div class="l1">Nothing needs you tonight.</div>
+        <div class="l2" id="exhaleLine">Sleep.</div>
+        <div class="note">Leo is going quiet until 6am</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="replay">↻ Replay</button>
+</div>
+
+<script>
+// When the orb finishes dimming, gently settle the closing word to ghost-slate too.
+function settle(root){
+  const line = root.querySelector('#exhaleLine');
+  // matches the orb 'dim' end (2.6s delay + 3.2s duration). Pure state change, single timeout.
+  const t = setTimeout(()=> line && line.classList.add('dimmed'), 5800);
+  root.__settleTimer = t;
+}
+
+// Replay: clone the screen so every CSS animation-delay timeline restarts cleanly.
+const replay = document.getElementById('replay');
+replay.addEventListener('click', ()=>{
+  const old = document.getElementById('screen');
+  if(old.__settleTimer) clearTimeout(old.__settleTimer);
+  const fresh = old.cloneNode(true);
+  // strip the carried-over dimmed state before re-running
+  const fl = fresh.querySelector('#exhaleLine'); if(fl) fl.classList.remove('dimmed');
+  old.replaceWith(fresh);
+  fresh.getBoundingClientRect(); // reflow to re-trigger the timeline
+  settle(fresh);
+});
+settle(document.getElementById('screen'));
+
+// Boot-time keyboard sweep: make any non-native click target operable by keyboard.
+// Runs after the DOM is ready (script is at end of body). Skips real <button>/<a>.
+(function(){
+  // primary interactive row/card/item/tab/pill classes used in this file's prototypes
+  var INTERACTIVE = '.row, .card, .item, .tab, .pill';
+  function upgrade(el){
+    if(!el) return;
+    var tag = el.tagName;
+    if(tag === 'BUTTON' || tag === 'A') return; // already keyboard-operable
+    if(el.hasAttribute('role') && el.getAttribute('role') === 'button') {
+      // ensure focusable even if role was pre-set
+      if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+      return;
+    }
+    if(!el.setAttribute) return;
+    el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  }
+  // 1) every element with an inline onclick that is not a native button/anchor
+  document.querySelectorAll('[onclick]').forEach(upgrade);
+  // 2) primary interactive classes ONLY if they are click-bound via onclick
+  document.querySelectorAll(INTERACTIVE).forEach(function(el){
+    if(el.hasAttribute('onclick')) upgrade(el);
+  });
+
+  // One document-level keydown listener: Enter/Space activates a focused upgraded target.
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    var t = e.target;
+    if(!t || !t.tagName) return;
+    var tag = t.tagName;
+    // never hijack typing inside form fields / editable regions
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable) return;
+    // native button/anchor handle their own keyboard activation
+    if(tag === 'BUTTON' || tag === 'A') return;
+    if(t.getAttribute && t.getAttribute('role') === 'button' && typeof t.click === 'function'){
+      e.preventDefault();
+      t.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>

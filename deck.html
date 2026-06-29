@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The morning command center - Real + Leo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* surface - dark premium, matched to command-center.html */
+  --paper: #0A0B10;
+  --card: #15171F;
+  --sunken: #0F1016;
+  --hair: rgba(174,194,246,0.12);
+  --hair-soft: rgba(174,194,246,0.07);
+  --shadow: 0 20px 44px -22px rgba(0,0,0,0.72);
+  --shadow-lift: 0 34px 80px -38px rgba(0,0,0,0.8);
+
+  /* ink */
+  --ink: #F1F3FA;
+  --body: #BCC1D2;
+  --muted: #828AA0;
+
+  /* two poles: periwinkle = calm, AI, interactive; warm sand = needs you */
+  --seaglass: #AEC2F6;
+  --amber: #C9AC85;
+  --coral: #E7C79C;
+  --cobalt: #AEC2F6;
+  --accent: #AEC2F6;
+
+  --seaglass-text: #AEC2F6;
+  --amber-text: #D2B68C;
+  --coral-text: #ECCBA0;
+
+  --seaglass-tint: rgba(174,194,246,0.14);
+  --amber-tint: rgba(201,172,133,0.14);
+  --coral-tint: rgba(231,199,156,0.14);
+  --cobalt-tint: rgba(174,194,246,0.16);
+
+  --serif: 'Host Grotesk', 'Inter', system-ui, sans-serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease: cubic-bezier(.16,1,.3,1);
+
+  --r-card: 18px;
+  --r-chip: 9px;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html,body{ height:100%; }
+
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(130% 90% at 50% -12%, #16181F 0%, var(--paper) 52%, #060709 100%);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+
+::selection{ background:var(--cobalt-tint); }
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:3px; border-radius:8px; }
+
+/* ---------- stage ---------- */
+.stage{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:clamp(16px, 3.2vw, 56px);
+}
+
+.deck{
+  position:relative;
+  width:min(94vw, calc(88vh * 16 / 9));
+  aspect-ratio:16 / 9;
+  border-radius:22px;
+  background:var(--card);
+  border:1px solid var(--hair);
+  box-shadow:var(--shadow-lift);
+  overflow:hidden;
+}
+
+/* paper grain on the stage edges, very faint */
+.deck::after{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(140% 120% at 100% 0%, rgba(174,194,246,0) 55%, rgba(174,194,246,0.06) 100%);
+  mix-blend-mode:multiply;
+  opacity:.5;
+}
+
+.slide{
+  position:absolute;
+  inset:0;
+  padding:clamp(26px, 4.4vw, 76px);
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+}
+.slide.active{ display:flex; }
+
+/* entrance choreography */
+.slide.active .rise{
+  animation:rise .56s var(--ease) both;
+}
+.slide.active .rise:nth-child(1){ animation-delay:.02s; }
+.slide.active .rise:nth-child(2){ animation-delay:.09s; }
+.slide.active .rise:nth-child(3){ animation-delay:.16s; }
+.slide.active .rise:nth-child(4){ animation-delay:.23s; }
+.slide.active .rise:nth-child(5){ animation-delay:.30s; }
+.slide.active .rise:nth-child(6){ animation-delay:.37s; }
+.slide.active .rise:nth-child(7){ animation-delay:.44s; }
+
+@keyframes rise{
+  from{ opacity:0; transform:translateY(13px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* ---------- type system ---------- */
+.kicker{
+  font-family:var(--mono);
+  font-size:clamp(9px, .8vw, 11.5px);
+  letter-spacing:.16em;
+  text-transform:none;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.kicker .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.kicker .num{ color:var(--muted); opacity:.7; }
+
+h1{
+  font-family:var(--serif);
+  font-weight:500;
+  letter-spacing:-0.01em;
+  line-height:1.02;
+  color:var(--ink);
+  font-size:clamp(34px, 5.4vw, 82px);
+}
+h2{
+  font-family:var(--serif);
+  font-weight:500;
+  letter-spacing:-0.008em;
+  line-height:1.06;
+  color:var(--ink);
+  font-size:clamp(26px, 3.6vw, 52px);
+}
+.lede{
+  font-family:var(--serif);
+  font-weight:400;
+  line-height:1.28;
+  color:var(--body);
+  font-size:clamp(16px, 1.85vw, 27px);
+  max-width:30ch;
+}
+.body{
+  font-size:clamp(13px, 1.12vw, 17px);
+  line-height:1.55;
+  color:var(--body);
+  max-width:54ch;
+}
+.body strong{ color:var(--ink); font-weight:600; }
+em{ font-style:italic; color:var(--ink); }
+
+.serifmark{ font-family:var(--serif); font-style:italic; color:var(--ink); }
+
+/* ---------- chrome: footer + controls ---------- */
+.footer{
+  position:absolute;
+  left:clamp(26px,4.4vw,76px);
+  right:clamp(26px,4.4vw,76px);
+  bottom:clamp(16px,2.2vw,30px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:none;
+  color:var(--muted);
+  z-index:5;
+}
+.footer .brand{ color:var(--ink); opacity:.75; }
+.footer .brand b{ font-weight:500; }
+
+.controls{
+  position:fixed;
+  bottom:clamp(14px, 2.4vw, 26px);
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  z-index:30;
+}
+.controls button{
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:500;
+  color:var(--body);
+  background:var(--card);
+  border:1px solid var(--hair);
+  border-radius:999px;
+  padding:9px 16px;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:transform .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.controls button:hover{ transform:translateY(-1px); color:var(--ink); border-color:rgba(174,194,246,0.22); }
+.controls button:disabled{ opacity:.4; cursor:default; transform:none; }
+.controls .count{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--muted);
+  min-width:52px;
+  text-align:center;
+}
+
+/* progress rail */
+.rail{
+  position:fixed;
+  top:0; left:0;
+  height:3px;
+  background:var(--accent);
+  width:0;
+  z-index:40;
+  transition:width .4s var(--ease);
+  opacity:.85;
+}
+
+/* ---------- reusable layout ---------- */
+.two-col{
+  display:grid;
+  grid-template-columns:1.05fr 1fr;
+  gap:clamp(28px, 4vw, 64px);
+  align-items:center;
+  height:100%;
+}
+.col{ display:flex; flex-direction:column; gap:clamp(14px,1.6vw,22px); }
+.stack-sm{ display:flex; flex-direction:column; gap:10px; }
+.spacer{ flex:1; }
+
+/* state chip (confidence language) */
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.1em;
+  text-transform:none;
+  padding:5px 10px;
+  border-radius:var(--r-chip);
+  width:max-content;
+}
+.chip .d{ width:7px; height:7px; border-radius:50%; }
+.chip.sea{ background:var(--seaglass-tint); color:var(--seaglass-text); }
+.chip.sea .d{ background:var(--seaglass); }
+.chip.amb{ background:var(--amber-tint); color:var(--amber-text); }
+.chip.amb .d{ background:var(--amber); }
+.chip.cor{ background:var(--coral-tint); color:var(--coral-text); }
+.chip.cor .d{ background:var(--coral); }
+.chip.cob{ background:var(--cobalt-tint); color:var(--cobalt); }
+.chip.cob .d{ background:var(--cobalt); }
+.chip.ghost{ background:rgba(174,194,246,0.06); color:var(--muted); }
+.chip.ghost .d{ background:var(--muted); }
+
+/* card (a triage item etc) */
+.card{
+  background:var(--card);
+  border:1px solid var(--hair);
+  border-radius:var(--r-card);
+  padding:clamp(13px,1.4vw,18px) clamp(15px,1.6vw,20px);
+  box-shadow:0 10px 26px -20px rgba(0,0,0,0.45);
+  position:relative;
+}
+.card .edge{
+  position:absolute; left:0; top:14px; bottom:14px;
+  width:3px; border-radius:3px;
+}
+.card.cor .edge{ background:var(--coral); }
+.card.amb .edge{ background:var(--amber); }
+.card.sea .edge{ background:var(--seaglass); }
+.card .ctitle{
+  font-family:var(--serif);
+  font-size:clamp(15px,1.5vw,21px);
+  font-weight:500;
+  color:var(--ink);
+  line-height:1.18;
+}
+.card .cwhy{
+  font-size:clamp(11.5px,1vw,14px);
+  color:var(--body);
+  line-height:1.42;
+  margin-top:4px;
+}
+.card .cmeta{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:none;
+  color:var(--muted);
+  margin-top:8px;
+}
+.card-pad{ padding-left:clamp(22px,2vw,30px); }
+
+/* numbered design-decision list */
+.changes{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px 26px; }
+.change{ display:flex; gap:14px; align-items:flex-start; }
+.change .n{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:clamp(18px,1.9vw,26px);
+  color:var(--accent);
+  line-height:1;
+  min-width:1.4ch;
+}
+.change .t{
+  font-size:clamp(12.5px,1.05vw,16px);
+  font-weight:600;
+  color:var(--ink);
+  line-height:1.25;
+}
+.change .s{
+  font-size:clamp(11px,.92vw,13.5px);
+  color:var(--body);
+  line-height:1.4;
+  margin-top:3px;
+}
+
+/* source / citation line */
+.cite{
+  font-family:var(--mono);
+  font-size:clamp(9px,.78vw,11px);
+  letter-spacing:.05em;
+  color:var(--muted);
+  line-height:1.5;
+  border-left:2px solid var(--hair);
+  padding-left:12px;
+}
+
+/* three-state voice columns */
+.voices{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.voice{
+  background:var(--card);
+  border:1px solid var(--hair);
+  border-radius:var(--r-card);
+  padding:clamp(14px,1.5vw,20px);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.voice .say{
+  font-family:var(--serif);
+  font-size:clamp(13px,1.25vw,18px);
+  line-height:1.32;
+  color:var(--ink);
+}
+.voice .note{
+  font-size:clamp(10.5px,.9vw,13px);
+  color:var(--body);
+  line-height:1.4;
+}
+
+/* big quiet ledger figure (used sparingly, not a metric-template) */
+.ledger{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  font-family:var(--serif);
+}
+.ledger .big{ font-size:clamp(40px,6vw,90px); font-weight:500; color:var(--ink); line-height:.9; letter-spacing:-0.02em; }
+.ledger .lab{ font-size:clamp(13px,1.2vw,18px); color:var(--body); font-style:italic; }
+
+/* dead-end before/after */
+.deadend{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.de-card{
+  border-radius:var(--r-card);
+  padding:clamp(14px,1.5vw,20px);
+  border:1px solid var(--hair);
+}
+.de-card.was{ background:var(--sunken); }
+.de-card.now{ background:var(--card); box-shadow:var(--shadow); }
+.de-card .tag{
+  font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:none;
+  color:var(--muted); margin-bottom:8px;
+}
+.de-card.now .tag{ color:var(--accent); }
+.de-card .line{ font-size:clamp(12px,1vw,15px); color:var(--body); line-height:1.5; }
+.de-card .line + .line{ margin-top:7px; }
+
+/* range strip - the explored variants + skins */
+.swatches{ display:flex; gap:7px; flex-wrap:wrap; }
+.sw{
+  width:clamp(26px,2.6vw,40px); height:clamp(34px,3.4vw,52px);
+  border-radius:8px; border:1px solid var(--hair);
+}
+.skins{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px; }
+.skin{
+  border-radius:14px; border:1px solid var(--hair); overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.skin .top{ height:clamp(40px,4.4vw,66px); }
+.skin .cap{
+  padding:9px 11px; font-size:clamp(10.5px,.92vw,13.5px); color:var(--body); line-height:1.3;
+  background:var(--card);
+}
+.skin .cap b{ color:var(--ink); display:block; font-weight:600; font-size:clamp(11px,1vw,14.5px); margin-bottom:2px; }
+
+/* phone mock for the lead-screen slide */
+.phone{
+  width:clamp(190px, 22vw, 300px);
+  aspect-ratio:9 / 18.6;
+  border-radius:30px;
+  background:var(--paper);
+  padding:11px 11px 0;
+  box-shadow:
+    0 0 0 9px oklch(0.23 0.012 60),
+    0 0 0 11px oklch(0.31 0.012 60),
+    0 36px 80px -32px oklch(0.30 0.03 60 / 0.5);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  margin-inline:auto;
+}
+.phone .status{
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:9px; color:var(--muted); padding:3px 6px 9px;
+  letter-spacing:.04em;
+}
+.phone .greet{ font-family:var(--serif); font-size:clamp(15px,1.55vw,21px); color:var(--ink); line-height:1.15; padding:0 6px 3px; }
+.phone .sub{ font-size:clamp(9.5px,.85vw,12px); color:var(--muted); padding:0 6px 12px; }
+.phone .mini{
+  background:var(--card); border:1px solid var(--hair); border-radius:13px;
+  padding:9px 11px; margin:0 4px 8px; position:relative;
+}
+.phone .mini .e{ position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:3px; }
+.phone .mini.cor .e{ background:var(--coral); }
+.phone .mini.amb .e{ background:var(--amber); }
+.phone .mini.sea .e{ background:var(--seaglass); }
+.phone .mini .h{ font-family:var(--serif); font-size:clamp(11px,1.05vw,14.5px); color:var(--ink); line-height:1.2; padding-left:8px; }
+.phone .mini .w{ font-size:clamp(8.5px,.78vw,11px); color:var(--body); line-height:1.35; padding-left:8px; margin-top:2px; }
+.phone .mini .m{ font-family:var(--mono); font-size:8px; letter-spacing:.06em; text-transform:none; color:var(--muted); padding-left:8px; margin-top:5px; }
+.phone .quiet{
+  margin:auto 4px 12px; padding:9px 11px; border-radius:13px;
+  background:var(--sunken); font-size:clamp(9px,.8vw,11.5px); color:var(--body); line-height:1.4;
+}
+.phone .quiet b{ color:var(--ink); font-weight:600; }
+
+/* orb (idle breathing) */
+.orb{
+  width:14px; height:14px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, oklch(0.78 0.09 280), var(--cobalt));
+  box-shadow:0 0 0 0 var(--cobalt-tint);
+  animation:breathe 3.4s var(--ease) infinite;
+}
+@keyframes breathe{
+  0%,100%{ transform:scale(1); box-shadow:0 0 0 0 oklch(0.62 0.10 280 / 0.20); }
+  50%{ transform:scale(1.12); box-shadow:0 0 0 7px oklch(0.62 0.10 280 / 0); }
+}
+
+/* title slide ornament: the three things, abstracted */
+.title-marks{ display:flex; gap:12px; align-items:center; }
+.title-marks .bar{ width:40px; height:3px; border-radius:3px; }
+
+.close-line{
+  font-family:var(--serif);
+  font-size:clamp(22px,3vw,46px);
+  line-height:1.18;
+  color:var(--ink);
+  font-weight:500;
+  max-width:18ch;
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .slide.active .rise{ animation:none !important; }
+  .orb{ animation:none; }
+  .rail{ transition:none; }
+  .controls button{ transition:none; }
+}
+
+@media (max-width:760px){
+  .two-col{ grid-template-columns:1fr; gap:18px; }
+  .changes{ grid-template-columns:1fr; }
+  .voices{ grid-template-columns:1fr; }
+  .phone{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="rail" id="rail"></div>
+
+<main class="stage" role="region" aria-roledescription="carousel" aria-label="Walkthrough slides">
+  <div class="deck" id="deck">
+
+    <!-- 1 :: TITLE -->
+    <section class="slide active" data-i="1">
+      <div class="rise kicker"><span class="dot"></span> Real - Lead AI Product Designer <span class="num">// a calm morning surface for a team lead</span></div>
+      <div style="height:clamp(14px,2vw,26px)"></div>
+      <h1 class="rise" style="max-width:11ch">The morning command center</h1>
+      <div style="height:clamp(12px,1.4vw,18px)"></div>
+      <p class="rise lede">A once-a-day screen that shows a real-estate team lead the few things that actually need her, and proves it can be trusted with the rest.</p>
+      <div style="height:clamp(16px,2vw,26px)"></div>
+      <div class="rise title-marks">
+        <span class="bar" style="background:var(--coral)"></span>
+        <span class="bar" style="background:var(--amber)"></span>
+        <span class="bar" style="background:var(--seaglass)"></span>
+        <span style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:none;color:var(--muted)">three things, ranked, honest about each</span>
+      </div>
+      <div class="footer">
+        <span class="brand"><b>Real</b> + Leo</span>
+        <span>the app does the sorting, the human keeps the judgment</span>
+      </div>
+    </section>
+
+    <!-- 2 :: THE PROBLEM -->
+    <section class="slide" data-i="2">
+      <div class="two-col">
+        <div class="col">
+          <div class="rise kicker"><span class="dot"></span> the problem</div>
+          <h2 class="rise">A dashboard does not tell you what to do.</h2>
+          <p class="rise body">Every tool a team lead owns shows her <strong>activity</strong>: inboxes, pipelines, counts, charts. Then it leaves the triage to her. She opens the app, scans numbers, and works out the morning herself.</p>
+          <p class="rise body">That sorting is the tax. Information overload affects about <strong>46.7 percent</strong> of dashboard users, and working memory only holds three to five items at once. A screen full of metrics is asking her to do the hard part by hand.</p>
+        </div>
+        <div class="col rise">
+          <div class="card" style="background:var(--sunken);box-shadow:none">
+            <div class="cmeta" style="margin-top:0">today, the app now</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px">
+              <div style="background:var(--card);border:1px solid var(--hair);border-radius:11px;padding:11px"><div style="font-family:var(--serif);font-size:clamp(18px,2vw,28px);color:var(--ink)">14</div><div style="font-size:11px;color:var(--muted)">new leads</div></div>
+              <div style="background:var(--card);border:1px solid var(--hair);border-radius:11px;padding:11px"><div style="font-family:var(--serif);font-size:clamp(18px,2vw,28px);color:var(--ink)">$9.5M</div><div style="font-size:11px;color:var(--muted)">pipeline</div></div>
+              <div style="background:var(--card);border:1px solid var(--hair);border-radius:11px;padding:11px"><div style="font-family:var(--serif);font-size:clamp(18px,2vw,28px);color:var(--ink)">6</div><div style="font-size:11px;color:var(--muted)">closings</div></div>
+              <div style="background:var(--card);border:1px solid var(--hair);border-radius:11px;padding:11px"><div style="font-family:var(--serif);font-size:clamp(18px,2vw,28px);color:var(--ink)">31</div><div style="font-size:11px;color:var(--muted)">tasks</div></div>
+            </div>
+            <p style="font-size:12px;color:var(--body);line-height:1.4;margin-top:13px;font-style:italic;font-family:var(--serif)">Which of these needs me before my 9am? The screen will not say.</p>
+          </div>
+          <div class="cite">Fegno, 2025 (review of 75 studies): overload affects 46.7 percent of dashboard users; working memory holds about 3 to 5 items (Cognitive Load Theory).</div>
+        </div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>the problem</span></div>
+    </section>
+
+    <!-- 3 :: WHO DANA IS -->
+    <section class="slide" data-i="3">
+      <div class="two-col">
+        <div class="col">
+          <div class="rise kicker"><span class="dot"></span> who she is</div>
+          <h2 class="rise">Dana runs her own deals and her team's. Trust is the scarce thing.</h2>
+          <p class="rise body"><strong>Dana Reyes, 41.</strong> Fourteen years in. She closes about 22 sides a year and carries a 7-person team that closes about 95. She became a manager by being the best agent, not the best coach, and she lives at two heights at once.</p>
+          <p class="rise body">Switching between producing and managing can cost up to <strong>40 percent</strong> of what she gets done. She has been burned by flaky tools, so she re-checks everything to feel safe. The job to be done is not more information, it is to <em>stop being the triage engine</em> and to trust that the screen chose well.</p>
+        </div>
+        <div class="col rise">
+          <div class="card card-pad sea">
+            <div class="edge"></div>
+            <div class="cmeta" style="margin-top:0">the job, in her words</div>
+            <p style="font-family:var(--serif);font-size:clamp(15px,1.5vw,21px);color:var(--ink);line-height:1.3;margin-top:8px">"When I open my phone before coffee, decide for me what actually needs me this morning, across my deals and my team, so I stop checking everything myself to feel safe."</p>
+          </div>
+          <div class="cite">Sitkins (player-coach), citing APA: context-switching can cut productivity up to 40 percent. McKinsey: only about 46 percent of people globally trust AI systems, so trust is a feature, not decoration.</div>
+        </div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>the ICP, locked</span></div>
+    </section>
+
+    <!-- 4 :: THE REFRAME -->
+    <section class="slide" data-i="4">
+      <div class="rise kicker"><span class="dot"></span> the reframe</div>
+      <div style="height:clamp(12px,1.6vw,22px)"></div>
+      <h2 class="rise" style="max-width:20ch">Organize the app by what needs me, not by data type.</h2>
+      <div style="height:clamp(14px,1.8vw,24px)"></div>
+      <div class="two-col" style="height:auto;align-items:start">
+        <div class="col rise">
+          <p class="body"><strong>A typical tool.</strong> Open the app, get a dashboard of everything, do the triage yourself. A Deals tab, a Leads tab, a Tasks tab, a Notifications tab. Every object in its own box, and you visit each one.</p>
+          <p class="body"><strong>This one.</strong> Open the app, the triage is already done. You make three decisions and put the phone down. Attention is the scarce resource, so attention is the architecture.</p>
+        </div>
+        <div class="col rise">
+          <div class="stack-sm">
+            <span class="chip cob"><span class="d"></span> light, not loud</span>
+            <span class="chip ghost"><span class="d"></span> plain everyday english, no jargon</span>
+            <span class="chip sea"><span class="d"></span> ranked by stake across both altitudes</span>
+          </div>
+          <p class="body" style="margin-top:6px">The default surface is attention. The objects are where you go to <em>act</em> once attention points you there. One focus per screen, then the rest is given to paper.</p>
+        </div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>one IA principle</span></div>
+    </section>
+
+    <!-- 5 :: THE FIVE MOVES -->
+    <section class="slide" data-i="5">
+      <div class="rise kicker"><span class="dot"></span> the case study <span class="num">// five design moves</span></div>
+      <div style="height:10px"></div>
+      <h2 class="rise" style="max-width:24ch">Five moves that make a morning you can trust.</h2>
+      <div style="height:clamp(16px,2vw,26px)"></div>
+      <div class="rise changes">
+        <div class="change"><span class="n">1</span><div><div class="t">A "what needs you today" home</div><div class="s">A short ranked list instead of a metric grid. Built to three-to-five items, not to fill the screen.</div></div></div>
+        <div class="change"><span class="n">2</span><div><div class="t">A clock on every new lead</div><div class="s">Make the most valuable five minutes of the day visible and one tap to act on.</div></div></div>
+        <div class="change"><span class="n">3</span><div><div class="t">Reason, confidence, approve</div><div class="s">Every Leo action shows why, how sure, and sends nothing client-facing without a tap.</div></div></div>
+        <div class="change"><span class="n">4</span><div><div class="t">Notifications down by default</div><div class="s">One calm daily brief instead of a stream. Interrupt only for the genuinely time-critical.</div></div></div>
+        <div class="change"><span class="n">5</span><div><div class="t">Your deals and the team's, together</div><div class="s">One list ranked by stake, ownership is a small label. An "at risk today" lane on top.</div></div></div>
+        <div class="change"><span class="n" style="color:var(--seaglass-text)">&rarr;</span><div><div class="t">One idea, five angles</div><div class="s">The app does the sorting; the human keeps the judgment. Everything below is downstream of that.</div></div></div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>one idea, five angles</span></div>
+    </section>
+
+    <!-- 6 :: THE LEAD SCREEN -->
+    <section class="slide" data-i="6">
+      <div class="two-col">
+        <div class="col">
+          <div class="rise kicker"><span class="dot"></span> the lead screen</div>
+          <h2 class="rise">Dana's morning, resolved in three lines.</h2>
+          <p class="rise body">There is no push to tap. The app opens straight to the Today command center and assembles in front of her. The serif greeting sets first, then the trust ledger reads "47 handled overnight, 2 need you, 1 corrected," then the focus card and its collapsed queue rise in a soft stagger. The order is the priority made physical: <strong>the proof of restraint, then her name, then the few things that need her.</strong></p>
+          <div class="rise stack-sm" style="margin-top:4px">
+            <span class="chip cor"><span class="d"></span> held a line that reads as steering</span>
+            <span class="chip cor"><span class="d"></span> a hot lead has waited 3h on Marcus</span>
+            <span class="chip amb"><span class="d"></span> the Crestview deal has gone quiet</span>
+          </div>
+          <p class="rise body" style="margin-top:4px">Deal risk and team risk rank in one list, not bolted on as separate features: the quiet Crestview deal desaturates to amber and floats up next to the team's breach. Silence made visible instead of audible.</p>
+        </div>
+        <div class="rise" style="display:flex;justify-content:center">
+          <div class="phone">
+            <div class="status"><span>7:14</span><span class="orb"></span></div>
+            <div class="greet">Good morning, Dana.</div>
+            <div class="sub">A few things need you. I handled the rest.</div>
+            <div class="mini cor"><span class="e"></span><div class="h">Held a line that reads as steering</div><div class="w">My draft was a Fair Housing risk. I held it and rewrote it.</div><div class="m">fair-housing // approve the safe version</div></div>
+            <div class="mini cor"><span class="e"></span><div class="h">A hot lead has waited 3h on Marcus</div><div class="w">$720K, North Hills. Marcus is in a showing. Reassign?</div><div class="m">team SLA breach // your call</div></div>
+            <div class="mini amb"><span class="e"></span><div class="h">The Crestview deal has gone quiet</div><div class="w">$635K, Westlake. Four days, no reply. 62% sure a nudge helps.</div><div class="m">deal-risk // nudge or hold</div></div>
+            <div class="quiet"><b>47 handled overnight,</b> 2 need you, 1 corrected.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>Today is the front door</span></div>
+    </section>
+
+    <!-- 7 :: HOW LEO TALKS -->
+    <section class="slide" data-i="7">
+      <div class="rise kicker"><span class="dot"></span> how Leo talks</div>
+      <div style="height:8px"></div>
+      <h2 class="rise" style="max-width:26ch">Confident, uncertain, or silent. The voice tells you which, before you read a word.</h2>
+      <div style="height:clamp(16px,2vw,26px)"></div>
+      <div class="rise voices">
+        <div class="voice">
+          <span class="chip sea"><span class="d"></span> confident</span>
+          <div class="say">"This lead matches the three you closed on Elm. I would call first."</div>
+          <div class="note">High confidence as a plain word, never a fake "87 percent." Color and type weight both carry it, so it survives a glance.</div>
+        </div>
+        <div class="voice">
+          <span class="chip amb"><span class="d"></span> uncertain</span>
+          <div class="say">"I am fairly sure on the counter. Fair range $605K to $618K. Two things I could not check: the survey date and their financing."</div>
+          <div class="note">Honest uncertainty beats confident-and-wrong for a lead trained by flaky tools. The range is shown and the unknowns are named, not hidden.</div>
+        </div>
+        <div class="voice">
+          <span class="chip ghost"><span class="d"></span> silent</span>
+          <div class="say">"47 handled overnight, chose not to interrupt you on 6."</div>
+          <div class="note">When Leo handled it, there is no ping. The absence of a notification is itself a designed, trustworthy signal.</div>
+        </div>
+      </div>
+      <div style="height:clamp(14px,1.8vw,22px)"></div>
+      <p class="rise body" style="max-width:64ch"><strong>And a fifth mode: wrong, then corrected.</strong> Confident, uncertain, and silent are the three above; the design is graded hardest on the fifth, when Leo gets it wrong. The clearest review-before-send moment is the counter-offer in the voice outbox: Leo drafts the Oak St counter, shows how sure it is and what it could not verify, and nothing client-facing leaves without Dana's "Send as me," plus a short undo window to catch a bad call and an acknowledge-correct path to teach it. The model proposes, the human disposes.</p>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>calibrated trust, not blind trust</span></div>
+    </section>
+
+    <!-- 8 :: ORCHESTRATION -->
+    <section class="slide" data-i="8">
+      <div class="two-col">
+        <div class="col">
+          <div class="rise kicker"><span class="dot"></span> orchestration</div>
+          <h2 class="rise">Suppress by default. Surface the few that need a person.</h2>
+          <p class="rise body">The thesis is that the <em>screen</em> decides priority, so the notification model must not re-create the inbox it replaces. One wrong "urgent" poisons every flag after it: in clinical work, <strong>72 to 99 percent</strong> of monitor alarms are false, which trains people to ignore the real one.</p>
+          <div class="rise stack-sm">
+            <span class="chip cor"><span class="d"></span> needs you &nbsp;&middot;&nbsp; high stake + uncertain or irreversible &middot; may push</span>
+            <span class="chip ghost"><span class="d"></span> fyi &amp; handled &nbsp;&middot;&nbsp; never push, wait in Today</span>
+          </div>
+        </div>
+        <div class="col rise">
+          <div class="card card-pad cor">
+            <div class="edge"></div>
+            <div class="cmeta" style="margin-top:0">a push is a decision, not an fyi</div>
+            <p style="font-family:var(--serif);font-size:clamp(14px,1.4vw,19px);color:var(--ink);line-height:1.28;margin-top:8px;padding-left:2px">"A hot lead has waited 3h on Marcus. $720K, North Hills, and he's in a showing."</p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <span class="chip cob" style="background:var(--accent);color:var(--card)"><span class="d" style="background:var(--card)"></span> reassign now</span>
+              <span class="chip ghost"><span class="d"></span> nudge Marcus</span>
+            </div>
+          </div>
+          <div class="cite">Frontiers in Digital Health, 2022 (72 to 99 percent of ICU alarms false). Rootly: the best alert arrives once, is right, and has the next step attached. A handful of pushes a day, never a stream.</div>
+        </div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>precision is the headline metric</span></div>
+    </section>
+
+    <!-- 9 :: THE RANGE -->
+    <section class="slide" data-i="9">
+      <div class="rise kicker"><span class="dot"></span> the range explored</div>
+      <div style="height:8px"></div>
+      <h2 class="rise" style="max-width:24ch">Twenty variants and three skins, before committing to one.</h2>
+      <div style="height:clamp(14px,1.8vw,22px)"></div>
+      <div class="rise swatches" aria-hidden="true">
+        <span class="sw" style="background:#0A0B10"></span>
+        <span class="sw" style="background:#15171F"></span>
+        <span class="sw" style="background:#1C1E29"></span>
+        <span class="sw" style="background:#AEC2F6"></span>
+        <span class="sw" style="background:#8A93C4"></span>
+        <span class="sw" style="background:#C9AC85"></span>
+        <span class="sw" style="background:#E7C79C"></span>
+        <span class="sw" style="background:#F1F3FA"></span>
+        <span class="sw" style="background:#BCC1D2"></span>
+        <span class="sw" style="background:#828AA0"></span>
+        <span class="sw" style="background:#43342A"></span>
+        <span class="sw" style="background:#75655C"></span>
+      </div>
+      <div style="height:clamp(12px,1.6vw,20px)"></div>
+      <div class="rise skins">
+        <div class="skin">
+          <div class="top" style="background:oklch(0.975 0.011 83)"></div>
+          <div class="cap"><b>Warm editorial light</b> the honest detour. Proved the surface could carry itself with no atmosphere to hide behind.</div>
+        </div>
+        <div class="skin">
+          <div class="top" style="background:oklch(0.985 0.006 250)"></div>
+          <div class="cap"><b>Clean data-app light</b> sharper, cooler. Honest but a little clinical for a morning ritual.</div>
+        </div>
+        <div class="skin">
+          <div class="top" style="background:#0A0B10"></div>
+          <div class="cap"><b>Disciplined dark</b> the one chosen. The atmosphere generic dark reaches for, earned with a chosen periwinkle palette and no glow.</div>
+        </div>
+      </div>
+      <p class="rise body" style="margin-top:clamp(10px,1.4vw,18px)">Range is not indecision. Exploring twenty kept the final honest: not the generic dark, not a retreat to light, but a disciplined dark that earns its atmosphere with a chosen palette and warmth reserved for what needs a human.</p>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>breadth, then conviction</span></div>
+    </section>
+
+    <!-- 10 :: THE DEAD ENDS -->
+    <section class="slide" data-i="10">
+      <div class="rise kicker"><span class="dot"></span> the dead ends</div>
+      <div style="height:8px"></div>
+      <h2 class="rise" style="max-width:24ch">Generic dark read as slop. So I earned the dark instead of fleeing it.</h2>
+      <div style="height:clamp(14px,1.8vw,22px)"></div>
+      <div class="rise deadend">
+        <div class="de-card was">
+          <div class="tag">what did not work</div>
+          <div class="line">Dark canvas, glow, three identical feature cards. It landed as <em>every other AI demo</em>.</div>
+          <div class="line">The miss was not the color. It was leaning on the genre's defaults: dark mesh, neon, generic SaaS blue.</div>
+        </div>
+        <div class="de-card now">
+          <div class="tag">the call</div>
+          <div class="line">The slop was never the color, it was reaching for the genre default. The call: a disciplined dark, a chosen periwinkle-on-near-black palette, no glow, warm sand reserved for what needs a human. Color always means a state, never decoration.</div>
+          <div class="line">Also cut on purpose: a denser dashboard (the point is subtraction), auto-send (nothing irreversible without a tap), and a chatty AI persona (competence beats warmth in a task setting).</div>
+        </div>
+      </div>
+      <p class="rise body" style="margin-top:clamp(12px,1.6vw,20px);max-width:60ch">If a screen could be captioned "made by an AI in 2024," it got rebuilt. The generic dark was instructive precisely because it failed in a recognizable way.</p>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>documented, not hidden</span></div>
+    </section>
+
+    <!-- 11 :: HOW AI WAS USED -->
+    <section class="slide" data-i="11">
+      <div class="two-col">
+        <div class="col">
+          <div class="rise kicker"><span class="dot"></span> how AI was used</div>
+          <h2 class="rise">Built with AI and orchestrated, with my overrides on top.</h2>
+          <p class="rise body">I used AI the way the role expects a 2026 designer to: as a build partner. It generated the research dossier, drafted twenty style variants, and coded the working prototype while I steered direction, voice, and every visual call.</p>
+          <p class="rise body">Where it drifted, I overrode it: it reached for the dark genre default and an upbeat AI persona, and I pulled both back. <strong>Taste with accountability is the point</strong>, the machine accelerates, the judgment stays mine.</p>
+        </div>
+        <div class="col rise">
+          <div class="stack-sm">
+            <span class="chip cob"><span class="d"></span> orchestrated &middot; research, variants, prototype</span>
+            <span class="chip amb"><span class="d"></span> overridden &middot; killed the dark slop and the persona</span>
+            <span class="chip sea"><span class="d"></span> kept by hand &middot; voice, tokens, the IA principle</span>
+          </div>
+          <div class="cite">The Fountain Institute, 2026: 79 percent of design managers need people who can design AI products; AI-skilled designers earn 56 percent more. Jenny Wen (Anthropic): "taste with accountability is leadership."</div>
+        </div>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>build partner, not autopilot</span></div>
+    </section>
+
+    <!-- 12 :: THE EXTRA WEEK -->
+    <section class="slide" data-i="12">
+      <div class="rise kicker"><span class="dot"></span> if I had another week</div>
+      <div style="height:10px"></div>
+      <h2 class="rise" style="max-width:24ch">Where I would spend the next seven days.</h2>
+      <div style="height:clamp(16px,2vw,26px)"></div>
+      <div class="rise changes">
+        <div class="change"><span class="n">1</span><div><div class="t">Test whether confidence helps</div><div class="s">PAIR is explicit: only ship a confidence cue if it improves Dana's decisions. Five team leads, one think-aloud session each.</div></div></div>
+        <div class="change"><span class="n">2</span><div><div class="t">Build the error-and-edge lane</div><div class="s">Spam leads, duplicate inquiries, after-hours texts. A clearly labeled "needs your eyes" instead of a confident wrong guess.</div></div></div>
+        <div class="change"><span class="n">3</span><div><div class="t">Wire the "not important" loop</div><div class="s">A one-tap retrain so Dana teaches Leo to stop flagging a kind of thing, mirroring Gmail Priority Inbox's mark-important model.</div></div></div>
+        <div class="change"><span class="n">4</span><div><div class="t">The voice path</div><div class="s">Leo CoPilot is voice-first since Nov 2025. Design the between-showings, eyes-off version of the same calm triage.</div></div></div>
+      </div>
+      <p class="rise body" style="margin-top:clamp(12px,1.6vw,20px);max-width:58ch">All four are about proving the trust, not adding surface. The product stays small on purpose; the week goes to making the small thing dependable.</p>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>honest about what is unfinished</span></div>
+    </section>
+
+    <!-- 13 :: CLOSE -->
+    <section class="slide" data-i="13">
+      <div class="rise kicker"><span class="dot"></span> the close</div>
+      <div class="spacer"></div>
+      <div class="rise ledger">
+        <span class="big">47</span>
+        <span class="lab">handled overnight, chose not to interrupt you on 6</span>
+      </div>
+      <div style="height:clamp(18px,2.4vw,34px)"></div>
+      <p class="rise close-line">The app does the sorting. The human keeps the judgment.</p>
+      <div style="height:clamp(14px,1.8vw,24px)"></div>
+      <p class="rise body" style="max-width:54ch">That is the whole product in one line, and the reason a team lead would open it before coffee and trust what she sees. Less, ranked, and honest about its own confidence.</p>
+      <div class="spacer"></div>
+      <div class="rise" style="display:flex;align-items:center;gap:12px">
+        <span class="orb"></span>
+        <span style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:none;color:var(--muted)">prototype: prototype/command-center.html &middot; arrow keys to revisit</span>
+      </div>
+      <div class="footer"><span class="brand"><b>Real</b> + Leo</span><span>thank you</span></div>
+    </section>
+
+  </div>
+</main>
+
+<nav class="controls" aria-label="Slide navigation">
+  <button id="prev" aria-label="Previous slide">&larr; Prev</button>
+  <span class="count" id="count" aria-live="polite" aria-atomic="true">01 / 13</span>
+  <button id="next" aria-label="Next slide">Next &rarr;</button>
+</nav>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var i = 0;
+  var prevBtn = document.getElementById('prev');
+  var nextBtn = document.getElementById('next');
+  var count = document.getElementById('count');
+  var rail = document.getElementById('rail');
+
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+
+  function show(n){
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function(s, idx){
+      s.classList.toggle('active', idx === i);
+    });
+    count.textContent = pad(i + 1) + ' / ' + pad(total);
+    prevBtn.disabled = (i === 0);
+    nextBtn.disabled = (i === total - 1);
+    rail.style.width = ((i) / (total - 1) * 100) + '%';
+  }
+
+  function nextSlide(){ if (i < total - 1) show(i + 1); }
+  function prevSlide(){ if (i > 0) show(i - 1); }
+
+  nextBtn.addEventListener('click', nextSlide);
+  prevBtn.addEventListener('click', prevSlide);
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+    else if (e.key === 'Home') { show(0); }
+    else if (e.key === 'End') { show(total - 1); }
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>

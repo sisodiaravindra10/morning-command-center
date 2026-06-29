@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V07 Consumer Vivid x The Counter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* warm paper surface, never pure white */
+  --paper:oklch(0.972 0.013 86);
+  --card:oklch(0.992 0.005 88);
+  --sunken:oklch(0.952 0.013 82);
+  --hair:oklch(0.30 0.02 60 / 0.10);
+  --hair2:oklch(0.30 0.02 60 / 0.16);
+  --shadow:0 14px 34px -18px oklch(0.45 0.05 60 / 0.34);
+
+  /* ink, never pure black */
+  --ink:oklch(0.255 0.02 60);
+  --body:oklch(0.455 0.017 62);
+  --muted:oklch(0.60 0.013 66);
+  --soft:oklch(0.70 0.012 72);
+
+  /* color == confidence state */
+  --confident:oklch(0.54 0.11 168);   --confident-bg:oklch(0.93 0.07 168);
+  --uncertain:oklch(0.60 0.13 72);     --uncertain-bg:oklch(0.94 0.085 80);
+  --coral:oklch(0.56 0.17 28);         --coral-bg:oklch(0.93 0.075 32);
+  --cobalt:oklch(0.50 0.13 262);       --cobalt-bg:oklch(0.93 0.055 262);
+  --on-state:oklch(0.985 0.01 90);
+
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(120% 80% at 80% -10%, oklch(0.93 0.03 70 / .8), transparent 60%),
+    oklch(0.90 0.018 78);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center; min-height:100dvh;
+  padding:26px 16px 56px; -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+/* caption */
+.caption{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:oklch(0.42 0.02 60 / .72); white-space:nowrap;
+}
+
+/* phone */
+.phone{
+  position:relative; width:393px; height:852px; max-height:calc(100dvh - 96px);
+  background:var(--paper); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.18 0.012 60), 0 0 0 12px oklch(0.34 0.012 60), 0 44px 96px -26px oklch(0.30 0.03 60 / .55);
+  overflow:hidden; isolation:isolate;
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.18 0.012 60); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink)}
+.statusbar .ic{display:flex; gap:7px; opacity:.78}
+
+.screen{position:absolute; inset:0; overflow-y:auto; scrollbar-width:none; padding:54px 18px 26px}
+.screen::-webkit-scrollbar{display:none}
+
+/* breathing orb (only idle motion) */
+.orb{
+  width:24px;height:24px;border-radius:50%;flex:none;
+  background:radial-gradient(62% 62% at 34% 30%, oklch(0.93 0.06 180), oklch(0.60 0.13 200) 46%, oklch(0.42 0.11 230));
+  box-shadow:0 0 10px oklch(0.60 0.13 200 / .32), inset 0 1px 2px oklch(0.98 0.01 200 / .55);
+  animation:breathe 5.2s var(--exp) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.075)}}
+
+/* avatars */
+.av{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;color:oklch(0.985 0.008 80);font-family:var(--sans)}
+.av.dana{background:linear-gradient(135deg,oklch(0.60 0.14 28),oklch(0.49 0.13 16))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.55 0.12 168),oklch(0.45 0.10 182))}
+
+/* ---- header ---- */
+.head{display:flex; align-items:center; gap:11px; padding:8px 6px 4px}
+.head .hi{font-family:var(--serif); font-size:23px; color:var(--ink); letter-spacing:-.2px}
+.head .now{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--muted)}
+.lede{font-family:var(--serif); font-size:17px; line-height:1.5; color:var(--body); padding:6px 6px 0; max-width:33ch}
+.lede em{font-style:italic; color:var(--ink)}
+
+/* search-forward feel */
+.search{display:flex; gap:10px; align-items:center; margin:18px 6px 8px}
+.search .field{flex:1; display:flex; align-items:center; gap:9px; height:46px; padding:0 15px; border-radius:14px; background:oklch(0.30 0.02 60 / .045); color:var(--muted); font-size:14px; border:1px solid var(--hair)}
+.search .field svg{flex:none}
+.search .filt{width:46px; height:46px; border-radius:14px; background:var(--ink); color:var(--paper); display:flex; align-items:center; justify-content:center; flex:none; border:none; cursor:pointer; transition:transform .2s var(--exp)}
+.search .filt:active{transform:scale(.94)}
+.search .filt:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px}
+
+.list-head{display:flex; align-items:baseline; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--soft); padding:18px 6px 12px}
+.list-head .n{color:var(--coral)}
+
+/* ---- triage rows (varied composition, no identical grid) ---- */
+#rows{display:flex; flex-direction:column; gap:13px}
+.row{
+  border-radius:22px; padding:15px; background:var(--card); border:1px solid var(--hair);
+  box-shadow:var(--shadow); position:relative; cursor:pointer;
+  opacity:0; transform:translateY(12px);
+  animation:rise .56s var(--exp) forwards;
+}
+.row:nth-child(1){animation-delay:.06s}
+.row:nth-child(2){animation-delay:.13s}
+.row:nth-child(3){animation-delay:.20s}
+@keyframes rise{to{opacity:1; transform:none}}
+.row:focus-visible{outline:3px solid var(--cobalt); outline-offset:3px}
+.row .top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+.pill{font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:4px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; line-height:1}
+.pill .dot{width:6px;height:6px;border-radius:50%}
+.pill.urgent{color:var(--coral); background:var(--coral-bg)} .pill.urgent .dot{background:var(--coral)}
+.pill.uncertain{color:var(--uncertain); background:var(--uncertain-bg)} .pill.uncertain .dot{background:var(--uncertain)}
+.pill.confident{color:var(--confident); background:var(--confident-bg)} .pill.confident .dot{background:var(--confident)}
+.pill.alt{color:var(--body); background:oklch(0.30 0.02 60 / .06)}
+.row .when{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.row .title{font-family:var(--sans); font-size:17px; font-weight:600; line-height:1.25; letter-spacing:-.2px; color:var(--ink); margin-top:11px}
+.row .why{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:var(--body); margin-top:6px}
+.row .foot{display:flex; align-items:center; gap:9px; margin-top:13px}
+.row .who{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.row .go{margin-left:auto; width:38px; height:38px; border-radius:50%; background:var(--ink); color:var(--paper); border:none; display:flex; align-items:center; justify-content:center; flex:none; transition:transform .2s var(--exp); pointer-events:none}
+.row:active .go{transform:scale(.92)}
+.row.lead .title .free{color:var(--confident)}
+.row.lead .window{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; color:var(--confident); background:var(--confident-bg); padding:4px 9px; border-radius:999px}
+.row.lead .window .pulse{width:6px;height:6px;border-radius:50%;background:var(--confident);animation:winp 1.6s var(--exp) infinite}
+@keyframes winp{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.35)}}
+
+/* ---- calm signal (lower density, not a card-grid clone) ---- */
+.signal{margin:13px 0 0; padding:14px 16px; border-radius:18px; background:var(--sunken); border:1px solid var(--hair)}
+.signal .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:7px}
+.signal .lbl .d{width:6px;height:6px;border-radius:50%;background:var(--uncertain)}
+.signal .txt{font-family:var(--serif); font-size:15px; line-height:1.45; color:var(--body); margin-top:7px}
+.signal .txt b{color:var(--ink); font-weight:600}
+
+/* ---- silence ledger ---- */
+.ledger{margin:22px 6px 8px; display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--muted); line-height:1.5}
+.ledger .b{width:5px;height:5px;border-radius:50%;background:var(--soft);flex:none}
+.ledger b{color:var(--ink); font-weight:500}
+
+/* =========================================================
+   THE COUNTER  (centerpiece sheet)
+   ========================================================= */
+.scrim{position:absolute; inset:0; background:oklch(0.20 0.02 60 / .42); opacity:0; pointer-events:none; transition:opacity .34s var(--exp); z-index:90}
+.scrim.on{opacity:1; pointer-events:auto}
+
+.sheet{
+  position:absolute; left:0; right:0; bottom:0; z-index:91;
+  background:var(--paper); border-radius:26px 26px 0 0;
+  box-shadow:0 -22px 60px -24px oklch(0.20 0.03 60 / .5);
+  transform:translateY(102%); transition:transform .46s var(--exp);
+  max-height:90%; overflow-y:auto; scrollbar-width:none; padding:8px 20px 26px;
+}
+.sheet::-webkit-scrollbar{display:none}
+.sheet.on{transform:none}
+.grab{width:38px;height:5px;border-radius:5px;background:var(--hair2);margin:8px auto 14px}
+
+.sh-head{display:flex; align-items:center; gap:10px}
+.sh-head .who{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.sh-head .x{margin-left:auto; width:34px; height:34px; border-radius:50%; background:oklch(0.30 0.02 60 / .06); border:none; color:var(--body); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.sh-head .x:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px}
+
+/* staggered confident reveal */
+.rv{opacity:0; transform:translateY(12px)}
+.sheet.on .rv{animation:rise .5s var(--exp) forwards}
+.sheet.on .rv.d1{animation-delay:.10s}
+.sheet.on .rv.d2{animation-delay:.18s}
+.sheet.on .rv.d3{animation-delay:.26s}
+.sheet.on .rv.d4{animation-delay:.34s}
+.sheet.on .rv.d5{animation-delay:.42s}
+
+.sh-read{font-family:var(--serif); font-size:18px; line-height:1.5; color:var(--ink); margin:16px 2px 2px}
+.sh-read em{font-style:normal; font-weight:600}
+.sh-read .num{font-variant-numeric:tabular-nums}
+
+.confchip{display:inline-flex; align-items:center; gap:7px; margin:14px 0 0; padding:6px 12px; border-radius:999px; font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--confident); background:var(--confident-bg)}
+.confchip .dot{width:7px;height:7px;border-radius:50%;background:var(--confident)}
+
+/* source chips */
+.sources{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
+.src{display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:11px; background:var(--card); border:1px solid var(--hair); font-family:var(--mono); font-size:11px; color:var(--body); box-shadow:var(--shadow)}
+.src .tick{width:14px;height:14px;border-radius:4px;background:var(--confident-bg);display:flex;align-items:center;justify-content:center;flex:none}
+.src .tick svg{display:block}
+
+/* the two named unknowns */
+.unknowns{margin:16px 0 0; padding:14px 15px; border-radius:16px; background:var(--uncertain-bg)}
+.unknowns .h{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--uncertain); display:flex; align-items:center; gap:7px}
+.unknowns .h .d{width:7px;height:7px;border-radius:50%;background:var(--uncertain)}
+.unknowns ul{list-style:none; margin:11px 0 0; display:flex; flex-direction:column; gap:9px}
+.unknowns li{display:flex; gap:9px; font-family:var(--sans); font-size:13.5px; line-height:1.42; color:var(--body)}
+.unknowns li .q{font-family:var(--mono); color:var(--uncertain); font-size:13px; flex:none; line-height:1.42}
+.unknowns li b{color:var(--ink); font-weight:600}
+
+/* defensible-range bar */
+.range{margin:18px 2px 0}
+.range .cap{display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:10px}
+.range .track{position:relative; height:46px; border-radius:13px; overflow:hidden; background:var(--sunken); border:1px solid var(--hair)}
+.range .band{position:absolute; top:0; bottom:0; background:color-mix(in oklch, var(--confident) 24%, transparent)}
+.range .band.thin{background:repeating-linear-gradient(135deg, oklch(0.60 0.13 72 / .26) 0 7px, transparent 7px 14px)}
+.range .leo{position:absolute; top:-4px; bottom:-4px; width:3px; background:var(--ink); border-radius:3px}
+.range .leo::after{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;background:var(--ink);border:2px solid var(--paper)}
+.range .ticks{display:flex; justify-content:space-between; margin-top:9px; font-family:var(--mono); font-size:10.5px; color:var(--soft)}
+.range .note{font-family:var(--serif); font-size:13.5px; line-height:1.45; color:var(--body); margin-top:11px}
+.range .note b{color:var(--ink); font-weight:600}
+
+/* actions */
+.review-note{display:flex; align-items:center; justify-content:center; gap:8px; font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin:20px 0 12px}
+.review-note .lk{width:6px;height:6px;border-radius:50%;background:var(--confident)}
+.acts{display:flex; flex-direction:column; gap:10px}
+.btn{height:50px; border-radius:14px; border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .18s var(--exp), filter .18s var(--exp)}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px}
+.btn-p{background:var(--ink); color:var(--paper)}
+.btn-p:hover{filter:brightness(1.12)}
+.btn-s{background:transparent; color:var(--body); border:1px solid var(--hair2); height:46px; font-weight:500}
+.btn-s:hover{background:oklch(0.30 0.02 60 / .04)}
+
+/* resolve-to-Sent */
+.sent{position:absolute; inset:0; background:var(--paper); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 40px; opacity:0; pointer-events:none; transition:opacity .4s var(--exp); z-index:92; text-align:center}
+.sent.on{opacity:1; pointer-events:auto}
+.sent .mark{width:62px;height:62px;border-radius:50%;background:var(--confident-bg);display:flex;align-items:center;justify-content:center;transform:scale(.6);opacity:0}
+.sent.on .mark{animation:markin .5s var(--exp) .04s forwards}
+@keyframes markin{to{transform:scale(1);opacity:1}}
+.sent .mark svg{transform:scale(.6);opacity:0}
+.sent.on .mark svg{animation:markin .42s var(--exp) .22s forwards}
+.sent .t{font-family:var(--serif); font-size:21px; color:var(--ink); opacity:0; transform:translateY(8px)}
+.sent.on .t{animation:rise .44s var(--exp) .30s forwards}
+.sent .s{font-family:var(--serif); font-size:15.5px; line-height:1.5; color:var(--body); max-width:30ch; opacity:0; transform:translateY(8px)}
+.sent.on .s{animation:rise .44s var(--exp) .40s forwards}
+.sent .meta{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted); opacity:0; transform:translateY(8px)}
+.sent.on .meta{animation:rise .44s var(--exp) .50s forwards}
+.sent .close{margin-top:6px; height:46px; padding:0 26px; border-radius:14px; background:var(--ink); color:var(--paper); border:none; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; opacity:0}
+.sent.on .close{animation:rise .44s var(--exp) .58s forwards}
+.sent .close:focus-visible{outline:3px solid var(--cobalt); outline-offset:2px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important}
+  .orb{animation:none}
+  .row,.rv,.sent .mark,.sent .t,.sent .s,.sent .meta,.sent .close{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" role="application" aria-label="Your morning view">
+  <div class="notch"></div>
+  <div class="statusbar"><span>8:42</span><span class="ic"><span>5G</span><span>100</span></span></div>
+
+  <main class="screen" id="screen">
+    <header class="head">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="hi">Good morning, Dana</span>
+      <span class="now">TUE 8:42</span>
+    </header>
+    <p class="lede">Three things need you this morning. The rest can wait. <em>Start at the top.</em></p>
+
+    <div class="search">
+      <div class="field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+        Ask a question, or search a deal
+      </div>
+      <button class="filt" aria-label="Filter the list">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+      </button>
+    </div>
+
+    <div class="list-head">Needs you<span aria-hidden="true">·</span><span class="n">3 open</span></div>
+
+    <div id="rows">
+      <!-- 1. The counter (centerpiece entry) -->
+      <div class="row" id="rowCounter" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open the draft reply for 142 Oak Street, due 10am">
+        <div class="top">
+          <span class="pill uncertain"><span class="dot"></span>Reply drafted</span>
+          <span class="pill alt">Your deal</span>
+          <span class="when">Due 10:00am</span>
+        </div>
+        <div class="title">142 Oak St reply is ready for you</div>
+        <p class="why">I wrote a reply to the buyer's offer. It looks good, with two things I could not double-check. Have a look before it goes.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>I drafted this for you</span>
+          <span class="go" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- 2. New lead, 5-minute window -->
+      <div class="row lead" role="button" tabindex="0" aria-label="New 88 Linden buyer, already approved for a loan, best to call in the next 5 minutes">
+        <div class="top">
+          <span class="pill confident"><span class="dot"></span>New buyer</span>
+          <span class="window"><span class="pulse" aria-hidden="true"></span>Call in 5 min</span>
+          <span class="when">2 min ago</span>
+        </div>
+        <div class="title">88 Linden buyer is <span class="free">approved for a loan</span></div>
+        <p class="why">They reached out and they are ready. Calling fast wins this one. I have a first reply ready to go.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>Yours to take</span>
+          <span class="go" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- 3. Teammate Marcus lead going quiet -->
+      <div class="row" role="button" tabindex="0" aria-label="Marcus has a buyer who has not replied in 3 days, may need a follow-up">
+        <div class="top">
+          <span class="pill urgent"><span class="dot"></span>No reply in 3 days</span>
+          <span class="pill alt">Team · Marcus</span>
+          <span class="when">3 days quiet</span>
+        </div>
+        <div class="title">Marcus's Birchwood buyer has gone quiet</div>
+        <p class="why">No reply since Friday. Marcus has not noticed yet. A friendly check-in from you would help.</p>
+        <div class="foot">
+          <span class="who"><span class="av marcus" aria-hidden="true">M</span>Your team</span>
+          <span class="go" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-head">Worth a glance</div>
+    <section class="signal" aria-label="Heads up, the Crestview deal is slowing down">
+      <div class="lbl"><span class="d" aria-hidden="true"></span>Slowing down</div>
+      <p class="txt">The <b>Crestview</b> deal is slowing down a bit, not stuck. The buyer is replying slower this week. Nothing to do yet. I am keeping an eye on it and will flag it here if it slows more.</p>
+    </section>
+
+    <p class="ledger">
+      <span class="b" aria-hidden="true"></span>
+      Overnight I handled <b>47</b> things and woke you for <b>0</b>. See the full list under Activity.
+    </p>
+  </main>
+
+  <!-- ===== THE COUNTER SHEET ===== -->
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="The draft reply for 142 Oak Street" aria-hidden="true">
+    <div class="grab" aria-hidden="true"></div>
+
+    <div class="sh-head rv d1">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="who">Draft reply · 142 Oak St</span>
+      <button class="x" id="sheetClose" aria-label="Close draft">&times;</button>
+    </div>
+
+    <p class="sh-read rv d1">I would reply with <em class="num">$612k</em>. That is close enough to their offer to keep them interested, without giving up room you still have.</p>
+
+    <span class="confchip rv d2"><span class="dot" aria-hidden="true"></span>I am very sure about this price</span>
+
+    <div class="sources rv d2" aria-label="What this price is based on">
+      <span class="src"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--confident)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>6 nearby homes that sold</span>
+      <span class="src"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--confident)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>Their past offers</span>
+      <span class="src"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--confident)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>How long it has been listed</span>
+    </div>
+
+    <div class="unknowns rv d3">
+      <div class="h"><span class="d" aria-hidden="true"></span>2 things I could not double-check</div>
+      <ul>
+        <li><span class="q" aria-hidden="true">?</span><span>The buyer hinted they need to <b>move in by a certain date</b>, but I could not confirm it. If that is true, you can hold firm more than this price assumes.</span></li>
+        <li><span class="q" aria-hidden="true">?</span><span>One nearby sale at 9 Maple has <b>not closed yet</b>. I gave it less weight. If that sale falls through, the high end of the range drops a little.</span></li>
+      </ul>
+    </div>
+
+    <div class="range rv d4" aria-label="A fair price range for the reply">
+      <div class="cap"><span>Fair range</span><span>My pick</span></div>
+      <div class="track">
+        <!-- 595..640k mapped across the track; defensible 605-625 -->
+        <div class="band" style="left:22.2%; width:44.4%;"></div>
+        <div class="band thin" style="left:66.6%; width:33.4%;" title="fewer recent sales to back up prices above 625k"></div>
+        <div class="leo" style="left:37.8%;" aria-hidden="true"></div>
+      </div>
+      <div class="ticks"><span>$595k</span><span>$612k</span><span>$640k</span></div>
+      <p class="note"><b>Safe up to $625k.</b> Above that, fewer recent sales back up the price, so expect more back-and-forth. Below $605k you give away money.</p>
+    </div>
+
+    <div class="review-note rv d5"><span class="lk" aria-hidden="true"></span>Nothing is sent until you tap send</div>
+    <div class="acts rv d5">
+      <button class="btn btn-p" id="sendBtn">Send this reply</button>
+      <button class="btn btn-s" id="tuneBtn">Change the price first</button>
+    </div>
+  </section>
+
+  <!-- resolve-to-Sent -->
+  <div class="sent" id="sent" role="status" aria-hidden="true">
+    <div class="mark" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--confident)" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div class="t">Reply sent</div>
+    <p class="s">Your $612k reply is on its way to the buyer's agent. I will tell you the moment they reply.</p>
+    <div class="meta">142 OAK ST · 8:43AM · SAVED TO DEAL</div>
+    <button class="close" id="sentClose">Back to today</button>
+  </div>
+</div>
+
+<div class="caption">V07 CONSUMER VIVID x THE COUNTER</div>
+
+<script>
+  document.documentElement.classList.add('js');
+  var rowCounter = document.getElementById('rowCounter');
+  var scrim = document.getElementById('scrim');
+  var sheet = document.getElementById('sheet');
+  var sheetClose = document.getElementById('sheetClose');
+  var sendBtn = document.getElementById('sendBtn');
+  var tuneBtn = document.getElementById('tuneBtn');
+  var sent = document.getElementById('sent');
+  var sentClose = document.getElementById('sentClose');
+
+  function openSheet(){
+    scrim.classList.add('on');
+    sheet.classList.add('on');
+    sheet.setAttribute('aria-hidden','false');
+    // re-trigger the staggered confident reveal each open
+    sheet.querySelectorAll('.rv').forEach(function(el){
+      el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+    });
+    setTimeout(function(){ sheetClose.focus(); }, 60);
+  }
+  function closeSheet(){
+    scrim.classList.remove('on');
+    sheet.classList.remove('on');
+    sheet.setAttribute('aria-hidden','true');
+    rowCounter.focus();
+  }
+  function activate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fn(); }
+    });
+  }
+
+  activate(rowCounter, openSheet);
+  sheetClose.addEventListener('click', closeSheet);
+  scrim.addEventListener('click', closeSheet);
+  tuneBtn.addEventListener('click', closeSheet);
+
+  sendBtn.addEventListener('click', function(){
+    // resolve-to-Sent: deliberately calm, no celebration
+    sheet.classList.remove('on');
+    scrim.classList.remove('on');
+    sheet.setAttribute('aria-hidden','true');
+    sent.classList.add('on');
+    sent.setAttribute('aria-hidden','false');
+    setTimeout(function(){ sentClose.focus(); }, 620);
+  });
+
+  sentClose.addEventListener('click', function(){
+    sent.classList.remove('on');
+    sent.setAttribute('aria-hidden','true');
+    // mark the row handled, restrained: dim it, swap state
+    var pill = rowCounter.querySelector('.pill.uncertain');
+    if(pill){
+      pill.className='pill confident';
+      pill.innerHTML='<span class="dot"></span>Reply sent';
+    }
+    var why = rowCounter.querySelector('.why');
+    if(why){ why.textContent="Sent at 8:43am. I am watching for the buyer's agent to reply."; }
+    rowCounter.style.opacity='.62';
+    rowCounter.focus();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){
+      if(sheet.classList.contains('on')) closeSheet();
+    }
+  });
+</script>
+</body>
+</html>

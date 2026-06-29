@@ -1,0 +1,847 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leo - the morning command center (kinetic cut)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    /* AI-state palette (OKLCH) - hues carry meaning, kept recognizable */
+    --cobalt:    oklch(0.66 0.16 262);
+    --seaglass:  oklch(0.80 0.11 168);
+    --amber:     oklch(0.82 0.12 72);
+    --coral:     oklch(0.73 0.16 28);
+    --ghost:     oklch(0.66 0.02 262);
+
+    /* bold kinetic ground colors - saturated full-bleed blocks */
+    --block-night:  oklch(0.22 0.06 264);
+    --block-violet: oklch(0.46 0.16 292);
+    --block-cobalt: oklch(0.52 0.18 262);
+    --block-coral:  oklch(0.66 0.18 28);
+    --block-amber:  oklch(0.80 0.14 78);
+    --block-sea:    oklch(0.74 0.13 168);
+    --block-paper:  oklch(0.93 0.03 86);
+
+    /* tinted neutrals - never pure black or white */
+    --ink:       oklch(0.97 0.012 90);
+    --ink-deep:  oklch(0.18 0.03 264);
+    --ink-soft:  oklch(0.97 0.012 90 / 0.74);
+    --ink-faint: oklch(0.97 0.012 90 / 0.52);
+
+    --display: 'Anton', 'Arial Narrow', sans-serif;
+    --serif:   'Newsreader', Georgia, serif;
+    --sans:    'Inter', system-ui, sans-serif;
+    --mono:    'JetBrains Mono', ui-monospace, monospace;
+
+    /* master runtime - every scene + progress bar references this exact value */
+    --film: 89s;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.20 0.05 280) 0%, transparent 55%),
+      oklch(0.09 0.02 270);
+    min-height: 100vh;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 26px 18px 36px;
+  }
+
+  /* ---------- the video stage (16:9 letterboxed player) ---------- */
+  .stage {
+    position: relative;
+    width: 100%;
+    max-width: 1040px;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--block-night);
+    border: 1px solid oklch(0.4 0.06 280 / 0.5);
+    box-shadow:
+      0 0 0 1px oklch(0 0 0 / 0.5),
+      0 44px 130px -34px oklch(0 0 0 / 0.92),
+      inset 0 1px 0 oklch(1 0 0 / 0.05);
+    isolation: isolate;
+  }
+
+  /* fine vignette to seat the bold blocks in the frame */
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(125% 115% at 50% 45%, transparent 62%, oklch(0 0 0 / 0.34) 100%);
+    z-index: 70;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  /* ---------- scene layer system ---------- */
+  .timeline { position: absolute; inset: 0; z-index: 10; }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6% 7%;
+    opacity: 0;
+    overflow: hidden;
+    will-change: opacity, transform;
+  }
+
+  /* each scene carries a full-bleed saturated color block that snaps in */
+  .scene::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--block, var(--block-night));
+    will-change: transform;
+  }
+  .scene > * { position: relative; z-index: 2; }
+
+  /* ---------- type primitives ---------- */
+  .kicker {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: clamp(10px, 1.2vw, 14px);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .kicker.dark { color: oklch(0.2 0.03 264 / 0.74); }
+
+  /* the heavy condensed display voice - the kinetic hero */
+  .big {
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: 0.004em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-size: clamp(38px, 8.4vw, 104px);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .big.dark { color: var(--ink-deep); }
+  .mid {
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    font-size: clamp(26px, 5vw, 60px);
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .mid.dark { color: var(--ink-deep); }
+
+  /* the human / Leo serif voice - used for the quieter lines + thesis */
+  .serif {
+    font-family: var(--serif);
+    font-weight: 300;
+    line-height: 1.12;
+    letter-spacing: -0.005em;
+    font-size: clamp(20px, 3.4vw, 42px);
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .serif.dark { color: var(--ink-deep); }
+
+  .ui-line {
+    font-family: var(--sans);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-size: clamp(13px, 1.7vw, 20px);
+    color: var(--ink-soft);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .ui-line.dark { color: oklch(0.2 0.03 264 / 0.8); }
+
+  /* meaningful AI-state accents */
+  .a-cobalt  { color: var(--cobalt); }
+  .a-sea     { color: var(--seaglass); }
+  .a-amber   { color: var(--amber); }
+  .a-coral   { color: var(--coral); }
+  .a-ghost   { color: var(--ghost); }
+
+  /* ============================================================
+     KEYFRAMES - CSS only, no rAF / IO / scroll-JS anywhere
+     ============================================================ */
+
+  /* scene container: snap in, hold, snap out */
+  @keyframes sceneHold {
+    0%   { opacity: 0; }
+    4%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes holdLast {
+    0%   { opacity: 0; }
+    5%   { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  /* the color block SNAP - a big confident wipe from the side */
+  @keyframes blockSnapL {
+    0%   { transform: translateX(-104%); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes blockSnapR {
+    0%   { transform: translateX(104%); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes blockSnapUp {
+    0%   { transform: translateY(104%); }
+    100% { transform: translateY(0); }
+  }
+  @keyframes blockSnapDown {
+    0%   { transform: translateY(-104%); }
+    100% { transform: translateY(0); }
+  }
+
+  /* kinetic word reveals - heavy, confident, slightly skewed */
+  @keyframes wordPunch {
+    0%   { opacity: 0; transform: translateY(34px) scale(0.92); }
+    60%  { opacity: 1; }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes wordSlide {
+    0%   { opacity: 0; transform: translateX(-46px) skewX(-7deg); }
+    100% { opacity: 1; transform: translateX(0) skewX(0deg); }
+  }
+  @keyframes softUp {
+    0%   { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes kickUp {
+    0%   { opacity: 0; transform: translateY(14px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes strike {
+    0%   { transform: scaleX(0); opacity: 0; }
+    18%  { opacity: 1; }
+    100% { transform: scaleX(1); opacity: 1; }
+  }
+  @keyframes dissolveOut {
+    0%   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-10px) scale(0.94); filter: blur(7px); }
+  }
+  @keyframes stampIn {
+    0%   { opacity: 0; transform: scale(2.1) rotate(-9deg); }
+    55%  { opacity: 1; }
+    72%  { transform: scale(0.94) rotate(-3deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-4deg); }
+  }
+  @keyframes bloom {
+    0%   { opacity: 0; transform: scale(0.5); }
+    40%  { opacity: 0.55; }
+    100% { opacity: 0; transform: scale(2.0); }
+  }
+  @keyframes phoneIn {
+    0%   { opacity: 0; transform: translateY(60px) rotate(-4deg) scale(0.86); }
+    100% { opacity: 1; transform: translateY(0) rotate(var(--rot, 0deg)) scale(1); }
+  }
+  @keyframes cardSnap {
+    0%   { opacity: 0; transform: translateY(40px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes swatchSnap {
+    0%   { opacity: 0; transform: scaleY(0); }
+    100% { opacity: 1; transform: scaleY(1); }
+  }
+  @keyframes thesisScale {
+    0%   { opacity: 0; transform: scale(0.7); letter-spacing: 0.14em; }
+    100% { opacity: 1; transform: scale(1); letter-spacing: 0.004em; }
+  }
+  @keyframes breathe {
+    from { transform: scale(1); opacity: 0.8; }
+    to   { transform: scale(1.16); opacity: 1; }
+  }
+  @keyframes barGrow {
+    0%   { transform: scaleY(0.2); opacity: 0.5; }
+    100% { transform: scaleY(1); opacity: 1; }
+  }
+
+  /* ============================================================
+     TIMELINE - master = var(--film) = 89s
+     Scenes open with a sceneHold window; pieces inside fire on
+     absolute delays. Pure CSS auto-play; JS only adds pause + replay.
+     ============================================================ */
+  .scene { animation-fill-mode: both; }
+
+  /* ACT 1 */
+  #s1  { --block: linear-gradient(160deg, var(--block-night), oklch(0.16 0.04 270)); animation: sceneHold 11s var(--ease) 0s both; }
+  #s2  { --block: linear-gradient(160deg, var(--block-violet), var(--block-cobalt)); animation: sceneHold 9s  var(--ease) 10.5s both; }
+  #s3  { --block: linear-gradient(160deg, var(--block-cobalt), oklch(0.34 0.14 266)); animation: sceneHold 8s  var(--ease) 19s both; }
+  /* ACT 2 */
+  #s4  { --block: linear-gradient(160deg, oklch(0.30 0.10 286), var(--block-violet)); animation: sceneHold 7.5s var(--ease) 26.5s both; }
+  #s5  { --block: linear-gradient(165deg, oklch(0.26 0.07 272), oklch(0.20 0.05 264)); animation: sceneHold 10.5s var(--ease) 32.5s both; }
+  #s6  { --block: var(--block-paper); animation: sceneHold 6.2s var(--ease) 43s both; }
+  /* ACT 3 */
+  #s7  { --block: linear-gradient(160deg, oklch(0.30 0.08 200), oklch(0.24 0.06 220)); animation: sceneHold 6.6s var(--ease) 49s both; }
+  #s8  { --block: linear-gradient(165deg, oklch(0.19 0.04 264), oklch(0.15 0.03 264)); animation: sceneHold 16s var(--ease) 55s both; }
+  #s9  { --block: linear-gradient(160deg, var(--block-sea), oklch(0.62 0.12 174)); animation: sceneHold 8.5s var(--ease) 70.5s both; }
+  #s10 { --block: linear-gradient(165deg, var(--block-night), oklch(0.14 0.04 272)); animation: holdLast 11s var(--ease) 78s both; }
+
+  /* block snaps - each scene's color block wipes in */
+  #s1::before  { animation: blockSnapUp   0.9s var(--ease) 0s both; }
+  #s2::before  { animation: blockSnapR    0.7s var(--ease) 10.5s both; }
+  #s3::before  { animation: blockSnapL    0.7s var(--ease) 19s both; }
+  #s4::before  { animation: blockSnapUp   0.7s var(--ease) 26.5s both; }
+  #s5::before  { animation: blockSnapDown 0.8s var(--ease) 32.5s both; }
+  #s6::before  { animation: blockSnapR    0.7s var(--ease) 43s both; }
+  #s7::before  { animation: blockSnapL    0.7s var(--ease) 49s both; }
+  #s8::before  { animation: blockSnapUp   0.8s var(--ease) 55s both; }
+  #s9::before  { animation: blockSnapR    0.8s var(--ease) 70.5s both; }
+  #s10::before { animation: blockSnapDown 1.0s var(--ease) 78s both; }
+
+  /* --- S1: open --- 0-10s: "A morning, before coffee." / "A hundred agents worked all night." */
+  #s1 .k1   { animation: kickUp   1.3s var(--ease) 0.9s both; }
+  #s1 .l1   { animation: wordPunch 1.5s var(--ease) 2.8s both; }
+  #s1 .l1b  { animation: wordPunch 1.5s var(--ease) 5.2s both; }
+  #s1 .lfade{ animation: dissolveOut 1.4s var(--ease) 9.1s both; }
+
+  /* --- S2: 10.5-19s: "So I built a dashboard." -> strike -> "Wrong answer." (coral) --- */
+  #s2 .l2     { animation: wordSlide 1.2s var(--ease) 11.1s both; }
+  #s2 .strikebar { animation: strike 0.8s var(--ease) 13.4s both; }
+  #s2 .l2dis  { animation: dissolveOut 1.2s var(--ease) 14.6s both; }
+  #s2 .wrong  { animation: stampIn 1.2s var(--ease) 15.8s both; }
+  #s2 .wrongbloom { animation: bloom 1.8s ease-out 15.9s both; }
+
+  /* --- S3: 19-26s: reframe "It is not a dashboard. It is a triage of exceptions." --- */
+  #s3 .k3     { animation: kickUp 1.2s var(--ease) 19.5s both; }
+  #s3 .l3     { animation: wordPunch 1.5s var(--ease) 20.7s both; }
+  #s3 .l3b    { animation: wordPunch 1.6s var(--ease) 22.6s both; }
+
+  /* --- S4: 26-33s ACT 2 kicker: "I did not trust one idea. I built three." --- */
+  #s4 .k4     { animation: kickUp 1.2s var(--ease) 26.9s both; }
+  #s4 .l4     { animation: wordSlide 1.3s var(--ease) 28.1s both; }
+  #s4 .l4b    { animation: wordPunch 1.4s var(--ease) 30.0s both; }
+
+  /* --- S5: 33-43s: three device frames stagger in, labeled, then closing line --- */
+  #s5 .phone1 { animation: phoneIn 1.3s var(--ease) 33.2s both; }
+  #s5 .phone2 { animation: phoneIn 1.3s var(--ease) 34.0s both; }
+  #s5 .phone3 { animation: phoneIn 1.3s var(--ease) 34.8s both; }
+  #s5 .l5     { animation: softUp 1.5s var(--ease) 39.6s both; }
+
+  /* --- S6: 43-49s: range montage of visual-dialect color swatches --- */
+  #s6 .k6        { animation: kickUp 1.0s var(--ease) 43.4s both; }
+  #s6 .swatchwrap{ animation: softUp 1.0s var(--ease) 44.2s both; }
+  #s6 .sw        { transform-origin: bottom; animation: swatchSnap 0.55s var(--ease) calc(44.6s + var(--i) * 0.16s) both; }
+  #s6 .l6        { animation: softUp 1.1s var(--ease) 46.8s both; }
+
+  /* --- S7: 49-55s ACT 3 kicker: "The calmest of the three." --- */
+  #s7 .k7     { animation: kickUp 1.2s var(--ease) 49.5s both; }
+  #s7 .l7     { animation: wordPunch 1.6s var(--ease) 50.9s both; }
+
+  /* --- S8: 55-70s: five AI voices, one at a time (~2.4s each) as bold color-block cards --- */
+  #s8 .k8     { animation: kickUp 1.1s var(--ease) 55.4s both; }
+  #s8 .voice  { animation: cardSnap 0.95s var(--ease) calc(56.2s + var(--i) * 2.4s) both; }
+  #s8 .vorb   { animation: breathe 2.6s ease-in-out infinite alternate; }
+
+  /* --- S9: 70.5-78s: Silence Ledger payoff, held ~3s --- */
+  #s9 .k9     { animation: kickUp 1.1s var(--ease) 71.0s both; }
+  #s9 .l9     { animation: wordPunch 1.6s var(--ease) 72.1s both; }
+  #s9 .l9b    { animation: softUp 1.5s var(--ease) 74.0s both; }
+  #s9 .six    { animation: thesisScale 1.4s var(--ease) 74.4s both; }
+
+  /* --- S10: 78-89s: thesis slow scale-in + LONG hold, then end card (holds >=5s) --- */
+  #s10 .thesis1 { animation: thesisScale 2.4s var(--ease) 78.6s both; }
+  #s10 .thesis2 { animation: thesisScale 2.4s var(--ease) 80.8s both; }
+  #s10 .endrule { transform-origin: center; animation: strike 1.0s var(--ease) 83.0s both; }
+  #s10 .endcard { animation: softUp 1.6s var(--ease) 83.4s both; }
+  #s10 .endcard2{ animation: softUp 1.6s var(--ease) 84.2s both; }
+
+  /* ============================================================
+     SCENE-SPECIFIC LAYOUT
+     ============================================================ */
+
+  .strikeholder { position: relative; display: inline-block; }
+  .strikebar {
+    position: absolute;
+    left: -2%;
+    top: 52%;
+    width: 104%;
+    height: 0.1em;
+    background: var(--coral);
+    border-radius: 2px;
+    transform-origin: left center;
+    transform: scaleX(0);
+    box-shadow: 0 0 22px var(--coral);
+  }
+  .struck { color: var(--ink-faint); }
+
+  .wrongbloom {
+    position: absolute;
+    width: 46%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--coral) 0%, transparent 68%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* device frames row */
+  .phones {
+    display: flex;
+    gap: clamp(12px, 2.6vw, 30px);
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: clamp(14px, 2.6vh, 30px);
+  }
+  .phone {
+    width: clamp(82px, 12.5vw, 152px);
+    aspect-ratio: 9 / 18.5;
+    border-radius: clamp(12px, 1.6vw, 20px);
+    border: 2px solid oklch(1 0 0 / 0.16);
+    box-shadow: 0 22px 50px -18px oklch(0 0 0 / 0.7), inset 0 1px 0 oklch(1 0 0 / 0.1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px 9px;
+  }
+  .phone .notch {
+    position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    width: 28%; height: 5px; border-radius: 4px; background: oklch(0 0 0 / 0.4);
+  }
+  .phone .plabel {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: clamp(9px, 1.25vw, 15px);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: oklch(0.16 0.03 264);
+  }
+  .phone .ptag {
+    font-family: var(--mono);
+    font-size: clamp(6px, 0.78vw, 9px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: oklch(0.16 0.03 264 / 0.66);
+    margin-top: 3px;
+  }
+  .phone .pbars { display: flex; flex-direction: column; gap: 4px; margin-bottom: 9px; }
+  .phone .pb { height: 5px; border-radius: 3px; background: oklch(0.16 0.03 264 / 0.22); }
+  .phone .pb.w1 { width: 86%; } .phone .pb.w2 { width: 64%; } .phone .pb.w3 { width: 74%; }
+  /* Quiet Capital - dark editorial */
+  .phone.p1 { --rot: -3deg; background: linear-gradient(170deg, oklch(0.24 0.03 264), oklch(0.16 0.02 264)); }
+  .phone.p1 .plabel, .phone.p1 .ptag { color: oklch(0.92 0.02 264); }
+  .phone.p1 .ptag { color: var(--seaglass); }
+  .phone.p1 .pb { background: oklch(0.92 0.02 264 / 0.18); }
+  /* Daybook - light, color = confidence */
+  .phone.p2 { --rot: 0deg; background: linear-gradient(170deg, oklch(0.95 0.02 96), oklch(0.88 0.05 88)); }
+  /* Headline - bold editorial */
+  .phone.p3 { --rot: 3deg; background: linear-gradient(170deg, var(--block-coral), oklch(0.58 0.16 24)); }
+  .phone.p3 .plabel, .phone.p3 .ptag { color: oklch(0.99 0.01 90); }
+  .phone.p3 .pb { background: oklch(0.99 0.01 90 / 0.28); }
+
+  /* swatch range montage */
+  .swatchwrap {
+    display: flex;
+    gap: 6px;
+    width: min(78%, 700px);
+    height: clamp(70px, 13vh, 130px);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -24px oklch(0 0 0 / 0.55);
+    margin-bottom: clamp(14px, 2.5vh, 28px);
+  }
+  .sw { flex: 1; border-radius: 6px; }
+
+  /* AI-voice color-block cards */
+  .voices {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(8px, 1.3vw, 16px);
+    width: min(94%, 940px);
+  }
+  .voice {
+    border-radius: 14px;
+    padding: clamp(12px, 1.8vw, 22px) clamp(10px, 1.3vw, 16px);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: clamp(150px, 26vh, 230px);
+    opacity: 0;
+    box-shadow: 0 20px 44px -20px oklch(0 0 0 / 0.6), inset 0 1px 0 oklch(1 0 0 / 0.12);
+    border: 1px solid oklch(1 0 0 / 0.12);
+  }
+  .vtop { display: flex; align-items: center; gap: 9px; }
+  .vorb {
+    width: clamp(13px, 1.5vw, 18px); aspect-ratio: 1; border-radius: 50%;
+    flex: none;
+    box-shadow: 0 0 16px currentColor;
+  }
+  .vstate {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: clamp(8px, 0.95vw, 11px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .vbody {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(13px, 1.55vw, 19px);
+    line-height: 1.22;
+    margin-top: auto;
+    color: var(--ink);
+  }
+  /* meaningful hues, kept as bold blocks */
+  .voice.v-think { background: linear-gradient(165deg, oklch(0.34 0.13 262), oklch(0.26 0.10 262)); }
+  .voice.v-think .vorb, .voice.v-think .vstate { color: var(--cobalt); }
+  .voice.v-conf  { background: linear-gradient(165deg, oklch(0.40 0.10 168), oklch(0.30 0.08 168)); }
+  .voice.v-conf .vorb, .voice.v-conf .vstate { color: var(--seaglass); }
+  .voice.v-unc   { background: linear-gradient(165deg, oklch(0.44 0.11 76), oklch(0.34 0.09 76)); }
+  .voice.v-unc .vorb, .voice.v-unc .vstate { color: var(--amber); }
+  .voice.v-unc .vbody { font-weight: 300; opacity: 0.82; }
+  .voice.v-wrong { background: linear-gradient(165deg, oklch(0.40 0.14 28), oklch(0.30 0.11 28)); }
+  .voice.v-wrong .vorb, .voice.v-wrong .vstate { color: var(--coral); }
+  .voice.v-silent{ background: linear-gradient(165deg, oklch(0.26 0.02 264), oklch(0.20 0.015 264)); }
+  .voice.v-silent .vorb, .voice.v-silent .vstate { color: var(--ghost); }
+
+  .ledgernum {
+    font-family: var(--display);
+    font-size: clamp(30px, 6vw, 78px);
+    line-height: 1;
+    color: var(--ink-deep);
+    display: inline-block;
+  }
+  .ledgernum .six { display: inline-block; color: oklch(0.34 0.14 28); }
+
+  .endrule {
+    width: clamp(60px, 8vw, 110px);
+    height: 3px;
+    border-radius: 2px;
+    background: var(--seaglass);
+    margin: clamp(14px, 2.4vh, 26px) 0 clamp(12px, 2vh, 22px);
+    box-shadow: 0 0 18px var(--seaglass);
+    transform: scaleX(0);
+  }
+
+  .l1, .l1b, .l4b, .l3, .l3b, .l7, .l9 { max-width: 16ch; }
+  .serif.l5 { max-width: 34ch; }
+  .serif.l6 { max-width: 30ch; }
+
+  /* ============================================================
+     PAUSE / REPLAY  (CSS-controlled, JS only toggles classes)
+     ============================================================ */
+  .paused .scene,
+  .paused .scene *,
+  .paused .scene::before,
+  .paused .progress-fill { animation-play-state: paused !important; }
+
+  .reset .scene,
+  .reset .scene *,
+  .reset .scene::before,
+  .reset .progress-fill { animation: none !important; }
+
+  /* ---------------- controls + progress ---------------- */
+  .player {
+    width: 100%;
+    max-width: 1040px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .progress {
+    position: relative;
+    height: 5px;
+    width: 100%;
+    border-radius: 99px;
+    background: oklch(0.4 0.04 280 / 0.3);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0;
+    right: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--cobalt), var(--seaglass));
+    box-shadow: 0 0 14px oklch(0.7 0.12 220 / 0.6);
+    /* progress bar fills over the SAME master duration */
+    animation: fill var(--film) linear 0s both;
+  }
+  @keyframes fill { from { right: 100%; } to { right: 0%; } }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .ctl-left { display: flex; gap: 10px; }
+  .btn {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: oklch(0.26 0.04 280 / 0.5);
+    border: 1px solid oklch(0.5 0.06 280 / 0.4);
+    padding: 10px 18px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.12s var(--ease);
+  }
+  .btn:hover {
+    color: var(--ink);
+    border-color: var(--cobalt);
+    background: oklch(0.32 0.06 270 / 0.6);
+  }
+  .btn:active { transform: scale(0.95); }
+
+  .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .meta b { color: var(--ink-soft); font-weight: 600; }
+
+  /* ============================================================
+     REDUCED MOTION - show a static, readable frame
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .scene, .scene *, .scene::before {
+      animation: none !important;
+      transition: none !important;
+    }
+    .scene { opacity: 0; }
+    #s10 { opacity: 1; }
+    #s10 .thesis1, #s10 .thesis2, #s10 .endcard, #s10 .endcard2 {
+      opacity: 1; transform: none; letter-spacing: normal;
+    }
+    #s10 .endrule { opacity: 1; transform: scaleX(1); }
+    #s10::before { transform: none; }
+    .progress-fill { right: 0; animation: none; }
+  }
+
+  @media (max-width: 560px) {
+    .voices { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .voice { min-height: 130px; padding: 9px 7px; border-radius: 9px; }
+    .vbody { font-size: 10px; }
+    .vstate { font-size: 6.5px; letter-spacing: 0.08em; }
+  }
+</style>
+
+<div class="page">
+
+  <!-- ================= THE FILM STAGE (16:9 letterboxed player) ================= -->
+  <div class="stage">
+    <div class="timeline">
+
+      <!-- ===== ACT 1 ===== -->
+
+      <!-- S1: 0-10s open -->
+      <section class="scene" id="s1">
+        <div class="kicker k1">A morning, before coffee.</div>
+        <div class="big l1 lfade">A hundred agents</div>
+        <div class="big l1b lfade a-cobalt">worked all night.</div>
+      </section>
+
+      <!-- S2: 10.5-19s "So I built a dashboard." -> strike -> "Wrong answer." -->
+      <section class="scene" id="s2">
+        <div class="mid l2 l2dis">So I built a
+          <span class="strikeholder">
+            <span class="struck">dashboard.</span>
+            <span class="strikebar"></span>
+          </span>
+        </div>
+        <div class="wrongbloom"></div>
+        <div class="big wrong a-coral">Wrong answer.</div>
+      </section>
+
+      <!-- S3: 19-26s reframe -->
+      <section class="scene" id="s3">
+        <div class="kicker k3">The reframe</div>
+        <div class="mid l3">It is not a dashboard.</div>
+        <div class="big l3b">It is a triage<br><span class="a-amber">of exceptions.</span></div>
+      </section>
+
+      <!-- ===== ACT 2 ===== -->
+
+      <!-- S4: 26-33s kicker -->
+      <section class="scene" id="s4">
+        <div class="kicker k4">Act two - the work</div>
+        <div class="mid l4">I did not trust one idea.</div>
+        <div class="big l4b">I built three.</div>
+      </section>
+
+      <!-- S5: 33-43s three device frames -->
+      <section class="scene" id="s5">
+        <div class="phones">
+          <div class="phone p1 phone1">
+            <div class="notch"></div>
+            <div class="pbars"><div class="pb w1"></div><div class="pb w2"></div><div class="pb w3"></div></div>
+            <div class="plabel">Quiet<br>Capital</div>
+            <div class="ptag">dark - editorial</div>
+          </div>
+          <div class="phone p2 phone2">
+            <div class="notch"></div>
+            <div class="pbars"><div class="pb w1"></div><div class="pb w2"></div><div class="pb w3"></div></div>
+            <div class="plabel">Daybook</div>
+            <div class="ptag">color = confidence</div>
+          </div>
+          <div class="phone p3 phone3">
+            <div class="notch"></div>
+            <div class="pbars"><div class="pb w1"></div><div class="pb w2"></div><div class="pb w3"></div></div>
+            <div class="plabel">Headline</div>
+            <div class="ptag">type is the triage</div>
+          </div>
+        </div>
+        <div class="serif l5">Each one a working app. The choice between them was the design.</div>
+      </section>
+
+      <!-- S6: 43-49s range montage of color swatches -->
+      <section class="scene" id="s6">
+        <div class="kicker k6 dark">A range of visual dialects</div>
+        <div class="swatchwrap">
+          <div class="sw" style="--i:0; background: oklch(0.22 0.03 264);"></div>
+          <div class="sw" style="--i:1; background: var(--cobalt);"></div>
+          <div class="sw" style="--i:2; background: var(--seaglass);"></div>
+          <div class="sw" style="--i:3; background: var(--amber);"></div>
+          <div class="sw" style="--i:4; background: var(--coral);"></div>
+          <div class="sw" style="--i:5; background: oklch(0.93 0.03 86);"></div>
+          <div class="sw" style="--i:6; background: var(--block-violet);"></div>
+          <div class="sw" style="--i:7; background: oklch(0.5 0.16 200);"></div>
+        </div>
+        <div class="ui-line l6 dark">One choice between them: which silence feels like home.</div>
+      </section>
+
+      <!-- ===== ACT 3 ===== -->
+
+      <!-- S7: 49-55s kicker -->
+      <section class="scene" id="s7">
+        <div class="kicker k7">Act three - the one</div>
+        <div class="big l7">The calmest<br><span class="a-sea">of the three.</span></div>
+      </section>
+
+      <!-- S8: 55-70s five AI voices as bold color-block cards -->
+      <section class="scene" id="s8">
+        <div class="kicker k8">Five voices, one calm</div>
+        <div class="voices">
+          <div class="voice v-think"  style="--i:0">
+            <div class="vtop"><span class="vorb"></span><span class="vstate">Thinking</span></div>
+            <div class="vbody">It tells you what it is checking.</div>
+          </div>
+          <div class="voice v-conf"   style="--i:1">
+            <div class="vtop"><span class="vorb"></span><span class="vstate">Confident</span></div>
+            <div class="vbody">Boring on purpose.</div>
+          </div>
+          <div class="voice v-unc"    style="--i:2">
+            <div class="vtop"><span class="vorb"></span><span class="vstate">Uncertain</span></div>
+            <div class="vbody">The type gets lighter.</div>
+          </div>
+          <div class="voice v-wrong"  style="--i:3">
+            <div class="vtop"><span class="vorb"></span><span class="vstate">Wrong</span></div>
+            <div class="vbody">It never dead-ends.</div>
+          </div>
+          <div class="voice v-silent" style="--i:4">
+            <div class="vtop"><span class="vorb"></span><span class="vstate">Silent</span></div>
+            <div class="vbody">It shows you what it did not interrupt you for.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S9: 70.5-78s Silence Ledger payoff -->
+      <section class="scene" id="s9">
+        <div class="kicker k9 dark">The silence ledger</div>
+        <div class="big l9 dark">I handled <span class="ledgernum">47</span> things overnight.</div>
+        <div class="serif l9b dark six">I chose not to wake you for <span class="ledgernum"><span class="six">six</span></span>.</div>
+      </section>
+
+      <!-- S10: 78-89s thesis + end card (LONG hold) -->
+      <section class="scene" id="s10">
+        <div class="big thesis1">The agents are<br>not the product.</div>
+        <div class="big thesis2 a-sea">The calm is<br>the product.</div>
+        <div class="endrule"></div>
+        <div class="serif endcard" style="font-style: italic;">Leo - the morning command center</div>
+        <div class="ui-line endcard2">by Ravindra Sisodia</div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ================= PLAYER CHROME ================= -->
+  <div class="player">
+    <div class="progress" aria-hidden="true"><div class="progress-fill" id="fill"></div></div>
+    <div class="controls">
+      <div class="ctl-left">
+        <button class="btn" id="playpause" aria-label="Play or pause the film">Pause</button>
+        <button class="btn" id="replay" aria-label="Replay the film from the start">Replay</button>
+      </div>
+      <div class="meta"><b>Leo</b> &nbsp;-&nbsp; kinetic cut &nbsp;-&nbsp; 01:29</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /*
+    The film auto-plays from pure CSS - this script is enhancement only.
+    If it never runs (CSP, error), the timeline + progress bar still play.
+    Replay: suppress every animation, force one reflow, release -> all restart at 0.
+    Pause:  toggle .paused on the page root -> animation-play-state: paused.
+    Motion is 100% CSS keyframes. No frame loops, no observers, no scroll hooks.
+  */
+  (function () {
+    var page = document.querySelector('.page');
+    var playpause = document.getElementById('playpause');
+    var replay = document.getElementById('replay');
+    if (!page || !playpause || !replay) return;
+
+    var paused = false;
+
+    function restart() {
+      page.classList.add('reset');
+      page.classList.remove('paused');
+      paused = false;
+      playpause.textContent = 'Pause';
+      // force reflow with animations suppressed, then release synchronously so
+      // every CSS animation restarts from 0 (no rAF needed)
+      void page.offsetWidth;
+      page.classList.remove('reset');
+    }
+
+    function toggle() {
+      paused = !paused;
+      page.classList.toggle('paused', paused);
+      playpause.textContent = paused ? 'Play' : 'Pause';
+    }
+
+    replay.addEventListener('click', restart);
+    playpause.addEventListener('click', toggle);
+  })();
+</script>

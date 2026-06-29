@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Sightline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --cobalt:oklch(0.66 0.16 262); --ghost:oklch(0.46 0.014 260); --on:oklch(0.99 0 0);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.21 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:812px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.statusbar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--body);z-index:30;pointer-events:none}
+.statusbar .dots{display:flex;gap:5px;align-items:center}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:54px 0 0}
+
+/* header */
+.head{padding:8px 24px 14px;flex:none}
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.86 0.10 262), oklch(0.62 0.17 262) 46%, oklch(0.34 0.11 270));box-shadow:0 0 12px oklch(0.62 0.17 262 / .55);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.lede{font-family:var(--serif);font-size:21px;line-height:1.32;margin-top:13px;letter-spacing:-.01em}
+.lede .dim{color:var(--muted)}
+.lede.cleared{color:var(--confident)}
+
+/* timeline */
+.scroll{flex:1;overflow:hidden;position:relative}
+.timeline{position:relative;padding:6px 24px 22px;height:100%}
+/* the sightline svg sits on the rail, behind the nodes */
+.rail-svg{position:absolute;top:0;bottom:0;left:50px;width:42px;overflow:visible;z-index:1;pointer-events:none}
+/* static faint spine connecting every block */
+.spine{fill:none;stroke:var(--hair2);stroke-width:1.5;stroke-dasharray:1 6;stroke-linecap:round}
+/* the glowing cobalt sightline that threads only the moments that need you */
+.sight{fill:none;stroke:var(--cobalt);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px oklch(0.66 0.16 262 / .7));
+  stroke-dasharray:900;stroke-dashoffset:0;transition:opacity .8s ease}
+/* draw-in motion is a pure enhancement; the line is visible by default even without JS */
+.timeline.drawn .sight{animation:sight-draw 1.7s var(--exp) both}
+@keyframes sight-draw{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+/* route variants: only one path is active at a time. they share the .sight look. */
+.sight[data-route]{display:none}
+.timeline[data-route="3"] .sight[data-route="3"],
+.timeline[data-route="2"] .sight[data-route="2"],
+.timeline[data-route="1"] .sight[data-route="1"]{display:block}
+.timeline.allclear .sight{opacity:0}
+
+/* blocks */
+.block{position:relative;display:flex;gap:18px;padding:9px 0;z-index:2}
+.time{flex:0 0 38px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--soft);padding-top:13px;text-align:right;transition:color .5s var(--exp)}
+.node{flex:0 0 14px;position:relative;display:flex;justify-content:center;padding-top:14px}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--ghost);box-shadow:0 0 0 4px var(--canvas);transition:all .5s var(--exp);position:relative;z-index:3}
+.body{flex:1;min-width:0}
+.label{font-family:var(--serif);font-size:16px;line-height:1.35;color:var(--ghost);transition:color .5s var(--exp)}
+.meta{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:oklch(0.42 0.012 260);margin-top:3px;text-transform:uppercase;transition:color .5s var(--exp)}
+
+/* ghosted (handled) blocks read quiet */
+.block.ghost{opacity:.55}
+.block.ghost .meta::after{content:" · handled";color:oklch(0.40 0.012 260)}
+
+/* marked blocks: the ones that need your eyes */
+.block.mark .dot{background:var(--cobalt);box-shadow:0 0 0 4px var(--canvas),0 0 11px oklch(0.66 0.16 262 / .8);}
+.block.mark .label{color:var(--ink)}
+.block.mark .time{color:var(--body)}
+.block.mark .meta{color:var(--cobalt)}
+.block.mark{cursor:pointer}
+/* 'look here' marker - a small pulsing ring with a caret */
+.look{position:absolute;left:0;top:11px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt);transform:translateX(-2px);opacity:1;transition:opacity .5s ease}
+.look .ring{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--cobalt);position:relative}
+.look .ring::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--cobalt);animation:ripple 2.4s var(--exp) infinite;opacity:0}
+@keyframes ripple{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+.block.mark .body{position:relative}
+.look-tag{position:absolute;right:0;top:15px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--cobalt);display:flex;align-items:center;gap:5px;opacity:1;transition:opacity .5s ease .3s}
+.look-tag .car{display:inline-block;animation:nudge 1.8s var(--exp) infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* expand panel */
+.expand{max-height:0;overflow:hidden;opacity:0;transition:max-height .55s var(--exp),opacity .4s ease,margin .4s ease;margin-top:0}
+.block.open .expand{max-height:220px;opacity:1;margin-top:11px}
+.block.open .look-tag{opacity:0}
+.panel{background:var(--inset);border:1px solid oklch(0.66 0.16 262 / .28);border-radius:14px;padding:14px 15px}
+.panel .why{font-family:var(--serif);font-size:14.5px;font-style:italic;line-height:1.5;color:var(--body)}
+.panel .why b{font-style:normal;font-weight:600;color:var(--ink)}
+.panel .act{margin-top:13px;display:flex;gap:9px}
+.btn{height:42px;border-radius:11px;font-family:var(--sans);font-size:13.5px;font-weight:600;border:none;cursor:pointer;transition:transform .16s var(--exp)}
+.btn:active{transform:scale(.96)}
+.btn-p{flex:1;background:var(--cobalt);color:var(--on)}
+.btn-g{background:transparent;color:var(--body);border:1px solid var(--hair2);padding:0 15px}
+
+/* resolved state: node turns seaglass, line re-routes past it */
+.block.done .dot{background:var(--confident);box-shadow:0 0 0 4px var(--canvas),0 0 9px oklch(0.80 0.11 168 / .6)}
+.block.done .label{color:var(--muted)}
+.block.done .meta{color:var(--confident)}
+.block.done{cursor:default;opacity:.7}
+.block.done .look,.block.done .look-tag{opacity:0!important}
+.block.done .expand{max-height:0;opacity:0;margin-top:0}
+.block.done .meta .verb{display:none}
+.block.done .meta::before{content:"resolved · ";color:var(--confident)}
+
+/* footer rail */
+.foot{flex:none;padding:14px 24px 26px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.counter{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--soft)}
+.counter b{color:var(--cobalt);font-weight:500}
+.counter.cleared b{color:var(--confident)}
+.replay{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:10px;padding:8px 13px;cursor:pointer;transition:transform .16s var(--exp)}
+.replay:active{transform:scale(.96)}
+
+.controls{display:flex;gap:10px}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer;transition:transform .16s var(--exp)}
+.controls button:active{transform:scale(.97)}
+
+@media (prefers-reduced-motion: reduce){
+  .orb{animation:none}
+  .sight,.timeline.drawn .sight{transition:none;animation:none}
+  .look .ring::after,.look-tag .car{animation:none}
+  .dot,.label,.time,.meta,.expand,.look,.look-tag{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · The Sightline</div>
+
+<div class="phone">
+  <div class="island"></div>
+  <div class="statusbar"><span>7:02</span><span class="dots">5G ▮▮▮ 86</span></div>
+  <div class="screen">
+
+    <div class="head">
+      <div class="hi"><span class="orb"></span>Leo · where to look this morning</div>
+      <div class="lede" id="lede">Three moments need your eyes today. <span class="dim">I have dimmed the rest.</span></div>
+    </div>
+
+    <div class="scroll">
+      <div class="timeline" id="timeline" data-route="3">
+
+        <!-- the sightline: three route variants, one shown per data-route -->
+        <svg class="rail-svg" viewBox="0 0 42 700" preserveAspectRatio="none" aria-hidden="true">
+          <!-- faint spine through all 7 blocks (node centres ~ every 100u) -->
+          <path class="spine" d="M21 30 V 670"/>
+          <!-- route 3: threads blocks 2 (9:30), 4 (1:00p), 6 (4:30p) -->
+          <path class="sight" data-route="3" d="M21 30 Q 6 95 21 160 Q 36 250 21 350 Q 6 440 21 540 Q 36 605 21 670"/>
+          <!-- route 2: 9:30 resolved -> threads 1:00p, 4:30p only -->
+          <path class="sight" data-route="2" d="M21 30 L 21 350 Q 36 440 21 540 Q 6 605 21 670"/>
+          <!-- route 1: only 4:30p left -->
+          <path class="sight" data-route="1" d="M21 30 L 21 540 Q 36 605 21 670"/>
+        </svg>
+
+        <!-- 1 · 7am · ghost -->
+        <div class="block ghost">
+          <div class="time">7:00a</div>
+          <div class="node"><span class="dot"></span></div>
+          <div class="body"><div class="label">Overnight brief and inbox triage</div><div class="meta">leo · 41 items sorted</div></div>
+        </div>
+
+        <!-- 2 · 9:30 · MARK -->
+        <div class="block mark" id="b1" data-route-next="2">
+          <div class="time">9:30a</div>
+          <div class="node"><span class="dot"></span><span class="look"><span class="ring"></span></span></div>
+          <div class="body">
+            <div class="label">Maple St. counter expires</div>
+            <div class="meta"><span class="verb">needs a yes/no · </span>own deal</div>
+            <span class="look-tag">look here <span class="car">›</span></span>
+            <div class="expand"><div class="panel">
+              <div class="why">Buyers gave until <b>10am</b>. Leo drafted a counter at $612k holding your terms. <b>Your name, not mine</b> - this one's worth your read.</div>
+              <div class="act"><button class="btn btn-p" data-resolve="b1">Send the counter</button><button class="btn btn-g">Open draft</button></div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- 3 · 11am · ghost -->
+        <div class="block ghost">
+          <div class="time">11:00a</div>
+          <div class="node"><span class="dot"></span></div>
+          <div class="body"><div class="label">Rivera inspection follow-ups</div><div class="meta">leo · vendor booked</div></div>
+        </div>
+
+        <!-- 4 · 1:00p · MARK -->
+        <div class="block mark" id="b2" data-route-next="1">
+          <div class="time">1:00p</div>
+          <div class="node"><span class="dot"></span><span class="look"><span class="ring"></span></span></div>
+          <div class="body">
+            <div class="label">New agent's first listing call</div>
+            <div class="meta"><span class="verb">a word before · </span>team</div>
+            <span class="look-tag">look here <span class="car">›</span></span>
+            <div class="expand"><div class="panel">
+              <div class="why">Priya presents at 1. She's <b>wobbly on the pricing story</b>. Two lines from you before she dials would steady it.</div>
+              <div class="act"><button class="btn btn-p" data-resolve="b2">Send her the two lines</button><button class="btn btn-g">Call Priya</button></div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- 5 · 2:30p · ghost -->
+        <div class="block ghost">
+          <div class="time">2:30p</div>
+          <div class="node"><span class="dot"></span></div>
+          <div class="body"><div class="label">Closing docs for the Tans</div><div class="meta">leo · sent for e-sign</div></div>
+        </div>
+
+        <!-- 6 · 4:30p · MARK -->
+        <div class="block mark" id="b3" data-route-next="0">
+          <div class="time">4:30p</div>
+          <div class="node"><span class="dot"></span><span class="look"><span class="ring"></span></span></div>
+          <div class="body">
+            <div class="label">Cedar Park seller is wavering</div>
+            <div class="meta"><span class="verb">a human call · </span>team</div>
+            <span class="look-tag">look here <span class="car">›</span></span>
+            <div class="expand"><div class="panel">
+              <div class="why">Tone cooled across three texts. Leo won't text a wavering seller - <b>this wants your voice</b>, not a message.</div>
+              <div class="act"><button class="btn btn-p" data-resolve="b3">Call the seller</button><button class="btn btn-g">See the thread</button></div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- 7 · evening · ghost -->
+        <div class="block ghost">
+          <div class="time">eve</div>
+          <div class="node"><span class="dot"></span></div>
+          <div class="body"><div class="label">Tomorrow staged, recap drafted</div><div class="meta">leo · ready for 7am</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="counter" id="counter"><b>3</b> of 3 moments still need your eyes</div>
+      <button class="replay" id="replay">↻ Replay</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="controls"><button id="re2">↻ Replay the morning</button></div>
+
+<script>
+(function(){
+  var timeline=document.getElementById('timeline');
+  var lede=document.getElementById('lede');
+  var counter=document.getElementById('counter');
+  var marks=['b1','b2','b3'];
+
+  function draw(){ timeline.classList.remove('drawn'); void timeline.offsetWidth; timeline.classList.add('drawn'); }
+
+  // tap a marked moment to expand (single open at a time)
+  marks.forEach(function(id){
+    var b=document.getElementById(id);
+    b.addEventListener('click',function(e){
+      if(e.target.closest('.btn')) return;
+      if(b.classList.contains('done')) return;
+      var wasOpen=b.classList.contains('open');
+      marks.forEach(function(x){ document.getElementById(x).classList.remove('open'); });
+      if(!wasOpen) b.classList.add('open');
+    });
+  });
+
+  function remaining(){ return marks.filter(function(id){ return !document.getElementById(id).classList.contains('done'); }); }
+
+  function updateChrome(){
+    var left=remaining().length;
+    if(left===0){
+      lede.classList.add('cleared'); lede.innerHTML='Nothing else needs your eyes.';
+      counter.classList.add('cleared'); counter.innerHTML='All clear · <b>handled the rest, quietly</b>';
+      timeline.classList.add('allclear');
+    }else{
+      counter.innerHTML='<b>'+left+'</b> of 3 moment'+(left===1?'':'s')+' still need'+(left===1?'s':'')+' your eyes';
+    }
+  }
+
+  // resolve -> node seaglass, sightline re-routes to the next moment
+  document.querySelectorAll('[data-resolve]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var b=document.getElementById(btn.getAttribute('data-resolve'));
+      b.classList.remove('open');
+      b.classList.add('mark');
+      b.classList.add('done');
+      // re-route: each block declares the route to switch to once it's done
+      var next=b.getAttribute('data-route-next');
+      // small beat so the panel collapse reads before the line redraws
+      setTimeout(function(){
+        if(next==='0'){ updateChrome(); }
+        else{ timeline.setAttribute('data-route',next); draw(); updateChrome(); }
+      },260);
+      if(next==='0'){ /* allclear handled in updateChrome via remaining() */ }
+    });
+  });
+
+  function reset(){
+    marks.forEach(function(id){ var b=document.getElementById(id); b.classList.remove('done','open'); });
+    timeline.classList.remove('allclear');
+    timeline.setAttribute('data-route','3');
+    lede.classList.remove('cleared');
+    lede.innerHTML='Three moments need your eyes today. <span class="dim">I have dimmed the rest.</span>';
+    counter.classList.remove('cleared');
+    counter.innerHTML='<b>3</b> of 3 moments still need your eyes';
+    draw();
+  }
+
+  document.getElementById('replay').addEventListener('click',reset);
+  document.getElementById('re2').addEventListener('click',reset);
+
+  // a11y: make click-bound non-native elements keyboard-operable
+  // (DOM is already parsed; this script tag sits at the end of body)
+  (function keyboardSweep(){
+    var nativelyFocusable={A:1,BUTTON:1};
+    var candidates=[];
+    // any element wired via an onclick attribute that isn't a button/link
+    Array.prototype.forEach.call(document.querySelectorAll('[onclick]'),function(el){
+      candidates.push(el);
+    });
+    // the file's primary click-bound interactive rows
+    Array.prototype.forEach.call(document.querySelectorAll('.block.mark'),function(el){
+      candidates.push(el);
+    });
+    candidates.forEach(function(el){
+      if(nativelyFocusable[el.tagName]) return; // don't double-bind real button/anchor
+      if(!el.hasAttribute('role')) el.setAttribute('role','button');
+      if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    });
+    // one document-level handler: Enter/Space activates a focused custom button
+    document.addEventListener('keydown',function(e){
+      if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+      var t=e.target;
+      if(!t||t.getAttribute('role')!=='button') return;
+      if(t.tagName==='A'||t.tagName==='BUTTON') return; // native handles itself
+      var tag=t.tagName;
+      if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable) return; // don't break typing
+      e.preventDefault();
+      t.click();
+    });
+  })();
+
+  draw();
+})();
+</script>
+</body>
+</html>

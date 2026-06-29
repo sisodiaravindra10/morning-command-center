@@ -1,0 +1,688 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Three calms. I had to pick one. - Approaches - Morning Command Center</title>
+<meta name="description" content="The decision behind the morning command center: three calm directions - Quiet Capital, Daybook, Headline - scored against what matters for a Team Lead Agent, and why one became the base." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* AI-state palette (OKLCH) */
+    --seaglass:  oklch(0.80 0.11 168);
+    --amber:     oklch(0.82 0.12 72);
+    --coral:     oklch(0.73 0.16 28);
+    --cobalt:    oklch(0.66 0.16 262);
+    --ghost:     oklch(0.62 0.012 260);
+
+    /* dark cinematic ground, tinted toward hue 260 */
+    --ground:    oklch(0.13 0.02 262);
+    --ground-2:  oklch(0.10 0.015 260);
+    --canvas:    oklch(0.155 0.022 260);
+    --card:      oklch(0.185 0.024 261);
+    --card-2:    oklch(0.215 0.026 261);
+    --hairline:  oklch(0.96 0.01 250 / .10);
+    --hairline-2:oklch(0.96 0.01 250 / .18);
+    --ink:       oklch(0.96 0.01 250);
+    --ink-soft:  oklch(0.80 0.012 255);
+    --ink-mute:  oklch(0.62 0.012 258);
+    --ink-faint: oklch(0.50 0.012 258);
+
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --ease: cubic-bezier(.16,1,.3,1);
+
+    --maxw: 1180px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--ground-2);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+  body::before{
+    content:""; position: fixed; inset: 0; z-index: 0; pointer-events:none;
+    background:
+      radial-gradient(120% 80% at 50% -20%, oklch(0.18 0.03 264) 0%, transparent 55%),
+      linear-gradient(180deg, var(--ground) 0%, var(--ground-2) 70%);
+  }
+  .aurora{
+    position: fixed; inset: -10% -10% auto -10%; height: 70vh; z-index: 0; pointer-events:none;
+    background:
+      radial-gradient(46% 58% at 20% 6%, oklch(0.42 0.13 262 / .22) 0%, transparent 62%),
+      radial-gradient(50% 55% at 84% 0%, oklch(0.40 0.10 200 / .16) 0%, transparent 60%);
+    filter: blur(8px);
+    animation: drift 28s var(--ease) infinite alternate;
+  }
+  @keyframes drift{ from{ transform: translate3d(-3%,0,0) scale(1);} to{ transform: translate3d(4%,2.5%,0) scale(1.08);} }
+  .grain{
+    position: fixed; inset: 0; z-index: 1; pointer-events:none; opacity: .04;
+    background-image: repeating-linear-gradient(0deg, oklch(1 0 0 / .5) 0 1px, transparent 1px 3px);
+    mix-blend-mode: overlay;
+  }
+  main, .topbar{ position: relative; z-index: 2; }
+  a{ color: inherit; text-decoration: none; }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+  .wrap{ width:100%; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+
+  /* ===== type primitives ===== */
+  .kicker{ font-family: var(--mono); font-size: 11px; letter-spacing:.15em; text-transform:uppercase; color: var(--ink-mute); }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing:.15em; text-transform:uppercase; color: var(--cobalt);
+  }
+  .eyebrow::before{ content:""; width:26px; height:1px; background: currentColor; opacity:.55; }
+  h2.section-title{
+    font-family: var(--serif); font-weight:400;
+    font-size: clamp(28px, 4.2vw, 48px); line-height:1.07; letter-spacing:-0.01em; color: var(--ink); max-width: 20ch;
+  }
+  h2.section-title em{ font-style:italic; color: var(--ink-soft); }
+  .section-lede{ margin-top:18px; max-width:58ch; font-size:15.5px; line-height:1.65; color: var(--ink-mute); }
+  .section-head{ margin-bottom: 46px; }
+
+  /* ===== topbar ===== */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 32px; max-width: var(--maxw); margin: 0 auto;
+  }
+  .topbar .brand{ display:flex; align-items:center; gap:12px; }
+  .topbar .brand .orb{
+    width: 26px; height: 26px; border-radius:50%; position:relative;
+    background: radial-gradient(circle at 38% 34%, oklch(0.95 0.03 200 / .6), var(--seaglass) 72%);
+    box-shadow: 0 0 0 1px var(--hairline), 0 0 18px -4px var(--seaglass);
+    animation: breath 3.4s var(--ease) infinite;
+  }
+  @keyframes breath{ 0%,100%{ transform:scale(1); opacity:.92;} 50%{ transform:scale(1.08); opacity:1;} }
+  .topbar .brand b{ font-family: var(--sans); font-weight:600; font-size:13.5px; letter-spacing:-0.01em; }
+  .topbar .brand span{ display:block; font-family: var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color: var(--ink-mute); margin-top:2px; }
+  .topbar .links{ display:flex; gap:26px; }
+  .topbar .links a{ font-family: var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-mute); transition: color .3s var(--ease); }
+  .topbar .links a:hover{ color: var(--ink); }
+
+  /* ===== hero ===== */
+  .hero{ padding: 78px 0 30px; }
+  .hero .eyebrow{ animation: rise .8s var(--ease) .05s both; }
+  .hero h1{
+    font-family: var(--serif); font-weight:400;
+    font-size: clamp(38px, 6.4vw, 82px); line-height:1.02; letter-spacing:-0.02em;
+    margin-top: 22px; max-width: 17ch;
+    animation: rise .9s var(--ease) .12s both;
+  }
+  .hero h1 .l2{ display:block; font-style:italic; color: var(--ink-soft); }
+  .hero .sub{
+    margin-top: 28px; max-width: 60ch; font-size:17px; line-height:1.62; color: var(--ink-mute);
+    animation: rise .9s var(--ease) .2s both;
+  }
+  .hero .sub b{ color: var(--ink-soft); font-weight:500; }
+  @keyframes rise{ from{ opacity:0; transform: translateY(16px);} to{opacity:1; transform:none;} }
+
+  /* ===== three columns ===== */
+  .three{ padding: 64px 0 24px; }
+  .col-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .col{
+    position: relative; border-radius: 22px; overflow:hidden;
+    border: 1px solid var(--hairline); background: var(--card);
+    display:flex; flex-direction: column;
+    transition: transform .5s var(--ease), border-color .5s var(--ease), box-shadow .5s var(--ease);
+  }
+  .col:hover{ transform: translateY(-6px); border-color: var(--hairline-2); box-shadow: 0 34px 64px -38px oklch(0 0 0 / .75); }
+  .col-head{ padding: 22px 22px 0; }
+  .col-head .num{ font-family: var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color: var(--ink-faint); }
+  .col-head h3{ font-family: var(--serif); font-weight:400; font-size: 27px; margin-top:5px; letter-spacing:-0.01em; }
+  .col-head .model{
+    display:inline-flex; align-items:center; gap:8px; margin-top:12px;
+    font-family: var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    color: var(--cl); padding: 5px 11px; border-radius: 30px; border:1px solid color-mix(in oklch, var(--cl) 40%, transparent);
+    background: color-mix(in oklch, var(--cl) 12%, transparent);
+  }
+  .col-head .model::before{ content:""; width:6px; height:6px; border-radius:50%; background: var(--cl); }
+
+  /* the device mock */
+  .mock{
+    margin: 22px 22px 0; border-radius: 16px; overflow:hidden;
+    border: 1px solid var(--hairline); position: relative;
+    aspect-ratio: 393 / 300;
+  }
+  .mock .status{
+    height: 22px; display:flex; align-items:center; justify-content:space-between;
+    padding: 0 14px; font-family: var(--mono); font-size: 8px; letter-spacing:.06em;
+  }
+  .mock .island{
+    position:absolute; top: 7px; left:50%; transform: translateX(-50%);
+    width: 64px; height: 13px; border-radius: 10px; background: oklch(0.04 0.01 264);
+  }
+  .mock .body{ padding: 6px 14px 14px; display:flex; flex-direction: column; gap: 8px; }
+  .mock .ln{ border-radius: 6px; }
+  .mock .meta{ font-family: var(--mono); font-size: 7.5px; letter-spacing:.06em; }
+  .mock .head{ font-family: var(--serif); line-height:1.08; letter-spacing:-0.01em; }
+
+  /* ---- v1 Quiet Capital: dark editorial-minimal, the AI whispers ---- */
+  .mock.v1{ background: linear-gradient(180deg, oklch(0.135 0.018 260), oklch(0.10 0.015 260)); }
+  .mock.v1 .status{ color: oklch(0.72 0.01 250); }
+  .mock.v1 .meta{ color: oklch(0.55 0.012 258); text-transform:uppercase; }
+  .mock.v1 .whisper{ font-family: var(--serif); font-style:italic; font-size: 11px; color: oklch(0.70 0.02 200); line-height:1.4; }
+  .mock.v1 .row{
+    border:1px solid oklch(0.96 0.01 250 / .08); border-radius:10px; padding: 9px 11px;
+    background: oklch(0.18 0.022 261 / .5); display:flex; flex-direction:column; gap:5px;
+  }
+  .mock.v1 .row .head{ font-size: 13px; color: oklch(0.92 0.008 250); }
+  .mock.v1 .row .dot{ width:6px; height:6px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align: middle; }
+  .mock.v1 .row.urgent .dot{ background: var(--coral); box-shadow:0 0 7px var(--coral); }
+  .mock.v1 .row.calm .dot{ background: var(--seaglass); }
+  .mock.v1 .ln.faint{ height:5px; background: oklch(0.96 0.01 250 / .07); }
+
+  /* ---- v2 Daybook: warm, color equals confidence ---- */
+  .mock.v2{ background: linear-gradient(180deg, oklch(0.99 0.01 82), oklch(0.965 0.02 78)); }
+  .mock.v2 .status{ color: oklch(0.40 0.02 60); }
+  .mock.v2 .island{ background: oklch(0.30 0.02 60); }
+  .mock.v2 .meta{ color: oklch(0.50 0.03 60); text-transform:uppercase; }
+  .mock.v2 .head{ color: oklch(0.20 0.02 55); font-style: italic; }
+  .mock.v2 .card{
+    border-radius: 12px; padding: 9px 11px; display:flex; flex-direction: column; gap:5px;
+    background: oklch(0.995 0.006 90); box-shadow: 0 2px 8px -4px oklch(0.3 0.03 60 / .35);
+    border-left: 4px solid var(--cf);
+  }
+  .mock.v2 .card .t{ font-family: var(--serif); font-size: 12.5px; color: oklch(0.22 0.02 55); }
+  .mock.v2 .card .c{ font-family: var(--mono); font-size: 7.5px; letter-spacing:.08em; text-transform:uppercase; color: var(--cf); font-weight:500; }
+  .mock.v2 .card.high{ --cf: oklch(0.52 0.13 165); }
+  .mock.v2 .card.mid{  --cf: oklch(0.70 0.13 72); }
+  .mock.v2 .card.low{  --cf: oklch(0.62 0.17 28); }
+  .mock.v2 .ln.warm{ height:5px; background: oklch(0.30 0.03 60 / .14); }
+
+  /* ---- v3 Headline: editorial-white, giant type IS the triage ---- */
+  .mock.v3{ background: linear-gradient(180deg, oklch(0.995 0.004 95), oklch(0.97 0.012 90)); }
+  .mock.v3 .status{ color: oklch(0.30 0.01 60); }
+  .mock.v3 .island{ background: oklch(0.16 0.01 60); }
+  .mock.v3 .meta{ color: oklch(0.45 0.02 60); text-transform:uppercase; }
+  .mock.v3 .kick{ font-family: var(--mono); font-size: 7px; letter-spacing:.16em; text-transform:uppercase; color: oklch(0.55 0.02 60); }
+  .mock.v3 .giant{ font-family: var(--serif); font-weight:400; font-size: 25px; line-height:1.0; letter-spacing:-0.02em; color: oklch(0.13 0.01 60); margin-top: 2px; }
+  .mock.v3 .giant em{ font-style:italic; color: oklch(0.50 0.11 168); }
+  .mock.v3 .rule{ height:1px; background: oklch(0.16 0.01 60 / .14); margin: 6px 0; }
+  .mock.v3 .sub{ font-family: var(--serif); font-size: 11px; color: oklch(0.38 0.02 60); line-height:1.3; }
+  .mock.v3 .dots{ display:flex; gap:5px; margin-top: 4px; }
+  .mock.v3 .dots i{ width:5px; height:5px; border-radius:50%; background: oklch(0.16 0.01 60 / .2); }
+  .mock.v3 .dots i.on{ background: oklch(0.13 0.01 60); }
+
+  .col-body{ padding: 20px 22px 22px; display:flex; flex-direction:column; flex:1; }
+  .col-body p.desc{ font-size: 13.5px; line-height:1.55; color: var(--ink-soft); }
+  .col-body p.desc + p.desc{ margin-top:8px; color: var(--ink-mute); }
+  .col-foot{
+    margin-top:auto; padding-top: 18px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    border-top: 1px solid var(--hairline);
+  }
+  .col-foot .live{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family: var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-soft);
+    transition: gap .35s var(--ease), color .35s var(--ease);
+  }
+  .col-foot .live::after{ content:"\2192"; transition: transform .35s var(--ease); }
+  .col:hover .col-foot .live{ color: var(--cl); }
+  .col:hover .col-foot .live::after{ transform: translateX(3px); }
+  .col-foot .chosen{
+    font-family: var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+    padding: 4px 9px; border-radius: 20px; border:1px solid var(--seaglass);
+    color: var(--seaglass); background: oklch(0.80 0.11 168 / .12);
+  }
+  .col.is-base{ border-color: color-mix(in oklch, var(--seaglass) 35%, var(--hairline)); }
+  .col.is-base::before{
+    content:""; position:absolute; inset:0; border-radius:22px; pointer-events:none;
+    box-shadow: 0 0 0 1px var(--seaglass) inset; opacity:.25;
+  }
+
+  /* ===== decision matrix ===== */
+  .matrix-sec{ padding: 96px 0 24px; }
+  .matrix-scroll{ overflow-x: auto; border-radius: 18px; border:1px solid var(--hairline); background: var(--card); }
+  table.matrix{ width:100%; border-collapse: collapse; min-width: 760px; }
+  table.matrix thead th{
+    text-align:left; padding: 22px 20px 18px; vertical-align: bottom;
+    border-bottom: 1px solid var(--hairline-2);
+  }
+  table.matrix thead th.crit{ width: 38%; }
+  table.matrix thead th .ch{ font-family: var(--serif); font-weight:400; font-size: 19px; letter-spacing:-0.01em; display:block; }
+  table.matrix thead th .cm{ font-family: var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-faint); margin-top:4px; display:block; }
+  table.matrix thead th.app .badge{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family: var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color: var(--ah);
+  }
+  table.matrix thead th.app .badge::before{ content:""; width:8px; height:8px; border-radius:50%; background: var(--ah); }
+  table.matrix thead th.app.base .badge{ color: var(--seaglass); }
+  table.matrix thead th.app.base .tag{ display:block; margin-top:5px; font-family: var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color: var(--seaglass); opacity:.85; }
+  table.matrix tbody td{ padding: 16px 20px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  table.matrix tbody tr:last-child td{ border-bottom: none; }
+  table.matrix tbody tr:hover td{ background: oklch(0.22 0.026 261 / .4); }
+  td.crit .name{ font-family: var(--sans); font-weight:500; font-size: 14px; color: var(--ink); }
+  td.crit .why{ font-size: 12px; line-height:1.5; color: var(--ink-mute); margin-top:4px; max-width: 40ch; }
+
+  .score{ display:flex; flex-direction: column; gap:7px; }
+  .dots{ display:flex; gap:5px; }
+  .dots i{ width:9px; height:9px; border-radius:50%; background: oklch(0.96 0.01 250 / .12); transition: transform .4s var(--ease); }
+  .dots i.f{ background: var(--sc); box-shadow: 0 0 8px -2px var(--sc); }
+  table.matrix tbody tr:hover .dots i.f{ transform: scale(1.12); }
+  .score .lbl{ font-family: var(--mono); font-size: 9px; letter-spacing:.08em; text-transform:uppercase; color: var(--ink-faint); }
+  td.s1{ --sc: var(--seaglass); }
+  td.s2{ --sc: var(--amber); }
+  td.s3{ --sc: var(--coral); }
+  td.base-col{ background: oklch(0.80 0.11 168 / .05); }
+  table.matrix tbody tr:hover td.base-col{ background: oklch(0.80 0.11 168 / .09); }
+  /* total row */
+  table.matrix tr.total td{ border-top: 1px solid var(--hairline-2); padding-top: 18px; padding-bottom: 20px; }
+  table.matrix tr.total td.crit .name{ font-family: var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color: var(--ink-mute); }
+  .totbar{ display:flex; flex-direction: column; gap:6px; }
+  .totbar .num{ font-family: var(--serif); font-size: 26px; line-height:1; color: var(--ink); }
+  .totbar .num small{ font-family: var(--mono); font-size:10px; color: var(--ink-faint); letter-spacing:.05em; }
+  .totbar .track{ height:5px; border-radius: 4px; background: oklch(0.96 0.01 250 / .1); overflow:hidden; }
+  .totbar .fill{ height:100%; border-radius:4px; background: var(--tc); transform-origin:left; animation: grow 1s var(--ease) both; }
+  @keyframes grow{ from{ transform: scaleX(0);} to{ transform: scaleX(1);} }
+  td.t1 .totbar .num{ color: var(--seaglass); } td.t1{ --tc: var(--seaglass); }
+  td.t2{ --tc: var(--amber); } td.t3{ --tc: var(--coral); }
+  .matrix-key{
+    margin-top: 16px; display:flex; flex-wrap:wrap; gap: 22px;
+    font-family: var(--mono); font-size: 10px; letter-spacing:.08em; text-transform:uppercase; color: var(--ink-faint);
+  }
+  .matrix-key .k{ display:flex; align-items:center; gap:8px; }
+  .matrix-key .k .d{ display:flex; gap:3px; }
+  .matrix-key .k .d i{ width:7px; height:7px; border-radius:50%; background: oklch(0.96 0.01 250 / .12); }
+  .matrix-key .k .d i.f{ background: var(--seaglass); }
+
+  /* ===== verdict ===== */
+  .verdict-sec{ padding: 100px 0 24px; }
+  .verdict{
+    position: relative; border-radius: 24px; overflow:hidden;
+    border: 1px solid color-mix(in oklch, var(--seaglass) 22%, var(--hairline));
+    background:
+      radial-gradient(70% 130% at 88% 8%, oklch(0.24 0.06 200 / .5) 0%, transparent 56%),
+      var(--card);
+    padding: clamp(34px, 5vw, 60px);
+  }
+  .verdict .eyebrow{ color: var(--seaglass); }
+  .verdict h3{
+    font-family: var(--serif); font-weight:400; font-size: clamp(26px, 3.6vw, 40px);
+    line-height:1.12; letter-spacing:-0.01em; margin-top:18px; max-width: 22ch;
+  }
+  .verdict h3 .em{ font-style: normal; color: var(--seaglass); }
+  .verdict .grafts{ margin-top: 34px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .graft{
+    border-radius: 14px; border:1px solid var(--hairline); background: oklch(0.20 0.024 261 / .6);
+    padding: 18px 18px 16px; position:relative;
+    transition: transform .45s var(--ease), border-color .45s var(--ease);
+  }
+  .graft:hover{ transform: translateY(-4px); border-color: var(--gc); }
+  .graft .from{ font-family: var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color: var(--gc); display:flex; align-items:center; gap:7px; }
+  .graft .from::before{ content:""; width:7px; height:7px; border-radius:50%; background: var(--gc); }
+  .graft h4{ font-family: var(--serif); font-weight:400; font-size: 18px; margin-top:10px; letter-spacing:-0.01em; }
+  .graft p{ margin-top:7px; font-size: 12.5px; line-height:1.5; color: var(--ink-mute); }
+  .graft.g-base{ --gc: var(--seaglass); }
+  .graft.g-day{ --gc: var(--amber); }
+  .graft.g-head{ --gc: var(--coral); }
+  .verdict .closing{ margin-top: 34px; max-width: 70ch; font-size: 16px; line-height:1.72; color: var(--ink-soft); font-family: var(--serif); }
+  .verdict .closing b{ font-family: var(--sans); font-weight:500; font-size: 14.5px; color: var(--ink); }
+
+  /* ===== footer ===== */
+  footer{ padding: 96px 0 70px; border-top:1px solid var(--hairline); margin-top: 80px; position:relative; }
+  footer .back{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family: var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color: var(--ink);
+    border:1px solid var(--hairline-2); padding: 13px 20px; border-radius: 40px;
+    transition: transform .4s var(--ease), border-color .4s var(--ease), color .4s var(--ease), gap .4s var(--ease);
+  }
+  footer .back::before{ content:"\2190"; transition: transform .35s var(--ease); }
+  footer .back:hover{ transform: translateY(-2px); border-color: var(--seaglass); color: var(--seaglass); gap: 14px; }
+  footer .back:hover::before{ transform: translateX(-3px); }
+  footer .foot-meta{ margin-top: 46px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  footer .foot-by b{ font-family: var(--sans); font-weight:600; font-size:15px; }
+  footer .foot-by span{ display:block; margin-top:6px; font-size:13px; color: var(--ink-mute); }
+  footer .foot-credit{ font-family: var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-faint); max-width:30ch; line-height:1.7; text-align:right; }
+
+  /* ===== responsive ===== */
+  @media (max-width: 920px){
+    .col-grid{ grid-template-columns: 1fr; max-width: 460px; margin:0 auto; }
+    .verdict .grafts{ grid-template-columns: 1fr; }
+    footer .foot-credit{ text-align:left; }
+  }
+  @media (max-width: 560px){
+    .wrap{ padding: 0 20px; }
+    .topbar{ padding: 18px 20px; }
+    .topbar .links{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation: none !important; transition: none !important; }
+    .totbar .fill{ transform: none; }
+  }
+</style>
+
+<div class="aurora" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="./landing.html">
+    <span class="orb" aria-hidden="true"></span>
+    <span>
+      <b>Morning Command Center</b>
+      <span>The decision</span>
+    </span>
+  </a>
+  <nav class="links" aria-label="Showcase">
+    <a href="./landing.html">Home</a>
+    <a href="../prototype/command-center.html" target="_blank" rel="noopener">Prototype</a>
+    <a href="./design-system.html">System</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">The approaches</p>
+      <h1>Three calms.<span class="l2">I had to pick one.</span></h1>
+      <p class="sub">
+        Same brief, same user: <b>Dana Reyes</b>, a Team Lead Agent reading her phone before coffee.
+        I designed the morning three different ways - three honest answers to "what does calm look like here?"
+        They are not throwaway sketches. Each is a full, navigable app. <b>The choice between them was the design.</b>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== THREE COLUMNS ===== -->
+  <section class="three">
+    <div class="wrap">
+      <div class="col-grid">
+
+        <!-- v1 Quiet Capital -->
+        <article class="col is-base" style="--cl: var(--seaglass)">
+          <div class="col-head">
+            <p class="num">Approach 01</p>
+            <h3>Quiet Capital</h3>
+            <span class="model">Calm sequence</span>
+          </div>
+
+          <div class="mock v1" aria-hidden="true">
+            <div class="island"></div>
+            <div class="status"><span>9:41</span><span>LEO</span></div>
+            <div class="body">
+              <span class="meta">Tue, 21 Jun &middot; before coffee</span>
+              <span class="whisper">Three things are quietly leaking. I handled the rest.</span>
+              <div class="row urgent"><span class="head"><span class="dot"></span>Wire instructions changed</span><span class="ln faint" style="width:60%"></span></div>
+              <div class="row calm"><span class="head"><span class="dot"></span>Counter expires 6pm</span><span class="ln faint" style="width:44%"></span></div>
+            </div>
+          </div>
+
+          <div class="col-body">
+            <p class="desc">The morning as a private bank statement. Monochrome, restrained, the AI almost whispers in serif.</p>
+            <p class="desc">Leo walks you through one item at a time and closes with a deliberate exhale: you're clear.</p>
+            <div class="col-foot">
+              <a class="live" href="../prototype/v1-quiet-capital.html" target="_blank" rel="noopener">Open the live app</a>
+              <span class="chosen">Base</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- v2 Daybook -->
+        <article class="col" style="--cl: var(--amber)">
+          <div class="col-head">
+            <p class="num">Approach 02</p>
+            <h3>Daybook</h3>
+            <span class="model">Swipe deck</span>
+          </div>
+
+          <div class="mock v2" aria-hidden="true">
+            <div class="island"></div>
+            <div class="status"><span>9:41</span><span>LEO</span></div>
+            <div class="body">
+              <span class="meta">Tuesday &middot; the morning ledger</span>
+              <span class="head" style="font-size:13px">Good morning, Dana.</span>
+              <div class="card high"><span class="t">Send the Harbor counter</span><span class="c">Confident &middot; ready to send</span></div>
+              <div class="card mid"><span class="t">Lender went quiet on Vega</span><span class="c">Uncertain &middot; needs your read</span></div>
+              <div class="card low"><span class="t">Wire change on 4th St</span><span class="c">Urgent &middot; verify by call</span></div>
+            </div>
+          </div>
+
+          <div class="col-body">
+            <p class="desc">A warm hand-written ledger on cream paper. Color carries Leo's confidence: green is sure, amber hesitates, coral alarms.</p>
+            <p class="desc">A swipe-to-triage deck - act now or later - one card at a time, with a satisfying stamp.</p>
+            <div class="col-foot">
+              <a class="live" href="../prototype/v2-daybook.html" target="_blank" rel="noopener">Open the live app</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- v3 Headline -->
+        <article class="col" style="--cl: var(--coral)">
+          <div class="col-head">
+            <p class="num">Approach 03</p>
+            <h3>Headline</h3>
+            <span class="model">Scroll story</span>
+          </div>
+
+          <div class="mock v3" aria-hidden="true">
+            <div class="island"></div>
+            <div class="status"><span>9:41</span><span>LEO</span></div>
+            <div class="body">
+              <span class="kick">The morning edition &middot; for Dana</span>
+              <span class="giant">A wire just changed. <em>Call before you click.</em></span>
+              <div class="rule"></div>
+              <span class="sub">Two more need you. The other 47, Leo closed overnight.</span>
+              <div class="dots"><i class="on"></i><i></i><i></i></div>
+            </div>
+          </div>
+
+          <div class="col-body">
+            <p class="desc">The front page written just for Dana. Editorial white, giant serif type IS the triage - the biggest words are the biggest risk.</p>
+            <p class="desc">A scroll story that recomposes three headlines down to one as the day settles.</p>
+            <div class="col-foot">
+              <a class="live" href="../prototype/v3-headline.html" target="_blank" rel="noopener">Open the live app</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DECISION MATRIX ===== -->
+  <section class="matrix-sec">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">The decision matrix</p>
+        <h2 class="section-title">Scored against what matters <em>for this one user.</em></h2>
+        <p class="section-lede">
+          Not generic UX heuristics - the five things that decide whether a Team Lead Agent trusts an AI with her morning.
+          More filled dots is better. The bottom row is the weighted read across all five.
+        </p>
+      </div>
+
+      <div class="matrix-scroll">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th class="crit">
+                <span class="ch">Criterion</span>
+                <span class="cm">Why it matters for Dana</span>
+              </th>
+              <th class="app base">
+                <span class="badge">Quiet Capital</span>
+                <span class="tag">Chosen base</span>
+              </th>
+              <th class="app" style="--ah: var(--amber)">
+                <span class="badge">Daybook</span>
+              </th>
+              <th class="app" style="--ah: var(--coral)">
+                <span class="badge">Headline</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td class="crit">
+                <span class="name">Calm under load</span>
+                <span class="why">It is a triage feed for the worst mornings. Does the interface stay quiet when everything is loud?</span>
+              </td>
+              <td class="s1 base-col">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div><span class="lbl">Whispers by design</span></div>
+              </td>
+              <td class="s2">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span class="lbl">Warmth adds energy</span></div>
+              </td>
+              <td class="s3">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></div><span class="lbl">Giant type shouts</span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="crit">
+                <span class="name">Trust legibility</span>
+                <span class="why">Can she instantly read how sure Leo is, and why? Mislabeled confidence breaks the whole product.</span>
+              </td>
+              <td class="s1 base-col">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div><span class="lbl">Restraint reads honest</span></div>
+              </td>
+              <td class="s2">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div><span class="lbl">Color = confidence</span></div>
+              </td>
+              <td class="s3">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span class="lbl">Drama over nuance</span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="crit">
+                <span class="name">One-handed, pre-coffee use</span>
+                <span class="why">She reads this half-awake, thumb only, on a phone in bed. Low effort to parse and act.</span>
+              </td>
+              <td class="s1 base-col">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div><span class="lbl">Guided one at a time</span></div>
+              </td>
+              <td class="s2">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div><span class="lbl">Swipe is pure thumb</span></div>
+              </td>
+              <td class="s3">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span class="lbl">Scroll demands focus</span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="crit">
+                <span class="name">Scales to team altitude</span>
+                <span class="why">Her own deals and her team's deals must rank in one feed. Does the form hold at 3 items and at 30?</span>
+              </td>
+              <td class="s1 base-col">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div><span class="lbl">List scales cleanly</span></div>
+              </td>
+              <td class="s2">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></div><span class="lbl">Deck tires past ~10</span></div>
+              </td>
+              <td class="s3">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span class="lbl">One hero, weak depth</span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="crit">
+                <span class="name">Defensible scope</span>
+                <span class="why">Two to three days to build, then ship. Which one survives contact with real engineering time?</span>
+              </td>
+              <td class="s1 base-col">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div><span class="lbl">Minimal surface</span></div>
+              </td>
+              <td class="s2">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span class="lbl">Gesture system cost</span></div>
+              </td>
+              <td class="s3">
+                <div class="score"><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span class="lbl">Bespoke per-headline</span></div>
+              </td>
+            </tr>
+
+            <tr class="total">
+              <td class="crit">
+                <span class="name">Weighted total</span>
+              </td>
+              <td class="t1 base-col">
+                <div class="totbar">
+                  <span class="num">24<small>/25</small></span>
+                  <div class="track"><span class="fill" style="width:96%; animation-delay:.05s"></span></div>
+                </div>
+              </td>
+              <td class="t2">
+                <div class="totbar">
+                  <span class="num">19<small>/25</small></span>
+                  <div class="track"><span class="fill" style="width:76%; animation-delay:.15s"></span></div>
+                </div>
+              </td>
+              <td class="t3">
+                <div class="totbar">
+                  <span class="num">14<small>/25</small></span>
+                  <div class="track"><span class="fill" style="width:56%; animation-delay:.25s"></span></div>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="matrix-key">
+        <span class="k"><span class="d"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></span> Five dots = strongest fit for Dana</span>
+        <span class="k"><span class="d"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></span> Two dots = real weakness</span>
+        <span class="k">Highlighted column = the direction I chose</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VERDICT ===== -->
+  <section class="verdict-sec">
+    <div class="wrap">
+      <div class="verdict">
+        <p class="eyebrow">The verdict</p>
+        <h3>I chose <span class="em">Quiet Capital</span> as the base, then grafted on the best of the other two.</h3>
+
+        <div class="grafts">
+          <div class="graft g-base">
+            <span class="from">Kept from Quiet Capital</span>
+            <h4>Restraint and trust legibility</h4>
+            <p>The whispering base that stays calm under load and scales from 3 items to 30. The spine of the product.</p>
+          </div>
+          <div class="graft g-day">
+            <span class="from">Grafted from Daybook</span>
+            <h4>Color as confidence</h4>
+            <p>Leo's state shows as a leading dot and tag - seaglass, amber, coral - so confidence is readable at a glance.</p>
+          </div>
+          <div class="graft g-head">
+            <span class="from">Grafted from Headline</span>
+            <h4>One-sentence focus</h4>
+            <p>The single most urgent item gets one editorial sentence up top, so the worst leak is unmissable.</p>
+          </div>
+        </div>
+
+        <p class="closing">
+          Quiet Capital won on the criteria that are non-negotiable for this user: it stays calm when the morning is loud, it scales as Dana's team grows, and it is the most defensible thing to actually ship. But Daybook proved that <b>color is the fastest way to read an AI's confidence,</b> and Headline proved that <b>one giant sentence is the fastest way to surface the worst thing.</b> The final command center is Quiet Capital's restraint carrying Daybook's confidence color and Headline's one-sentence focus - the parts each direction did best, in one feed.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="wrap">
+      <a class="back" href="./landing.html">Back to the showcase</a>
+      <div class="foot-meta">
+        <div class="foot-by">
+          <b>Designed by Ravindra Sisodia</b>
+          <span>Round-2 take-home, Lead AI Product Designer (IC Track), Real.</span>
+        </div>
+        <p class="foot-credit">
+          Three directions, one decision.<br>
+          The choice between them was the design.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</main>

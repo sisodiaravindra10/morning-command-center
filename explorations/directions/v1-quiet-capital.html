@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · Quiet Capital - workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --raise:oklch(0.205 0.024 260); --card:oklch(0.20 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.80 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --on-coral:oklch(0.18 0.04 28);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 92px; -webkit-font-smoothing:antialiased}
+.phone{position:relative; width:393px; height:852px; max-height:calc(100dvh - 132px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden; isolation:isolate}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:60}
+.screen{position:absolute; inset:0; color:var(--ink); overflow:hidden}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:16px 28px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:50; pointer-events:none}
+.statusbar .ic{display:flex; gap:7px; opacity:.85}
+
+/* view router */
+.views{position:absolute; inset:0}
+.view{position:absolute; inset:0; overflow-y:auto; padding:54px 24px 100px; opacity:0; transform:translateX(28px); pointer-events:none; transition:opacity .35s var(--exp), transform .45s var(--exp); scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+.view.active{opacity:1; transform:none; pointer-events:auto}
+.view.exit-left{transform:translateX(-22px); opacity:0}
+
+/* orb + contour + avatars */
+.orb{width:16px;height:16px;border-radius:50%;flex:none;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 11px oklch(0.64 0.17 250 / .5), inset 0 1px 2px oklch(1 0 0 / .5);animation:breathe 5s var(--exp) infinite}
+@keyframes breathe{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.08);filter:brightness(1.15)}}
+.av{width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;color:oklch(0.99 0 0)}
+.av.dana{background:linear-gradient(135deg,oklch(0.62 0.14 28),oklch(0.5 0.13 18))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.58 0.11 168),oklch(0.46 0.10 180))}
+.av.priya{background:linear-gradient(135deg,oklch(0.60 0.13 300),oklch(0.48 0.12 285))}
+.contour{position:absolute;top:48px;left:0;right:0;height:280px;z-index:0;pointer-events:none;opacity:.5}
+
+/* ---- HOME ---- */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:9px;position:relative;z-index:2}
+.fold{min-height:46%;display:flex;flex-direction:column;position:relative;z-index:2}
+.focus{margin:auto 0}
+.greeting{font-family:var(--serif);font-size:33px;font-weight:400;line-height:1.08;letter-spacing:-.4px}
+.sentence{font-family:var(--serif);font-size:18px;line-height:1.5;color:var(--body);margin-top:16px;max-width:26ch}
+.count{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:22px}
+.count b{color:var(--confident);font-weight:500}
+.list-head{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);padding:8px 0 4px}
+.row{padding:20px 2px;border-top:1px solid var(--hair);cursor:pointer;position:relative;z-index:2}
+.row:first-child{border-top:none}
+.row-head{display:flex;align-items:flex-start;gap:13px}
+.sdot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:7px;background:var(--st)}
+.row.urgent{--st:var(--coral)} .row.uncertain{--st:var(--uncertain)} .row.confident{--st:var(--confident)}
+.row.done{opacity:.5}
+.row .title{font-family:var(--sans);font-size:17px;font-weight:600;line-height:1.32;letter-spacing:-.1px}
+.row .why{font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--muted);margin-top:6px}
+.row .meta{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin-top:10px}
+.row .meta .c{color:var(--st)}
+.chev{margin-left:auto;color:var(--soft);flex:none;margin-top:4px}
+.ledger{margin-top:26px;padding:18px 0 6px;border-top:1px solid var(--hair);cursor:pointer;position:relative;z-index:2}
+.ledger-line{display:flex;align-items:center;gap:11px;font-family:var(--sans);font-size:13.5px;color:var(--muted)}
+.ledger-line b{font-family:var(--mono);font-weight:500;color:var(--soft);font-size:12.5px}
+.ledger-list{max-height:0;overflow:hidden;transition:max-height .5s var(--exp)}
+.ledger.open .ledger-list{max-height:280px}
+.near{font-family:var(--sans);font-size:13px;line-height:1.45;color:var(--soft);padding:13px 0 0}
+.near .nm{font-family:var(--mono);font-size:10.5px;color:var(--soft);opacity:.7;margin-top:3px}
+
+/* ---- DETAIL ---- */
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.back{width:40px;height:40px;border-radius:50%;border:1px solid var(--hair2);background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.topbar .tt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.d-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dc);background:color-mix(in oklch,var(--dc) 13%,transparent);padding:5px 11px;border-radius:999px}
+.d-tag .d{width:6px;height:6px;border-radius:50%;background:var(--dc)}
+#detail.urgent{--dc:var(--coral)} #detail.uncertain{--dc:var(--uncertain)} #detail.confident{--dc:var(--confident)}
+.d-title{font-family:var(--serif);font-size:27px;line-height:1.12;letter-spacing:-.3px;margin-top:18px}
+.d-why{font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--body);margin-top:14px}
+.d-rationale{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.5;color:var(--ink);margin-top:20px;padding-left:15px;border-left:1px solid var(--dc)}
+.d-rationale .hedge{color:var(--uncertain)}
+.trace{margin-top:24px}
+.trace-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-bottom:12px}
+.trace-row{display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid var(--hair);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.trace-row .k{color:var(--soft)}
+.trace-row .v{margin-left:auto;color:var(--body)}
+.d-actions{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+.btn{height:50px;padding:0 20px;border-radius:14px;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .16s var(--exp);flex:1}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--cobalt);color:var(--ink)} .btn-u{background:var(--coral);color:var(--on-coral)}
+.btn-g{background:transparent;color:var(--body);border:1px solid var(--hair2);flex:0 0 auto;padding:0 18px}
+.result{margin-top:26px;padding:20px;border-radius:16px;background:var(--inset);border:1px solid var(--hair);display:none}
+.result.show{display:block;animation:rise .5s var(--exp) both}
+.result .rh{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:600;font-size:15px;color:var(--confident)}
+.result .tick{width:24px;height:24px;border-radius:50%;background:color-mix(in oklch,var(--confident) 16%,transparent);display:flex;align-items:center;justify-content:center}
+.result p{font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.5;color:var(--body);margin-top:12px}
+
+/* ---- PIPELINE / TEAM / LEO ---- */
+.view-h{font-family:var(--serif);font-size:28px;letter-spacing:-.3px;margin-bottom:6px}
+.view-sub{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:22px}
+.p-row{display:flex;align-items:center;gap:13px;padding:16px 2px;border-top:1px solid var(--hair);cursor:pointer}
+.p-row:first-of-type{border-top:none}
+.p-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--st,var(--soft))}
+.p-row.urgent{--st:var(--coral)} .p-row.uncertain{--st:var(--uncertain)} .p-row.confident{--st:var(--confident)} .p-row.calm{--st:var(--soft)}
+.p-row .pt{font-family:var(--sans);font-size:15px;font-weight:500}
+.p-row .ps{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:3px;letter-spacing:.03em}
+.p-row .pv{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.t-card{display:flex;align-items:center;gap:14px;padding:16px 0;border-top:1px solid var(--hair)}
+.t-card:first-of-type{border-top:none}
+.t-card .tn{font-family:var(--sans);font-size:15px;font-weight:600}
+.t-card .td{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:3px}
+.t-flag{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+.t-flag.risk{color:var(--uncertain);background:color-mix(in oklch,var(--uncertain) 14%,transparent)}
+.t-flag.ok{color:var(--confident);background:color-mix(in oklch,var(--confident) 12%,transparent)}
+/* leo chat */
+.chat{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.msg{max-width:84%;padding:13px 16px;border-radius:18px;font-size:14.5px;line-height:1.45}
+.msg.user{align-self:flex-end;background:var(--cobalt);color:var(--ink);border-bottom-right-radius:6px;font-family:var(--sans)}
+.msg.leo{align-self:flex-start;background:var(--card);border:1px solid var(--hair);border-bottom-left-radius:6px;font-family:var(--serif);color:var(--ink)}
+.composer{position:absolute;left:24px;right:24px;bottom:96px;display:flex;align-items:center;gap:10px;height:50px;padding:0 8px 0 18px;border-radius:16px;background:var(--inset);border:1px solid var(--hair2)}
+.composer input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:var(--sans);font-size:14px}
+.composer input::placeholder{color:var(--soft)}
+.composer .send{width:36px;height:36px;border-radius:50%;background:var(--cobalt);color:var(--ink);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* recovery sheet */
+.sheet-scrim{position:absolute;inset:0;background:oklch(0.08 0.02 260 / .6);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .35s;z-index:55}
+.sheet-scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--raise);border-top:1px solid var(--hair2);border-radius:26px 26px 0 0;padding:24px 24px 34px;transform:translateY(100%);transition:transform .45s var(--exp);z-index:56;box-shadow:0 -20px 60px rgba(0,0,0,.5)}
+.sheet.show{transform:none}
+.sheet .sh{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--coral);display:flex;align-items:center;gap:8px}
+.sheet h3{font-family:var(--sans);font-size:18px;font-weight:600;margin-top:11px;line-height:1.3}
+.sheet .sr{font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.5;color:var(--body);margin-top:12px;padding-left:13px;border-left:1px solid var(--coral)}
+.sheet .teach{font-family:var(--sans);font-size:13px;color:var(--body);margin-top:14px;padding:11px 13px;background:var(--inset);border-radius:11px}
+.sheet .teach b{color:var(--cobalt)}
+.sheet .sa{display:flex;gap:10px;margin-top:18px;align-items:center}
+.undo{height:46px;padding:0 18px;border-radius:13px;background:var(--coral);color:var(--on-coral);font-family:var(--sans);font-weight:600;font-size:14px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px}
+.undo .cd{font-family:var(--mono);font-size:12px;opacity:.8}
+
+/* tab bar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:84px;padding:10px 22px 28px;background:linear-gradient(to top,var(--canvas) 64%,transparent);display:flex;justify-content:space-between;z-index:45}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;color:var(--soft);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;background:none;border:none}
+.tab.active{color:var(--cobalt)}
+
+/* entrance */
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+#home.active [data-anim]{animation:rise .8s var(--exp) both;animation-delay:calc(var(--i,0) * 70ms + 80ms)}
+
+/* presenter controls */
+.controls{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:min(96vw,860px);z-index:100;background:oklch(0.16 0.02 260 / .9);backdrop-filter:blur(12px);border:1px solid var(--hair2);border-radius:14px;padding:8px;scrollbar-width:none}
+.controls::-webkit-scrollbar{display:none}
+.controls button{white-space:nowrap;flex:0 0 auto;font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .05);border:1px solid var(--hair2);border-radius:10px;padding:8px 12px;cursor:pointer}
+.controls button:hover{background:oklch(0.96 0.01 250 / .12);color:var(--ink)}
+.controls .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);align-self:center;padding:0 3px}
+
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001s !important;transition-duration:.05s !important} .orb{animation:none} }
+
+/* keyboard focus visibility */
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="phone"><div class="notch"></div>
+<div class="screen">
+  <div class="statusbar"><span id="clock">5:42</span><span class="ic">
+    <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="13.5" width="3" height="11" rx="1" fill="currentColor" opacity=".35"/></svg>
+    <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="21" height="10" rx="3" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/></svg>
+  </span></div>
+
+  <div class="views">
+
+    <!-- HOME -->
+    <section class="view active" id="home" data-view>
+      <svg class="contour" viewBox="0 0 393 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g fill="none" stroke="oklch(0.62 0.05 255 / .13)" stroke-width="1"><path d="M-20 48 Q196 8 413 56"/><path d="M-20 82 Q196 42 413 90"/><path d="M-20 120 Q196 80 413 128"/><path d="M-20 160 Q196 122 413 168"/><path d="M-20 206 Q196 170 413 214"/></g></svg>
+      <div class="fold">
+        <div class="eyebrow" data-anim style="--i:0"><span class="orb"></span>Leo · Fri 21 Jun</div>
+        <div class="focus">
+          <div class="greeting" data-anim style="--i:1">Good morning, Dana.</div>
+          <p class="sentence" data-anim style="--i:2">Three things need you to decide this morning. I took care of everything else.</p>
+          <div class="count" data-anim style="--i:3"><b data-count="3">3</b> need you</div>
+        </div>
+      </div>
+      <div class="list-head" data-anim style="--i:4">Needs you, most important first</div>
+      <div id="rows"></div>
+      <div class="ledger" data-anim style="--i:8" id="ledger">
+        <div class="ledger-line"><b><span data-count="47">47</span> handled</b> overnight. Did not wake you for <b><span data-count="6">6</span></b>.<span class="chev"><svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1.5 1.5 6.5 6.5 1.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="ledger-list">
+          <div class="near">Almost told you about a gap in the Henderson paperwork. It sorted itself out when the lender replied at 6:41a.<div class="nm">Sorted itself out</div></div>
+          <div class="near">Saw a small price drop on your Birch listing. It was under the $5k you asked me to flag, so I let it go.<div class="nm">Below your limit</div></div>
+          <div class="near">Wrote 3 birthday notes for your contacts. Ready to send at 9a.<div class="nm">Waiting to send</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAIL -->
+    <section class="view" id="detail" data-view>
+      <div class="topbar"><button class="back" data-back aria-label="Back"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M11 4 6 9l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="tt" id="d-alt">My deal</span></div>
+      <span class="d-tag" id="d-tag"><span class="d"></span><span id="d-tagtext">High</span></span>
+      <h2 class="d-title" id="d-title"></h2>
+      <p class="d-why" id="d-why"></p>
+      <p class="d-rationale" id="d-rationale"></p>
+      <div class="trace">
+        <div class="trace-h">Why I am telling you this</div>
+        <div id="d-trace"></div>
+      </div>
+      <div class="d-actions" id="d-actions"></div>
+      <div class="result" id="d-result"><div class="rh"><span class="tick"><svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2l2.3 2.3L9.5 3.5" stroke="oklch(0.8 0.11 168)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="d-result-h">Done</span></div><p id="d-result-p"></p></div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section class="view" id="pipeline" data-view>
+      <h2 class="view-h">Your deals</h2>
+      <div class="view-sub">9 going on · 2 need you · $4.1M in progress</div>
+      <div id="pipe-rows"></div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="view" id="team" data-view>
+      <h2 class="view-h">Your team</h2>
+      <div class="view-sub">7 people · 1 deal needs a check-in</div>
+      <div class="t-card"><span class="av marcus">M</span><div><div class="tn">Marcus Reyes</div><div class="td">Henderson buyer has gone quiet</div></div><span class="t-flag risk">Needs attention</span></div>
+      <div class="t-card"><span class="av priya">P</span><div><div class="tn">Priya Anand</div><div class="td">3 deals, all going well</div></div><span class="t-flag ok">All good</span></div>
+      <div class="t-card"><span class="av" style="background:linear-gradient(135deg,oklch(0.6 0.12 230),oklch(0.48 0.11 245))">J</span><div><div class="tn">Jordan Wells</div><div class="td">Finishing Tuesday, paperwork is clear</div></div><span class="t-flag ok">All good</span></div>
+      <div class="t-card"><span class="av" style="background:linear-gradient(135deg,oklch(0.62 0.13 60),oklch(0.5 0.12 48))">T</span><div><div class="tn">Tom Okafor</div><div class="td">2 new buyers, checking them out</div></div><span class="t-flag ok">All good</span></div>
+    </section>
+
+    <!-- LEO -->
+    <section class="view" id="leo" data-view>
+      <h2 class="view-h" style="display:flex;align-items:center;gap:11px"><span class="orb"></span>Ask Leo</h2>
+      <div class="view-sub">Type or talk, ask me anything about your deals</div>
+      <div class="chat">
+        <div class="msg user">Which of my deals is most likely to fall apart this week?</div>
+        <div class="msg leo">Maplewood, and it is not close. The buyer raised a concern after the home inspection and we have not replied, with 18 hours left to do it. It is the only hard deadline you have not met. I would deal with it before your 9:30.</div>
+        <div class="msg user">Write the reply for me.</div>
+        <div class="msg leo">Done. I stuck to the three repairs the inspector named and left the dollar amount blank for you to fill in. I will not send it until you say so.</div>
+      </div>
+      <div class="composer"><input placeholder="Ask me anything, or hold to talk" aria-label="Ask me anything, or hold to talk" /><button class="send" aria-label="Send"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 9h11M9.5 4.5 14 9l-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    </section>
+
+  </div>
+
+  <!-- recovery sheet -->
+  <div class="sheet-scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="sh"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1l6 11H1L7 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 5.5v3M7 10.2v.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> I got one wrong</div>
+    <h3>I emailed the Alvarez buyer before you said it was okay.</h3>
+    <p class="sr">I read your "write these" as "send these." That is my mistake. I have stopped the other 4 from going out.</p>
+    <div class="teach">From now on: <b>I will check anything that goes to a client with you first</b>, until you tell me to stop.</div>
+    <div class="sa"><button class="undo" id="undoBtn">Take it back <span class="cd" id="undoCount">14s</span></button><button class="btn-g" style="height:46px" id="dismissSheet">I'll handle it</button></div>
+  </div>
+
+  <!-- tab bar -->
+  <nav class="tabbar">
+    <button class="tab active" data-tab="home"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor"/><rect x="12" y="3" width="7" height="4.5" rx="1.6" fill="currentColor" opacity=".55"/><rect x="12" y="9.5" width="7" height="9.5" rx="2" fill="currentColor"/><rect x="3" y="12" width="7" height="7" rx="2" fill="currentColor" opacity=".55"/></svg>Today</button>
+    <button class="tab" data-tab="pipeline"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 16l4.5-5 3.5 3L19 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Deals</button>
+    <button class="tab" data-tab="team"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M2.5 18c.6-3 2.8-4.6 5.5-4.6S13 15 13.5 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team</button>
+    <button class="tab" data-tab="leo"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.7"/><circle cx="11" cy="11" r="3.6" fill="currentColor"/></svg>Leo</button>
+  </nav>
+</div></div>
+
+<div class="controls">
+  <span class="lbl">Demo</span>
+  <button id="cReplay">↻ Replay the morning</button>
+  <button id="cTheme">☀ Bring up the day</button>
+  <button id="cDeesc">◐ New info comes in</button>
+  <button id="cWrong">⚠ Leo got one wrong</button>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ----- data -----
+const DEALS={
+  maplewood:{state:'urgent',alt:'My deal',tag:'18 hours left',title:'The Maplewood buyer raised a concern after the inspection, and we have not replied.',
+    why:'You have until 8:00a tomorrow to reply. Miss it and the buyer can walk away and take their deposit.',
+    rationale:'I spotted this the moment the inspection report came in. The three repairs they listed are small. The real risk is the deadline, not the repairs.',
+    trace:[['Where I saw it','Inspection report, page 4'],['How sure I am','Very sure'],['Last checked','6:38a today']],
+    actions:[{label:'Read it and reply',kind:'u',result:['Reply saved','Your reply about the repairs is saved as a draft. I will let you know the moment the buyer\'s agent sees it.']},{label:'Remind me later',kind:'g'}]},
+  oak:{state:'uncertain',alt:'My deal',tag:'I am not fully sure',title:'142 Oak St. The buyer offered $24k below your asking price.',
+    why:'I wrote a reply offer for you, but there is one thing I could not check. Your call.',
+    rationale:'I would offer back $612k. Recent nearby sales back that up. <span class="hedge">But the buyer\'s agent hinted at a deadline I could not confirm, so I did not send anything yet.</span>',
+    trace:[['Based on','14 recent nearby sales'],['Not confirmed','2 things'],['How sure I am','Fairly sure'],['Written','5:30a today']],
+    actions:[{label:'Send my offer of $612k',kind:'p',result:['Offer sent at $612k','Sent. I will tell you the moment they reply, and keep an eye out for that deadline I could not confirm.']},{label:'Change it',kind:'g'}]},
+  henderson:{state:'confident',alt:'Marcus\'s deal',tag:'Very sure',title:"Marcus's buyer on Henderson has gone quiet.",
+    why:'No contact saved in 3 days. The buyer looked at the listing 4 times last night. That mix usually means they are about to drift away.',
+    rationale:'This is Marcus\'s deal, not yours, but the signs are strong enough that a quick word from you now beats sorting out a lost deal later.',
+    trace:[['Where I saw it','The buyer\'s activity'],['What I saw','Looked 4 times, no contact'],['How sure I am','Very sure'],['Last contact','3 days ago']],
+    actions:[{label:'Give Marcus a heads up',kind:'p',result:['Sent to Marcus','I sent Marcus the background and a line he can open with. I will tell you if the buyer gets back in touch.']},{label:'See the messages',kind:'g'}]}
+};
+const ORDER=['maplewood','oak','henderson'];
+const PIPE=[
+  {id:'maplewood',cls:'urgent',t:'Maplewood Dr',s:'Buyer concern open, needs a reply',v:'$840k'},
+  {id:'oak',cls:'uncertain',t:'142 Oak St',s:'Reply offer waiting on you',v:'$612k'},
+  {id:'birch',cls:'calm',t:'Birch Ln listing',s:'For sale, 12 viewings booked',v:'$1.2M'},
+  {id:'cedar',cls:'calm',t:'Cedar Ct',s:'Finishing Tue, paperwork clear',v:'$705k'},
+  {id:'elm',cls:'confident',t:'Elm & 4th',s:'Offer accepted yesterday',v:'$528k'}
+];
+
+// ----- render home rows -----
+const rowsEl=$('#rows');
+ORDER.forEach((id,idx)=>{
+  const d=DEALS[id];
+  const el=document.createElement('article');
+  el.className='row '+d.state; el.dataset.anim=''; el.style.setProperty('--i',5+idx); el.dataset.deal=id;
+  el.innerHTML=`<div class="row-head"><span class="sdot"></span><div style="flex:1"><div class="title">${d.title}</div><div class="why">${d.why}</div><div class="meta">${d.alt} · <span class="c">${d.tag}</span></div></div><span class="chev"><svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1.5 1.5 6.5 6.5 1.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>`;
+  el.addEventListener('click',()=>openDeal(id));
+  rowsEl.appendChild(el);
+});
+// pipeline rows
+const pipeEl=$('#pipe-rows');
+PIPE.forEach(p=>{
+  const el=document.createElement('div'); el.className='p-row '+p.cls;
+  el.innerHTML=`<span class="p-dot"></span><div><div class="pt">${p.t}</div><div class="ps">${p.s}</div></div><span class="pv">${p.v}</span>`;
+  if(DEALS[p.id]) el.addEventListener('click',()=>openDeal(p.id));
+  pipeEl.appendChild(el);
+});
+
+// ----- router -----
+let current='home';
+let detailOrigin='home'; // remembers where the detail view was opened from
+function show(id){
+  const cur=$('#'+current), next=$('#'+id);
+  if(cur===next) return;
+  cur.classList.add('exit-left'); cur.classList.remove('active');
+  setTimeout(()=>cur.classList.remove('exit-left'),400);
+  next.classList.add('active');
+  current=id;
+  // tab highlight
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
+  next.scrollTop=0;
+}
+function openDeal(id){
+  const d=DEALS[id];
+  detailOrigin=(current==='detail')?detailOrigin:current; // remember where we came from
+  const det=$('#detail'); det.className='view '+d.state;
+  $('#d-alt').textContent=d.alt;
+  $('#d-tagtext').textContent=d.tag;
+  $('#d-title').textContent=d.title;
+  $('#d-why').textContent=d.why;
+  $('#d-rationale').innerHTML=d.rationale;
+  $('#d-trace').innerHTML=d.trace.map(([k,v])=>`<div class="trace-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  $('#d-actions').innerHTML=d.actions.map((a,i)=>`<button class="btn btn-${a.kind}" data-act="${i}">${a.label}</button>`).join('');
+  $('#d-result').classList.remove('show');
+  $('#d-actions').style.display='flex'; // reset action panel here so it is fresh for every deal
+  det.dataset.deal=id;
+  $$('#d-actions .btn').forEach((b,i)=>b.addEventListener('click',()=>doAction(id,i)));
+  show('detail');
+}
+function doAction(id,i){
+  const a=DEALS[id].actions[i];
+  if(!a.result){ show(detailOrigin); return; } // ghost actions (Edit/Snooze/See thread) return to where the deal was opened from
+  $('#d-result-h').textContent=a.result[0];
+  $('#d-result-p').textContent=a.result[1];
+  $('#d-result').classList.add('show');
+  $('#d-actions').style.display='none';
+  // mark resolved on home + pipeline
+  const r=$(`.row[data-deal="${id}"]`); if(r) r.classList.add('done');
+}
+// back
+$$('[data-back]').forEach(b=>b.addEventListener('click',()=>{ show(detailOrigin); }));
+// tabs
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{ show(t.dataset.tab); }));
+// ledger
+$('#ledger').addEventListener('click',()=>$('#ledger').classList.toggle('open'));
+
+// ----- theme (time-aware) -----
+let day=false;
+$('#cTheme').addEventListener('click',()=>{
+  day=!day;
+  if(day){ document.documentElement.style.setProperty('--canvas','oklch(0.97 0.013 90)');
+    setVars({'--raise':'oklch(1 0 0)','--card':'oklch(0.99 0.004 90)','--inset':'oklch(0.95 0.012 85)','--ink':'oklch(0.2 0.015 60)','--body':'oklch(0.4 0.02 65)','--muted':'oklch(0.52 0.02 70)','--soft':'oklch(0.66 0.015 75)','--hair':'oklch(0.2 0.015 60 / .1)','--hair2':'oklch(0.2 0.015 60 / .16)'});
+    document.body.style.background='radial-gradient(120% 80% at 50% 0%, oklch(0.92 0.04 70), oklch(0.88 0.03 80))';
+    $('#clock').textContent='7:28'; $('#cTheme').textContent='☾ Back to dawn';
+  } else { resetDark(); $('#clock').textContent='5:42'; $('#cTheme').textContent='☀ Bring up the day'; }
+});
+function setVars(o){ for(const k in o) document.documentElement.style.setProperty(k,o[k]); }
+function resetDark(){ ['--canvas','--raise','--card','--inset','--ink','--body','--muted','--soft','--hair','--hair2'].forEach(k=>document.documentElement.style.removeProperty(k)); document.body.style.background='radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260))'; }
+
+// ----- de-escalation -----
+$('#cDeesc').addEventListener('click',()=>{
+  show('home');
+  const r=$('.row[data-deal="henderson"]'); if(!r||r.dataset.deesc) return; r.dataset.deesc='1';
+  r.classList.remove('confident'); r.classList.add('uncertain');
+  r.querySelector('.meta').innerHTML='Marcus\'s deal · <span class="c">Now unsure, new info</span>';
+  if(!r.querySelector('.deesc')){ const p=document.createElement('p'); p.className='why deesc'; p.style.color='var(--uncertain)'; p.style.marginTop='8px'; p.textContent='Update: the buyer just made an offer on a different home. I am no longer sure they are drifting away. Want me to ask Marcus to check?'; r.querySelector('.why').after(p); }
+  DEALS.henderson.state='uncertain'; DEALS.henderson.tag='Now unsure';
+  r.scrollIntoView({behavior:reduce()?'auto':'smooth',block:'center'});
+});
+
+// ----- wrong / recovery sheet -----
+let undoT=null;
+$('#cWrong').addEventListener('click',()=>{
+  $('#scrim').classList.add('show'); $('#sheet').classList.add('show');
+  $('#sheet .sa').style.display='flex'; $('#undoBtn').innerHTML='Undo send <span class="cd" id="undoCount">14s</span>';
+  let t=14; if(reduce())return; clearInterval(undoT);
+  undoT=setInterval(()=>{ t--; const c=$('#undoCount'); if(c)c.textContent=t+'s'; if(t<=0){clearInterval(undoT);} },1000);
+});
+function closeSheet(){ clearInterval(undoT); $('#scrim').classList.remove('show'); $('#sheet').classList.remove('show'); }
+$('#scrim').addEventListener('click',closeSheet);
+$('#dismissSheet').addEventListener('click',closeSheet);
+$('#undoBtn').addEventListener('click',()=>{ clearInterval(undoT); $('#sheet h3').textContent='Recalled before it reached the buyer. Nothing sent.'; $('#sheet .sa').style.display='none'; setTimeout(closeSheet,1100); });
+
+// ----- replay -----
+function playMorning(){
+  ['maplewood','oak'].forEach(id=>{ DEALS[id]; });
+  // reset de-escalation + resolved
+  const h=$('.row[data-deal="henderson"]'); if(h){ h.className='row confident'; delete h.dataset.deesc; h.querySelector('.meta').innerHTML='Marcus\'s deal · <span class="c">Very sure</span>'; const de=h.querySelector('.deesc'); if(de)de.remove(); }
+  DEALS.henderson.state='confident'; DEALS.henderson.tag='Very sure';
+  $$('.row').forEach(r=>r.classList.remove('done'));
+  show('home');
+  // retrigger entrance animation
+  const hv=$('#home'); hv.classList.remove('active'); void hv.offsetWidth; hv.classList.add('active');
+  runCounts();
+}
+$('#cReplay').addEventListener('click',playMorning);
+
+// ----- keyboard operability sweep (boot-time, DOM is ready) -----
+(function(){
+  // every onclick-bound element that is not already a real button/link, plus the
+  // primary click-bound interactive surfaces in this file
+  const candidates=new Set();
+  $$('[onclick]').forEach(el=>candidates.add(el));
+  $$('.row, .p-row, #ledger').forEach(el=>candidates.add(el));
+  candidates.forEach(el=>{
+    const tag=el.tagName.toLowerCase();
+    if(tag==='button'||tag==='a') return; // never double-bind real controls
+    el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  });
+  // one document-level keydown listener: Enter / Space activates a focusable
+  // role=button surface, without interfering with typing in inputs/textareas
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+    const t=e.target;
+    if(!t||!t.closest) return;
+    const tag=t.tagName?t.tagName.toLowerCase():'';
+    if(tag==='input'||tag==='textarea'||tag==='select'||t.isContentEditable) return;
+    const target=t.closest('[role="button"][tabindex]');
+    if(!target) return;
+    const ttag=target.tagName.toLowerCase();
+    if(ttag==='button'||ttag==='a') return; // real controls handle keys natively
+    e.preventDefault();
+    target.click();
+  });
+})();
+
+// ----- GSAP count-ups (safe: final value in DOM) -----
+function runCounts(){
+  if(!window.gsap || reduce()) return;
+  $$('[data-count]').forEach(el=>{ const end=+el.dataset.count,o={v:0}; gsap.to(o,{v:end,duration:1.0,ease:'power2.out',delay:.4,onUpdate:()=>el.textContent=Math.round(o.v)}); });
+}
+runCounts();
+</script>
+</body>
+</html>

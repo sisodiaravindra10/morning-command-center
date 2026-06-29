@@ -1,0 +1,842 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leo - the morning command center (Daybook)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    /* ----- Daybook visual language: warm paper + soft dusk ----- */
+    /* AI-state hues, warmed for the light context but still recognizable */
+    --cobalt:    oklch(0.52 0.16 262);   /* thinking */
+    --cobalt-bg: oklch(0.92 0.06 262);
+    --seaglass:  oklch(0.52 0.13 165);   /* confident */
+    --sea-bg:    oklch(0.92 0.075 165);
+    --amber:     oklch(0.58 0.14 70);    /* uncertain */
+    --amber-bg:  oklch(0.93 0.085 80);
+    --coral:     oklch(0.58 0.18 30);    /* wrong */
+    --coral-bg:  oklch(0.91 0.08 34);
+    --ghost:     oklch(0.55 0.02 70);    /* silent */
+    --ghost-bg:  oklch(0.93 0.008 80);
+
+    /* warm cream paper + dusk - never pure white, never pure black */
+    --paper:     oklch(0.97 0.014 88);
+    --paper-2:   oklch(0.95 0.018 80);
+    --cream-hi:  oklch(0.99 0.006 90);
+    --dusk:      oklch(0.90 0.03 70);
+    --ink:       oklch(0.26 0.025 56);
+    --body:      oklch(0.42 0.022 62);
+    --muted:     oklch(0.56 0.02 68);
+    --soft:      oklch(0.70 0.016 74);
+    --hair:      oklch(0.30 0.02 60 / 0.14);
+
+    --serif: 'Newsreader', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    /* master runtime - every scene + progress bar references this */
+    --film: 89s;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background:
+      radial-gradient(130% 90% at 50% -8%, oklch(0.93 0.03 74) 0%, transparent 58%),
+      oklch(0.88 0.024 78);
+    min-height: 100vh;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 28px 20px 40px;
+  }
+
+  /* ---------- the video stage (16:9 letterboxed player) ---------- */
+  .stage {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    background:
+      radial-gradient(150% 130% at 50% 14%, var(--cream-hi) 0%, var(--paper) 46%, var(--paper-2) 100%);
+    border: 1px solid oklch(0.82 0.03 72 / 0.8);
+    box-shadow:
+      0 0 0 1px oklch(1 0 0 / 0.5),
+      0 40px 110px -34px oklch(0.42 0.05 60 / 0.55),
+      inset 0 1px 0 oklch(1 0 0 / 0.6);
+    isolation: isolate;
+  }
+
+  /* slow warm gradient drift behind everything - a gentle dawn breathing */
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: -22%;
+    background:
+      radial-gradient(42% 42% at 28% 26%, oklch(0.86 0.07 60 / 0.55), transparent 70%),
+      radial-gradient(46% 46% at 76% 72%, oklch(0.88 0.06 150 / 0.40), transparent 72%),
+      radial-gradient(40% 40% at 62% 18%, oklch(0.90 0.05 28 / 0.30), transparent 70%);
+    animation: drift 26s ease-in-out infinite alternate;
+    z-index: 0;
+    pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translate3d(-2%, -1%, 0) scale(1.03); }
+    to   { transform: translate3d(2%, 2%, 0) scale(1.1); }
+  }
+
+  /* soft paper vignette - keeps the frame warm, not flat */
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(125% 115% at 50% 42%, transparent 60%, oklch(0.62 0.04 58 / 0.16) 100%);
+    z-index: 60;
+    pointer-events: none;
+  }
+
+  /* ---------- scene layer system ---------- */
+  .timeline {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+  }
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6% 8%;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* generic reveal pieces */
+  .kicker {
+    font-family: var(--mono);
+    font-size: clamp(10px, 1.15vw, 13px);
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .line {
+    font-family: var(--serif);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .ui-line {
+    font-family: var(--sans);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--body);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .accent-sea   { color: var(--seaglass); }
+  .accent-coral { color: var(--coral); }
+  .accent-amber { color: var(--amber); }
+  .accent-cobalt{ color: var(--cobalt); }
+
+  /* the master reveal: fade + gentle scale up + small rise + soft blur clear */
+  @keyframes reveal {
+    0%   { opacity: 0; transform: translateY(15px) scale(0.985); filter: blur(3px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+  @keyframes revealHold {
+    /* fade in, hold, fade out - for scene containers */
+    0%   { opacity: 0; }
+    8%   { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes bloom {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    40%  { opacity: 0.85; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+  }
+  @keyframes strike {
+    0%   { width: 0; opacity: 0; }
+    20%  { opacity: 1; }
+    100% { width: 100%; opacity: 1; }
+  }
+  @keyframes dissolveOut {
+    0%   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-6px) scale(0.97); filter: blur(6px); }
+  }
+  @keyframes slideInPhone {
+    0%   { opacity: 0; transform: translateY(42px) scale(0.92); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes cardIn {
+    0%   { opacity: 0; transform: translateY(16px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes breathe {
+    from { transform: scale(1); opacity: 0.9; }
+    to   { transform: scale(1.1); opacity: 1; }
+  }
+
+  /*
+    SCENE TIMING - identical to the master film. Each .scene gets a
+    revealHold animation over its window; pieces inside reference the same
+    master clock via their own absolute delays. Total = var(--film) = 89s.
+      s1  0    -> 11   origin kicker + opening lines
+      s2  10.5 -> 9    so I built a dashboard / wrong answer
+      s3  19   -> 7    reframe: triage of exceptions
+      s4  26   -> 7    act2 kicker
+      s5  32.5 -> 11   three phones
+      s6  43   -> 6.2  range montage of swatches
+      s7  49   -> 6    act3 kicker - calmest of three
+      s8  55   -> 16   five voices
+      s9  70.5 -> 8    silence ledger payoff
+      s10 78   -> 11   final thesis + end card (held, does not fade)
+    The film AUTO-PLAYS via pure CSS - no .playing gate, no JS required.
+  */
+  .scene { animation-fill-mode: both; }
+
+  #s1  { animation: revealHold 11s  var(--ease) 0s    both; }
+  #s2  { animation: revealHold 9s   var(--ease) 10.5s both; }
+  #s3  { animation: revealHold 7s   var(--ease) 19s   both; }
+  #s4  { animation: revealHold 7s   var(--ease) 26s   both; }
+  #s5  { animation: revealHold 11s  var(--ease) 32.5s both; }
+  #s6  { animation: revealHold 6.2s var(--ease) 43s   both; }
+  #s7  { animation: revealHold 6s   var(--ease) 49s   both; }
+  #s8  { animation: revealHold 16s  var(--ease) 55s   both; }
+  #s9  { animation: revealHold 8s   var(--ease) 70.5s both; }
+
+  /* the very last scene holds (does not fade out) - long ending hold */
+  #s10 { animation: holdLast 11s var(--ease) 78s both; }
+  @keyframes holdLast {
+    0%   { opacity: 0; }
+    12%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  /* ----- ACT 1 internal timing (delays absolute on the master clock) ----- */
+  #s1 .k1    { animation: reveal 1.4s var(--ease) 0.6s both; }
+  #s1 .l1    { animation: reveal 1.8s var(--ease) 3.0s both; }
+  #s1 .lfade { animation: dissolveOut 1.6s var(--ease) 9.0s both; }
+
+  #s2 .l3          { animation: reveal 1.6s var(--ease) 11.3s both; }
+  #s2 .strikeword  { animation: reveal 1.4s var(--ease) 12.4s both; }
+  #s2 .strikebar   { animation: strike 0.9s var(--ease) 14.2s both; }
+  #s2 .dissolveword{ animation: dissolveOut 1.2s var(--ease) 15.4s both; }
+  #s2 .wrong       { animation: reveal 1.4s var(--ease) 16.4s both; }
+  #s2 .wrongbloom  { animation: bloom 1.8s ease-out 16.4s both; }
+
+  #s3 .k3      { animation: reveal 1.3s var(--ease) 19.4s both; }
+  #s3 .reframe { animation: reveal 1.9s var(--ease) 20.6s both; }
+
+  /* ----- ACT 2 ----- */
+  #s4 .k4 { animation: reveal 1.4s var(--ease) 26.5s both; }
+  #s4 .l4 { animation: reveal 1.7s var(--ease) 28.2s both; }
+
+  #s5 .phone1 { animation: slideInPhone 1.5s var(--ease) 33.0s both; }
+  #s5 .phone2 { animation: slideInPhone 1.5s var(--ease) 33.8s both; }
+  #s5 .phone3 { animation: slideInPhone 1.5s var(--ease) 34.6s both; }
+  #s5 .l5     { animation: reveal 1.6s var(--ease) 39.5s both; }
+
+  #s6 .l6        { animation: reveal 1.5s var(--ease) 43.4s both; }
+  #s6 .swatchwrap{ animation: reveal 1.2s var(--ease) 45.0s both; }
+  #s6 .sw        { animation: cardIn 0.7s var(--ease) calc(45.2s + var(--i) * 0.18s) both; }
+
+  /* ----- ACT 3 ----- */
+  #s7 .k7 { animation: reveal 1.4s var(--ease) 49.4s both; }
+  #s7 .l7 { animation: reveal 1.7s var(--ease) 51.0s both; }
+
+  #s8 .k8    { animation: reveal 1.2s var(--ease) 55.3s both; }
+  #s8 .voice { animation: cardIn 1.0s var(--ease) calc(56.0s + var(--i) * 2.4s) both; }
+
+  #s9 .l9k { animation: reveal 1.3s var(--ease) 70.8s both; }
+  #s9 .l9a { animation: reveal 1.8s var(--ease) 71.6s both; }
+  #s9 .l9b { animation: reveal 1.8s var(--ease) 73.2s both; }
+
+  #s10 .thesis1 { animation: reveal 2.2s var(--ease) 78.6s both; }
+  #s10 .thesis2 { animation: reveal 2.2s var(--ease) 80.4s both; }
+  #s10 .endcard { animation: reveal 1.6s var(--ease) 82.2s both; }
+
+  /* breathing leo orb in the end card */
+  .orb { animation: breathe 3.6s ease-in-out infinite alternate; }
+
+  /* progress bar fills over the same master duration, auto-start via CSS */
+  .progress-fill { animation: fill var(--film) linear 0s both; }
+
+  /* ----- play/pause: freeze the ENTIRE timeline at once ----- */
+  .paused .scene,
+  .paused .scene *,
+  .paused .stage::before,
+  .paused .progress-fill,
+  .paused .orb { animation-play-state: paused !important; }
+
+  /* ----- replay: kill all animations for one frame, then release to restart at 0 ----- */
+  .reset .scene,
+  .reset .scene *,
+  .reset .progress-fill,
+  .reset .orb { animation: none !important; }
+
+  /* ---------------- typography scales inside scenes ---------------- */
+  .line.xl { font-size: clamp(28px, 5.6vw, 62px); }
+  .line.lg { font-size: clamp(24px, 4.4vw, 50px); }
+  .line.md { font-size: clamp(20px, 3.2vw, 36px); }
+  .reframe {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(22px, 3.9vw, 46px);
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    max-width: 16em;
+    color: var(--ink);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .wrong {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(30px, 6vw, 70px);
+    color: var(--coral);
+    letter-spacing: -0.012em;
+    opacity: 0;
+    position: relative;
+    will-change: opacity, transform;
+  }
+  .wrongbloom {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px; height: 44px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--coral) 0%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* strike-through dashboard word */
+  .strikeword {
+    position: relative;
+    display: inline-block;
+    font-family: var(--serif);
+    font-weight: 400;
+    color: var(--ink);
+    opacity: 0;
+  }
+  .strikebar {
+    position: absolute;
+    left: 0; top: 54%;
+    height: 3px;
+    width: 0;
+    background: var(--coral);
+    border-radius: 2px;
+  }
+
+  /* ---------------- ACT 2 phones (warm Daybook cards) ---------------- */
+  .phones {
+    display: flex;
+    gap: clamp(14px, 3vw, 40px);
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 4%;
+  }
+  .phone {
+    width: clamp(112px, 16vw, 188px);
+    aspect-ratio: 9 / 18.5;
+    border-radius: clamp(18px, 2vw, 30px);
+    padding: clamp(13px, 1.5vw, 19px) clamp(12px, 1.3vw, 16px);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    opacity: 0;
+    will-change: opacity, transform;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 22px 50px -22px oklch(0.4 0.05 60 / 0.5), inset 0 1px 0 oklch(1 0 0 / 0.7);
+  }
+  .phone .plabel {
+    font-size: clamp(11px, 1vw, 14px);
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+  }
+  .phone .sub {
+    font-family: var(--mono);
+    font-size: clamp(8px, 0.78vw, 10px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin-bottom: 6px;
+  }
+  .row {
+    height: 2px;
+    background: var(--hair);
+    margin: 5px 0;
+    border: none;
+    border-radius: 2px;
+  }
+  .row.short   { width: 62%; }
+  .row.shorter { width: 44%; }
+  .accentrow {
+    height: clamp(8px, 1vw, 12px);
+    border-radius: 5px;
+    margin-top: 8px;
+  }
+
+  /* Quiet Capital - restrained, monochrome paper */
+  .phone.quiet { background: linear-gradient(180deg, var(--cream-hi), var(--paper)); border: 1px solid oklch(0.84 0.02 70 / 0.8); }
+  .phone.quiet .plabel { font-family: var(--mono); color: var(--body); text-transform: uppercase; letter-spacing: 0.16em; font-size: clamp(8px,0.8vw,10px); }
+  .phone.quiet .accentrow { width: 70%; background: var(--seaglass); opacity: 0.85; }
+
+  /* Daybook - warm serif, color-as-emotion (the hero of this language) */
+  .phone.daybook { background: linear-gradient(180deg, oklch(0.97 0.02 78), oklch(0.95 0.026 70)); border: 1px solid oklch(0.84 0.03 70 / 0.85); }
+  .phone.daybook .plabel { font-family: var(--serif); color: var(--ink); font-weight: 500; }
+  .phone.daybook .card2 {
+    margin-top: 6px;
+    border-radius: 14px;
+    background: var(--amber-bg);
+    border: 1px solid oklch(0.58 0.14 70 / 0.28);
+    height: 38%;
+    padding: 9px;
+    display: flex; flex-direction: column; gap: 6px; justify-content: center;
+  }
+  .phone.daybook .card2 .row { background: oklch(0.58 0.14 70 / 0.5); }
+
+  /* Headline - editorial, giant type */
+  .phone.headline { background: linear-gradient(180deg, var(--cream-hi), oklch(0.96 0.01 60)); border: 1px solid oklch(0.83 0.02 50 / 0.85); }
+  .phone.headline .plabel { font-family: var(--serif); font-weight: 500; color: var(--ink); }
+  .phone.headline .big {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(16px, 1.9vw, 25px);
+    line-height: 1.02;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    margin-top: 4px;
+  }
+  .phone.headline .big .em { color: var(--coral); }
+
+  /* range montage swatches - soft rounded color cards */
+  .swatchwrap { display: flex; gap: clamp(8px, 1.4vw, 14px); justify-content: center; margin-top: 6px; opacity: 0; flex-wrap: wrap; }
+  .sw {
+    width: clamp(30px, 3.6vw, 48px);
+    height: clamp(30px, 3.6vw, 48px);
+    border-radius: 12px;
+    opacity: 0;
+    border: 1px solid oklch(1 0 0 / 0.5);
+    box-shadow: 0 6px 16px -8px oklch(0.4 0.05 60 / 0.4), inset 0 1px 0 oklch(1 0 0 / 0.4);
+  }
+
+  /* ---------------- ACT 3 five voices (soft rounded color cards) ---------------- */
+  .voices {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.1vw, 14px);
+    width: min(82%, 660px);
+  }
+  .voice {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1.6vw, 20px);
+    text-align: left;
+    padding: clamp(9px, 1.1vw, 15px) clamp(12px, 1.4vw, 18px);
+    border-radius: clamp(14px, 1.6vw, 20px);
+    opacity: 0;
+    will-change: opacity, transform;
+    box-shadow: 0 10px 26px -16px oklch(0.4 0.05 60 / 0.4), inset 0 1px 0 oklch(1 0 0 / 0.55);
+  }
+  .chip {
+    flex: 0 0 auto;
+    width: clamp(78px, 9.4vw, 122px);
+    padding: clamp(5px, 0.7vw, 8px) 0;
+    text-align: center;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: clamp(9px, 0.95vw, 12px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .chip .sdot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .voice .vtext {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(13px, 1.7vw, 22px);
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  /* each voice card carries its hue as a soft tinted background + chip */
+  .voice.thinking  { background: oklch(0.96 0.025 262); }
+  .voice.confident { background: oklch(0.96 0.03 165); }
+  .voice.uncertain { background: oklch(0.965 0.035 80); }
+  .voice.wrong     { background: oklch(0.96 0.03 34); }
+  .voice.silent    { background: var(--ghost-bg); }
+
+  .chip.c-think  { background: var(--cobalt-bg);  color: var(--cobalt);   }
+  .chip.c-think  .sdot { background: var(--cobalt); }
+  .chip.c-conf   { background: var(--sea-bg);     color: var(--seaglass); }
+  .chip.c-conf   .sdot { background: var(--seaglass); }
+  .chip.c-uncert { background: var(--amber-bg);   color: var(--amber);    }
+  .chip.c-uncert .sdot { background: var(--amber); }
+  .chip.c-wrong  { background: var(--coral-bg);   color: var(--coral);    }
+  .chip.c-wrong  .sdot { background: var(--coral); }
+  .chip.c-silent { background: oklch(0.91 0.008 78); color: var(--ghost); }
+  .chip.c-silent .sdot { background: var(--ghost); }
+
+  /* thinking voice: a soft scanning shimmer on the text - it is checking */
+  .voice.thinking .vtext { color: var(--cobalt); }
+  /* uncertain voice: the type literally gets lighter */
+  .voice.uncertain .vtext { color: oklch(0.42 0.022 62 / 0.55); font-weight: 300; }
+  .voice.wrong .vtext { color: var(--coral); }
+  .voice.silent .vtext { color: var(--muted); }
+
+  /* ---------------- silence ledger payoff ---------------- */
+  .ledgerwrap {
+    display: flex; flex-direction: column; align-items: center;
+    width: min(80%, 640px);
+  }
+
+  /* ---------------- end card ---------------- */
+  .endcard { opacity: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; will-change: opacity, transform; }
+  .orbwrap { display: flex; align-items: center; gap: 13px; }
+  .orb {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: radial-gradient(60% 60% at 34% 30%, oklch(0.92 0.07 200), oklch(0.62 0.16 250) 45%, oklch(0.40 0.12 268) 100%);
+    box-shadow: 0 0 22px -3px oklch(0.62 0.16 250 / 0.5), inset 0 1px 2px oklch(1 0 0 / 0.6);
+  }
+  .endcard .brand {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(15px, 1.7vw, 21px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .endcard .credit {
+    font-family: var(--mono);
+    font-size: clamp(9px, 0.95vw, 11px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .thesis1, .thesis2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    line-height: 1.14;
+    letter-spacing: -0.012em;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .thesis1 { font-size: clamp(22px, 4vw, 46px); color: var(--body); }
+  .thesis2 { font-size: clamp(24px, 4.6vw, 54px); color: var(--ink); font-weight: 500; }
+  .thesis2 .sea { color: var(--seaglass); }
+
+  /* ---------------- controls + progress ---------------- */
+  .controls {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .progress {
+    position: relative;
+    height: 4px;
+    width: 100%;
+    border-radius: 99px;
+    background: oklch(0.82 0.02 70 / 0.7);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0 100% 0 0;
+    background: linear-gradient(90deg, var(--amber), var(--coral) 50%, var(--seaglass));
+    border-radius: 99px;
+    will-change: right;
+  }
+  @keyframes fill { from { right: 100%; } to { right: 0%; } }
+
+  .barrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btns { display: flex; gap: 10px; }
+  button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--cream-hi);
+    border: 1px solid oklch(0.82 0.02 70 / 0.9);
+    border-radius: 999px;
+    padding: 9px 19px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px -3px oklch(0.4 0.05 60 / 0.3);
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.16s var(--ease);
+  }
+  button:hover { color: var(--ink); border-color: oklch(0.66 0.12 60 / 0.7); background: var(--paper); }
+  button:active { transform: scale(0.97); }
+
+  .chapters {
+    display: flex;
+    gap: 26px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  .chapters span { position: relative; }
+  .chapters span::before { content: "01 / "; color: oklch(0.62 0.1 60); }
+  .chapters span:nth-child(2)::before { content: "02 / "; }
+  .chapters span:nth-child(3)::before { content: "03 / "; }
+
+  /* ---------------- reduced motion: rest states, no big movement ---------------- */
+  @media (prefers-reduced-motion: reduce) {
+    .stage::before { animation: none; }
+    .scene, .scene * { animation: none !important; }
+    .scene { opacity: 0; }
+    #s10 { opacity: 1; }
+    #s10 .thesis1, #s10 .thesis2, #s10 .endcard { opacity: 1; transform: none; filter: none; }
+    .progress-fill { right: 0; animation: none; }
+    .orb { animation: none; }
+    .rm-note { display: block; }
+  }
+  .rm-note {
+    display: none;
+    position: absolute;
+    top: 20px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    z-index: 40;
+  }
+
+  @media (max-width: 560px) {
+    .chapters { display: none; }
+  }
+</style>
+
+<div class="page">
+  <main class="stage" aria-label="Leo product film - Daybook">
+    <div class="rm-note">reduced motion - resting frame</div>
+
+    <div class="timeline" id="timeline">
+
+      <!-- ===================== ACT 1 - THE ORIGIN ===================== -->
+      <section class="scene" id="s1">
+        <p class="kicker k1">A morning, before coffee.</p>
+        <div style="height: clamp(20px,4vh,46px)"></div>
+        <div class="lfade">
+          <p class="line xl l1">A hundred agents<br />worked all night.</p>
+        </div>
+      </section>
+
+      <section class="scene" id="s2">
+        <p class="line lg l3" style="margin-bottom: 0.4em;">So I built a</p>
+        <p style="font-size: clamp(24px, 4.4vw, 50px); line-height: 1.12;">
+          <span class="strikeword dissolveword">dashboard.<span class="strikebar"></span></span>
+        </p>
+        <div style="height: clamp(16px,3vh,34px)"></div>
+        <p class="wrong">Wrong answer.<span class="wrongbloom"></span></p>
+      </section>
+
+      <section class="scene" id="s3">
+        <p class="kicker k3">The reframe.</p>
+        <div style="height: clamp(16px,3vh,34px)"></div>
+        <p class="reframe">
+          It is not a dashboard. It is a
+          <span class="accent-sea">triage of exceptions</span>.
+        </p>
+      </section>
+
+      <!-- ===================== ACT 2 - THE APPROACHES ===================== -->
+      <section class="scene" id="s4">
+        <p class="kicker k4">I did not trust one idea.</p>
+        <div style="height: clamp(14px,2.4vh,28px)"></div>
+        <p class="line lg l4">I built three.</p>
+      </section>
+
+      <section class="scene" id="s5">
+        <div class="phones">
+          <div class="phone quiet phone1">
+            <div class="plabel">Quiet Capital</div>
+            <div class="sub">a private statement</div>
+            <hr class="row" /><hr class="row short" /><hr class="row" /><hr class="row shorter" />
+            <div class="accentrow"></div>
+          </div>
+          <div class="phone daybook phone2">
+            <div class="plabel">Daybook</div>
+            <div class="sub">a warm ledger</div>
+            <hr class="row" /><hr class="row short" />
+            <div class="card2">
+              <hr class="row" /><hr class="row short" />
+            </div>
+          </div>
+          <div class="phone headline phone3">
+            <div class="plabel">Headline</div>
+            <div class="sub">the front page</div>
+            <div class="big">Three<br /><span class="em">need you.</span></div>
+            <hr class="row" style="margin-top:auto" /><hr class="row short" />
+          </div>
+        </div>
+        <p class="ui-line l5" style="font-size: clamp(14px,2vw,22px); font-family: var(--serif); font-weight: 400; color: var(--body);">
+          Each one a working app. The choice between them was the design.
+        </p>
+      </section>
+
+      <section class="scene" id="s6">
+        <p class="line md l6" style="color: var(--body);">The range was the proof.</p>
+        <div style="height: clamp(16px,3vh,30px)"></div>
+        <div class="swatchwrap">
+          <span class="sw" style="--i:0; background: linear-gradient(150deg, oklch(0.62 0.16 262), oklch(0.5 0.15 262));"></span>
+          <span class="sw" style="--i:1; background: linear-gradient(150deg, oklch(0.62 0.13 165), oklch(0.5 0.12 168));"></span>
+          <span class="sw" style="--i:2; background: linear-gradient(150deg, oklch(0.7 0.14 75), oklch(0.58 0.14 70));"></span>
+          <span class="sw" style="--i:3; background: linear-gradient(150deg, oklch(0.66 0.18 32), oklch(0.56 0.18 28));"></span>
+          <span class="sw" style="--i:4; background: linear-gradient(150deg, oklch(0.66 0.1 320), oklch(0.56 0.1 310));"></span>
+          <span class="sw" style="--i:5; background: linear-gradient(150deg, oklch(0.74 0.02 78), oklch(0.6 0.02 70));"></span>
+        </div>
+      </section>
+
+      <!-- ===================== ACT 3 - THE ONE ===================== -->
+      <section class="scene" id="s7">
+        <p class="kicker k7">The calmest of the three.</p>
+        <div style="height: clamp(14px,2.4vh,28px)"></div>
+        <p class="line md l7" style="font-style: italic; color: var(--ink); font-weight: 400;">
+          Five voices, one currency: calm.
+        </p>
+      </section>
+
+      <section class="scene" id="s8">
+        <p class="kicker k8" style="margin-bottom: clamp(14px,2.6vh,30px);">How the AI speaks.</p>
+        <div class="voices">
+          <div class="voice thinking" style="--i:0">
+            <span class="chip c-think"><span class="sdot"></span>Thinking</span>
+            <span class="vtext">it tells you what it is checking</span>
+          </div>
+          <div class="voice confident" style="--i:1">
+            <span class="chip c-conf"><span class="sdot"></span>Confident</span>
+            <span class="vtext">boring on purpose</span>
+          </div>
+          <div class="voice uncertain" style="--i:2">
+            <span class="chip c-uncert"><span class="sdot"></span>Uncertain</span>
+            <span class="vtext">the type gets lighter</span>
+          </div>
+          <div class="voice wrong" style="--i:3">
+            <span class="chip c-wrong"><span class="sdot"></span>Wrong</span>
+            <span class="vtext">it never dead-ends</span>
+          </div>
+          <div class="voice silent" style="--i:4">
+            <span class="chip c-silent"><span class="sdot"></span>Silent</span>
+            <span class="vtext">it shows what it did not interrupt you for</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene" id="s9">
+        <div class="ledgerwrap">
+          <p class="kicker l9k" style="color: var(--seaglass); margin-bottom: clamp(14px,2.6vh,30px);">The silence ledger.</p>
+          <p class="line md l9a" style="color: var(--ink); font-weight: 400;">
+            I handled 47 things overnight.
+          </p>
+          <div style="height: clamp(10px,1.6vh,18px)"></div>
+          <p class="line md l9b" style="color: var(--seaglass); font-weight: 400;">
+            I chose not to wake you for six.
+          </p>
+        </div>
+      </section>
+
+      <section class="scene" id="s10">
+        <p class="thesis1">The agents are not the product.</p>
+        <div style="height: clamp(12px,2vh,22px)"></div>
+        <p class="thesis2">The <span class="sea">calm</span> is the product.</p>
+        <div style="height: clamp(26px,5vh,56px)"></div>
+        <div class="endcard">
+          <div class="orbwrap">
+            <span class="orb"></span>
+            <span class="brand">Leo - the morning command center</span>
+          </div>
+          <span class="credit">by Ravindra Sisodia</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="controls">
+    <div class="progress" aria-hidden="true"><div class="progress-fill" id="fill"></div></div>
+    <div class="barrow">
+      <div class="btns">
+        <button id="playpause" aria-label="Play or pause the film">Pause</button>
+        <button id="replay" aria-label="Replay the film from the start">Replay</button>
+      </div>
+      <nav class="chapters" aria-label="chapters">
+        <span>Origin</span>
+        <span>Approaches</span>
+        <span>The One</span>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+  /*
+    The film auto-plays from pure CSS - this script is pure enhancement.
+    If it never runs (CSP, error), the timeline + progress bar still play.
+    Replay: suppress every animation, force reflow, release -> all restart at 0.
+    Pause:  toggle .paused on the page root -> animation-play-state: paused.
+  */
+  (function () {
+    var page = document.querySelector('.page');
+    var playpause = document.getElementById('playpause');
+    var replay = document.getElementById('replay');
+    if (!page || !playpause || !replay) return;
+
+    var paused = false;
+
+    function restart() {
+      page.classList.add('reset');
+      page.classList.remove('paused');
+      paused = false;
+      playpause.textContent = 'Pause';
+      // force reflow with animations suppressed, then release synchronously so
+      // every CSS animation restarts from 0 (no frame-callback needed)
+      void page.offsetWidth;
+      page.classList.remove('reset');
+    }
+
+    function toggle() {
+      paused = !paused;
+      page.classList.toggle('paused', paused);
+      playpause.textContent = paused ? 'Play' : 'Pause';
+    }
+
+    replay.addEventListener('click', restart);
+    playpause.addEventListener('click', toggle);
+  })();
+</script>

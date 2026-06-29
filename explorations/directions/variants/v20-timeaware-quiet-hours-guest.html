@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V20 Time-Aware x Quiet Hours + Guest Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   V20  TIME-AWARE x QUIET HOURS + GUEST MODE
+   ---------------------------------------------------------
+   One surface, three moments, all CSS-driven.
+   - DAWN: a dim warm pre-light surface (the Onyx memory).
+   - PAPER: the warm cream of full morning (the signature
+     cross-fade target). Tokens swap on a .paper class so
+     transform/opacity + color transitions carry the change.
+   - DUSK: the Quiet Hours Recap, the evening bookend.
+   - GUEST: a seal transition into a calm client-safe view.
+   ========================================================= */
+:root{
+  /* ---- PAPER (full morning) is the default, warm + light ---- */
+  --paper:oklch(0.969 0.019 79);
+  --paper-2:oklch(0.955 0.022 73);
+  --card:oklch(0.992 0.006 86);
+  --sheet:oklch(0.990 0.007 88);
+  --sunken:oklch(0.946 0.018 76);
+  --hair:oklch(0.34 0.02 56 / 0.10);
+  --hair2:oklch(0.34 0.02 56 / 0.17);
+  --shadow:0 16px 36px -20px oklch(0.45 0.05 56 / 0.30);
+
+  --ink:oklch(0.265 0.022 56);     /* brightest fact */
+  --body:oklch(0.46 0.018 58);
+  --dim:oklch(0.66 0.016 64);
+  --soft:oklch(0.74 0.013 70);
+
+  /* glow painted into the top of the screen (full daylight, soft) */
+  --glow-a:oklch(0.97 0.045 70 / .55);
+  --glow-b:oklch(0.93 0.05 44 / .32);
+  --glow-stop-a:54%;
+  --glow-stop-b:52%;
+
+  /* color == a confidence state, tied to meaning before placement */
+  --coral:oklch(0.585 0.155 32);      --coral-bg:oklch(0.935 0.066 36);    /* the live thing right now */
+  --confident:oklch(0.52 0.10 166);   --confident-bg:oklch(0.93 0.062 168);
+  --uncertain:oklch(0.595 0.125 74);  --uncertain-bg:oklch(0.94 0.08 80);  /* drafted, needs a look */
+  --slow:oklch(0.58 0.085 250);       --slow-bg:oklch(0.935 0.04 250);     /* quietly cooling */
+  --on-state:oklch(0.985 0.01 90);
+
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+
+/* ---- DAWN: dim warm pre-light. the Onyx-to-Paper signature
+   starts here. NOT a dark slop screen: a low, warm, lit charcoal
+   that the morning will lift into cream. ---- */
+.phone.dawn{
+  --paper:oklch(0.255 0.022 58);
+  --paper-2:oklch(0.225 0.022 56);
+  --card:oklch(0.305 0.022 60);
+  --sheet:oklch(0.285 0.022 58);
+  --sunken:oklch(0.235 0.020 56);
+  --hair:oklch(0.92 0.02 80 / 0.10);
+  --hair2:oklch(0.92 0.02 80 / 0.17);
+  --shadow:0 18px 40px -22px oklch(0.10 0.02 56 / 0.7);
+
+  --ink:oklch(0.955 0.018 82);
+  --body:oklch(0.80 0.02 74);
+  --dim:oklch(0.66 0.02 66);
+  --soft:oklch(0.55 0.018 60);
+
+  --glow-a:oklch(0.62 0.10 52 / .42);   /* a thin warm horizon, the first light */
+  --glow-b:oklch(0.50 0.07 30 / .30);
+  --glow-stop-a:46%;
+  --glow-stop-b:48%;
+
+  --coral-bg:oklch(0.40 0.10 34);
+  --confident-bg:oklch(0.36 0.075 168);
+  --uncertain-bg:oklch(0.40 0.085 78);
+  --slow-bg:oklch(0.36 0.05 250);
+  --coral:oklch(0.78 0.13 38);
+  --confident:oklch(0.78 0.10 168);
+  --uncertain:oklch(0.82 0.115 84);
+  --slow:oklch(0.78 0.08 250);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(130% 70% at 78% -8%, oklch(0.94 0.035 64 / .8), transparent 58%),
+    oklch(0.903 0.02 74);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center; min-height:100dvh;
+  padding:26px 16px 56px; -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+/* variant caption */
+.caption{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  font-family:var(--mono); font-size:10px; letter-spacing:.17em; text-transform:uppercase;
+  color:oklch(0.42 0.02 56 / .72); white-space:nowrap;
+}
+
+/* phone */
+.phone{
+  position:relative; width:393px; height:852px; max-height:calc(100dvh - 96px);
+  background:var(--paper); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.18 0.012 56), 0 0 0 12px oklch(0.34 0.012 56), 0 44px 96px -26px oklch(0.30 0.03 56 / .55);
+  overflow:hidden; isolation:isolate;
+  /* THE SIGNATURE: surface + ink cross-fade as the day turns */
+  transition:background-color 1.1s var(--exp);
+}
+/* the light catching the top of the screen, retinted per time of day */
+.phone::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(95% 44% at 16% -4%, var(--glow-a), transparent var(--glow-stop-a)),
+    radial-gradient(80% 38% at 96% 2%, var(--glow-b), transparent var(--glow-stop-b));
+  transition:background 1.1s var(--exp);
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.16 0.012 56); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink); transition:color 1.1s var(--exp)}
+.statusbar .ic{display:flex; gap:7px; opacity:.78}
+
+.screen{position:absolute; inset:0; z-index:5; display:flex; flex-direction:column; transition:opacity .5s var(--exp), transform .5s var(--exp)}
+
+/* color/ink everywhere transitions with the surface so the fade reads as one move */
+.head .who,.head .now,.daynum,.date .mo,.date .dow,.greeting,.greeting b,
+.ledger,.ledger b,.sheet,.sheet-head,.row,.row .title,.row .why,.row .who,
+.signal,.signal .txt,.signal .txt b,.timeswitch,.grab{
+  transition:color 1.1s var(--exp), background-color 1.1s var(--exp), border-color 1.1s var(--exp), box-shadow 1.1s var(--exp);
+}
+
+/* breathing orb (Leo present, idle) */
+.orb{
+  width:22px;height:22px;border-radius:50%;flex:none;
+  background:radial-gradient(62% 62% at 34% 30%, oklch(0.96 0.04 80), oklch(0.74 0.12 56) 46%, oklch(0.58 0.14 40));
+  box-shadow:0 0 10px oklch(0.70 0.13 50 / .3), inset 0 1px 2px oklch(0.985 0.012 84 / .5);
+  animation:breathe 5.2s var(--exp) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* =========================================================
+   HEAD BLOCK
+   ========================================================= */
+.dawnblock{position:relative; z-index:6; padding:54px 28px 0; flex:none}
+
+.head{display:flex; align-items:center; gap:10px}
+.head .who{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--body)}
+.head .now{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--dim)}
+
+/* the time-of-day switch: the control that drives the signature cross-fade.
+   chrome, not content, so the subtle blur is allowed here. */
+.timeswitch{
+  display:inline-flex; align-items:center; gap:2px; margin-left:8px; padding:3px;
+  border-radius:999px; background:oklch(0.5 0.02 60 / .10); border:1px solid var(--hair);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+.timeswitch button{
+  appearance:none; border:none; background:transparent; cursor:pointer;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--dim); padding:5px 9px; border-radius:999px; line-height:1;
+  min-height:24px; transition:color .3s var(--exp), background-color .3s var(--exp);
+}
+.timeswitch button[aria-pressed="true"]{ color:var(--ink); background:var(--card); box-shadow:0 1px 4px oklch(0.2 0.02 56 / .12) }
+.timeswitch button:focus-visible{outline:2px solid var(--slow); outline-offset:2px}
+
+.toprow{display:flex; align-items:flex-start; justify-content:space-between; margin-top:16px}
+.daynum{position:relative; font-family:var(--serif); font-weight:500; font-size:76px; line-height:.82; letter-spacing:-.03em; color:var(--ink)}
+.daynum .liv{position:absolute; top:8px; right:-15px; width:9px; height:9px; border-radius:50%; background:var(--coral); animation:livedot 2.6s var(--exp) infinite}
+@keyframes livedot{0%,100%{opacity:.5; transform:scale(1)}50%{opacity:1; transform:scale(1.3)}}
+.date{text-align:right; margin-top:8px}
+.date .mo{font-family:var(--mono); font-size:13px; letter-spacing:.04em; color:var(--body)}
+.date .dow{font-family:var(--serif); font-style:italic; font-size:15px; color:var(--dim); margin-top:2px}
+
+/* mixed-brightness greeting: bright facts, dim connective tissue */
+.greeting{margin-top:24px; font-family:var(--serif); font-size:21px; line-height:1.52; font-weight:400; color:var(--dim); letter-spacing:-.004em; max-width:32ch}
+.greeting b{color:var(--ink); font-weight:500}
+.ig{display:inline-block; vertical-align:-3px; margin:0 3px 0 2px}
+
+/* the quiet ledger line: tappable, opens the evening bookend */
+.ledger{
+  margin-top:20px; display:flex; align-items:center; gap:9px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.01em; color:var(--body); line-height:1.5;
+  cursor:pointer; padding:8px 10px; margin-left:-10px; border-radius:12px;
+  width:max-content; max-width:100%;
+}
+.ledger:hover{background:oklch(0.5 0.02 60 / .05)}
+.ledger:focus-visible{outline:2px solid var(--slow); outline-offset:2px}
+.ledger .b{width:5px;height:5px;border-radius:50%;background:var(--confident);flex:none}
+.ledger b{color:var(--ink); font-weight:500}
+.ledger .chev{margin-left:4px; color:var(--dim); display:inline-flex}
+
+/* =========================================================
+   TRIAGE SHEET (the morning's three things)
+   ========================================================= */
+.sheet-wrap{position:relative; z-index:6; flex:1 1 auto; min-height:0; margin-top:20px; display:flex}
+.sheet{
+  position:relative; width:100%;
+  background:var(--sheet); border-radius:28px 28px 0 0;
+  box-shadow:0 -20px 56px -28px oklch(0.30 0.03 56 / .5);
+  padding:8px 18px 22px; overflow-y:auto; scrollbar-width:none;
+  transform:translateY(28px); opacity:0;
+  animation:sheetRise .72s var(--exp) .26s forwards;
+}
+.sheet::-webkit-scrollbar{display:none}
+@keyframes sheetRise{to{transform:none; opacity:1}}
+.grab{width:38px;height:5px;border-radius:5px;background:var(--hair2);margin:8px auto 12px}
+
+.sheet-head{display:flex; align-items:baseline; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); padding:2px 6px 12px}
+.sheet-head .n{color:var(--coral)}
+.sheet-head .seal{margin-left:auto; font-size:10px; letter-spacing:.1em; color:var(--dim); display:none; align-items:center; gap:6px}
+.sheet-head .seal .lk{width:6px;height:6px;border-radius:50%;background:var(--slow)}
+
+#rows{display:flex; flex-direction:column; gap:12px}
+.row{
+  border-radius:20px; padding:15px; background:var(--card); border:1px solid var(--hair);
+  box-shadow:var(--shadow); position:relative; cursor:pointer;
+  opacity:0; transform:translateY(10px); animation:rise .56s var(--exp) forwards;
+}
+.row:nth-child(1){animation-delay:.46s}
+.row:nth-child(2){animation-delay:.54s}
+.row:nth-child(3){animation-delay:.62s}
+@keyframes rise{to{opacity:1; transform:none}}
+.row:focus-visible{outline:3px solid var(--slow); outline-offset:3px}
+.row .top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+.pill{font-family:var(--mono); font-size:10px; letter-spacing:.04em; text-transform:uppercase; padding:4px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; line-height:1}
+.pill .dot{width:6px;height:6px;border-radius:50%}
+.pill.coral{color:var(--coral); background:var(--coral-bg)} .pill.coral .dot{background:var(--coral)}
+.pill.uncertain{color:var(--uncertain); background:var(--uncertain-bg)} .pill.uncertain .dot{background:var(--uncertain)}
+.pill.confident{color:var(--confident); background:var(--confident-bg)} .pill.confident .dot{background:var(--confident)}
+.pill.alt{color:var(--body); background:oklch(0.5 0.02 60 / .08)}
+.row .when{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--dim)}
+.row .title{font-family:var(--sans); font-size:16.5px; font-weight:600; line-height:1.26; letter-spacing:-.2px; color:var(--ink); margin-top:11px}
+.row .why{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:var(--body); margin-top:6px}
+.row .foot{display:flex; align-items:center; gap:9px; margin-top:13px}
+.row .who{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--dim)}
+.row .go{margin-left:auto; width:36px; height:36px; border-radius:50%; background:var(--ink); color:var(--paper); display:flex; align-items:center; justify-content:center; flex:none; transition:transform .2s var(--exp); pointer-events:none}
+.row:active .go{transform:scale(.92)}
+
+/* the private number that Guest Mode seals away */
+.priv{position:relative}
+.priv .seal-tag{
+  display:none; align-items:center; gap:5px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.04em; text-transform:uppercase; color:var(--slow);
+}
+.priv .seal-tag .lk{width:6px;height:6px;border-radius:50%;background:var(--slow)}
+
+/* avatars */
+.av{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:10px;color:oklch(0.985 0.008 80);font-family:var(--sans)}
+.av.dana{background:linear-gradient(135deg,oklch(0.62 0.14 32),oklch(0.5 0.13 18))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.56 0.11 168),oklch(0.46 0.10 184))}
+
+/* the lead row: leading with the live 5-minute window via a draining ring */
+.row.lead{display:flex; gap:14px; align-items:flex-start}
+.row.lead .ring{flex:none; margin-top:2px}
+.row.lead .body{flex:1; min-width:0}
+.win-ring-wrap{position:relative; width:54px; height:54px; animation:ringbreath 3.4s var(--exp) infinite}
+@keyframes ringbreath{0%,100%{transform:scale(1); opacity:1}50%{transform:scale(1.035); opacity:.92}}
+.win-ring .track{stroke:var(--coral-bg); fill:none}
+.win-ring .drain{stroke:var(--coral); fill:none; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center}
+.win-ring-wrap .cen{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px}
+.win-ring-wrap .cen .t{font-family:var(--mono); font-size:13px; font-weight:500; color:var(--coral); line-height:1; font-variant-numeric:tabular-nums}
+.win-ring-wrap .cen .l{font-family:var(--mono); font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--coral); opacity:.78}
+
+/* calm signal: Crestview cooling, lower density */
+.signal{margin:14px 6px 4px; padding:14px 16px; border-radius:18px; background:var(--sunken); border:1px solid var(--hair)}
+.signal .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--body); display:flex; align-items:center; gap:7px}
+.signal .lbl .d{width:6px;height:6px;border-radius:50%;background:var(--slow)}
+.signal .txt{font-family:var(--serif); font-size:14.5px; line-height:1.46; color:var(--body); margin-top:7px}
+.signal .txt b{color:var(--ink); font-weight:500}
+
+/* =========================================================
+   GUEST MODE: the seal control + sealed client-safe layer
+   ========================================================= */
+.guestbar{
+  position:absolute; left:16px; right:16px; bottom:16px; z-index:60;
+  display:flex; align-items:center; gap:12px; padding:11px 12px 11px 16px;
+  border-radius:18px; background:oklch(0.5 0.02 60 / .14); border:1px solid var(--hair2);
+  backdrop-filter:blur(14px) saturate(1.1); -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  transition:opacity .4s var(--exp), transform .4s var(--exp);
+}
+.guestbar .gtxt{display:flex; flex-direction:column; gap:2px; min-width:0}
+.guestbar .gtxt .a{font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink); line-height:1.2}
+.guestbar .gtxt .b{font-family:var(--mono); font-size:10px; letter-spacing:.02em; color:var(--dim); line-height:1.3}
+.guestbar .gbtn{
+  margin-left:auto; flex:none; min-height:44px; padding:0 16px; border-radius:13px; border:none;
+  background:var(--ink); color:var(--paper); font-family:var(--sans); font-size:13.5px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:transform .18s var(--exp), filter .18s var(--exp);
+}
+.guestbar .gbtn:active{transform:scale(.97)}
+.guestbar .gbtn:focus-visible{outline:3px solid var(--slow); outline-offset:2px}
+
+/* the seal sweep: a calm wipe that travels the screen as data locks */
+.sealwipe{
+  position:absolute; inset:0; z-index:95; pointer-events:none;
+  background:linear-gradient(180deg, oklch(0.40 0.06 250 / .0) 0%, oklch(0.42 0.07 250 / .22) 50%, oklch(0.40 0.06 250 / 0) 100%);
+  transform:translateY(-100%); opacity:0;
+}
+.sealwipe.run{animation:seal 1s var(--exp) forwards}
+@keyframes seal{
+  0%{transform:translateY(-100%); opacity:0}
+  30%{opacity:1}
+  70%{opacity:1}
+  100%{transform:translateY(100%); opacity:0}
+}
+
+/* the client-safe view: a separate calm screen that slides up sealed */
+.guest{
+  position:absolute; inset:0; z-index:90; background:var(--paper);
+  display:flex; flex-direction:column; padding:54px 26px 26px;
+  transform:translateY(100%); transition:transform .55s var(--exp);
+  overflow-y:auto; scrollbar-width:none;
+}
+.guest::-webkit-scrollbar{display:none}
+.guest.on{transform:none}
+.guest .ghead{display:flex; align-items:center; gap:10px}
+.guest .ghead .orb{width:20px;height:20px}
+.guest .ghead .gh-who{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--body)}
+.guest .ghead .gh-seal{margin-left:auto; display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--slow)}
+.guest .ghead .gh-seal .lk{width:7px;height:7px;border-radius:50%;background:var(--slow)}
+.guest h2{font-family:var(--serif); font-weight:500; font-size:30px; line-height:1.04; letter-spacing:-.02em; color:var(--ink); margin-top:22px}
+.guest .gsub{font-family:var(--mono); font-size:11px; letter-spacing:.03em; color:var(--dim); margin-top:9px}
+
+/* client progress runway, no internal numbers anywhere */
+.runway{margin-top:26px; display:flex; flex-direction:column}
+.runstep{display:flex; align-items:flex-start; gap:14px; padding:0 0 22px; position:relative}
+.runstep:not(:last-child)::before{content:""; position:absolute; left:11px; top:24px; bottom:0; width:1.5px; background:var(--hair2)}
+.runstep .dot{width:23px;height:23px;border-radius:50%;flex:none; display:flex; align-items:center; justify-content:center; background:var(--confident-bg)}
+.runstep.now .dot{background:var(--uncertain-bg)}
+.runstep.todo .dot{background:var(--sunken); border:1.5px solid var(--hair2)}
+.runstep .rt{font-family:var(--sans); font-size:15px; font-weight:600; color:var(--ink); line-height:1.25}
+.runstep.todo .rt{color:var(--dim)}
+.runstep .rs{font-family:var(--serif); font-size:14px; color:var(--body); margin-top:3px; line-height:1.42}
+
+.guest .gnext{
+  margin-top:6px; padding:16px; border-radius:18px; background:var(--card); border:1px solid var(--hair); box-shadow:var(--shadow);
+  font-family:var(--serif); font-size:15.5px; line-height:1.5; color:var(--ink);
+}
+.guest .gnext b{font-weight:600}
+.guest .gexit{
+  margin-top:auto; min-height:50px; border-radius:14px; border:1px solid var(--hair2); background:transparent;
+  color:var(--body); font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  transition:background-color .2s var(--exp);
+}
+.guest .gexit:hover{background:oklch(0.5 0.02 60 / .05)}
+.guest .gexit:focus-visible{outline:3px solid var(--slow); outline-offset:2px}
+
+/* when guest is sealed: dim the private number, show the lock tag */
+.phone.guest-on .priv .num{display:none}
+.phone.guest-on .priv .seal-tag{display:inline-flex}
+.phone.guest-on .sheet-head .seal{display:flex}
+
+/* =========================================================
+   QUIET HOURS RECAP: the evening bookend (dusk digest)
+   ========================================================= */
+.scrim{position:absolute; inset:0; background:oklch(0.16 0.02 56 / .5); opacity:0; pointer-events:none; transition:opacity .34s var(--exp); z-index:96}
+.scrim.on{opacity:1; pointer-events:auto}
+
+.recap{
+  position:absolute; left:0; right:0; bottom:0; z-index:97;
+  /* the dusk surface: a deep warm indigo that is its own moment, not the paper */
+  background:
+    radial-gradient(120% 60% at 50% 108%, oklch(0.40 0.075 46 / .55), transparent 60%),
+    linear-gradient(180deg, oklch(0.235 0.03 274) 0%, oklch(0.205 0.028 290) 100%);
+  border-radius:26px 26px 0 0;
+  box-shadow:0 -22px 60px -24px oklch(0.12 0.03 56 / .6);
+  transform:translateY(102%); transition:transform .5s var(--exp);
+  max-height:92%; overflow-y:auto; scrollbar-width:none; padding:8px 22px 26px;
+  color:oklch(0.92 0.018 84);
+}
+.recap::-webkit-scrollbar{display:none}
+.recap.on{transform:none}
+.recap .grab{background:oklch(0.92 0.02 84 / .22)}
+
+.recap-top{display:flex; align-items:center; gap:10px; margin-top:4px}
+.recap-top .who{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:oklch(0.76 0.03 70)}
+.recap-top .x{margin-left:auto; width:34px; height:34px; border-radius:50%; background:oklch(0.92 0.02 84 / .1); border:none; color:oklch(0.88 0.02 84); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.recap-top .x:focus-visible{outline:3px solid oklch(0.78 0.08 250); outline-offset:2px}
+
+.recap h2{
+  font-family:var(--serif); font-weight:400; font-size:27px; line-height:1.18; letter-spacing:-.01em;
+  color:oklch(0.97 0.014 84); margin:18px 2px 4px; max-width:24ch;
+}
+.recap h2 b{font-weight:600}
+.recap .when{font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:oklch(0.70 0.03 66); margin:8px 2px 0}
+.recap .tally{font-family:var(--serif); font-size:16px; line-height:1.5; color:oklch(0.86 0.02 80); margin:16px 2px 0}
+.recap .tally b{color:oklch(0.97 0.014 84); font-weight:500}
+
+.rlist{margin:18px 0 0; display:flex; flex-direction:column}
+.ritem{display:flex; align-items:flex-start; gap:12px; padding:13px 2px; border-top:1px solid oklch(0.92 0.02 84 / .12)}
+.ritem .rd{width:8px;height:8px;border-radius:50%;flex:none;margin-top:6px}
+.ritem.handled .rd{background:oklch(0.74 0.10 168)}
+.ritem.held .rd{background:oklch(0.80 0.115 84)}
+.ritem .rbody{flex:1; min-width:0}
+.ritem .rt{font-family:var(--sans); font-size:14.5px; font-weight:600; color:oklch(0.96 0.014 84); line-height:1.3}
+.ritem .rs{font-family:var(--serif); font-size:13.5px; line-height:1.44; color:oklch(0.80 0.02 78); margin-top:4px}
+.ritem .rtag{font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:oklch(0.66 0.03 64); margin-top:6px; display:inline-block}
+.ritem .rwhen{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:oklch(0.66 0.03 64); flex:none; padding-top:1px}
+
+.recap .batched{
+  margin:16px 2px 0; padding:13px 15px; border-radius:14px; background:oklch(0.92 0.02 84 / .06);
+  font-family:var(--mono); font-size:11px; letter-spacing:.01em; color:oklch(0.80 0.02 78); line-height:1.55;
+}
+.recap .batched b{color:oklch(0.95 0.014 84); font-weight:500}
+
+/* the close of the bookend: nothing needs you tonight */
+.goodnight{
+  margin:26px 2px 4px; padding:22px 18px; border-radius:20px; text-align:center;
+  background:oklch(0.92 0.02 84 / .05); border:1px solid oklch(0.92 0.02 84 / .12);
+}
+.goodnight .moon{
+  width:34px;height:34px;border-radius:50%;margin:0 auto 14px; position:relative;
+  background:radial-gradient(60% 60% at 38% 34%, oklch(0.92 0.03 84), oklch(0.72 0.06 70) 60%, oklch(0.56 0.06 60));
+  box-shadow:0 0 22px oklch(0.78 0.08 70 / .35);
+  animation:moonglow 6s var(--exp) infinite;
+}
+@keyframes moonglow{0%,100%{box-shadow:0 0 18px oklch(0.78 0.08 70 / .26)}50%{box-shadow:0 0 28px oklch(0.78 0.08 70 / .42)}}
+.goodnight .gn-t{font-family:var(--serif); font-size:21px; line-height:1.34; color:oklch(0.97 0.014 84)}
+.goodnight .gn-s{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:oklch(0.70 0.03 66); margin-top:11px}
+
+/* =========================================================
+   reduced motion
+   ========================================================= */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important}
+  .orb,.daynum .liv,.win-ring-wrap,.goodnight .moon{animation:none !important}
+  .row,.sheet{opacity:1 !important; transform:none !important}
+  /* keep the meaning-bearing transitions but make them near-instant */
+  .phone,.phone::before,.screen,.recap,.guest,.guestbar,.sealwipe{transition-duration:.12s !important}
+  .sealwipe.run{animation-duration:.4s !important}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone" role="application" aria-label="Leo morning command center">
+  <div class="notch" aria-hidden="true"></div>
+  <div class="statusbar"><span id="clock">6:18</span><span class="ic"><span>5G</span><span>92</span></span></div>
+
+  <main class="screen" id="screen">
+    <!-- ===== HEAD BLOCK ===== -->
+    <section class="dawnblock">
+      <div class="head">
+        <span class="orb" aria-hidden="true"></span>
+        <span class="who">Leo · your helper</span>
+        <div class="timeswitch" role="group" aria-label="Time of day">
+          <button id="tDawn" aria-pressed="true">Early</button>
+          <button id="tDay" aria-pressed="false">Morning</button>
+        </div>
+      </div>
+
+      <div class="toprow">
+        <div class="daynum">22<span class="liv" aria-hidden="true"></span></div>
+        <div class="date">
+          <div class="mo">JUN '26</div>
+          <div class="dow">Tuesday</div>
+        </div>
+      </div>
+
+      <p class="greeting" id="greeting">
+        <b>Almost morning, Dana.</b> The light is coming up. Three things will need you when you are ready, and one is
+        <svg class="ig" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="13" r="8" stroke="var(--coral)" stroke-width="1.8"/>
+          <path d="M12 9v4l2.5 1.6" stroke="var(--coral)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 3.5h6" stroke="var(--coral)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <b>happening right now.</b>
+      </p>
+
+      <div class="ledger" id="ledgerBtn" role="button" tabindex="0"
+           aria-haspopup="dialog" aria-label="Overnight, Leo took care of 47 things and woke you for 0. Open last night's summary.">
+        <span class="b" aria-hidden="true"></span>
+        Overnight Leo took care of <b>47</b> things and woke you for <b>0</b>.
+        <span class="chev" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+    </section>
+
+    <!-- ===== TRIAGE SHEET ===== -->
+    <div class="sheet-wrap">
+      <div class="sheet">
+        <div class="grab" aria-hidden="true"></div>
+        <div class="sheet-head">
+          Needs you <span aria-hidden="true">·</span> <span class="n">3 open</span>
+          <span class="seal" aria-hidden="true"><span class="lk"></span>Safe to show clients</span>
+        </div>
+
+        <div id="rows">
+          <!-- 1. live 5-minute window lead -->
+          <div class="row lead" role="button" tabindex="0"
+               aria-label="New buyer for 88 Linden, already approved for a loan. Best to call in the next four minutes and twelve seconds.">
+            <div class="ring" aria-hidden="true">
+              <div class="win-ring-wrap">
+                <!-- 4:12 of 5:00 left = 84% remaining. C = 2*pi*22 = 138.2; 84% = 116.1 dash -->
+                <svg class="win-ring" width="54" height="54" viewBox="0 0 54 54">
+                  <circle class="track" cx="27" cy="27" r="22" stroke-width="5"/>
+                  <circle class="drain" cx="27" cy="27" r="22" stroke-width="5"
+                          stroke-dasharray="116.1 138.2" stroke-dashoffset="0"/>
+                </svg>
+                <div class="cen"><span class="t">4:12</span><span class="l">left</span></div>
+              </div>
+            </div>
+            <div class="body">
+              <div class="top">
+                <span class="pill coral"><span class="dot"></span>Call now</span>
+                <span class="pill alt">New buyer</span>
+              </div>
+              <div class="title">New buyer for 88 Linden, came in 90 seconds ago</div>
+              <p class="why">They are interested and already approved for a loan. The first agent to reach out usually wins. Leo has a first text ready, written to sound like you.</p>
+              <div class="foot">
+                <span class="who"><span class="av dana" aria-hidden="true">D</span>Yours to take</span>
+                <span class="go" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Oak St counter due 10am (carries the private number Guest seals) -->
+          <div class="row" role="button" tabindex="0" aria-label="Your reply for 142 Oak Street is ready, send by 10am">
+            <div class="top">
+              <span class="pill uncertain"><span class="dot"></span>Reply written, please check</span>
+              <span class="pill alt">Your deal</span>
+              <span class="when">Send by 10:00am</span>
+            </div>
+            <div class="title">Your reply for 142 Oak St is ready</div>
+            <p class="why">Leo wrote a reply to the buyer offering $612k. It looks good, but two details could not be confirmed. Have a look before you send it.</p>
+            <div class="foot priv">
+              <span class="who"><span class="av dana" aria-hidden="true">D</span>
+                <span class="num">You earn at closing: $9,700</span>
+                <span class="seal-tag" aria-hidden="true"><span class="lk"></span>Hidden from clients</span>
+              </span>
+              <span class="go" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- 3. Marcus lead going quiet -->
+          <div class="row" role="button" tabindex="0" aria-label="A buyer on Marcus's team has not replied in 3 days, a quick message could help">
+            <div class="top">
+              <span class="pill confident"><span class="dot"></span>From your team</span>
+              <span class="pill alt">Marcus</span>
+              <span class="when">No reply in 3 days</span>
+            </div>
+            <div class="title">A buyer Marcus is helping has gone quiet</div>
+            <p class="why">No reply since Friday on the Birchwood home. Marcus has not noticed yet. A quick message from you could help.</p>
+            <div class="foot">
+              <span class="who"><span class="av marcus" aria-hidden="true">M</span>Your team</span>
+              <span class="go" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- calm signal: Crestview cooling -->
+        <section class="signal" aria-label="Heads up, the Crestview deal is slowing down">
+          <div class="lbl"><span class="d" aria-hidden="true"></span>Just a heads up</div>
+          <p class="txt">The <b>Crestview</b> deal is slowing down a little, not stalling. The buyer is replying more slowly this week. Nothing to do yet. Leo is keeping an eye on it and will tell you here if it slows down more.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== GUEST MODE seal control ===== -->
+  <div class="guestbar" id="guestbar">
+    <div class="gtxt">
+      <span class="a">Showing the Okafors this screen?</span>
+      <span class="b">This hides your pay, private notes, and team info</span>
+    </div>
+    <button class="gbtn" id="guestEnter">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true">
+        <rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+      </svg>
+      Show client safely
+    </button>
+  </div>
+
+  <!-- the seal sweep -->
+  <div class="sealwipe" id="sealwipe" aria-hidden="true"></div>
+
+  <!-- ===== the sealed client-safe view ===== -->
+  <section class="guest" id="guestView" role="dialog" aria-modal="true" aria-label="Client-safe view, 142 Oak St" aria-hidden="true">
+    <div class="ghead">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="gh-who">Real · your home purchase</span>
+      <span class="gh-seal"><span class="lk" aria-hidden="true"></span>Private info hidden</span>
+    </div>
+    <h2>142 Oak St, with Dana Reyes</h2>
+    <p class="gsub">BUYER: THE OKAFORS · AIMING TO CLOSE JUN 28</p>
+
+    <div class="runway" aria-label="Where you are in buying the home">
+      <div class="runstep">
+        <span class="dot" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--confident)" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+        <div><div class="rt">Offer accepted</div><div class="rs">Signed by both sides. The home is yours to buy.</div></div>
+      </div>
+      <div class="runstep">
+        <span class="dot" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--confident)" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+        <div><div class="rt">Home inspection done</div><div class="rs">Nothing major found. The report is in your shared folder.</div></div>
+      </div>
+      <div class="runstep now">
+        <span class="dot" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--uncertain)" stroke-width="3"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg></span>
+        <div><div class="rt">Loan being approved</div><div class="rs">Your bank has everything it needs. Expected back this week.</div></div>
+      </div>
+      <div class="runstep todo">
+        <span class="dot" aria-hidden="true"></span>
+        <div><div class="rt">Sign a few forms</div><div class="rs">A short set of forms, coming to you soon.</div></div>
+      </div>
+      <div class="runstep todo">
+        <span class="dot" aria-hidden="true"></span>
+        <div><div class="rt">Get your keys</div><div class="rs">The final day. We will be there with you.</div></div>
+      </div>
+    </div>
+
+    <div class="gnext">What is next for you: <b>sign a few forms by Friday.</b> Dana will walk you through each one. Nothing to do until they arrive.</div>
+
+    <button class="gexit" id="guestExit">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true">
+        <path d="M9 12h12M16 7l5 5-5 5"/><path d="M4 4v16"/>
+      </svg>
+      Use Face ID to go back to your view
+    </button>
+  </section>
+
+  <!-- ===== QUIET HOURS RECAP (evening bookend) ===== -->
+  <div class="scrim" id="scrim"></div>
+  <section class="recap" id="recap" role="dialog" aria-modal="true" aria-label="Last night's summary, what happened after hours" aria-hidden="true">
+    <div class="grab" aria-hidden="true"></div>
+
+    <div class="recap-top">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="who">Leo · last night's summary</span>
+      <button class="x" id="recapClose" aria-label="Close summary">&times;</button>
+    </div>
+
+    <h2>Six things came up after 6pm. <b>I took care of five. One is waiting for your morning.</b></h2>
+    <p class="when">OVERNIGHT · 6:02PM TO 5:50AM</p>
+    <p class="tally">The night was quiet. I woke you for <b>nothing</b>, because <b>nothing</b> needed you before sunrise.</p>
+
+    <div class="rlist" aria-label="What happened overnight">
+      <div class="ritem handled">
+        <span class="rd" aria-hidden="true"></span>
+        <div class="rbody">
+          <div class="rt">The buyer's agent replied about 142 Oak St</div>
+          <div class="rs">They know your reply is coming at ten. Nothing for you to do yet.</div>
+          <span class="rtag">I kept an eye on the messages</span>
+        </div>
+        <span class="rwhen">9:14pm</span>
+      </div>
+      <div class="ritem handled">
+        <span class="rd" aria-hidden="true"></span>
+        <div class="rbody">
+          <div class="rt">Two new buyers checked over and lined up for 8am</div>
+          <div class="rs">Both already approved for a loan. I saved them for the morning so you start with good ones.</div>
+          <span class="rtag">I checked the new buyers</span>
+        </div>
+        <span class="rwhen">10:40pm</span>
+      </div>
+      <div class="ritem handled">
+        <span class="rd" aria-hidden="true"></span>
+        <div class="rbody">
+          <div class="rt">Crestview home inspection booked</div>
+          <div class="rs">Set for Thursday 11am with the inspector you usually use. It is on your calendar.</div>
+          <span class="rtag">I set up the appointment</span>
+        </div>
+        <span class="rwhen">11:02pm</span>
+      </div>
+      <div class="ritem handled">
+        <span class="rd" aria-hidden="true"></span>
+        <div class="rbody">
+          <div class="rt">Maplewood seller's paperwork added to the deal</div>
+          <div class="rs">Saved and attached. The buyer's agent has a copy.</div>
+          <span class="rtag">I filed the paperwork</span>
+        </div>
+        <span class="rwhen">12:18am</span>
+      </div>
+      <div class="ritem held">
+        <span class="rd" aria-hidden="true"></span>
+        <div class="rbody">
+          <div class="rt">Henderson asked to move closing up a day</div>
+          <div class="rs">Nothing was due tonight, so I saved it for your morning. Saying yes affects the bank and the title company, so that is your call.</div>
+          <span class="rtag">waiting for you · probably fine</span>
+        </div>
+        <span class="rwhen">1:50am</span>
+      </div>
+    </div>
+
+    <div class="batched">
+      Eight routine updates saved to your records. <b>31 smaller items</b> grouped together, none needed you.
+    </div>
+
+    <div class="goodnight">
+      <div class="moon" aria-hidden="true"></div>
+      <p class="gn-t">Nothing needs you tonight. Get some rest, Dana.</p>
+      <p class="gn-s">Leo will be quiet until 6am</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="caption">V20 TIME-AWARE x QUIET HOURS + GUEST MODE</div>
+
+<script>
+  document.documentElement.classList.add('js');
+
+  var phone   = document.getElementById('phone');
+  var screen  = document.getElementById('screen');
+  var clock   = document.getElementById('clock');
+  var greeting= document.getElementById('greeting');
+
+  /* ---------- THE SIGNATURE: time-of-day cross-fade ---------- */
+  phone.classList.add('dawn'); /* opens in the dim warm dawn */
+
+  var tDawn = document.getElementById('tDawn');
+  var tDay  = document.getElementById('tDay');
+
+  var dawnGreet = '<b>Almost morning, Dana.</b> The light is coming up. Three things will need you when you are ready, and one is';
+  var dayGreet  = '<b>Good morning, Dana.</b> The day has started. Three things need you now, and one is';
+  var glyph =
+    ' <svg class="ig" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">'+
+    '<circle cx="12" cy="13" r="8" stroke="var(--coral)" stroke-width="1.8"/>'+
+    '<path d="M12 9v4l2.5 1.6" stroke="var(--coral)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<path d="M9 3.5h6" stroke="var(--coral)" stroke-width="1.8" stroke-linecap="round"/></svg>'+
+    ' <b>happening right now.</b>';
+
+  function setDawn(){
+    phone.classList.add('dawn');
+    tDawn.setAttribute('aria-pressed','true');
+    tDay.setAttribute('aria-pressed','false');
+    clock.textContent='5:52';
+    greeting.innerHTML = dawnGreet + glyph;
+  }
+  function setDay(){
+    phone.classList.remove('dawn');
+    tDawn.setAttribute('aria-pressed','false');
+    tDay.setAttribute('aria-pressed','true');
+    clock.textContent='7:08';
+    greeting.innerHTML = dayGreet + glyph;
+  }
+  tDawn.addEventListener('click', setDawn);
+  tDay.addEventListener('click', setDay);
+  /* set the opening copy/clock to dawn */
+  setDawn();
+
+  /* ---------- keyboard activation helper ---------- */
+  function activate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fn(); }
+    });
+  }
+
+  /* ---------- QUIET HOURS RECAP (evening bookend) ---------- */
+  var ledgerBtn  = document.getElementById('ledgerBtn');
+  var scrim      = document.getElementById('scrim');
+  var recap      = document.getElementById('recap');
+  var recapClose = document.getElementById('recapClose');
+
+  function openRecap(){
+    scrim.classList.add('on');
+    recap.classList.add('on');
+    recap.setAttribute('aria-hidden','false');
+    setTimeout(function(){ recapClose.focus(); }, 80);
+  }
+  function closeRecap(){
+    scrim.classList.remove('on');
+    recap.classList.remove('on');
+    recap.setAttribute('aria-hidden','true');
+    ledgerBtn.focus();
+  }
+  activate(ledgerBtn, openRecap);
+  recapClose.addEventListener('click', closeRecap);
+  scrim.addEventListener('click', closeRecap);
+
+  /* ---------- GUEST MODE: the seal transition ---------- */
+  var guestEnter = document.getElementById('guestEnter');
+  var guestExit  = document.getElementById('guestExit');
+  var guestView  = document.getElementById('guestView');
+  var guestbar   = document.getElementById('guestbar');
+  var sealwipe   = document.getElementById('sealwipe');
+
+  function enterGuest(){
+    /* 1. seal the private data underneath */
+    phone.classList.add('guest-on');
+    /* 2. run the calm seal sweep, then slide the client view up */
+    sealwipe.classList.remove('run');   /* reset if replayed */
+    /* force reflow so the animation can restart */
+    void sealwipe.offsetWidth;
+    sealwipe.classList.add('run');
+    guestbar.style.opacity='0';
+    guestbar.style.transform='translateY(8px)';
+    guestbar.style.pointerEvents='none';
+    setTimeout(function(){
+      guestView.classList.add('on');
+      guestView.setAttribute('aria-hidden','false');
+    }, 420);
+    setTimeout(function(){ guestExit.focus(); }, 1000);
+  }
+  function exitGuest(){
+    guestView.classList.remove('on');
+    guestView.setAttribute('aria-hidden','true');
+    sealwipe.classList.remove('run');
+    setTimeout(function(){
+      phone.classList.remove('guest-on');
+      guestbar.style.opacity='';
+      guestbar.style.transform='';
+      guestbar.style.pointerEvents='';
+      guestEnter.focus();
+    }, 520);
+  }
+  guestEnter.addEventListener('click', enterGuest);
+  guestExit.addEventListener('click', exitGuest);
+
+  /* ---------- Escape closes whichever layer is open ---------- */
+  document.addEventListener('keydown', function(e){
+    if(e.key!=='Escape') return;
+    if(recap.classList.contains('on')) closeRecap();
+    else if(guestView.classList.contains('on')) exitGuest();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo · Morning · V01 Wellness × Spoken Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm paper surfaces, tinted neutrals (no pure #fff / #000) */
+    --paper:    oklch(0.978 0.013 78);
+    --paper-2:  oklch(0.968 0.016 72);
+    --card:     oklch(0.995 0.005 84);
+    --sunken:   oklch(0.958 0.014 76);
+    --hair:     oklch(0.34 0.02 60 / 0.10);
+    --hair-soft:oklch(0.34 0.02 60 / 0.06);
+    --shadow:   0 16px 38px -20px oklch(0.46 0.05 58 / 0.34);
+    --shadow-lift: 0 22px 50px -22px oklch(0.46 0.06 50 / 0.42);
+
+    /* ink */
+    --ink:   oklch(0.26 0.02 58);
+    --body:  oklch(0.45 0.016 62);
+    --muted: oklch(0.60 0.013 64);
+    --faint: oklch(0.72 0.012 70);
+
+    /* AI-state accents (confidence, never decoration) */
+    --confident: oklch(0.56 0.10 168);
+    --uncertain: oklch(0.64 0.13 68);
+    --urgent:    oklch(0.55 0.16 28);
+    --silent:    var(--muted);
+    --accent:    oklch(0.50 0.13 262); /* single primary action */
+
+    /* peach glow stops */
+    --glow-1: oklch(0.93 0.055 56 / 0.85);
+    --glow-2: oklch(0.95 0.035 78 / 0.55);
+
+    --serif: "Newsreader", Georgia, serif;
+    --sans: "Inter", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --r-card: 22px;
+    --r-chip: 11px;
+    --r-btn: 13px;
+    --ease: cubic-bezier(.16,1,.3,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 70% at 50% -8%, var(--paper-2), transparent 60%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:34px 16px 48px;
+  }
+
+  .stage{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+
+  .caption{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--faint);
+  }
+
+  /* phone frame */
+  .phone{
+    width:393px;
+    max-width:100%;
+    height:830px;
+    border-radius:52px;
+    background:var(--paper);
+    position:relative;
+    box-shadow:
+      0 0 0 11px oklch(0.30 0.012 60),
+      0 0 0 12px oklch(0.42 0.015 60),
+      0 40px 90px -38px oklch(0.40 0.05 56 / 0.55);
+    overflow:hidden;
+  }
+  /* peach radial glow at the top of the screen */
+  .phone::before{
+    content:"";
+    position:absolute;
+    inset:0 0 auto 0;
+    height:340px;
+    background:
+      radial-gradient(86% 130% at 50% -22%, var(--glow-1), transparent 64%),
+      radial-gradient(120% 110% at 78% -6%, var(--glow-2), transparent 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .notch{
+    position:absolute;
+    top:13px; left:50%;
+    transform:translateX(-50%);
+    width:118px; height:32px;
+    background:oklch(0.24 0.012 60);
+    border-radius:18px;
+    z-index:40;
+  }
+
+  .screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    z-index:1;
+  }
+
+  /* status bar */
+  .statusbar{
+    height:52px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:0 28px 4px;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.02em;
+    color:var(--ink);
+    flex:0 0 auto;
+    position:relative;
+    z-index:5;
+  }
+  .statusbar .dots{ display:flex; gap:5px; align-items:center; }
+  .statusbar .dots span{ width:5px; height:5px; border-radius:50%; background:var(--muted); }
+  .statusbar .dots .bar{ width:18px; height:8px; border:1.5px solid var(--muted); border-radius:3px; }
+
+  .scroll{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:6px 22px 128px;
+    scrollbar-width:none;
+  }
+  .scroll::-webkit-scrollbar{ display:none; }
+
+  /* ---- header / Leo orb ---- */
+  .head{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:8px 4px 4px;
+  }
+  .orb{
+    width:60px; height:60px;
+    border-radius:50%;
+    position:relative;
+    flex:0 0 auto;
+    background:
+      radial-gradient(60% 60% at 35% 30%, oklch(0.97 0.05 76), transparent 70%),
+      conic-gradient(from 200deg,
+        oklch(0.86 0.07 60),
+        oklch(0.80 0.09 30),
+        oklch(0.78 0.08 350),
+        oklch(0.84 0.06 95),
+        oklch(0.86 0.07 60));
+    box-shadow:
+      0 8px 22px -10px oklch(0.62 0.10 40 / 0.55),
+      inset 0 0 14px oklch(1 0 0 / 0.35);
+    animation:breathe 5.6s var(--ease) infinite;
+  }
+  .orb::after{
+    content:"";
+    position:absolute;
+    inset:-9px;
+    border-radius:50%;
+    border:1px solid oklch(0.82 0.07 50 / 0.30);
+    animation:halo 5.6s var(--ease) infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.045); }
+  }
+  @keyframes halo{
+    0%,100%{ transform:scale(0.98); opacity:0.5; }
+    50%{ transform:scale(1.06); opacity:0.85; }
+  }
+
+  .greeting{ display:flex; flex-direction:column; gap:1px; }
+  .greeting .meta{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .greeting h1{
+    font-family:var(--serif);
+    font-weight:300;
+    font-size:31px;
+    line-height:1.06;
+    letter-spacing:-0.012em;
+    margin:2px 0 0;
+    color:var(--ink);
+  }
+
+  /* ---- the spoken brief (centerpiece) ---- */
+  .brief{
+    margin:24px 0 6px;
+  }
+  .brief-label{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .brief-label .live{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:var(--confident);
+  }
+  .brief-label .live i{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--confident);
+    animation:pulse-soft 2.6s var(--ease) infinite;
+  }
+  @keyframes pulse-soft{
+    0%,100%{ opacity:0.35; transform:scale(0.82); }
+    50%{ opacity:1; transform:scale(1); }
+  }
+
+  .passage{
+    font-family:var(--serif);
+    font-weight:300;
+    font-size:26px;
+    line-height:1.5;
+    letter-spacing:-0.006em;
+    color:var(--faint);            /* unspoken words sit faint */
+    transition:color .4s var(--ease);
+  }
+  .passage .ln{
+    display:block;
+    transition:transform .5s var(--ease);
+    will-change:transform;
+  }
+  /* every word starts faint; the karaoke sweep brightens it word by word */
+  .passage w{
+    color:var(--faint);
+    transition:color .35s var(--ease), opacity .35s var(--ease);
+  }
+  .passage .key{ font-weight:400; }
+  .passage .num{ font-family:var(--mono); font-weight:500; font-size:0.86em; letter-spacing:0; }
+
+  /* the active line lifts gently */
+  .passage .ln.active{ transform:translateY(-3px); }
+
+  /* word highlight cascade. each word lights, then settles to "spoken" ink. */
+  @keyframes speak{
+    0%{ color:var(--faint); }
+    16%{ color:var(--ink); }       /* the sweep front, brightest */
+    100%{ color:var(--body); }     /* settled, already spoken */
+  }
+  .reduce-ok w{
+    animation:speak .9s var(--ease) forwards;
+    animation-delay:var(--d, 0s);
+  }
+  /* accent words inherit a state hue once spoken */
+  .reduce-ok w.t-urgent{ animation-name:speak-urgent; }
+  .reduce-ok w.t-uncertain{ animation-name:speak-uncertain; }
+  .reduce-ok w.t-confident{ animation-name:speak-confident; }
+  @keyframes speak-urgent{
+    0%{ color:var(--faint); } 16%{ color:var(--urgent); } 100%{ color:var(--urgent); }
+  }
+  @keyframes speak-uncertain{
+    0%{ color:var(--faint); } 16%{ color:var(--uncertain); } 100%{ color:var(--uncertain); }
+  }
+  @keyframes speak-confident{
+    0%{ color:var(--faint); } 16%{ color:var(--confident); } 100%{ color:var(--confident); }
+  }
+  /* line-lift cascade synced to the sweep */
+  .reduce-ok .ln{ animation:lift 3.2s var(--ease); animation-delay:var(--ld, 0s); }
+  @keyframes lift{
+    0%,100%{ transform:translateY(0); }
+    8%,26%{ transform:translateY(-3px); }
+  }
+
+  /* ---- the three action cards (one focus each, no grid) ---- */
+  .threads{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-top:20px;
+  }
+  .thread{
+    background:var(--card);
+    border:1px solid var(--hair-soft);
+    border-radius:var(--r-card);
+    padding:17px 18px;
+    box-shadow:var(--shadow);
+    opacity:0;
+    transform:translateY(12px);
+    animation:enter .56s var(--ease) forwards;
+  }
+  .reduce-ok .thread{ animation:enter .56s var(--ease) forwards; }
+  @keyframes enter{ to{ opacity:1; transform:translateY(0); } }
+
+  /* first card leads (largest), the rest are quieter (no identical grid) */
+  .thread.lead{ padding:20px 19px 18px; }
+
+  .thread .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .thread .tag{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .thread .tag .dot{ width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+  .dot.urgent{ background:var(--urgent); }
+  .dot.confident{ background:var(--confident); }
+  .dot.uncertain{ background:var(--uncertain); }
+
+  .thread .when{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--body);
+    letter-spacing:0.01em;
+  }
+
+  .thread h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:20px;
+    line-height:1.22;
+    letter-spacing:-0.01em;
+    margin:11px 0 0;
+    color:var(--ink);
+  }
+  .thread.lead h2{ font-size:22px; }
+  .thread p{
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--body);
+    margin:7px 0 0;
+  }
+  .thread .conf{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.02em;
+    color:var(--muted);
+    margin-top:10px;
+  }
+  .thread .conf b{ color:var(--body); font-weight:500; }
+
+  /* bank / defer affordances */
+  .acts{ display:flex; gap:9px; margin-top:14px; }
+  .btn{
+    flex:1 1 auto;
+    min-height:44px;
+    border-radius:var(--r-btn);
+    font-family:var(--sans);
+    font-size:13.5px;
+    font-weight:500;
+    letter-spacing:0.005em;
+    cursor:pointer;
+    border:1px solid var(--hair);
+    background:var(--card);
+    color:var(--ink);
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    transition:transform .2s var(--ease), background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0) scale(0.985); }
+  .btn.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:oklch(0.985 0.01 260);
+    flex:1.5 1 auto;
+  }
+  .btn.primary:hover{ background:oklch(0.46 0.13 262); }
+  .btn:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px oklch(0.50 0.13 262 / 0.35);
+    border-color:var(--accent);
+  }
+  /* banked / deferred states */
+  .thread.banked .acts, .thread.deferred .acts{ display:none; }
+  .thread.banked, .thread.deferred{ opacity:0.62; }
+  .resolved-note{
+    display:none;
+    margin-top:13px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--confident);
+    align-items:center; gap:8px;
+  }
+  .thread.banked .resolved-note,
+  .thread.deferred .resolved-note{ display:flex; }
+  .thread.deferred .resolved-note{ color:var(--muted); }
+  .resolved-note i{
+    width:14px; height:14px; border-radius:50%;
+    border:1.5px solid currentColor;
+    position:relative; flex:0 0 auto;
+  }
+  .resolved-note i::after{
+    content:""; position:absolute;
+    left:3px; top:5px; width:4px; height:7px;
+    border-right:1.5px solid currentColor;
+    border-bottom:1.5px solid currentColor;
+    transform:rotate(40deg);
+  }
+  .thread.deferred .resolved-note i::after{
+    border-bottom:none; border-right:none;
+    left:3px; top:6px; width:6px;
+    border-top:1.5px solid currentColor;
+    transform:none;
+  }
+
+  /* ---- calm signal (quiet, not a card) ---- */
+  .signal{
+    margin-top:24px;
+    padding:15px 17px;
+    border-radius:var(--r-card);
+    background:var(--sunken);
+    border:1px solid var(--hair-soft);
+    display:flex; align-items:flex-start; gap:12px;
+    opacity:0;
+    transform:translateY(12px);
+    animation:enter .56s var(--ease) .42s forwards;
+  }
+  .signal .dot{ width:8px; height:8px; border-radius:50%; background:var(--uncertain); margin-top:5px; flex:0 0 auto; }
+  .signal .txt{ flex:1; }
+  .signal .txt .lbl{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .signal .txt p{
+    font-family:var(--serif); font-weight:400; font-size:15px; line-height:1.4;
+    color:var(--body); margin:5px 0 0;
+  }
+  .signal .txt p b{ color:var(--ink); font-weight:500; }
+
+  /* ---- the silence ledger line ---- */
+  .ledger{
+    margin-top:18px;
+    text-align:center;
+    padding:0 6px;
+    opacity:0;
+    animation:enter .56s var(--ease) .54s forwards;
+  }
+  .ledger p{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    font-size:15px;
+    line-height:1.45;
+    color:var(--muted);
+    margin:0;
+  }
+  .ledger .n{ font-family:var(--mono); font-style:normal; font-weight:500; color:var(--body); }
+  .ledger .zero{ color:var(--confident); }
+
+  /* ---- floating bottom nav ---- */
+  .nav{
+    position:absolute;
+    left:50%; bottom:18px;
+    transform:translateX(-50%);
+    z-index:30;
+    display:flex; align-items:center; gap:4px;
+    padding:7px 9px;
+    border-radius:26px;
+    background:oklch(0.99 0.005 84 / 0.78);
+    backdrop-filter:blur(18px) saturate(1.3);
+    -webkit-backdrop-filter:blur(18px) saturate(1.3);
+    border:1px solid var(--hair-soft);
+    box-shadow:var(--shadow-lift);
+  }
+  .nav button{
+    appearance:none; border:none; background:transparent; cursor:pointer;
+    min-width:60px; min-height:46px;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    border-radius:18px;
+    padding:6px 12px;
+    font-family:var(--sans); font-size:10.5px; font-weight:500; letter-spacing:0.02em;
+    color:var(--muted);
+    transition:color .2s var(--ease), background .2s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .nav button svg{ width:20px; height:20px; stroke:currentColor; stroke-width:1.6; fill:none; }
+  .nav button[aria-current="page"]{
+    color:var(--ink);
+    background:var(--sunken);
+  }
+  .nav button:hover{ color:var(--ink); }
+  .nav button:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px oklch(0.50 0.13 262 / 0.35);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    .passage, .passage w{ color:var(--body) !important; }
+    .passage w.t-urgent{ color:var(--urgent) !important; }
+    .passage w.t-uncertain{ color:var(--uncertain) !important; }
+    .passage w.t-confident{ color:var(--confident) !important; }
+    .thread, .signal, .ledger{ opacity:1 !important; transform:none !important; }
+    .orb{ transform:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone">
+      <div class="notch" aria-hidden="true"></div>
+      <div class="screen">
+
+        <div class="statusbar" aria-hidden="true">
+          <span>7:14</span>
+          <div class="dots">
+            <span></span><span></span><span></span>
+            <span class="bar"></span>
+          </div>
+        </div>
+
+        <main class="scroll">
+
+          <header class="head">
+            <div class="orb" aria-hidden="true"></div>
+            <div class="greeting">
+              <span class="meta">Sat · June 22 · clear</span>
+              <h1>Good morning, Dana.</h1>
+            </div>
+          </header>
+
+          <!-- CENTERPIECE: Leo reads the morning brief, word by word -->
+          <section class="brief" aria-label="Leo's morning brief">
+            <div class="brief-label">
+              <span class="live"><i aria-hidden="true"></i>Leo is reading your morning out loud</span>
+            </div>
+
+            <div class="passage" id="passage">
+              <span class="ln" style="--ld:0s">
+                <w style="--d:.15s">Three</w> <w style="--d:.30s">things</w> <w style="--d:.45s">want</w> <w style="--d:.60s">you</w> <w style="--d:.75s">today.</w>
+              </span>
+              <span class="ln" style="--ld:.95s">
+                <w style="--d:1.00s">The</w> <w class="key t-urgent num" style="--d:1.15s">142&nbsp;Oak</w> <w class="key t-urgent" style="--d:1.40s">counter</w> <w style="--d:1.58s">is</w> <w style="--d:1.72s">due</w> <w style="--d:1.86s">at</w> <w class="num" style="--d:2.00s">10:00,</w> <w style="--d:2.18s">and</w> <w style="--d:2.32s">I</w> <w style="--d:2.46s">have</w> <w style="--d:2.60s">a</w> <w style="--d:2.74s">draft</w> <w style="--d:2.88s">waiting.</w>
+              </span>
+              <span class="ln" style="--ld:3.20s">
+                <w style="--d:3.25s">A</w> <w class="key t-confident num" style="--d:3.40s">88&nbsp;Linden</w> <w style="--d:3.62s">buyer</w> <w style="--d:3.76s">just</w> <w style="--d:3.90s">asked,</w> <w style="--d:4.04s">loan</w> <w style="--d:4.22s">already</w> <w class="key" style="--d:4.36s">approved.</w> <w style="--d:4.52s">Best</w> <w style="--d:4.68s">to</w> <w class="key" style="--d:4.82s">call</w> <w style="--d:4.96s">now.</w>
+              </span>
+              <span class="ln" style="--ld:5.30s">
+                <w style="--d:5.35s">And</w> <w style="--d:5.50s">one</w> <w style="--d:5.64s">of</w> <w class="key" style="--d:5.78s">Marcus's</w> <w style="--d:5.92s">buyers</w> <w class="t-uncertain" style="--d:6.06s">has</w> <w class="t-uncertain" style="--d:6.20s">gone</w> <w class="t-uncertain" style="--d:6.34s">quiet,</w> <w style="--d:6.48s">if</w> <w style="--d:6.62s">you</w> <w style="--d:6.76s">want</w> <w style="--d:6.90s">to</w> <w style="--d:7.04s">help.</w>
+              </span>
+            </div>
+          </section>
+
+          <!-- the three, as acted-on threads -->
+          <section class="threads" aria-label="What needs you">
+
+            <article class="thread lead" id="t-oak" style="animation-delay:.10s">
+              <div class="row">
+                <span class="tag"><span class="dot urgent" aria-hidden="true"></span>Your deal · their offer back</span>
+                <span class="when">reply by 10:00am</span>
+              </div>
+              <h2>142 Oak St: your reply is ready to check</h2>
+              <p>The buyer offered 12k less than the asking price. Leo wrote a reply that holds your price and gives them 48 hours to decide, the same way you won the Birchwood deal.</p>
+              <div class="conf">how sure I am: <b>very sure</b> · based on 3 similar nearby sales and your last 4 replies</div>
+              <div class="acts">
+                <button type="button" class="btn primary" data-act="open" aria-label="Read the reply Leo wrote for 142 Oak St">Read the reply</button>
+                <button type="button" class="btn" data-act="defer" data-target="t-oak">Later</button>
+              </div>
+              <div class="resolved-note" role="status"><i aria-hidden="true"></i><span>Saved for 9:30. Leo will bring it back then.</span></div>
+            </article>
+
+            <article class="thread" id="t-linden" style="animation-delay:.20s">
+              <div class="row">
+                <span class="tag"><span class="dot confident" aria-hidden="true"></span>New buyer · ready to talk</span>
+                <span class="when">call in the next 5 minutes</span>
+              </div>
+              <h2>88 Linden: a new buyer, loan already approved</h2>
+              <p>She asked about the home 6 minutes ago, and her loan is already approved. Buyers are most likely to answer in the first five minutes.</p>
+              <div class="conf">how sure I am: <b>very sure</b> · her lender confirmed the loan</div>
+              <div class="acts">
+                <button type="button" class="btn primary" data-act="open" aria-label="Call the 88 Linden buyer now">Call now</button>
+                <button type="button" class="btn" data-act="bank" data-target="t-linden">Let Leo say hi</button>
+              </div>
+              <div class="resolved-note" role="status"><i aria-hidden="true"></i><span>Leo said hi and is keeping the chat going for you.</span></div>
+            </article>
+
+            <article class="thread" id="t-marcus" style="animation-delay:.30s">
+              <div class="row">
+                <span class="tag"><span class="dot uncertain" aria-hidden="true"></span>Teammate · Marcus</span>
+                <span class="when">no reply in 3 days</span>
+              </div>
+              <h2>One of Marcus's buyers has gone quiet</h2>
+              <p>No reply since Tuesday from a buyer looking around 410k. Leo can remind Marcus, or you can reach out yourself.</p>
+              <div class="conf">how sure I am: <b>fairly sure</b> · it looks stalled, but not certain yet</div>
+              <div class="acts">
+                <button type="button" class="btn" data-act="bank" data-target="t-marcus">Remind Marcus</button>
+                <button type="button" class="btn" data-act="defer" data-target="t-marcus">Not now</button>
+              </div>
+              <div class="resolved-note" role="status"><i aria-hidden="true"></i><span>Reminder sent to Marcus. Leo will watch for a reply.</span></div>
+            </article>
+
+          </section>
+
+          <!-- calm signal, quietly noted (not urgent) -->
+          <section class="signal" aria-label="A calm signal">
+            <span class="dot" aria-hidden="true"></span>
+            <div class="txt">
+              <span class="lbl">Worth a glance</span>
+              <p><b>Crestview</b> has slowed down. Nothing is due yet, but things have moved slower since the home inspection. Just flagging it so it does not catch you off guard next week.</p>
+            </div>
+          </section>
+
+          <!-- the silence ledger -->
+          <div class="ledger" role="status">
+            <p>Overnight I handled <span class="n">47</span> things and woke you for <span class="n zero">zero</span>.</p>
+          </div>
+
+        </main>
+
+        <!-- floating bottom nav -->
+        <nav class="nav" aria-label="Primary">
+          <button type="button" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/></svg>
+            Today
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h9"/></svg>
+            Deals
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.2"/><path d="M5.5 19c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/></svg>
+            People
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6"/></svg>
+            Leo
+          </button>
+        </nav>
+
+      </div>
+    </div>
+    <div class="caption">V01 WELLNESS × SPOKEN BRIEF</div>
+  </div>
+
+  <script>
+    // progressive enhancement only. content is fully visible without JS.
+    document.documentElement.classList.remove('no-js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!reduce.matches){
+      // arm the karaoke sweep; entrances + breathing run from CSS regardless
+      document.getElementById('passage').classList.add('reduce-ok');
+    }
+
+    // bank / defer affordances: toggle state on the thread, no layout animation
+    document.querySelectorAll('.btn[data-act]').forEach(function(btn){
+      var act = btn.getAttribute('data-act');
+      if (act === 'open') return; // primary actions are no-ops in this static screen
+      btn.addEventListener('click', function(){
+        var card = document.getElementById(btn.getAttribute('data-target'));
+        if (!card) return;
+        card.classList.remove('banked','deferred');
+        card.classList.add(act === 'bank' ? 'banked' : 'deferred');
+      });
+    });
+
+    // nav: move aria-current, do not navigate (single screen)
+    document.querySelectorAll('.nav button').forEach(function(b){
+      b.addEventListener('click', function(){
+        document.querySelectorAll('.nav button').forEach(function(x){ x.removeAttribute('aria-current'); });
+        b.setAttribute('aria-current','page');
+      });
+    });
+  </script>
+</body>
+</html>

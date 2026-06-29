@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Close Bloom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.62 0.018 258); --soft:oklch(0.49 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --confident-soft:oklch(0.80 0.11 168 / .16); --on:oklch(0.99 0 0);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.20 0.03 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.56 0.03 260)}
+
+/* phone frame */
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:13px; left:50%; transform:translateX(-50%); width:118px; height:33px; background:oklch(0.06 0.012 260); border-radius:20px; z-index:40}
+.status{position:absolute; top:20px; left:0; right:0; padding:0 32px; display:flex; justify-content:space-between; align-items:center; z-index:30; font-family:var(--mono); font-size:12px; color:var(--body); letter-spacing:.02em}
+.status .dots{display:flex; gap:5px; align-items:center}
+.status .dots i{width:5px;height:5px;border-radius:50%;background:var(--body);display:block}
+.status .bat{width:22px;height:11px;border:1px solid var(--body);border-radius:3px;position:relative;opacity:.8}
+.status .bat::after{content:"";position:absolute;inset:1.5px;right:5px;background:var(--body);border-radius:1px}
+
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:62px 26px 26px; overflow:hidden}
+
+/* Leo header */
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 10px oklch(0.64 0.17 250 / .5);animation:breathe 6s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+
+/* stage holds the bloom + card centered */
+.stage{position:relative; flex:1; display:flex; align-items:center; justify-content:center; margin:6px 0}
+
+/* the single earned bloom - all CSS */
+.bloom{position:absolute; left:50%; top:50%; width:520px; height:520px; border-radius:50%; transform:translate(-50%,-50%) scale(.2); opacity:0; pointer-events:none; z-index:0;
+  background:radial-gradient(circle, oklch(0.80 0.11 168 / .42) 0%, oklch(0.80 0.11 168 / .16) 34%, oklch(0.80 0.11 168 / 0) 68%);}
+.bloom.go{animation:bloom 2.1s var(--exp) forwards}
+@keyframes bloom{
+  0%{transform:translate(-50%,-50%) scale(.2); opacity:0}
+  18%{opacity:1}
+  42%{transform:translate(-50%,-50%) scale(1); opacity:.95}
+  100%{transform:translate(-50%,-50%) scale(1.12); opacity:0}
+}
+/* a second, thinner ring that follows the bloom out for a touch of depth */
+.ring{position:absolute; left:50%; top:50%; width:300px; height:300px; border-radius:50%; transform:translate(-50%,-50%) scale(.4); opacity:0; pointer-events:none; z-index:0;
+  border:1px solid oklch(0.80 0.11 168 / .5);}
+.ring.go{animation:ring 2.1s var(--exp) forwards}
+@keyframes ring{
+  0%{transform:translate(-50%,-50%) scale(.4); opacity:0}
+  20%{opacity:.6}
+  100%{transform:translate(-50%,-50%) scale(1.55); opacity:0}
+}
+
+/* deal card */
+.card{position:relative; z-index:1; width:100%; background:var(--card); border:1px solid var(--hair); border-radius:24px; padding:28px 26px 26px; box-shadow:0 18px 50px -28px rgba(0,0,0,.6); transition:border-color 1.2s var(--exp), box-shadow 1.2s var(--exp);}
+.card.lit{border-color:oklch(0.80 0.11 168 / .35); box-shadow:0 18px 60px -26px oklch(0.80 0.11 168 / .35)}
+
+.tag{display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); padding:5px 10px; border:1px solid var(--hair2); border-radius:999px; transition:color .8s var(--exp), border-color .8s var(--exp)}
+.tag .d{width:6px;height:6px;border-radius:50%;background:var(--soft);transition:background .8s var(--exp)}
+.card.lit .tag{color:var(--confident); border-color:oklch(0.80 0.11 168 / .4)}
+.card.lit .tag .d{background:var(--confident); box-shadow:0 0 8px oklch(0.80 0.11 168 / .7)}
+
+.addr{font-family:var(--serif); font-size:30px; line-height:1.12; letter-spacing:-.4px; color:var(--ink); margin-top:16px}
+.sub{font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:7px; letter-spacing:.02em}
+
+/* commission count - all-CSS count-up via stepped counter animation */
+.figure{margin-top:24px; padding-top:22px; border-top:1px solid var(--hair)}
+.figure .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--soft)}
+.amount{font-family:var(--serif); font-size:44px; line-height:1; letter-spacing:-1px; color:var(--ink); margin-top:8px; display:flex; align-items:baseline; gap:2px; transition:color 1.2s var(--exp)}
+.card.lit .amount{color:var(--confident)}
+.amount .cur{font-size:26px; color:var(--muted); transition:color 1.2s var(--exp)}
+.card.lit .amount .cur{color:oklch(0.80 0.11 168 / .85)}
+
+/* The count itself: a CSS @property counter animated with steps() so the
+   number ticks up and settles. No JS drives the number. */
+@property --n{syntax:'<integer>'; initial-value:18450; inherits:false}
+.num{--n:18450}
+.num::after{content:counter(c); counter-reset:c var(--n)}
+.card.count .num{animation:tick 1.25s steps(60,end) forwards}
+@keyframes tick{from{--n:0} to{--n:18450}}
+/* thousands feel: split groups so it reads $18,450 even mid-animation tail */
+.amount .grp{display:flex; align-items:baseline}
+
+/* Leo's one-line note - VISIBLE by default (content first); the bloom only
+   animates its entrance. No max-height + no transition-delay (those starve
+   when the tab isn't actively painting); pure opacity + translate degrades safe. */
+.note{font-family:var(--serif); font-style:italic; font-size:17px; line-height:1.5; color:var(--confident); text-align:left; margin-top:22px; opacity:1; transform:translateY(0); transition:opacity .55s var(--exp), transform .55s var(--exp)}
+/* .arming = the brief pre-bloom beat where the note is tucked away,
+   then removing it lets the note rise into place as the count settles. */
+.card.arming .note{opacity:0; transform:translateY(8px)}
+
+/* CTA */
+.cta-wrap{margin-top:20px}
+.btn{width:100%; height:52px; border-radius:15px; font-family:var(--sans); font-size:14.5px; font-weight:600; border:none; cursor:pointer; transition:transform .18s var(--exp), background .3s, color .3s; background:var(--confident); color:oklch(0.16 0.03 168)}
+.btn:hover{background:oklch(0.83 0.11 168)}
+.btn:active{transform:scale(.975)}
+.btn.rested{background:transparent; color:var(--muted); border:1px solid var(--hair2); cursor:default}
+.btn.rested:hover{background:transparent}
+.btn:disabled{cursor:default}
+
+/* keyboard focus indicator */
+:focus-visible{ outline:2px solid var(--confident); outline-offset:2px; }
+
+/* aside */
+.aside{font-family:var(--serif); font-size:14px; line-height:1.55; color:var(--muted); text-align:center; margin-top:18px; padding:0 6px}
+.aside b{color:var(--body); font-weight:400; font-style:italic}
+
+/* controls below phone */
+.controls{display:flex; gap:10px}
+.controls button{font-family:var(--sans); font-size:13px; font-weight:500; color:var(--body); background:oklch(0.96 0.01 250 / .06); border:1px solid var(--hair2); border-radius:11px; padding:10px 16px; cursor:pointer; transition:background .2s, transform .15s var(--exp)}
+.controls button:hover{background:oklch(0.96 0.01 250 / .1)}
+.controls button:active{transform:scale(.96)}
+
+@media (prefers-reduced-motion: reduce){
+  .orb{animation:none}
+  .bloom.go,.ring.go{animation:none; opacity:0}
+  .card.count .num{animation:none; --n:18450}
+  .card,.note,.tag,.amount,.amount .cur{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="cap">The Close Bloom - the only celebration Leo allows.</div>
+
+<div class="phone">
+  <div class="island"></div>
+  <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i><span class="bat"></span></span></div>
+  <div class="screen">
+    <div class="hi"><span class="orb"></span>Leo · closings</div>
+
+    <div class="stage">
+      <div class="bloom" id="bloom"></div>
+      <div class="ring" id="ring"></div>
+
+      <div class="card" id="card">
+        <span class="tag"><span class="d"></span><span id="tagtxt">Clear to close</span></span>
+        <div class="addr">Maplewood Dr</div>
+        <div class="sub">Buyer-side · file #RE-2291 · escrow funded</div>
+
+        <div class="figure">
+          <div class="lbl">Your commission</div>
+          <div class="amount">
+            <span class="cur">$</span><span class="grp"><span class="num" id="num"></span></span>
+          </div>
+        </div>
+
+        <div class="note" id="note">Funded and recorded. Nicely done.</div>
+
+        <div class="cta-wrap">
+          <button class="btn" id="cta">Close the deal</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="aside">
+      <b>Leo is boring when it is confident.</b> Closing is the one thing it lets you feel.
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="replay">↻ Replay the bloom</button>
+</div>
+
+<script>
+const card=document.getElementById('card');
+const bloom=document.getElementById('bloom');
+const ring=document.getElementById('ring');
+const cta=document.getElementById('cta');
+let t1,t2,t3;
+
+function clearTimers(){ [t1,t2,t3].forEach(t=>t&&clearTimeout(t)); }
+
+// reset to the pre-celebration beat. Note is tucked via .arming (it stays
+// fully present in layout - content-first - just faded a hair, ready to rise).
+function rest(){
+  clearTimers();
+  card.classList.remove('lit','count');
+  card.classList.add('arming');
+  bloom.classList.remove('go');
+  ring.classList.remove('go');
+  cta.classList.remove('rested');
+  cta.disabled=false;
+  cta.textContent='Close the deal';
+  // force reflow so re-adding animation classes restarts them cleanly
+  void bloom.offsetWidth;
+}
+
+// the single earned celebration, then back to composure within ~2s
+function celebrate(){
+  rest();
+  // bloom expands once + numbers settle + card lights. Removing .arming on the
+  // next tick lets the note rise into place; this is a state change, not a JS
+  // animation loop - every ANIMATION itself is CSS.
+  bloom.classList.add('go');
+  ring.classList.add('go');
+  card.classList.add('lit','count');
+
+  // Leo's note rises just as the count settles
+  t1=setTimeout(()=>{ card.classList.remove('arming'); }, 650);
+  // CTA settles into a calm "closed" rest state
+  t2=setTimeout(()=>{
+    cta.classList.add('rested');
+    cta.disabled=true;
+    cta.textContent='Closed - filed at 9:41a';
+  }, 1300);
+  // composure: the count animation has ended; card holds its quiet lit state
+  t3=setTimeout(()=>{ card.classList.remove('count'); }, 2100);
+}
+
+cta.addEventListener('click', celebrate);
+document.getElementById('replay').addEventListener('click', celebrate);
+
+// boot-time keyboard sweep: make any click-bound non-button/non-anchor element
+// keyboard-operable. Real <button>/<a> already handle Enter/Space natively, so
+// skip them to avoid double-binding. This file's interactive controls are all
+// real <button>s, so this sweep is a safety net for any click-bound rows/cards/
+// items/tabs/pills if they exist.
+function enableKeyboardA11y(){
+  const sel='[onclick], .row, .card-item, .item, .tab, .pill';
+  document.querySelectorAll(sel).forEach(el=>{
+    const tag=el.tagName;
+    if(tag==='BUTTON'||tag==='A') return;            // native handling, do not double-bind
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    el.dataset.kbd='1';
+  });
+}
+// one document-level keydown listener: Enter/Space activates a swept element
+document.addEventListener('keydown',(e)=>{
+  if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar') return;
+  const t=e.target;
+  if(!t||!t.dataset||t.dataset.kbd!=='1') return;
+  // never hijack typing inside form fields
+  const tag=t.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||t.isContentEditable) return;
+  e.preventDefault();
+  t.click();
+});
+enableKeyboardA11y();
+
+// one earned bloom on load
+window.addEventListener('load', ()=>{ setTimeout(celebrate, 420); });
+</script>
+</body>
+</html>

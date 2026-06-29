@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en" class="nojs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo - Morning Command Center - V05 Focus Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm paper surface (tinted, never pure white) */
+    --paper:    oklch(0.976 0.011 83);
+    --paper-2:  oklch(0.962 0.013 80);
+    --card:     oklch(0.995 0.004 85);
+    --sunken:   oklch(0.953 0.012 80);
+    --hair:     oklch(0.30 0.02 60 / 0.10);
+    --hair-2:   oklch(0.30 0.02 60 / 0.055);
+
+    /* ink (warm near-black, never pure) */
+    --ink:   oklch(0.255 0.02 60);
+    --body:  oklch(0.455 0.016 62);
+    --muted: oklch(0.595 0.012 65);
+    --faint: oklch(0.70 0.010 68);
+
+    /* AI-state accents, tuned for light */
+    --confident: oklch(0.56 0.10 168);
+    --uncertain: oklch(0.64 0.12 70);
+    --urgent:    oklch(0.55 0.16 28);
+    --thinking:  oklch(0.50 0.13 262);
+
+    /* one interactive accent for the single primary action */
+    --accent:    oklch(0.30 0.03 265);
+    --accent-ink:oklch(0.985 0.006 85);
+
+    --shadow:  0 16px 40px -20px oklch(0.45 0.04 60 / 0.34);
+    --shadow-sm: 0 6px 18px -12px oklch(0.45 0.04 60 / 0.30);
+
+    --r-card:20px; --r-chip:9px; --r-btn:13px;
+    --ease: cubic-bezier(.16,1,.3,1);
+
+    --serif:'Newsreader', Georgia, serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.97 0.018 88) 0%, transparent 55%),
+      var(--paper-2);
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:18px; padding:34px 16px 46px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .variant-caption{
+    font-family:var(--mono);
+    font-size:10.5px; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ---- phone frame ---- */
+  .phone{
+    width:393px; max-width:100%;
+    height:832px;
+    border-radius:52px;
+    background:var(--paper);
+    position:relative;
+    padding:11px;
+    box-shadow:
+      0 2px 0 oklch(1 0 0 / 0.6) inset,
+      0 50px 90px -40px oklch(0.40 0.04 60 / 0.5),
+      0 0 0 1px oklch(0.30 0.02 60 / 0.10);
+  }
+  .phone::after{ /* side button hint */
+    content:""; position:absolute; right:-2px; top:168px;
+    width:3px; height:62px; border-radius:3px;
+    background:oklch(0.30 0.02 60 / 0.16);
+  }
+  .screen{
+    position:relative; width:100%; height:100%;
+    border-radius:42px; overflow:hidden;
+    background:
+      radial-gradient(135% 70% at 50% -6%, oklch(0.985 0.012 88) 0%, transparent 52%),
+      var(--paper);
+    display:flex; flex-direction:column;
+  }
+  .notch{
+    position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:118px; height:30px; border-radius:18px;
+    background:oklch(0.20 0.02 60); z-index:60;
+  }
+
+  /* ---- status row ---- */
+  .status{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:15px 26px 0; font-family:var(--mono);
+    font-size:11px; color:var(--ink); letter-spacing:.02em; flex:0 0 auto;
+  }
+  .status .right{ display:flex; gap:6px; align-items:center; opacity:.8; }
+
+  /* ---- header: tiny mono label + progress whisper ---- */
+  .topbar{
+    flex:0 0 auto;
+    padding:16px 26px 4px;
+    display:flex; align-items:flex-start; justify-content:space-between;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.24em;
+    text-transform:uppercase; color:var(--muted);
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .leo-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--confident);
+    box-shadow:0 0 0 3px oklch(0.56 0.10 168 / 0.16);
+    animation:breathe 4.2s var(--ease) infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); opacity:.95; }
+    50%{ transform:scale(1.18); opacity:.7; }
+  }
+  .focus-counter{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.12em;
+    color:var(--muted); text-align:right;
+  }
+  .focus-counter b{ color:var(--ink); font-weight:500; }
+
+  /* progress ticks */
+  .ticks{ display:flex; gap:5px; margin-top:7px; justify-content:flex-end; }
+  .tick{
+    width:26px; height:3px; border-radius:3px;
+    background:var(--hair);
+    transform:scaleX(.69); transform-origin:right center;
+    transition:background .5s var(--ease), transform .5s var(--ease);
+  }
+  .tick.done{ background:var(--confident); }
+  .tick.active{ background:var(--ink); transform:scaleX(1); }
+
+  /* ====== FOCUS STAGE: one full-screen decision at a time ====== */
+  .stage{
+    position:relative; flex:1 1 auto; min-height:0;
+    display:grid;
+  }
+  .decision{
+    grid-area:1/1;
+    display:flex; flex-direction:column;
+    padding:6px 26px 0;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(12px);
+    transition:opacity .5s var(--ease), transform .55s var(--ease), visibility 0s linear .55s;
+  }
+  .decision.show{
+    opacity:1; visibility:visible; pointer-events:auto;
+    transform:translateY(0);
+    transition:opacity .55s var(--ease), transform .6s var(--ease), visibility 0s;
+  }
+
+  /* state line above the hero */
+  .stateline{
+    display:flex; align-items:center; gap:9px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--muted); margin-top:8px;
+  }
+  .stateline .sdot{ width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+  .s-urgent .sdot{ background:var(--urgent); box-shadow:0 0 0 3px oklch(0.55 0.16 28 / 0.14); }
+  .s-fresh .sdot{ background:var(--confident); box-shadow:0 0 0 3px oklch(0.56 0.10 168 / 0.14); }
+  .s-watch .sdot{ background:var(--uncertain); box-shadow:0 0 0 3px oklch(0.64 0.12 70 / 0.14); }
+  .badge-alt{
+    margin-left:auto; font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
+    color:var(--body); padding:3px 8px; border-radius:6px;
+    border:1px solid var(--hair); background:var(--card);
+  }
+
+  /* ---- the rendered chrome orb (hero material object) ---- */
+  .orb-wrap{
+    display:flex; justify-content:center; align-items:center;
+    margin:14px 0 12px;
+  }
+  .orb{
+    position:relative; width:128px; height:128px; border-radius:50%;
+    /* layered gradients: highlight, body sheen, horizon, shade */
+    background:
+      radial-gradient(38% 30% at 38% 26%, oklch(0.99 0.01 250 / 0.95) 0%, transparent 46%),
+      radial-gradient(120% 90% at 62% 18%, oklch(0.92 0.02 250) 0%, transparent 40%),
+      linear-gradient(180deg,
+        oklch(0.84 0.018 250) 0%,
+        oklch(0.71 0.02 252) 40%,
+        oklch(0.50 0.02 255) 52%,   /* horizon line */
+        oklch(0.66 0.022 250) 60%,
+        oklch(0.80 0.018 250) 100%);
+    box-shadow:
+      0 18px 30px -16px oklch(0.40 0.03 255 / 0.5),
+      0 2px 1px oklch(1 0 0 / 0.45) inset,
+      0 -10px 18px -10px oklch(0.30 0.02 255 / 0.45) inset;
+    overflow:hidden;
+  }
+  /* slow shine drift across the orb */
+  .orb::before{
+    content:""; position:absolute; inset:-30% -60%;
+    background:linear-gradient(74deg,
+      transparent 36%,
+      oklch(1 0 0 / 0.0) 42%,
+      oklch(1 0 0 / 0.55) 50%,
+      oklch(1 0 0 / 0.0) 58%,
+      transparent 64%);
+    transform:translateX(-30%);
+    animation:shine 7.5s var(--ease) infinite;
+  }
+  @keyframes shine{
+    0%,100%{ transform:translateX(-34%); }
+    50%{ transform:translateX(34%); }
+  }
+  /* horizon reflection band */
+  .orb::after{
+    content:""; position:absolute; left:8%; right:8%; top:49%; height:5px;
+    border-radius:50%;
+    background:linear-gradient(90deg, transparent, oklch(0.94 0.01 250 / 0.7), transparent);
+    filter:blur(.5px);
+  }
+  /* the orb tints to the decision's state */
+  .s-urgent .orb{
+    background:
+      radial-gradient(38% 30% at 38% 26%, oklch(0.99 0.012 30 / 0.92) 0%, transparent 46%),
+      radial-gradient(120% 90% at 62% 18%, oklch(0.90 0.04 32) 0%, transparent 40%),
+      linear-gradient(180deg,
+        oklch(0.82 0.05 34) 0%,
+        oklch(0.66 0.10 32) 40%,
+        oklch(0.49 0.09 30) 52%,
+        oklch(0.62 0.10 32) 60%,
+        oklch(0.78 0.06 34) 100%);
+  }
+  .s-fresh .orb{
+    background:
+      radial-gradient(38% 30% at 38% 26%, oklch(0.99 0.012 170 / 0.92) 0%, transparent 46%),
+      radial-gradient(120% 90% at 62% 18%, oklch(0.90 0.04 170) 0%, transparent 40%),
+      linear-gradient(180deg,
+        oklch(0.83 0.05 172) 0%,
+        oklch(0.64 0.08 170) 40%,
+        oklch(0.47 0.07 168) 52%,
+        oklch(0.61 0.08 170) 60%,
+        oklch(0.79 0.05 172) 100%);
+  }
+  .s-watch .orb{
+    background:
+      radial-gradient(38% 30% at 38% 26%, oklch(0.99 0.012 80 / 0.92) 0%, transparent 46%),
+      radial-gradient(120% 90% at 62% 18%, oklch(0.92 0.05 82) 0%, transparent 40%),
+      linear-gradient(180deg,
+        oklch(0.84 0.06 84) 0%,
+        oklch(0.68 0.10 78) 40%,
+        oklch(0.50 0.09 74) 52%,
+        oklch(0.64 0.10 78) 60%,
+        oklch(0.80 0.06 84) 100%);
+  }
+
+  /* ---- the decision text ---- */
+  .meta-line{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.10em;
+    color:var(--muted); text-align:center; margin-bottom:6px;
+  }
+  .headline{
+    font-family:var(--serif); font-weight:400;
+    font-size:27px; line-height:1.18; letter-spacing:-0.01em;
+    color:var(--ink); text-align:center; max-width:300px; margin:0 auto;
+  }
+  .headline b{ font-weight:600; }
+  .subline{
+    font-family:var(--sans); font-size:14px; line-height:1.5;
+    color:var(--body); text-align:center; max-width:300px;
+    margin:12px auto 0;
+  }
+  .subline .hi{ color:var(--ink); font-weight:500; }
+
+  /* L2/L3 disclosure: tap headline-zone to drill to the source */
+  .drill{
+    margin:16px auto 0; width:100%; max-width:312px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    box-shadow:var(--shadow-sm);
+    cursor:pointer;
+    overflow:hidden;
+    transition:box-shadow .3s var(--ease), border-color .3s var(--ease);
+  }
+  .drill:hover{ border-color:oklch(0.30 0.02 60 / 0.18); }
+  .drill:focus-visible{
+    outline:none;
+    box-shadow:var(--shadow-sm), 0 0 0 3px oklch(0.50 0.13 262 / 0.28);
+  }
+  .drill-head{
+    display:flex; align-items:center; gap:10px;
+    padding:13px 15px;
+  }
+  .drill-head .src-tag{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--muted);
+  }
+  .drill-head .chev{
+    margin-left:auto; color:var(--faint);
+    transition:transform .35s var(--ease);
+  }
+  .drill.open .chev{ transform:rotate(90deg); }
+  .drill-snippet{
+    font-family:var(--serif); font-size:14px; line-height:1.45;
+    color:var(--body); padding:0 15px 13px;
+  }
+  .drill-snippet em{ font-style:italic; color:var(--ink); }
+
+  /* L3 source body, revealed (grid-track collapse, opacity-only motion) */
+  .drill-body{
+    display:grid; grid-template-rows:0fr; opacity:0;
+    transition:opacity .35s var(--ease);
+  }
+  .drill.open .drill-body{ grid-template-rows:1fr; opacity:1; }
+  .drill-body > *{ min-height:0; overflow:hidden; }
+  .drill-body-inner{
+    border-top:1px solid var(--hair-2);
+    padding:12px 15px 14px;
+    display:flex; flex-direction:column; gap:9px;
+  }
+  .trace-row{
+    display:flex; gap:9px; align-items:baseline;
+    font-size:12.5px; color:var(--body); line-height:1.4;
+  }
+  .trace-row .t-time{
+    font-family:var(--mono); font-size:10px; color:var(--faint);
+    flex:0 0 46px; letter-spacing:.02em;
+  }
+  .trace-row .t-actor{ color:var(--ink); font-weight:500; }
+
+  /* ---- actions ---- */
+  .actions{
+    margin-top:auto; padding:18px 0 8px;
+    display:flex; flex-direction:column; gap:9px;
+  }
+  .btn{
+    width:100%; min-height:52px;
+    border-radius:var(--r-btn); border:none; cursor:pointer;
+    font-family:var(--sans); font-size:15px; font-weight:500;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform .2s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+  }
+  .btn:active{ transform:translateY(1px); }
+  .btn-primary{
+    background:var(--accent); color:var(--accent-ink);
+    box-shadow:0 10px 22px -12px oklch(0.30 0.03 265 / 0.7);
+  }
+  .btn-primary:hover{ background:oklch(0.34 0.035 265); }
+  .btn-primary:focus-visible{ outline:none; box-shadow:0 10px 22px -12px oklch(0.30 0.03 265 / 0.7), 0 0 0 3px oklch(0.50 0.13 262 / 0.35); }
+  .btn-ghost{
+    background:transparent; color:var(--body);
+    min-height:44px; font-size:13.5px; font-weight:450;
+  }
+  .btn-ghost:hover{ color:var(--ink); }
+  .btn-ghost:focus-visible{ outline:none; box-shadow:0 0 0 3px oklch(0.50 0.13 262 / 0.30); border-radius:var(--r-btn); }
+
+  /* the calm signal + ledger live as a quiet footer under the decision */
+  .quiet-edge{
+    flex:0 0 auto;
+    padding:10px 26px 0;
+    border-top:1px solid var(--hair-2);
+    margin:0 0 2px;
+  }
+  .calm-signal{
+    display:flex; align-items:center; gap:10px;
+    font-size:12.5px; color:var(--body); line-height:1.35;
+  }
+  .calm-signal .cdot{
+    width:7px; height:7px; border-radius:50%; flex:0 0 auto;
+    background:var(--uncertain);
+    box-shadow:0 0 0 3px oklch(0.64 0.12 70 / 0.13);
+  }
+  .calm-signal .cname{ color:var(--ink); font-weight:500; }
+  .ledger{
+    margin-top:7px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.04em;
+    color:var(--muted);
+  }
+  .ledger b{ color:var(--body); font-weight:500; }
+
+  /* the "2 more after this" whisper at the very bottom edge */
+  .whisper{
+    flex:0 0 auto;
+    text-align:center;
+    padding:12px 0 14px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--faint);
+    transition:opacity .5s var(--ease);
+  }
+  .whisper span{ color:var(--muted); }
+
+  /* ====== CLEARED STATE ====== */
+  .cleared{
+    grid-area:1/1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:0 34px;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(12px);
+    transition:opacity .55s var(--ease), transform .6s var(--ease), visibility 0s linear .6s;
+  }
+  .cleared.show{
+    opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);
+    transition:opacity .6s var(--ease), transform .65s var(--ease), visibility 0s;
+  }
+  .cleared .orb-sm{
+    width:84px; height:84px; border-radius:50%; margin-bottom:22px;
+    background:
+      radial-gradient(38% 30% at 38% 26%, oklch(0.99 0.012 170 / 0.92) 0%, transparent 46%),
+      linear-gradient(180deg, oklch(0.83 0.05 172), oklch(0.49 0.07 168) 52%, oklch(0.79 0.05 172));
+    box-shadow:0 14px 26px -14px oklch(0.40 0.03 170 / 0.5), 0 2px 1px oklch(1 0 0 / 0.45) inset;
+    animation:breathe 4.2s var(--ease) infinite;
+  }
+  .cleared h2{
+    font-family:var(--serif); font-weight:400; font-size:25px;
+    color:var(--ink); line-height:1.25; max-width:280px;
+  }
+  .cleared p{
+    font-family:var(--sans); font-size:13.5px; color:var(--body);
+    margin-top:12px; line-height:1.5; max-width:268px;
+  }
+  .cleared .led{
+    margin-top:18px; font-family:var(--mono); font-size:10px;
+    letter-spacing:.06em; color:var(--muted);
+  }
+  .cleared .reset{
+    margin-top:26px; background:transparent; border:1px solid var(--hair);
+    color:var(--body); font-family:var(--sans); font-size:12.5px;
+    padding:10px 18px; border-radius:var(--r-btn); cursor:pointer;
+    transition:border-color .25s var(--ease), color .25s var(--ease);
+    min-height:44px;
+  }
+  .cleared .reset:hover{ border-color:oklch(0.30 0.02 60 / 0.2); color:var(--ink); }
+  .cleared .reset:focus-visible{ outline:none; box-shadow:0 0 0 3px oklch(0.50 0.13 262 / 0.32); }
+
+  @media (prefers-reduced-motion: reduce){
+    .orb::before{ animation:none; }
+    .eyebrow .leo-dot, .calm-signal .cdot, .cleared .orb-sm{ animation:none; }
+    *{ transition-duration:.001ms !important; }
+  }
+
+  /* before JS boots, first decision is visible (content visible by default) */
+  html.nojs #d1{ opacity:1; visibility:visible; transform:none; pointer-events:auto; }
+</style>
+</head>
+<body>
+  <div class="variant-caption">V05 PREMIUM MATERIAL x FOCUS MODE</div>
+
+  <div class="phone">
+    <div class="notch" aria-hidden="true"></div>
+    <div class="screen">
+
+      <div class="status">
+        <span>7:14</span>
+        <span class="right"><span>5G</span><span>87%</span></span>
+      </div>
+
+      <div class="topbar">
+        <div class="eyebrow"><span class="leo-dot" aria-hidden="true"></span>Leo / today</div>
+        <div style="text-align:right">
+          <div class="focus-counter" id="counter"><b>1</b> of 3 that need you</div>
+          <div class="ticks" id="ticks" aria-hidden="true">
+            <span class="tick active" data-i="0"></span>
+            <span class="tick" data-i="1"></span>
+            <span class="tick" data-i="2"></span>
+          </div>
+        </div>
+      </div>
+
+      <main class="stage" id="stage" aria-live="polite">
+
+        <!-- DECISION 1 - the counter, urgent -->
+        <section class="decision show s-urgent" id="d1" data-i="0">
+          <div class="stateline s-urgent">
+            <span class="sdot" aria-hidden="true"></span>Reply needed by 10:00am
+            <span class="badge-alt">YOUR DEAL</span>
+          </div>
+
+          <div class="orb-wrap"><div class="orb" aria-hidden="true"></div></div>
+
+          <div class="meta-line">142 OAK ST / PRICE OFFER</div>
+          <h2 class="headline">The buyer made an offer. <b>I wrote your reply</b> and it is waiting for you.</h2>
+          <p class="subline">My reply asks for <span class="hi">full price and closing in 18 days</span>, the most the seller said they would take. Nothing goes out until you say so.</p>
+
+          <div class="drill" role="button" tabindex="0" aria-expanded="false" data-drill>
+            <div class="drill-head">
+              <span class="src-tag">Why this number</span>
+              <span class="chev" aria-hidden="true">&rsaquo;</span>
+            </div>
+            <div class="drill-snippet"><em>"We can go up to the asking price if they close before the end of the month."</em> The seller, yesterday 6:40pm.</div>
+            <div class="drill-body">
+              <div class="drill-body-inner">
+                <div class="trace-row"><span class="t-time">6:40pm</span><span><span class="t-actor">Seller call</span> told me the highest price they will accept.</span></div>
+                <div class="trace-row"><span class="t-time">11:02pm</span><span><span class="t-actor">Buyer's agent</span> offered 12k less and asked to close in 30 days.</span></div>
+                <div class="trace-row"><span class="t-time">6:55am</span><span><span class="t-actor">Leo</span> wrote your reply and noted that the closing date matters more here than the price.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" data-resolve>Read it and send</button>
+            <button class="btn btn-ghost" data-resolve>Remind me at 9:30</button>
+          </div>
+        </section>
+
+        <!-- DECISION 2 - the fresh lead, 5-min window -->
+        <section class="decision s-fresh" id="d2" data-i="1">
+          <div class="stateline s-fresh">
+            <span class="sdot" aria-hidden="true"></span>Best to reply in the next 5 minutes
+            <span class="badge-alt">NEW LEAD</span>
+          </div>
+
+          <div class="orb-wrap"><div class="orb" aria-hidden="true"></div></div>
+
+          <div class="meta-line">88 LINDEN / NEW MESSAGE</div>
+          <h2 class="headline">A buyer who is ready to borrow just asked about <b>88 Linden</b>.</h2>
+          <p class="subline">They are looking at the listing <span class="hi">right now</span>. I can offer them a time to see the home while they are still on the page.</p>
+
+          <div class="drill" role="button" tabindex="0" aria-expanded="false" data-drill>
+            <div class="drill-head">
+              <span class="src-tag">What I know</span>
+              <span class="chev" aria-hidden="true">&rsaquo;</span>
+            </div>
+            <div class="drill-snippet"><em>"Is 88 Linden still available? We're ready to buy and can move fast."</em> New message, 2 min ago.</div>
+            <div class="drill-body">
+              <div class="drill-body-inner">
+                <div class="trace-row"><span class="t-time">7:12am</span><span><span class="t-actor">Online form</span> filled out on the listing page, with their bank's letter attached.</span></div>
+                <div class="trace-row"><span class="t-time">7:12am</span><span><span class="t-actor">Leo</span> confirmed their bank will lend up to 740k and found two open times Thursday.</span></div>
+                <div class="trace-row"><span class="t-time">now</span><span><span class="t-actor">Still on the page.</span> Being the first to reply is what wins this one.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" data-resolve>Offer them a time to visit</button>
+            <button class="btn btn-ghost" data-resolve>Let Leo reply for me</button>
+          </div>
+        </section>
+
+        <!-- DECISION 3 - teammate Marcus, lead going quiet -->
+        <section class="decision s-watch" id="d3" data-i="2">
+          <div class="stateline s-watch">
+            <span class="sdot" aria-hidden="true"></span>No reply in 4 days
+            <span class="badge-alt">TEAM / MARCUS</span>
+          </div>
+
+          <div class="orb-wrap"><div class="orb" aria-hidden="true"></div></div>
+
+          <div class="meta-line">MARCUS LEE / RIVERTON BUYER</div>
+          <h2 class="headline">A keen buyer of Marcus's <b>has gone quiet</b>.</h2>
+          <p class="subline">It has been four days since Marcus last wrote to them. I think a short note from you, rather than from him, would work better here.</p>
+
+          <div class="drill" role="button" tabindex="0" aria-expanded="false" data-drill>
+            <div class="drill-head">
+              <span class="src-tag">Why I am showing you this</span>
+              <span class="chev" aria-hidden="true">&rsaquo;</span>
+            </div>
+            <div class="drill-snippet"><em>The buyer opened the last two emails but did not write back.</em> I have seen this lead to people losing interest.</div>
+            <div class="drill-body">
+              <div class="drill-body-inner">
+                <div class="trace-row"><span class="t-time">Mon</span><span><span class="t-actor">Marcus</span> sent three Riverton homes, no reply since.</span></div>
+                <div class="trace-row"><span class="t-time">Wed</span><span><span class="t-actor">Buyer</span> opened both follow-up emails and clicked one home twice.</span></div>
+                <div class="trace-row"><span class="t-time">today</span><span><span class="t-actor">Leo</span> wrote a short hello for you to okay before Marcus sees it.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" data-resolve>Send the hello</button>
+            <button class="btn btn-ghost" data-resolve>Leave it to Marcus</button>
+          </div>
+        </section>
+
+        <!-- CLEARED -->
+        <section class="cleared" id="cleared">
+          <div class="orb-sm" aria-hidden="true"></div>
+          <h2>That is your morning. All three done.</h2>
+          <p>Nothing else needs you right now. I am keeping an eye on everything else and will tell you if anything changes.</p>
+          <div class="led">Crestview is still quiet. I will bring it up if it needs you.</div>
+          <button class="reset" id="resetBtn">Go through it again</button>
+        </section>
+
+      </main>
+
+      <!-- quiet edge: the calm signal + the ledger, low contrast, never competing -->
+      <div class="quiet-edge" id="quietEdge">
+        <div class="calm-signal">
+          <span class="cdot" aria-hidden="true"></span>
+          <span><span class="cname">Crestview</span> has gone quiet. Nothing to do yet. I am keeping track of it for you.</span>
+        </div>
+        <div class="ledger"><b>I handled 47 things overnight.</b> Woke you for none of them.</div>
+      </div>
+
+      <div class="whisper" id="whisper"><span id="whisperText">2 more after this</span></div>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  root.classList.remove('nojs');
+
+  var order = ['d1','d2','d3'];
+  var idx = 0;
+  var resolved = 0;
+
+  var stage = document.getElementById('stage');
+  var counter = document.getElementById('counter');
+  var ticks = Array.prototype.slice.call(document.querySelectorAll('#ticks .tick'));
+  var whisper = document.getElementById('whisper');
+  var whisperText = document.getElementById('whisperText');
+  var quietEdge = document.getElementById('quietEdge');
+  var cleared = document.getElementById('cleared');
+
+  function panelFor(id){ return document.getElementById(id); }
+
+  function updateChrome(){
+    var remaining = order.length - resolved;
+    if(remaining <= 0){
+      counter.innerHTML = 'All done';
+      ticks.forEach(function(t){ t.className = 'tick done'; });
+      whisperText.textContent = 'morning all done';
+      whisper.style.opacity = '.55';
+      quietEdge.style.opacity = '.55';
+      return;
+    }
+    counter.innerHTML = '<b>'+(idx+1)+'</b> of 3 that need you';
+    ticks.forEach(function(t){
+      var i = parseInt(t.getAttribute('data-i'),10);
+      t.className = 'tick' + (i < idx ? ' done' : (i === idx ? ' active' : ''));
+    });
+    var after = order.length - 1 - idx;
+    if(after <= 0){ whisperText.textContent = 'last one'; }
+    else if(after === 1){ whisperText.textContent = '1 more after this'; }
+    else { whisperText.textContent = after + ' more after this'; }
+  }
+
+  function show(id){
+    order.forEach(function(o){ panelFor(o).classList.remove('show'); });
+    cleared.classList.remove('show');
+    var p = panelFor(id);
+    if(p){
+      // brief gap lets the cross-fade out complete before the next fades in
+      crossfade(function(){ p.classList.add('show'); });
+    }
+    updateChrome();
+  }
+
+  // a short timeout (no rAF) gives the soft cross-fade between single decisions
+  function crossfade(fn){ setTimeout(fn, 90); }
+
+  function advance(){
+    resolved++;
+    if(resolved >= order.length){
+      order.forEach(function(o){ panelFor(o).classList.remove('show'); });
+      crossfade(function(){ cleared.classList.add('show'); });
+      updateChrome();
+      return;
+    }
+    idx++;
+    show(order[idx]);
+  }
+
+  // resolve buttons advance to the next single thing
+  document.querySelectorAll('[data-resolve]').forEach(function(btn){
+    btn.addEventListener('click', function(){ advance(); });
+  });
+
+  // drill disclosure (L1 -> L3) + keyboard
+  document.querySelectorAll('[data-drill]').forEach(function(d){
+    function toggle(){
+      var open = d.classList.toggle('open');
+      d.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    d.addEventListener('click', function(e){ toggle(); });
+    d.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault(); toggle();
+      }
+    });
+  });
+
+  // reset
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    resolved = 0; idx = 0;
+    whisper.style.opacity = '';
+    quietEdge.style.opacity = '';
+    document.querySelectorAll('.drill.open').forEach(function(d){
+      d.classList.remove('open'); d.setAttribute('aria-expanded','false');
+    });
+    cleared.classList.remove('show');
+    show(order[0]);
+  });
+
+  // boot
+  updateChrome();
+})();
+</script>
+</body>
+</html>

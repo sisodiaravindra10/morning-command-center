@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Wake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.80 0.014 255); --muted:oklch(0.56 0.018 258); --soft:oklch(0.44 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.19 0.03 262), oklch(0.10 0.02 260) 58%, oklch(0.075 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.55 0.03 260)}
+
+.phone{position:relative; width:393px; height:800px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.island{position:absolute; top:13px; left:50%; transform:translateX(-50%); width:120px; height:33px; background:oklch(0.04 0.01 264); border-radius:20px; z-index:60}
+.screen{position:absolute; inset:0; color:var(--ink); overflow:hidden}
+
+/* iOS-ish status bar (sits above both layers) */
+.status{position:absolute; top:0; left:0; right:0; height:54px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 30px 7px; z-index:55; pointer-events:none}
+.status .t{font-family:var(--sans); font-size:15px; font-weight:600; letter-spacing:.01em; color:var(--ink)}
+.status .r{display:flex; align-items:center; gap:6px}
+.status .r svg{display:block}
+.status .r .bat{width:24px; height:12px; border:1px solid oklch(0.96 0.01 250 / .55); border-radius:3px; position:relative; padding:1.5px}
+.status .r .bat::after{content:""; position:absolute; right:-3px; top:3.5px; width:2px; height:5px; border-radius:0 2px 2px 0; background:oklch(0.96 0.01 250 / .55)}
+.status .r .bat i{display:block; height:100%; width:74%; border-radius:1px; background:var(--ink)}
+
+/* ============ LAYER 1: the triage (revealed underneath) ============ */
+.triage{position:absolute; inset:0; padding:64px 22px 24px; display:flex; flex-direction:column; gap:13px}
+.tri-head{display:flex; align-items:center; gap:9px; margin-bottom:2px}
+.tri-head .o{width:13px; height:13px; border-radius:50%; flex:none; background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.06 200), oklch(0.66 0.16 262) 48%, oklch(0.34 0.10 270)); box-shadow:0 0 10px oklch(0.66 0.16 262 / .5)}
+.tri-head .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+.tri-head .lbl b{color:var(--body); font-weight:500}
+.tri-title{font-family:var(--serif); font-size:22px; line-height:1.32; color:var(--ink); margin:2px 2px 8px}
+
+.card{background:var(--card); border:1px solid var(--hair); border-left:3px solid var(--dc,var(--soft)); border-radius:18px; padding:15px 17px}
+.card .top{display:flex; align-items:center; gap:9px}
+.card .dot{width:8px; height:8px; border-radius:50%; background:var(--dc,var(--soft)); flex:none}
+.card .nm{font-family:var(--sans); font-size:15.5px; font-weight:600; color:var(--ink)}
+.card .tg{margin-left:auto; font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--dc,var(--muted))}
+.card .sub{font-family:var(--sans); font-size:13px; line-height:1.45; color:var(--body); margin-top:7px}
+.card .alt{display:inline-block; margin-top:11px; font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--soft); border:1px solid var(--hair2); border-radius:20px; padding:3px 9px}
+.card.urgent{--dc:var(--coral)} .card.uncertain{--dc:var(--uncertain)} .card.thinking{--dc:var(--cobalt)}
+
+.ledger{margin-top:auto; display:flex; align-items:center; gap:10px; padding:14px 4px 2px; border-top:1px solid var(--hair)}
+.ledger .lo{width:9px; height:9px; border-radius:50%; flex:none; background:oklch(0.56 0.018 258); box-shadow:0 0 0 4px oklch(0.56 0.018 258 / .12)}
+.ledger .lt{font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--muted)}
+.ledger .lt b{color:var(--body); font-weight:500}
+.ledger .go{margin-left:auto; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--confident); border:1px solid oklch(0.80 0.11 168 / .35); border-radius:20px; padding:5px 11px; cursor:pointer; background:oklch(0.80 0.11 168 / .08); transition:background .2s var(--exp)}
+.ledger .go:hover{background:oklch(0.80 0.11 168 / .16)}
+.ledger .go:active{transform:scale(.96)}
+
+/* the silently-handled list, revealed when the ledger is tapped */
+.silent{max-height:0; overflow:hidden; opacity:0; transition:max-height .55s var(--exp), opacity .4s ease}
+.silent.open{max-height:230px; opacity:1; margin-top:10px}
+.s-row{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11px; color:var(--muted); padding:7px 2px; border-top:1px solid var(--hair)}
+.s-row:first-child{border-top:none}
+.s-row .sc{width:6px; height:6px; border-radius:50%; background:var(--confident); flex:none}
+.s-row .sk{flex:1; color:var(--body)}
+.s-row .sv{color:var(--soft)}
+
+/* ============ LAYER 2: the lock screen (lifts away) ============ */
+.lock{position:absolute; inset:0; z-index:40; background:
+    radial-gradient(140% 90% at 50% -8%, oklch(0.24 0.045 268), transparent 60%),
+    radial-gradient(120% 70% at 78% 18%, oklch(0.22 0.06 300 / .55), transparent 55%),
+    linear-gradient(180deg, oklch(0.135 0.025 264) 0%, oklch(0.10 0.018 262) 100%);
+  display:flex; flex-direction:column; align-items:center; padding:104px 30px 46px}
+.lock .glow{position:absolute; top:-20%; left:50%; transform:translateX(-50%); width:320px; height:320px; border-radius:50%; background:radial-gradient(circle, oklch(0.5 0.14 268 / .28), transparent 65%); filter:blur(8px); animation:drift 11s var(--exp) infinite}
+@keyframes drift{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-44%) translateY(14px) scale(1.08)}}
+
+.lock .date{font-family:var(--sans); font-size:16px; font-weight:500; letter-spacing:.02em; color:oklch(0.78 0.02 260); text-align:center}
+.lock .clock{font-family:var(--sans); font-size:84px; font-weight:600; letter-spacing:-.03em; line-height:.96; color:var(--ink); margin-top:4px; text-shadow:0 2px 30px oklch(0.5 0.12 268 / .35)}
+
+/* Leo's wake message lives mid-screen */
+.wake{margin-top:54px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; min-height:150px}
+.wake .orb-wrap{position:relative; width:58px; height:58px; display:flex; align-items:center; justify-content:center}
+.wake .orb{width:18px; height:18px; border-radius:50%; opacity:0; transform:scale(.4);
+  background:radial-gradient(60% 60% at 34% 30%, oklch(0.94 0.07 200), oklch(0.68 0.16 262) 46%, oklch(0.36 0.12 275));
+  box-shadow:0 0 22px oklch(0.68 0.16 262 / .6);
+  animation:orb-wake 1.1s var(--exp) .25s forwards, breathe 6s var(--exp) 1.5s infinite}
+.wake .pulse{position:absolute; inset:0; margin:auto; width:18px; height:18px; border-radius:50%; border:1.5px solid oklch(0.68 0.16 262 / .5); opacity:0; animation:pulse 2.6s var(--exp) 1.6s infinite}
+@keyframes orb-wake{from{opacity:0; transform:scale(.4)} to{opacity:1; transform:scale(1)}}
+@keyframes breathe{0%,100%{transform:scale(1)} 50%{transform:scale(1.12)}}
+@keyframes pulse{0%{transform:scale(1); opacity:.55} 100%{transform:scale(2.9); opacity:0}}
+
+.line{font-family:var(--serif); font-size:24px; line-height:1.34; color:var(--ink); opacity:0; transform:translateY(8px); max-width:300px}
+.line.l1{animation:line-in 1.4s var(--exp) 1.4s forwards}
+.line.l2{font-style:italic; color:oklch(0.86 0.05 200); animation:line-in 1.4s var(--exp) 3.2s forwards}
+.line .em{color:var(--confident); font-variant-numeric:tabular-nums}
+@keyframes line-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+
+.lock .hint{margin-top:auto; font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); opacity:0; animation:line-in 1s var(--exp) 4.6s forwards}
+
+/* the lock screen lifts away to reveal the triage */
+.lock{animation:lock-lift 1.5s var(--exp) 5.2s forwards}
+@keyframes lock-lift{
+  0%{transform:translateY(0); opacity:1; filter:blur(0)}
+  100%{transform:translateY(-46px); opacity:0; filter:blur(3px); pointer-events:none}
+}
+
+/* triage cards rise in a slow stagger AS the lock lifts */
+.card{opacity:0; transform:translateY(22px) scale(.985); animation:card-rise 1.1s var(--exp) forwards}
+.card.c1{animation-delay:5.55s} .card.c2{animation-delay:5.85s} .card.c3{animation-delay:6.15s}
+.tri-head{opacity:0; animation:line-in 1s var(--exp) 5.3s forwards}
+.tri-title{opacity:0; animation:line-in 1.1s var(--exp) 5.45s forwards}
+.ledger{opacity:0; animation:line-in 1.1s var(--exp) 6.5s forwards}
+@keyframes card-rise{from{opacity:0; transform:translateY(22px) scale(.985)} to{opacity:1; transform:translateY(0) scale(1)}}
+
+/* reduced motion: everything visible, no movement, lock starts already lifted */
+@media (prefers-reduced-motion: reduce){
+  .wake .orb, .wake .pulse, .line.l1, .line.l2, .lock .hint,
+  .card, .tri-head, .tri-title, .ledger, .lock .glow{animation:none}
+  .wake .orb, .line.l1, .line.l2, .lock .hint{opacity:1; transform:none}
+  .card, .tri-head, .tri-title, .ledger{opacity:1; transform:none}
+  .lock{transform:translateY(-46px); opacity:0; pointer-events:none}
+}
+
+/* controls */
+.controls{display:flex; gap:8px}
+.controls button{font-family:var(--sans); font-size:13px; font-weight:500; color:var(--body); background:oklch(0.96 0.01 250 / .06); border:1px solid var(--hair2); border-radius:11px; padding:10px 16px; cursor:pointer; transition:color .2s, background .2s}
+.controls button:hover{color:var(--ink); background:oklch(0.96 0.01 250 / .12)}
+.controls button:active{transform:scale(.97)}
+
+/* visible keyboard focus on every interactive control */
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · The Wake - the first second of the morning</div>
+
+<div class="phone">
+  <div class="island"></div>
+  <div class="status">
+    <span class="t">6:14</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11" aria-hidden="true"><g fill="var(--ink)"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></g></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" aria-hidden="true" fill="none"><path d="M7.5 3.2C9.3 3.2 10.9 3.9 12 5L13.4 3.5C11.9 2 9.8 1.1 7.5 1.1S3.1 2 1.6 3.5L3 5C4.1 3.9 5.7 3.2 7.5 3.2Z" fill="var(--ink)"/><path d="M7.5 6C8.5 6 9.4 6.4 10 7L7.5 9.6L5 7C5.6 6.4 6.5 6 7.5 6Z" fill="var(--ink)"/></svg>
+      <span class="bat"><i></i></span>
+    </span>
+  </div>
+
+  <div class="screen" id="screen">
+
+    <!-- LAYER 1: the triage, revealed underneath -->
+    <div class="triage">
+      <div class="tri-head"><span class="o"></span><span class="lbl">Leo · <b>this morning's triage</b></span></div>
+      <div class="tri-title">Three need you. Everything else is held.</div>
+
+      <div class="card urgent c1">
+        <div class="top"><span class="dot"></span><span class="nm">Maplewood Dr escrow</span><span class="tg">18h left</span></div>
+        <div class="sub">Inspection objection is still unanswered. The only hard deadline that is also unmet.</div>
+        <span class="alt">Your deal · $840k</span>
+      </div>
+
+      <div class="card uncertain c2">
+        <div class="top"><span class="dot"></span><span class="nm">Crestview Ave</span><span class="tg">went quiet</span></div>
+        <div class="sub">Buyer's agent has not replied in three days. I drafted a nudge - want to read it first?</div>
+        <span class="alt">Marcus · team deal</span>
+      </div>
+
+      <div class="card thinking c3">
+        <div class="top"><span class="dot"></span><span class="nm">Henderson closing</span><span class="tg">Tue · checking</span></div>
+        <div class="sub">Lender's clear-to-close is late. I am chasing it now and will flag you only if it slips.</div>
+        <span class="alt">Jordan · team deal</span>
+      </div>
+
+      <div class="ledger">
+        <span class="lo"></span>
+        <span class="lt"><b>44 handled silently</b> overnight.</span>
+        <button class="go" id="ledgerBtn">Tap to see</button>
+      </div>
+      <div class="silent" id="silent">
+        <div class="s-row"><span class="sc"></span><span class="sk">Sent 11 listing-alert replies</span><span class="sv">auto</span></div>
+        <div class="s-row"><span class="sc"></span><span class="sk">Rescheduled 2 showings around rain</span><span class="sv">auto</span></div>
+        <div class="s-row"><span class="sc"></span><span class="sk">Logged 9 lead touches to the CRM</span><span class="sv">auto</span></div>
+        <div class="s-row"><span class="sc"></span><span class="sk">Filed 6 inspection PDFs to deals</span><span class="sv">auto</span></div>
+        <div class="s-row"><span class="sc"></span><span class="sk">Chose not to wake you on 6 minor items</span><span class="sv">held</span></div>
+      </div>
+    </div>
+
+    <!-- LAYER 2: the lock screen, lifts away -->
+    <div class="lock" id="lock">
+      <span class="glow"></span>
+      <div class="date">Sunday, June 22</div>
+      <div class="clock">6:14</div>
+      <div class="wake">
+        <div class="orb-wrap"><span class="pulse"></span><span class="orb"></span></div>
+        <div class="line l1">While you slept, I handled <span class="em">47</span> things.</div>
+        <div class="line l2">Three need you.</div>
+      </div>
+      <div class="hint">Good morning, Dana</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="controls">
+  <button id="replay">↻ Replay</button>
+</div>
+
+<script>
+// Replay: clone the screen to force a full reflow-restart of every CSS animation.
+const replay = document.getElementById('replay');
+function rewire(root){
+  const lock = root.querySelector('#lock');
+  const btn  = root.querySelector('#ledgerBtn');
+  const sil  = root.querySelector('#silent');
+  btn.addEventListener('click', ()=> sil.classList.toggle('open'));
+  // let the lifted lock screen still be tapped early to skip the intro
+  lock.addEventListener('click', ()=>{ lock.style.animation='none'; lock.getBoundingClientRect(); lock.style.transform='translateY(-46px)'; lock.style.opacity='0'; lock.style.pointerEvents='none'; });
+}
+replay.addEventListener('click', ()=>{
+  const old = document.getElementById('screen');
+  const fresh = old.cloneNode(true);
+  // clear state that cloneNode(true) would otherwise carry over from a skipped
+  // or expanded run, so the cinematic intro replays cleanly from the top.
+  const freshLock = fresh.querySelector('#lock');
+  if(freshLock) freshLock.removeAttribute('style');
+  const freshSilent = fresh.querySelector('#silent');
+  if(freshSilent) freshSilent.classList.remove('open');
+  old.replaceWith(fresh);
+  // reflow so the freshly-inserted node re-runs its animation-delay timeline
+  fresh.getBoundingClientRect();
+  rewire(fresh);
+});
+rewire(document.getElementById('screen'));
+
+// Keyboard operability sweep: make non-button click-bound elements focusable
+// and operable with Enter/Space, without double-binding real buttons/links.
+(function(){
+  function makeOperable(el){
+    if(!el) return;
+    const tag = el.tagName;
+    if(tag === 'BUTTON' || tag === 'A') return;
+    if(el.dataset.kbReady) return;
+    el.dataset.kbReady = '1';
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  }
+  function sweep(){
+    // elements wired via an onclick attribute
+    document.querySelectorAll('[onclick]').forEach(makeOperable);
+    // the file's primary click-bound interactive element (the lock = skip intro)
+    document.querySelectorAll('#lock').forEach(el=>{
+      makeOperable(el);
+      if(!el.hasAttribute('aria-label')) el.setAttribute('aria-label','Skip intro');
+    });
+  }
+  // run once at boot
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', sweep);
+  } else {
+    sweep();
+  }
+  // re-sweep after a Replay swaps in a fresh #screen node
+  replay.addEventListener('click', ()=>{ sweep(); });
+
+  // one document-level keydown handler for Enter/Space activation
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    const t = e.target;
+    if(!t) return;
+    // never interfere with typing inside form fields
+    const tag = t.tagName;
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable) return;
+    // only act on elements we made operable (real buttons/links handle keys natively)
+    if(t.getAttribute && t.getAttribute('role') === 'button' && t.dataset && t.dataset.kbReady){
+      e.preventDefault();
+      t.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>

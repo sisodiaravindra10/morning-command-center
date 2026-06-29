@@ -1,0 +1,739 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Leo - Morning Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0e0d12;
+    --ink-soft: #211f29;
+    --grey: #9b98a8;
+    --grey-soft: #b9b6c6;
+    --grey-line: #ecebf2;
+    --lav-bg: #e7e3f7;          /* soft lavender backdrop */
+    --lav-screen: #efedfb;      /* near-white lavender screen tint */
+    --lav-screen-2: #e8e4f8;
+    --card: #ffffff;
+    --pill: #f4f2fb;
+    --badge: #ffffff;
+    --shadow-card: 0 26px 60px -28px rgba(60, 46, 110, 0.40);
+    --shadow-soft: 0 12px 30px -16px rgba(60, 46, 110, 0.30);
+    --shadow-cover: 0 14px 22px -12px rgba(40, 30, 70, 0.45);
+    --shadow-thumb: 0 10px 22px -12px rgba(40, 30, 70, 0.35);
+
+    /* cover palette */
+    --bauhaus-bg: #f4f1ea;
+    --rams-bg: #f06a2a;
+    --everyday-bg: #f4c640;
+    --dark-bg: #20202a;
+    --bauhaus-red: #e23b2e;
+    --bauhaus-blue: #2f5fd0;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    background: var(--lav-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 44px 16px;
+    color: var(--ink);
+  }
+
+  .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7d7a8c;
+    font-weight: 500;
+  }
+
+  /* ---------- iPhone frame ---------- */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: #0c0c0e;
+    border-radius: 46px;
+    padding: 11px;
+    box-shadow:
+      0 50px 100px -40px rgba(56, 40, 100, 0.50),
+      0 0 0 2px rgba(255, 255, 255, 0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background: var(--lav-screen);
+    isolation: isolate;
+  }
+
+  /* soft lavender wash */
+  .screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 70% at 80% -10%, #f0edfc 0%, var(--lav-screen-2) 40%, var(--lav-screen) 72%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 128px;
+    height: 30px;
+    background: #0c0c0e;
+    border-radius: 0 0 18px 18px;
+    z-index: 40;
+  }
+
+  /* ---------- status bar ---------- */
+  .statusbar {
+    position: relative;
+    z-index: 30;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 34px;
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .statusbar .time { letter-spacing: 0.01em; }
+  .statusbar .sys { display: flex; align-items: center; gap: 7px; }
+  .statusbar .sys svg { display: block; }
+
+  /* ---------- content wrapper ---------- */
+  .content {
+    position: relative;
+    z-index: 10;
+    height: calc(100% - 50px);
+    padding: 4px 24px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- top streak strip ---------- */
+  .streak {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .streak-left { display: flex; align-items: flex-start; gap: 11px; }
+  .streak-glyph {
+    width: 30px; height: 30px;
+    border-radius: 10px;
+    background: var(--ink);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .streak-text .t1 {
+    font-size: 15.5px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .streak-text .t2 {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--grey);
+    margin-top: 3px;
+  }
+  .pager { display: flex; align-items: center; gap: 5px; margin-top: 7px; }
+  .pager span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--grey-soft);
+    transition: width 0.2s ease, background 0.2s ease;
+  }
+  .pager span.on { width: 16px; border-radius: 3px; background: var(--ink); }
+
+  /* ---------- hero heading ---------- */
+  .hero {
+    font-family: "Archivo", "Plus Jakarta Sans", sans-serif;
+    margin-top: 22px;
+    font-size: 39px;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  /* ---------- design row ---------- */
+  .deck-row {
+    margin-top: 22px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .deck-row .label {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .deck-row .more {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--grey);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: color 0.18s ease, transform 0.18s ease;
+  }
+  .deck-row .more:hover { color: var(--ink-soft); }
+  .deck-row .more:active { transform: scale(0.96); }
+  .deck-row .more svg { display: block; }
+
+  /* ---------- shelf ---------- */
+  .shelf {
+    margin-top: 16px;
+    position: relative;
+    height: 178px;
+  }
+  .books {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 150px;
+    padding: 0 2px;
+    overflow: hidden;
+  }
+  .cover {
+    flex-shrink: 0;
+    border-radius: 5px;
+    box-shadow: var(--shadow-cover);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.22s cubic-bezier(0.22,0.8,0.3,1);
+  }
+  .cover:hover { transform: translateY(-5px); }
+  .cover:active { transform: translateY(-2px) scale(0.99); }
+  /* subtle spine sheen */
+  .cover::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(100deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 22%);
+    pointer-events: none;
+  }
+
+  /* bauhaus cover */
+  .cover.bauhaus {
+    width: 86px; height: 128px;
+    background: var(--bauhaus-bg);
+    display: flex; flex-direction: column;
+    padding: 9px 9px 8px;
+  }
+  .bh-blocks { display: flex; gap: 5px; }
+  .bh-sq { width: 18px; height: 18px; }
+  .bh-sq.red { background: var(--bauhaus-red); border-radius: 50%; }
+  .bh-sq.blue { background: var(--bauhaus-blue); }
+  .bh-sq.ink { background: var(--ink); transform: rotate(0deg); }
+  .bauhaus .ttl {
+    margin-top: auto;
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 0.95;
+  }
+  .bauhaus .sub { font-size: 6.5px; font-weight: 600; color: #8a8678; letter-spacing: 0.08em; margin-top: 3px; text-transform: uppercase; }
+
+  /* dieter rams cover */
+  .cover.rams {
+    width: 86px; height: 138px;
+    background: var(--rams-bg);
+    padding: 11px 10px;
+    display: flex; flex-direction: column;
+  }
+  .rams .lines { display: flex; flex-direction: column; gap: 4px; }
+  .rams .lines i { display: block; height: 2px; background: rgba(255,255,255,0.55); border-radius: 2px; }
+  .rams .lines i:nth-child(2) { width: 70%; }
+  .rams .lines i:nth-child(3) { width: 50%; }
+  .rams .ttl {
+    margin-top: auto;
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    line-height: 0.92;
+    color: #fff;
+    letter-spacing: -0.02em;
+    text-transform: lowercase;
+  }
+  .rams .sub { font-size: 7px; font-weight: 600; color: rgba(255,255,255,0.8); margin-top: 5px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* everyday things cover */
+  .cover.everyday {
+    width: 92px; height: 150px;
+    background: var(--everyday-bg);
+    padding: 12px 11px;
+    display: flex; flex-direction: column;
+  }
+  .everyday .dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2.5px solid var(--ink);
+  }
+  .everyday .ttl {
+    margin-top: auto;
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    line-height: 0.96;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .everyday .sub { font-size: 7px; font-weight: 700; color: rgba(20,18,24,0.55); margin-top: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* dark cover (partly off-edge) */
+  .cover.dark {
+    width: 86px; height: 134px;
+    background: var(--dark-bg);
+    padding: 12px 11px;
+    display: flex; flex-direction: column;
+    margin-right: -28px;
+  }
+  .dark .mark { width: 16px; height: 16px; border: 2px solid #c9a86a; border-radius: 50%; }
+  .dark .ttl {
+    margin-top: auto;
+    font-family: "Archivo", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 0.98;
+    color: #f3efe6;
+    letter-spacing: -0.01em;
+  }
+  .dark .sub { font-size: 6.5px; font-weight: 600; color: #c9a86a; margin-top: 5px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* glass shelf + reflection */
+  .shelf-plate {
+    position: absolute;
+    left: -2px; right: -2px;
+    bottom: 22px;
+    height: 14px;
+    border-radius: 7px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.28) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 10px 24px -12px rgba(60,46,110,0.35);
+    backdrop-filter: blur(2px);
+    z-index: 1;
+  }
+  .shelf-reflect {
+    position: absolute;
+    left: 6px; right: 6px;
+    bottom: 0;
+    height: 22px;
+    border-radius: 0 0 16px 16px;
+    background: linear-gradient(180deg, rgba(120,100,180,0.16) 0%, rgba(120,100,180,0) 100%);
+    z-index: 0;
+    filter: blur(3px);
+  }
+
+  /* ---------- category tabs ---------- */
+  .cats {
+    margin-top: 18px;
+    display: flex;
+    gap: 9px;
+    overflow: hidden;
+  }
+  .cat {
+    border: none;
+    cursor: pointer;
+    height: 38px;
+    padding: 0 7px 0 14px;
+    border-radius: 19px;
+    background: var(--pill);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  }
+  .cat:hover { background: #ebe8f6; }
+  .cat:active { transform: scale(0.96); }
+  .cat .count {
+    min-width: 22px; height: 22px;
+    padding: 0 6px;
+    border-radius: 11px;
+    background: rgba(20,18,24,0.06);
+    display: inline-grid; place-items: center;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .cat.active { background: var(--ink); color: #fff; }
+  .cat.active .count { background: rgba(255,255,255,0.18); color: #fff; }
+
+  /* ---------- bottom white card ---------- */
+  .panel {
+    margin-top: 20px;
+    margin-left: -24px;
+    margin-right: -24px;
+    background: var(--card);
+    border-radius: 34px 34px 0 0;
+    padding: 22px 24px 24px;
+    box-shadow: var(--shadow-card);
+    flex: 1;
+    position: relative;
+  }
+  .panel-pills {
+    display: flex;
+    gap: 9px;
+  }
+  .ppill {
+    border: none; cursor: pointer;
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 18px;
+    background: var(--pill);
+    color: var(--grey);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  }
+  .ppill:hover { background: #ebe8f6; }
+  .ppill:active { transform: scale(0.96); }
+  .ppill.active { background: var(--ink); color: #fff; }
+
+  .panel-head {
+    margin-top: 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .panel-head .ph-t {
+    font-family: "Archivo", sans-serif;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .panel-head .ph-s {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--grey);
+    margin-top: 3px;
+  }
+  .panel-head .big250 {
+    position: relative;
+    font-family: "Archivo", sans-serif;
+    font-size: 50px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    line-height: 0.8;
+  }
+  .panel-head .big250 sup {
+    position: absolute;
+    top: 2px; right: -4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--grey);
+    transform: translateX(100%);
+  }
+
+  /* 2x2 thumb grid */
+  .thumbs {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .thumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.18s ease;
+  }
+  .thumb:active { transform: scale(0.98); }
+  .thumb img {
+    width: 50px; height: 66px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: var(--shadow-thumb);
+    flex-shrink: 0;
+  }
+  .thumb .meta .tt {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .thumb .meta .ts {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--grey);
+    margin-top: 3px;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 134px; height: 5px;
+    border-radius: 3px;
+    background: rgba(20, 18, 24, 0.30);
+    z-index: 36;
+  }
+
+  /* ---------- dribbble footer ---------- */
+  .author {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .author img {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .author .nm { font-size: 14px; font-weight: 700; color: #2a2733; }
+  .author .fl { font-size: 14px; font-weight: 500; color: #9a98a3; margin-left: 2px; }
+
+  /* ---------- entrance motion (gated) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .anim { opacity: 0; transform: translateY(14px); animation: rise 0.6s cubic-bezier(0.22, 0.8, 0.3, 1) forwards; }
+    .d1 { animation-delay: 0.04s; }
+    .d2 { animation-delay: 0.12s; }
+    .d3 { animation-delay: 0.20s; }
+    .d4 { animation-delay: 0.28s; }
+    .d5 { animation-delay: 0.36s; }
+    .d6 { animation-delay: 0.46s; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    .cover { animation: settle 0.7s cubic-bezier(0.22,0.8,0.3,1) backwards; }
+    .cover.bauhaus { animation-delay: 0.22s; }
+    .cover.rams { animation-delay: 0.30s; }
+    .cover.everyday { animation-delay: 0.38s; }
+    .cover.dark { animation-delay: 0.46s; }
+    @keyframes settle {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+
+<div class="caption">LEO - MORNING COMMAND CENTER</div>
+
+<div class="phone">
+  <div class="screen">
+    <div class="notch"></div>
+
+    <!-- status bar -->
+    <div class="statusbar">
+      <span class="time">9:41</span>
+      <span class="sys">
+        <!-- signal -->
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0e0d12"/>
+          <rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="#0e0d12"/>
+          <rect x="10" y="3" width="3" height="9" rx="1" fill="#0e0d12"/>
+          <rect x="15" y="0.5" width="3" height="11.5" rx="1" fill="#0e0d12"/>
+        </svg>
+        <!-- wifi -->
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8.5 1.2C5.4 1.2 2.6 2.4 0.6 4.4L8.5 12 16.4 4.4C14.4 2.4 11.6 1.2 8.5 1.2Z" fill="#0e0d12"/>
+        </svg>
+        <!-- battery -->
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#0e0d12" stroke-opacity="0.4" fill="none"/>
+          <rect x="2.2" y="2.2" width="17" height="8.6" rx="2" fill="#0e0d12"/>
+          <rect x="24" y="4" width="2" height="5" rx="1" fill="#0e0d12" fill-opacity="0.4"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="content">
+      <!-- top streak strip -->
+      <div class="streak anim d1">
+        <div class="streak-left">
+          <span class="streak-glyph">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="#fff"/>
+            </svg>
+          </span>
+          <div class="streak-text">
+            <div class="t1">Leo handled 47 things overnight</div>
+            <div class="t2">You are clear on 81 percent of the pipeline</div>
+          </div>
+        </div>
+        <div class="pager">
+          <span class="on"></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- hero heading -->
+      <h1 class="hero anim d2">You Have<br/>3 Decisions<br/>Today</h1>
+
+      <!-- needs you / count row -->
+      <div class="deck-row anim d2">
+        <span class="label">Needs you</span>
+        <span class="more">
+          3 deals
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6l6 6-6 6" stroke="#9b98a8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- book shelf -->
+      <div class="shelf anim d3">
+        <div class="shelf-reflect"></div>
+        <div class="books">
+          <!-- Maplewood brief -->
+          <div class="cover bauhaus" aria-label="Maplewood">
+            <div class="bh-blocks">
+              <span class="bh-sq red"></span>
+              <span class="bh-sq blue"></span>
+              <span class="bh-sq ink"></span>
+            </div>
+            <div class="ttl">Maplewood</div>
+            <div class="sub">Escrow - day 3</div>
+          </div>
+          <!-- Oak St deal -->
+          <div class="cover rams" aria-label="Oak St">
+            <div class="lines"><i></i><i></i><i></i></div>
+            <div class="ttl">oak<br/>st</div>
+            <div class="sub">counter due</div>
+          </div>
+          <!-- Crestview brief -->
+          <div class="cover everyday" aria-label="Crestview">
+            <div class="dot"></div>
+            <div class="ttl">Crestview<br/>Listing<br/>Brief</div>
+            <div class="sub">Leo drafted</div>
+          </div>
+          <!-- Lakeshore (partly off-edge) -->
+          <div class="cover dark" aria-label="Lakeshore">
+            <div class="mark"></div>
+            <div class="ttl">Lakeshore<br/>Lead</div>
+            <div class="sub">Hot - new</div>
+          </div>
+        </div>
+        <div class="shelf-plate"></div>
+      </div>
+
+      <!-- category tabs -->
+      <div class="cats anim d4">
+        <button class="cat active">All <span class="count">12</span></button>
+        <button class="cat">Escrow <span class="count">3</span></button>
+        <button class="cat">Counter <span class="count">4</span></button>
+        <button class="cat">Leads <span class="count">5</span></button>
+      </div>
+
+      <!-- bottom white panel -->
+      <div class="panel anim d5">
+        <div class="panel-pills">
+          <button class="ppill active">This morning</button>
+          <button class="ppill">Deals</button>
+        </div>
+
+        <div class="panel-head">
+          <div>
+            <div class="ph-t">This morning</div>
+            <div class="ph-s">The 3 that matter</div>
+          </div>
+          <div class="big250">47<sup>Handled</sup></div>
+        </div>
+
+        <div class="thumbs">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/maplewoodhome/120/160" alt="Maplewood" />
+            <div class="meta">
+              <div class="tt">Maplewood</div>
+              <div class="ts">Sign extension</div>
+            </div>
+          </div>
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/oakstreethome/120/160" alt="Oak St" />
+            <div class="meta">
+              <div class="tt">Oak St</div>
+              <div class="ts">Approve counter</div>
+            </div>
+          </div>
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/crestviewhome/120/160" alt="Crestview" />
+            <div class="meta">
+              <div class="tt">Crestview</div>
+              <div class="ts">Review brief</div>
+            </div>
+          </div>
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/lakeshorelead/120/160" alt="Lakeshore" />
+            <div class="meta">
+              <div class="tt">Lakeshore</div>
+              <div class="ts">Assign agent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+</div>
+
+<!-- author footer -->
+<div class="author">
+  <img src="https://picsum.photos/seed/ravindrasis/72/72" alt="Ravindra Sisodia" />
+  <span class="nm">Designed by Ravindra Sisodia</span>
+  <span class="fl">for Real</span>
+</div>
+
+<script>
+  (function () {
+    // category tabs toggle
+    var cats = document.querySelectorAll(".cat");
+    cats.forEach(function (c) {
+      c.addEventListener("click", function () {
+        cats.forEach(function (x) { x.classList.remove("active"); });
+        c.classList.add("active");
+      });
+    });
+
+    // collections / books pills toggle
+    var pills = document.querySelectorAll(".ppill");
+    pills.forEach(function (p) {
+      p.addEventListener("click", function () {
+        pills.forEach(function (x) { x.classList.remove("active"); });
+        p.classList.add("active");
+      });
+    });
+  })();
+</script>

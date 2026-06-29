@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo - Morning Command Center - V04 Clean Data x Pipeline Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm editorial light - tinted neutrals only, no pure black or white */
+    --paper:    oklch(0.975 0.011 83);
+    --card:     oklch(0.995 0.004 85);
+    --sunken:   oklch(0.955 0.012 80);
+    --hair:     oklch(0.30 0.02 60 / 0.10);
+    --hair-2:   oklch(0.30 0.02 60 / 0.06);
+    --shadow:   0 14px 34px -18px oklch(0.45 0.04 60 / 0.30);
+    --shadow-sm:0 6px 18px -12px oklch(0.45 0.04 60 / 0.26);
+
+    --ink:   oklch(0.26 0.02 60);
+    --body:  oklch(0.46 0.016 62);
+    --muted: oklch(0.60 0.012 65);
+
+    /* AI-confidence-state accents (state, not decoration) */
+    --seaglass:      oklch(0.58 0.10 168);
+    --seaglass-text: oklch(0.44 0.09 168);
+    --seaglass-tint: oklch(0.58 0.10 168 / 0.12);
+    --amber:         oklch(0.66 0.12 70);
+    --amber-text:    oklch(0.50 0.11 66);
+    --amber-tint:    oklch(0.66 0.12 70 / 0.14);
+    --coral:         oklch(0.56 0.16 28);
+    --coral-text:    oklch(0.49 0.15 28);
+    --coral-tint:    oklch(0.56 0.16 28 / 0.12);
+
+    /* pastel category surfaces (each pastel = a category) */
+    --mint:    oklch(0.955 0.040 168);   /* own deal / counter */
+    --lavender:oklch(0.948 0.038 282);   /* new lead */
+    --peach:   oklch(0.955 0.046 60);    /* teammate */
+    --rose:    oklch(0.952 0.034 18);    /* at risk */
+
+    /* one interactive accent: deep cobalt */
+    --accent:      oklch(0.50 0.13 262);
+    --accent-text: oklch(0.44 0.13 262);
+    --accent-ink:  oklch(0.985 0.01 262);
+
+    --r-card:18px; --r-chip:9px; --r-btn:13px; --r-pill:999px;
+    --ease:cubic-bezier(.16,1,.3,1);
+
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --serif:'Newsreader',Georgia,serif;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  body{
+    font-family:var(--sans);
+    background:
+      radial-gradient(120% 70% at 50% -8%, oklch(0.965 0.018 78) 0%, oklch(0.93 0.012 70) 60%, oklch(0.90 0.012 66) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center;
+    padding:34px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .caption{
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:oklch(0.50 0.018 64);
+    margin-bottom:20px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .caption .tick{ width:22px; height:1px; background:oklch(0.50 0.018 64 / .5); }
+
+  /* ===== phone frame (chrome only) ===== */
+  .phone{
+    width:393px; max-width:100%;
+    background:var(--paper);
+    border-radius:46px;
+    padding:11px;
+    box-shadow:
+      0 0 0 1px oklch(0.30 0.02 60 / 0.06),
+      0 50px 90px -40px oklch(0.40 0.04 60 / 0.42);
+    position:relative;
+  }
+  .screen{
+    background:var(--paper);
+    border-radius:36px;
+    overflow:hidden;
+    position:relative;
+    height:830px;
+    display:flex; flex-direction:column;
+  }
+
+  /* status bar */
+  .status{
+    height:44px; flex:none;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 26px;
+    font-family:var(--mono); font-size:13px; font-weight:500;
+    color:var(--ink);
+  }
+  .status .right{ display:flex; align-items:center; gap:6px; }
+  .status .right svg{ display:block; }
+
+  /* ===== scroll body ===== */
+  .body{
+    flex:1; overflow-y:auto; overflow-x:hidden;
+    padding:6px 20px 22px;
+    scrollbar-width:none;
+  }
+  .body::-webkit-scrollbar{ display:none; }
+
+  /* header / Leo line */
+  .head{ padding:8px 2px 4px; }
+  .head .meta{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .head .meta .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--seaglass);
+    box-shadow:0 0 0 4px var(--seaglass-tint);
+    animation:breathe 4.6s var(--ease) infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); opacity:.92; }
+    50%{ transform:scale(1.18); opacity:1; }
+  }
+  .head h1{
+    font-family:var(--serif); font-weight:500;
+    font-size:29px; line-height:1.16; letter-spacing:-0.01em;
+    color:var(--ink);
+    margin-top:12px;
+  }
+  .head h1 em{ font-style:italic; color:var(--body); }
+  .head .sub{
+    font-family:var(--serif); font-size:16px; line-height:1.5;
+    color:var(--body); margin-top:6px; max-width:32ch;
+  }
+
+  /* ===== macro-stat row (clean-data lineage) ===== */
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--hair-2);
+    border:1px solid var(--hair);
+    border-radius:14px;
+    overflow:hidden;
+    margin-top:18px;
+  }
+  .stat{
+    background:var(--card);
+    padding:12px 10px 11px;
+    display:flex; flex-direction:column; gap:4px;
+    min-height:62px;
+  }
+  .stat .n{
+    font-family:var(--mono); font-weight:500;
+    font-size:21px; line-height:1; color:var(--ink);
+    letter-spacing:-0.01em;
+    display:flex; align-items:baseline; gap:4px;
+  }
+  .stat .n .s{ font-size:11px; color:var(--muted); letter-spacing:0; }
+  .stat .l{
+    font-family:var(--sans); font-size:10.5px; font-weight:500;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
+  }
+  .stat.flag .n{ color:var(--amber-text); }
+  .stat.flag .l{ color:var(--amber-text); }
+  .stat .tag-dot{
+    width:6px; height:6px; border-radius:50%; display:inline-block;
+    vertical-align:middle; margin-left:1px;
+  }
+
+  /* section label */
+  .seclabel{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:24px 2px 11px;
+  }
+  .seclabel .t{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .seclabel .c{
+    font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    color:var(--muted);
+  }
+
+  /* ===== triage cards (pastel category surfaces, varied composition) ===== */
+  .cards{ display:flex; flex-direction:column; gap:13px; }
+
+  .tcard{
+    border-radius:var(--r-card);
+    border:1px solid var(--hair);
+    padding:16px 16px 15px;
+    box-shadow:var(--shadow-sm);
+    position:relative;
+    cursor:pointer;
+    transition:transform .26s var(--ease), box-shadow .26s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tcard:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+  }
+  .tcard:active{ transform:scale(0.992); }
+  .tcard.mint{ background:var(--mint); }
+  .tcard.lav{ background:var(--lavender); }
+  .tcard.peach{ background:var(--peach); }
+
+  .tcard .crow{
+    display:flex; align-items:center; gap:9px; margin-bottom:9px;
+  }
+  .tcard .sdot{ width:8px; height:8px; border-radius:50%; flex:none; }
+  .tcard.mint  .sdot{ background:var(--seaglass); box-shadow:0 0 0 4px var(--seaglass-tint); }
+  .tcard.lav   .sdot{ background:var(--accent); box-shadow:0 0 0 4px oklch(0.50 0.13 262 / 0.12); }
+  .tcard.peach .sdot{ background:var(--amber); box-shadow:0 0 0 4px var(--amber-tint); }
+
+  .tcard .cat{
+    font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--body);
+  }
+  .tcard .badge{
+    margin-left:auto;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--body);
+    background:oklch(0.30 0.02 60 / 0.07);
+    padding:3px 8px; border-radius:var(--r-pill);
+  }
+  .tcard.peach .badge{ color:var(--body); }
+
+  .tcard h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:19px; line-height:1.22; letter-spacing:-0.005em;
+    color:var(--ink);
+  }
+  .tcard .why{
+    font-family:var(--serif); font-size:14.5px; line-height:1.45;
+    color:var(--body); margin-top:5px; max-width:34ch;
+  }
+  .tcard .trace{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    margin-top:12px;
+  }
+  .chip{
+    font-family:var(--mono); font-size:10px; letter-spacing:.05em;
+    color:var(--body);
+    background:oklch(0.995 0.004 85 / 0.7);
+    border:1px solid var(--hair);
+    padding:4px 9px; border-radius:var(--r-chip);
+    display:inline-flex; align-items:center; gap:5px;
+  }
+  .chip .k{ color:var(--muted); }
+  .chip.conf-high{ color:var(--seaglass-text); }
+  .chip.conf-high .k{ color:var(--seaglass-text); opacity:.7; }
+  .chip.conf-mid{ color:var(--amber-text); }
+  .chip.conf-mid .k{ color:var(--amber-text); opacity:.7; }
+
+  /* range bar (calibrated, never a fake %) */
+  .range{
+    margin-top:12px;
+  }
+  .range .rlbl{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:5px;
+  }
+  .range .track{
+    height:6px; border-radius:var(--r-pill);
+    background:oklch(0.30 0.02 60 / 0.08);
+    position:relative; overflow:hidden;
+  }
+  .range .fill{
+    position:absolute; top:0; height:100%;
+    background:var(--seaglass); border-radius:var(--r-pill);
+    left:46%; width:32%;
+    transform:scaleX(0); transform-origin:left center;
+    animation:rangeIn .9s var(--ease) .35s forwards;
+  }
+  @keyframes rangeIn{ to{ transform:scaleX(1); } }
+
+  /* action footer inside card */
+  .tcard .act{
+    display:flex; align-items:center; gap:9px; margin-top:14px;
+  }
+  .btn{
+    font-family:var(--sans); font-size:13.5px; font-weight:500;
+    border:none; border-radius:var(--r-btn);
+    padding:0 16px; min-height:44px;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    cursor:pointer; -webkit-tap-highlight-color:transparent;
+    transition:transform .2s var(--ease), background .2s var(--ease);
+  }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--accent); color:var(--accent-ink); }
+  .btn-ghost{
+    background:oklch(0.995 0.004 85 / 0.65);
+    border:1px solid var(--hair);
+    color:var(--body);
+  }
+  .btn .win{
+    font-family:var(--mono); font-size:11px;
+    background:oklch(0.985 0.01 262 / 0.22);
+    padding:2px 6px; border-radius:6px;
+  }
+  .btn svg{ display:block; }
+
+  /* the new-lead window timer (microinteraction: draining) */
+  .draining{
+    display:flex; align-items:center; gap:8px; margin-top:11px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    color:var(--accent-text);
+  }
+  .draining .ring{
+    width:18px; height:18px; flex:none; transform:rotate(-90deg);
+  }
+  .draining .ring circle{ fill:none; stroke-width:3; }
+  .draining .ring .bg{ stroke:oklch(0.50 0.13 262 / 0.18); }
+  .draining .ring .fg{
+    stroke:var(--accent);
+    stroke-dasharray:44; stroke-dashoffset:6;
+    stroke-linecap:round;
+    animation:drain 300s linear forwards;
+  }
+  @keyframes drain{ to{ stroke-dashoffset:44; } }
+
+  /* ===== Pipeline Pulse (centerpiece) ===== */
+  .pulse{
+    margin-top:8px;
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    padding:15px 16px 13px;
+    box-shadow:var(--shadow-sm);
+  }
+  .pulse-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:13px;
+  }
+  .pulse-head .t{ font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ink); }
+  .pulse-head .legend{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); display:flex; align-items:center; gap:5px;
+  }
+  .pulse-head .legend .ld{ width:6px; height:6px; border-radius:50%; }
+
+  .pulse-rows{ display:flex; flex-direction:column; gap:0; }
+  .pulse-row{
+    display:flex; align-items:center; gap:13px;
+    min-height:44px;
+    border-top:1px solid var(--hair-2);
+    transition:transform .9s var(--ease);
+  }
+  .pulse-row:first-child{ border-top:none; }
+  .pulse-row .nm{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+    color:var(--body); width:76px; flex:none; text-align:right;
+  }
+  .pulse-row .spark{ flex:1; height:24px; }
+  .pulse-row .spark path{
+    fill:none; stroke:var(--seaglass); stroke-width:1.6;
+    stroke-linecap:round; stroke-linejoin:round;
+    transform-origin:center; transform-box:fill-box;
+  }
+  .pulse-row .st{
+    font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--seaglass-text); width:38px; flex:none; text-align:right;
+  }
+
+  /* healthy lines breathe continuously */
+  .pulse-row:not(.quiet) .spark path{
+    animation:pulse-breathe 2.8s ease-in-out infinite;
+  }
+  .pulse-row:nth-of-type(2) .spark path{ animation-delay:-.7s; }
+  .pulse-row:nth-of-type(4) .spark path{ animation-delay:-1.5s; }
+  @keyframes pulse-breathe{
+    0%,100%{ transform:scaleY(1);   opacity:.92; }
+    50%    { transform:scaleY(1.42); opacity:1; }
+  }
+
+  /* the quiet one: flatten + desaturate to amber + float up */
+  .pulse-row.quiet{ cursor:pointer; transform:translateY(-3px); }
+  .pulse-row.quiet:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; border-radius:8px; }
+  .pulse-row.quiet .nm{ color:var(--amber-text); }
+  .pulse-row.quiet .st{ color:var(--amber-text); }
+  /* live EKG line fades out, flat amber line fades in (robust everywhere) */
+  .pulse-row.quiet .spark .live{
+    stroke:var(--seaglass); opacity:.85;
+    animation:ekg-out 1.3s var(--ease) 1s both;
+  }
+  .pulse-row.quiet .spark .flat{
+    stroke:var(--amber); stroke-width:1.6; opacity:0;
+    animation:ekg-in 1.3s var(--ease) 1.4s both;
+  }
+  @keyframes ekg-out{ from{ opacity:.85; } to{ opacity:0; } }
+  @keyframes ekg-in{ from{ opacity:0; } to{ opacity:.95; } }
+
+  /* ===== quiet ledger line ===== */
+  .ledger{
+    margin-top:20px;
+    border-top:1px solid var(--hair);
+    padding-top:15px;
+    display:flex; align-items:flex-start; gap:11px;
+  }
+  .ledger .lic{
+    width:30px; height:30px; flex:none; border-radius:9px;
+    background:var(--sunken);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted);
+  }
+  .ledger .lt{
+    font-family:var(--serif); font-size:14.5px; line-height:1.45; color:var(--body);
+  }
+  .ledger .lt b{ font-weight:600; color:var(--ink); font-family:var(--sans); font-size:13.5px; }
+  .ledger .lm{
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); margin-top:5px;
+  }
+
+  /* ===== bottom nav (5 icons, clean-data lineage) ===== */
+  .nav{
+    flex:none; height:74px;
+    background:oklch(0.995 0.004 85 / 0.86);
+    backdrop-filter:saturate(1.4) blur(18px);
+    -webkit-backdrop-filter:saturate(1.4) blur(18px);
+    border-top:1px solid var(--hair);
+    display:flex; align-items:stretch; justify-content:space-around;
+    padding:8px 6px 20px;
+  }
+  .nav button{
+    flex:1; background:none; border:none; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    color:var(--muted); min-height:44px;
+    font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:.02em;
+    -webkit-tap-highlight-color:transparent;
+    transition:color .2s var(--ease);
+    border-radius:12px;
+  }
+  .nav button:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+  .nav button svg{ display:block; }
+  .nav button.on{ color:var(--ink); }
+  .nav button.on svg{ color:var(--accent); }
+
+  /* state-change toast (microinteraction feedback) */
+  .toast{
+    position:absolute; left:50%; bottom:96px; transform:translate(-50%,14px);
+    background:oklch(0.26 0.02 60 / 0.95);
+    color:var(--paper);
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    padding:10px 15px; border-radius:var(--r-pill);
+    box-shadow:var(--shadow);
+    opacity:0; pointer-events:none;
+    transition:opacity .3s var(--ease), transform .3s var(--ease);
+    display:flex; align-items:center; gap:8px;
+    white-space:nowrap; z-index:30;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+  .toast .td{ width:7px; height:7px; border-radius:50%; background:var(--seaglass); }
+
+  /* entrance choreography (transform+opacity only) */
+  .rise{ opacity:0; transform:translateY(12px); animation:rise .58s var(--ease) forwards; }
+  .d1{ animation-delay:.05s; } .d2{ animation-delay:.12s; } .d3{ animation-delay:.19s; }
+  .d4{ animation-delay:.26s; } .d5{ animation-delay:.33s; } .d6{ animation-delay:.40s; }
+  .d7{ animation-delay:.47s; }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+    .rise{ opacity:1; transform:none; }
+    .range .fill{ transform:scaleX(1); }
+    .pulse-row.quiet .spark .live{ opacity:0; }
+    .pulse-row.quiet .spark .flat{ opacity:.95; }
+  }
+</style>
+</head>
+<body>
+  <div class="caption"><span class="tick"></span>V04 Clean Data x Pipeline Pulse<span class="tick"></span></div>
+
+  <div class="phone">
+    <div class="screen">
+
+      <div class="status">
+        <span>7:02</span>
+        <span class="right">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="6" width="3" height="5" rx="1" fill="currentColor"/><rect x="4.5" y="4" width="3" height="7" rx="1" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg>
+          <svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="14" height="7" rx="1.2" fill="currentColor"/><rect x="20" y="3.5" width="1.6" height="4" rx="0.8" fill="currentColor" opacity="0.5"/></svg>
+        </span>
+      </div>
+
+      <div class="body">
+
+        <!-- header / Leo's voice -->
+        <header class="head rise d1">
+          <div class="meta"><span class="dot" aria-hidden="true"></span> Leo, your assistant, caught up while you slept</div>
+          <h1>Good morning, Dana.<br /><em>Three things need you</em> before 10.</h1>
+          <p class="sub">I took care of or kept an eye on the rest. I put the people waiting longest at the top.</p>
+        </header>
+
+        <!-- macro-stat row -->
+        <section class="stats rise d2" aria-label="Your deals at a glance">
+          <div class="stat">
+            <div class="n">18</div>
+            <div class="l">In progress</div>
+          </div>
+          <div class="stat">
+            <div class="n">3</div>
+            <div class="l">Offers to reply to</div>
+          </div>
+          <div class="stat">
+            <div class="n">5</div>
+            <div class="l">Closing soon</div>
+          </div>
+          <div class="stat flag">
+            <div class="n">1 <span class="tag-dot" style="background:var(--amber)"></span></div>
+            <div class="l">Needs attention</div>
+          </div>
+        </section>
+
+        <!-- triage cards -->
+        <div class="seclabel rise d3">
+          <span class="t">Needs you</span>
+          <span class="c">3 waiting</span>
+        </div>
+
+        <div class="cards">
+
+          <!-- 1. Counter due (own deal, mint = own-deal category) -->
+          <article class="tcard mint rise d3" role="button" tabindex="0"
+            aria-label="142 Oak Street: you need to reply to the buyer by 10am. Open the reply I wrote."
+            onclick="openCounter(this)" onkeydown="kbd(event,this)">
+            <div class="crow">
+              <span class="sdot" aria-hidden="true"></span>
+              <span class="cat">Your deal</span>
+              <span class="badge">Reply by 10:00am</span>
+            </div>
+            <h2>142 Oak St: a reply is ready for you to check.</h2>
+            <p class="why">The buyer offered 4,000 dollars less but wants to close sooner. I wrote a reply that holds your price and gives them the earlier date instead.</p>
+            <div class="range">
+              <div class="rlbl"><span>How sure I am</span><span>Very sure</span></div>
+              <div class="track"><div class="fill"></div></div>
+            </div>
+            <div class="trace">
+              <span class="chip"><span class="k">based on</span> recent sales nearby and 3 calls</span>
+              <span class="chip conf-high"><span class="k">how sure</span> very sure</span>
+            </div>
+            <div class="act">
+              <button class="btn btn-primary" onclick="event.stopPropagation(); review(this)">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M9 4l3.5 3.5L9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Read my reply
+              </button>
+              <button class="btn btn-ghost" onclick="event.stopPropagation()">Remind me in 30 min</button>
+            </div>
+          </article>
+
+          <!-- 2. New lead, 5-min window (lavender = new-lead category) -->
+          <article class="tcard lav rise d4" role="button" tabindex="0"
+            aria-label="New buyer asking about 88 Linden, already approved for a loan. Call them now."
+            onclick="connect(this)" onkeydown="kbd(event,this)">
+            <div class="crow">
+              <span class="sdot" aria-hidden="true"></span>
+              <span class="cat">New buyer</span>
+              <span class="badge">Reach out now</span>
+            </div>
+            <h2>Someone just asked about 88 Linden, and they are already approved for a loan.</h2>
+            <p class="why">The first few minutes matter most. They are still looking at the listing right now.</p>
+            <div class="draining" aria-label="About five minutes left to reach out">
+              <svg class="ring" viewBox="0 0 18 18" aria-hidden="true"><circle class="bg" cx="9" cy="9" r="7"/><circle class="fg" cx="9" cy="9" r="7"/></svg>
+              <span>Best to call in the next 5 min</span>
+            </div>
+            <div class="act">
+              <button class="btn btn-primary" onclick="event.stopPropagation(); connect(this)">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3.2 3.2c-.4 4 3.6 8 7.6 7.6l1.3-1.6-2.3-1.3-1 .9c-1.3-.6-2.5-1.8-3.1-3.1l.9-1L3.3 2.4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                Call now
+              </button>
+              <button class="btn btn-ghost" onclick="event.stopPropagation()"><span class="win">I can</span> say hello first</button>
+            </div>
+          </article>
+
+          <!-- 3. Teammate going quiet (peach = teammate category) -->
+          <article class="tcard peach rise d5" role="button" tabindex="0"
+            aria-label="One of Marcus's buyers has gone quiet. Check it or step in."
+            onclick="openMarcus(this)" onkeydown="kbd(event,this)">
+            <div class="crow">
+              <span class="sdot" aria-hidden="true"></span>
+              <span class="cat">Your teammate Marcus</span>
+              <span class="badge">No reply lately</span>
+            </div>
+            <h2>One of Marcus's buyers has gone quiet.</h2>
+            <p class="why">No reply in 4 days from a buyer who was keen. I can write a friendly check-in note for him to send, or you can step in.</p>
+            <div class="trace">
+              <span class="chip"><span class="k">last talked</span> 4 days ago</span>
+              <span class="chip conf-mid"><span class="k">my take</span> better to call than text</span>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Pipeline Pulse (centerpiece) -->
+        <div class="seclabel rise d5">
+          <span class="t">Your deals</span>
+          <span class="c">live</span>
+        </div>
+
+        <section class="pulse rise d6" aria-label="Your deals and how each one is moving">
+          <div class="pulse-head">
+            <span class="t">Six deals, at a glance</span>
+            <span class="legend"><span class="ld" style="background:var(--seaglass)"></span> moving <span class="ld" style="background:var(--amber); margin-left:6px"></span> quiet</span>
+          </div>
+          <div class="pulse-rows">
+            <div class="pulse-row">
+              <span class="nm">142 Oak St</span>
+              <svg class="spark" viewBox="0 0 160 18" preserveAspectRatio="none" aria-hidden="true"><path d="M0,9 L13,5 L26,12 L40,4 L53,11 L66,6 L80,12 L93,5 L106,11 L120,7 L133,12 L146,6 L160,9"/></svg>
+              <span class="st">moving</span>
+            </div>
+            <div class="pulse-row">
+              <span class="nm">21 Marsh</span>
+              <svg class="spark" viewBox="0 0 160 18" preserveAspectRatio="none" aria-hidden="true"><path d="M0,10 L14,6 L28,11 L42,5 L56,10 L70,7 L84,11 L98,6 L112,10 L126,8 L140,11 L160,9"/></svg>
+              <span class="st">moving</span>
+            </div>
+
+            <!-- the quiet one: flattens, desaturates to amber, floats up -->
+            <div class="pulse-row quiet" role="button" tabindex="0"
+              aria-label="Crestview has gone quiet. Open the deal."
+              onclick="openCrestview(this)" onkeydown="kbd(event,this)">
+              <span class="nm">Crestview</span>
+              <svg class="spark" viewBox="0 0 160 18" preserveAspectRatio="none" aria-hidden="true">
+                <path class="live" d="M0,9 L14,5 L28,12 L42,4 L56,11 L70,6 L84,12 L98,5 L112,11 L126,7 L140,12 L160,9" fill="none"/>
+                <path class="flat" d="M0,11 L40,11 L52,9.5 L60,12.5 L72,11 L160,11" fill="none"/>
+              </svg>
+              <span class="st">quiet</span>
+            </div>
+
+            <div class="pulse-row">
+              <span class="nm">7 Birch Ln</span>
+              <svg class="spark" viewBox="0 0 160 18" preserveAspectRatio="none" aria-hidden="true"><path d="M0,8 L14,11 L28,5 L42,12 L56,6 L70,11 L84,5 L98,12 L112,7 L126,10 L140,6 L160,9"/></svg>
+              <span class="st">moving</span>
+            </div>
+            <div class="pulse-row">
+              <span class="nm">88 Linden</span>
+              <svg class="spark" viewBox="0 0 160 18" preserveAspectRatio="none" aria-hidden="true"><path d="M0,11 L14,5 L28,12 L42,6 L56,11 L70,5 L84,12 L98,6 L112,10 L126,7 L140,11 L160,8"/></svg>
+              <span class="st">moving</span>
+            </div>
+            <div class="pulse-row">
+              <span class="nm">3 Castle Dr</span>
+              <svg class="spark" viewBox="0 0 160 18" preserveAspectRatio="none" aria-hidden="true"><path d="M0,9 L14,6 L28,11 L42,5 L56,12 L70,7 L84,10 L98,6 L112,11 L126,8 L140,10 L160,9"/></svg>
+              <span class="st">moving</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- quiet ledger line -->
+        <section class="ledger rise d7" aria-label="What Leo handled overnight">
+          <span class="lic" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8.5l3.5 3.5L14 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div>
+            <p class="lt"><b>I took care of 47 things while you slept.</b> I answered common questions, booked two home visits, and sorted the paperwork.</p>
+            <p class="lm">I did not need to wake you once. It all stayed within what you asked me to handle.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- bottom nav: 5 icons -->
+      <nav class="nav" aria-label="Primary">
+        <button class="on" aria-current="page">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 9.5l7-5.5 7 5.5V18a1 1 0 0 1-1 1h-3v-5h-6v5H5a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Today
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 16l4-5 3 3 4-6 3 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Deals
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="3.2" stroke="currentColor" stroke-width="1.5"/><path d="M5 18c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          People
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Leo
+        </button>
+        <button>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M11 3v2M11 17v2M3 11h2M17 11h2M5.2 5.2l1.4 1.4M15.4 15.4l1.4 1.4M16.8 5.2l-1.4 1.4M6.6 15.4l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Settings
+        </button>
+      </nav>
+
+      <div class="toast" id="toast" role="status" aria-live="polite">
+        <span class="td" id="toast-dot"></span>
+        <span id="toast-msg">Opened</span>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  function kbd(e, el){
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      el.click();
+    }
+  }
+  var toastTimer;
+  function toast(msg, kind){
+    var t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    var dot = document.getElementById('toast-dot');
+    dot.style.background = kind === 'amber'
+      ? 'var(--amber)'
+      : (kind === 'accent' ? 'var(--accent)' : 'var(--seaglass)');
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+  }
+  function openCounter(){ toast('Opening 142 Oak St', 'seaglass'); }
+  function review(){ toast('Here is the reply I wrote. Your call.', 'seaglass'); }
+  function connect(){ toast('Calling 88 Linden now', 'accent'); }
+  function openMarcus(){ toast('Wrote a check-in note for Marcus', 'amber'); }
+  function openCrestview(){ toast('Crestview went quiet. Opening it.', 'amber'); }
+</script>
+</body>
+</html>

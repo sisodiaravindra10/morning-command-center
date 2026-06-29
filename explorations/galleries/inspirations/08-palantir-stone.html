@@ -1,0 +1,384 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leo - Premium Chrome Sphere</title>
+<style>
+  :root{
+    --ink:#0b0b0d;
+    --grey-1:#efefef;
+    --grey-2:#e7e7e9;
+    --grey-3:#dadadc;
+    --tile:#f1f1f2;
+    --tile-line:#dcdcde;
+    --sub:#8a8a90;
+    --label:#a7a7ad;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:'Space Grotesk','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    background:#d9d9db;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:34px 16px 48px;
+    gap:22px;
+  }
+
+  .caption{
+    font-family:'Space Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:#76767c;
+    font-weight:500;
+  }
+
+  /* ===== iPhone frame ===== */
+  .phone{
+    position:relative;
+    width:390px;
+    max-width:calc(100vw - 28px);
+    aspect-ratio:390/844;
+    border-radius:56px;
+    background:#0a0a0c;
+    padding:11px;
+    box-shadow:
+      0 0 0 2px #0a0a0c,
+      0 1px 0 3px #2b2b2e,
+      0 28px 60px -18px rgba(0,0,0,.55),
+      0 8px 22px -10px rgba(0,0,0,.4);
+  }
+  .screen{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:46px;
+    background:var(--grey-1);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* notch */
+  .notch{
+    position:absolute;
+    top:9px;left:50%;
+    transform:translateX(-50%);
+    width:118px;height:30px;
+    background:#0a0a0c;
+    border-radius:16px;
+    z-index:30;
+  }
+
+  /* status bar */
+  .statusbar{
+    position:relative;
+    z-index:20;
+    height:50px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 26px;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.02em;
+    color:#0b0b0d;
+  }
+  .statusbar .time{font-variant-numeric:tabular-nums;}
+  .statusbar .icons{display:flex;align-items:center;gap:6px;}
+  .statusbar svg{display:block;}
+
+  /* ===== content ===== */
+  .content{
+    position:relative;
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:6px 22px 22px;
+    overflow:hidden;
+  }
+
+  .brand{
+    font-family:'Space Mono',ui-monospace,monospace;
+    font-size:10.5px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:#9b9ba1;
+    font-weight:500;
+    text-align:center;
+    margin-top:2px;
+  }
+
+  h1{
+    font-family:'Space Grotesk','Inter',sans-serif;
+    font-size:27px;
+    line-height:1.12;
+    font-weight:600;
+    letter-spacing:-.02em;
+    text-align:center;
+    color:#0c0c0f;
+    margin-top:14px;
+    max-width:280px;
+  }
+  .subtitle{
+    font-family:'Inter','Space Grotesk',sans-serif;
+    font-size:13px;
+    line-height:1.42;
+    font-weight:400;
+    color:#9a9aa0;
+    text-align:center;
+    margin-top:11px;
+    max-width:255px;
+    letter-spacing:.01em;
+  }
+
+  /* ===== sphere stage ===== */
+  .stage{
+    position:relative;
+    width:100%;
+    flex:1 1 auto;
+    min-height:204px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:6px 0 4px;
+  }
+
+  /* shared sphere base */
+  .sphere{
+    position:relative;
+    border-radius:50%;
+    background:
+      /* tiny crisp top highlight */
+      radial-gradient(circle at 36% 22%, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 12%),
+      /* broad soft top light */
+      radial-gradient(circle at 40% 26%, rgba(255,255,255,.85) 0%, rgba(255,255,255,0) 30%),
+      /* warm horizon reflection band */
+      linear-gradient(176deg,
+        #cfd2d6 0%,
+        #eef0f2 16%,
+        #ffffff 24%,
+        #b9bdc2 38%,
+        #6f747b 50%,
+        #cfd4d9 60%,
+        #f3f5f7 67%,
+        #9a9ea4 80%,
+        #3a3d42 100%),
+      #8d9197;
+    box-shadow:
+      inset 0 6px 14px rgba(255,255,255,.55),
+      inset 0 -24px 34px rgba(0,0,0,.55),
+      inset 10px 0 22px rgba(0,0,0,.22),
+      inset -10px 0 22px rgba(0,0,0,.22);
+    overflow:hidden;
+    isolation:isolate;
+  }
+  /* conic metallic streak overlay */
+  .sphere::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:
+      conic-gradient(from 210deg at 52% 46%,
+        rgba(255,255,255,0) 0deg,
+        rgba(255,255,255,.32) 26deg,
+        rgba(0,0,0,.18) 70deg,
+        rgba(255,255,255,.10) 120deg,
+        rgba(0,0,0,.28) 176deg,
+        rgba(255,255,255,.26) 230deg,
+        rgba(0,0,0,.20) 286deg,
+        rgba(255,255,255,0) 360deg);
+    mix-blend-mode:soft-light;
+    opacity:.85;
+    animation:spin 26s linear infinite;
+  }
+  /* drifting bright glint + reflected "room" */
+  .sphere::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 34% 20%, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 16%),
+      radial-gradient(ellipse 60% 30% at 62% 70%, rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 60%),
+      linear-gradient(180deg, rgba(150,170,190,.18) 0%, rgba(150,170,190,0) 30%);
+    animation:glint 14s ease-in-out infinite;
+  }
+
+  .sphere-hero{
+    width:212px;height:212px;
+    flex:0 0 auto;
+    z-index:5;
+  }
+  .sphere-hero .room{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    object-fit:cover;
+    opacity:.16;
+    filter:contrast(1.15) brightness(1.05);
+    mix-blend-mode:screen;
+    transform:scale(1.05);
+    z-index:1;
+  }
+
+  /* side peeking spheres */
+  .sphere-side{
+    position:absolute;
+    top:50%;
+    width:118px;height:118px;
+    filter:blur(1.1px);
+    opacity:.92;
+    z-index:1;
+  }
+  .sphere-left{left:-66px;transform:translateY(-50%);}
+  .sphere-right{right:-66px;transform:translateY(-50%);}
+
+  /* contact shadow under hero */
+  .stage::after{
+    content:"";
+    position:absolute;
+    bottom:14px;left:50%;
+    width:150px;height:24px;
+    transform:translateX(-50%);
+    background:radial-gradient(ellipse at center, rgba(0,0,0,.22) 0%, rgba(0,0,0,0) 70%);
+    border-radius:50%;
+    z-index:0;
+  }
+
+  /* ===== feature tiles ===== */
+  .tiles{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+    width:100%;
+    margin-top:4px;
+  }
+  .tile{
+    background:var(--tile);
+    border:1px solid var(--tile-line);
+    border-radius:18px;
+    padding:14px 10px 13px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    cursor:pointer;
+    transition:transform .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .tile:hover{background:#ebebec;border-color:#cfcfd2;}
+  .tile:active{transform:scale(.965);}
+  .tile .ic{
+    width:34px;height:34px;
+    border-radius:11px;
+    background:#fff;
+    border:1px solid #e3e3e5;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:9px;
+    color:#1a1a1d;
+  }
+  .tile .ic svg{width:18px;height:18px;display:block;}
+  .tile span{
+    font-family:'Inter','Space Grotesk',sans-serif;
+    font-size:11px;
+    line-height:1.22;
+    font-weight:500;
+    color:#34343a;
+    letter-spacing:.005em;
+  }
+
+  /* ===== buy button ===== */
+  .buy{
+    width:100%;
+    margin-top:13px;
+    height:54px;
+    border:none;
+    border-radius:18px;
+    background:#0b0b0d;
+    color:#fff;
+    font-family:'Space Grotesk','Inter',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:transform .16s ease, background .16s ease;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .buy:hover{background:#1c1c20;}
+  .buy:active{transform:scale(.98);}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes glint{
+    0%,100%{transform:translate(0,0) scale(1);opacity:1;}
+    50%{transform:translate(3px,2px) scale(1.015);opacity:.92;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .sphere::before,.sphere::after{animation:none;}
+  }
+</style>
+
+<div class="caption">Inspiration 08 - Premium Chrome Sphere</div>
+
+<div class="phone">
+  <div class="screen">
+    <div class="notch"></div>
+
+    <div class="statusbar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#0b0b0d"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1" fill="#0b0b0d"/><rect x="9" y="2.5" width="3" height="9.5" rx="1" fill="#0b0b0d"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#0b0b0d"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.6c2.1 0 4 .8 5.5 2.1l1.2-1.4C13 1.6 10.6.7 8 .7S3 1.6 1.3 3.3l1.2 1.4C4 3.4 5.9 2.6 8 2.6Z" fill="#0b0b0d"/><path d="M8 6.1c1.2 0 2.3.45 3.1 1.2l1.2-1.35C11.2 4.85 9.7 4.3 8 4.3s-3.2.55-4.3 1.65L4.9 7.3C5.7 6.55 6.8 6.1 8 6.1Z" fill="#0b0b0d"/><path d="M8 9.4 9.7 7.6C9.25 7.1 8.65 6.8 8 6.8s-1.25.3-1.7.8L8 9.4Z" fill="#0b0b0d"/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3.2" stroke="#0b0b0d" stroke-opacity=".4" stroke-width="1"/><rect x="2.6" y="2.6" width="17" height="7.8" rx="2" fill="#0b0b0d"/><rect x="23.2" y="4.3" width="1.8" height="4.4" rx="0.9" fill="#0b0b0d" fill-opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <div class="content">
+      <div class="brand">Leo</div>
+
+      <h1>A calm front door to a hundred agents</h1>
+      <p class="subtitle">Leo works overnight and hands you the three decisions that need a human.</p>
+
+      <div class="stage">
+        <div class="sphere sphere-side sphere-left"></div>
+
+        <div class="sphere sphere-hero">
+          <img class="room" alt="" src="https://picsum.photos/id/1048/300/300">
+        </div>
+
+        <div class="sphere sphere-side sphere-right"></div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile" role="button" tabindex="0">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-9 8.32 8.5 8.5 0 0 1-3.6-.82L3 21l1.9-4.1A8.38 8.38 0 0 1 4 12.5 8.5 8.5 0 0 1 12.5 4 8.38 8.38 0 0 1 21 11.5Z"/></svg>
+          </span>
+          <span>Reviewed<br>before send</span>
+        </div>
+
+        <div class="tile" role="button" tabindex="0">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </span>
+          <span>Calibrated<br>confidence</span>
+        </div>
+
+        <div class="tile" role="button" tabindex="0">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><path d="M4 20 21 3"/><polyline points="21 16 21 21 16 21"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+          </span>
+          <span>Silence<br>by default</span>
+        </div>
+      </div>
+
+      <button class="buy">Open the morning brief</button>
+    </div>
+  </div>
+</div>

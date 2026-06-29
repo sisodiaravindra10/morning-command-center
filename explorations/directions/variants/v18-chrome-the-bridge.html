@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en" class="nojs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo - Morning Command Center - V18 The Bridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm paper surface, tinted, never pure white */
+    --paper:    oklch(0.974 0.012 84);
+    --paper-2:  oklch(0.960 0.013 80);
+    --card:     oklch(0.992 0.005 86);
+    --sunken:   oklch(0.951 0.012 80);
+    --hair:     oklch(0.30 0.02 60 / 0.11);
+    --hair-2:   oklch(0.30 0.02 60 / 0.055);
+
+    /* ink, warm near-black, never pure */
+    --ink:   oklch(0.250 0.02 60);
+    --body:  oklch(0.450 0.016 62);
+    --muted: oklch(0.590 0.012 65);
+    --faint: oklch(0.700 0.010 68);
+
+    /* confidence-state hues (meaning, not decoration) */
+    --confident: oklch(0.55 0.10 168);  /* handled / yes / clear */
+    --uncertain: oklch(0.63 0.12 72);   /* watch / drifting */
+    --urgent:    oklch(0.55 0.16 28);    /* due / time-boxed */
+
+    /* the bridge connective hue: a warm bronze, the "intro" color */
+    --bridge:    oklch(0.56 0.10 56);
+    --bridge-ink:oklch(0.42 0.10 52);
+
+    /* one primary interactive accent */
+    --accent:    oklch(0.30 0.03 262);
+    --accent-ink:oklch(0.984 0.006 86);
+
+    /* brushed-metal material (the refined chrome accent, system only) */
+    --metal-hi:  oklch(0.93 0.006 250);
+    --metal-mid: oklch(0.80 0.008 252);
+    --metal-lo:  oklch(0.64 0.010 255);
+
+    --shadow:    0 18px 44px -22px oklch(0.45 0.04 60 / 0.34);
+    --shadow-sm: 0 7px 20px -13px oklch(0.45 0.04 60 / 0.30);
+
+    --r-card:20px; --r-chip:9px; --r-btn:13px;
+    --ease: cubic-bezier(.16,1,.3,1);
+
+    --serif:'Newsreader', Georgia, serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.97 0.018 88) 0%, transparent 56%),
+      var(--paper-2);
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:18px; padding:34px 16px 46px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .variant-caption{
+    font-family:var(--mono);
+    font-size:10.5px; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ---- phone frame (chrome lives here, not on content) ---- */
+  .phone{
+    width:393px; max-width:100%;
+    height:838px;
+    border-radius:52px;
+    background:var(--paper);
+    position:relative;
+    padding:11px;
+    box-shadow:
+      0 2px 0 oklch(1 0 0 / 0.6) inset,
+      0 50px 92px -42px oklch(0.40 0.04 60 / 0.5),
+      0 0 0 1px oklch(0.30 0.02 60 / 0.10);
+  }
+  .phone::after{ /* side button hint, brushed metal sliver */
+    content:""; position:absolute; right:-2px; top:172px;
+    width:3px; height:62px; border-radius:3px;
+    background:linear-gradient(180deg, var(--metal-hi), var(--metal-lo));
+  }
+  .screen{
+    position:relative; width:100%; height:100%;
+    border-radius:42px; overflow:hidden;
+    background:
+      radial-gradient(135% 64% at 50% -6%, oklch(0.986 0.012 88) 0%, transparent 50%),
+      var(--paper);
+    display:flex; flex-direction:column;
+  }
+  .notch{
+    position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:118px; height:30px; border-radius:18px;
+    background:oklch(0.20 0.02 60); z-index:60;
+  }
+
+  /* ---- status row ---- */
+  .status{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:15px 24px 0; font-family:var(--mono);
+    font-size:11px; color:var(--ink); letter-spacing:.02em; flex:0 0 auto;
+  }
+  .status .right{ display:flex; gap:6px; align-items:center; opacity:.82; }
+
+  /* ---- header: the brushed-metal Leo seal + the ledger whisper ---- */
+  .topbar{
+    flex:0 0 auto;
+    padding:14px 24px 0;
+    display:flex; align-items:center; gap:12px;
+  }
+  /* refined material accent: a small brushed-metal disc with a breathing core */
+  .seal{
+    position:relative; width:34px; height:34px; border-radius:50%;
+    flex:0 0 auto;
+    background:
+      conic-gradient(from 210deg,
+        var(--metal-hi) 0deg, var(--metal-lo) 70deg,
+        var(--metal-hi) 150deg, var(--metal-mid) 210deg,
+        var(--metal-lo) 280deg, var(--metal-hi) 360deg);
+    box-shadow:
+      0 2px 5px -2px oklch(0.40 0.03 255 / 0.5),
+      0 1px 0 oklch(1 0 0 / 0.6) inset,
+      0 0 0 1px oklch(0.30 0.02 60 / 0.10);
+  }
+  .seal::after{ /* breathing core, confidence color */
+    content:""; position:absolute; top:50%; left:50%;
+    width:9px; height:9px; border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:var(--confident);
+    box-shadow:0 0 0 4px oklch(0.55 0.10 168 / 0.18), 0 1px 1px oklch(1 0 0 / 0.7) inset;
+    animation:breathe 4.4s var(--ease) infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); opacity:.95; }
+    50%{ transform:translate(-50%,-50%) scale(1.22); opacity:.7; }
+  }
+  .topbar .lede-wrap{ display:flex; flex-direction:column; gap:1px; }
+  .topbar .eyebrow{
+    font-family:var(--mono); font-size:10px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--muted);
+  }
+  .topbar .greet{
+    font-family:var(--serif); font-weight:400; font-size:17px;
+    color:var(--ink); line-height:1.1;
+  }
+
+  /* scrolling body */
+  .body{
+    flex:1 1 auto; min-height:0; overflow-y:auto;
+    padding:14px 24px 6px;
+    display:flex; flex-direction:column; gap:16px;
+    scrollbar-width:thin;
+  }
+  .body::-webkit-scrollbar{ width:0; }
+
+  /* triage rail: the 3 things that need her, terse, the bridge is hero so these stay quiet */
+  .rail-label{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--faint);
+    display:flex; align-items:center; gap:9px;
+  }
+  .rail-label::after{ content:""; flex:1; height:1px; background:var(--hair-2); }
+
+  .rail{ display:flex; flex-direction:column; }
+  .rail-item{
+    display:flex; align-items:flex-start; gap:11px;
+    padding:11px 2px;
+    border-top:1px solid var(--hair-2);
+    text-align:left;
+  }
+  .rail-item:first-child{ border-top:none; }
+  .rail-dot{
+    width:8px; height:8px; border-radius:50%; flex:0 0 auto; margin-top:5px;
+  }
+  .rail-dot.due{   background:var(--urgent);    box-shadow:0 0 0 3px oklch(0.55 0.16 28 / 0.13); }
+  .rail-dot.fresh{ background:var(--confident);  box-shadow:0 0 0 3px oklch(0.55 0.10 168 / 0.13); }
+  .rail-dot.watch{ background:var(--uncertain);  box-shadow:0 0 0 3px oklch(0.63 0.12 72 / 0.13); }
+  .rail-main{ flex:1; min-width:0; }
+  .rail-title{
+    font-family:var(--sans); font-size:14px; font-weight:500; color:var(--ink);
+    line-height:1.3;
+  }
+  .rail-sub{
+    font-family:var(--sans); font-size:12px; color:var(--body);
+    line-height:1.4; margin-top:2px;
+  }
+  .rail-when{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.06em;
+    color:var(--muted); flex:0 0 auto; margin-top:4px; text-align:right;
+    white-space:nowrap;
+  }
+
+  /* ====== THE BRIDGE: centerpiece pane ====== */
+  .bridge-pane{
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:var(--r-card);
+    box-shadow:var(--shadow-sm);
+    padding:18px 18px 16px;
+    display:flex; flex-direction:column;
+  }
+  .bridge-head{
+    display:flex; align-items:center; gap:9px;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--bridge-ink);
+  }
+  .bridge-head .b-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--bridge);
+    box-shadow:0 0 0 3px oklch(0.56 0.10 56 / 0.16);
+  }
+  .bridge-head .b-tag{
+    margin-left:auto; font-family:var(--mono); font-size:9px; letter-spacing:.12em;
+    color:var(--muted); padding:3px 8px; border-radius:6px;
+    border:1px solid var(--hair); background:var(--paper);
+    text-transform:none;
+  }
+  .bridge-lede{
+    font-family:var(--serif); font-weight:400; font-size:23px; line-height:1.22;
+    letter-spacing:-0.01em; color:var(--ink); margin-top:11px;
+  }
+  .bridge-lede b{ font-weight:600; }
+
+  /* the drawing stage */
+  .stage{ position:relative; height:152px; margin-top:6px; }
+  .stage svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .arc{
+    fill:none; stroke:var(--bridge); stroke-width:1.6; stroke-linecap:round;
+    stroke-dasharray:300; stroke-dashoffset:300;
+    transition:stroke-dashoffset 1.5s var(--ease);
+  }
+  .drawn .arc{ stroke-dashoffset:0; }
+  /* a faint ghost arc so the path reads even before it draws */
+  .arc-ghost{
+    fill:none; stroke:var(--hair); stroke-width:1.2; stroke-dasharray:3 5;
+  }
+  .why{
+    position:absolute; left:50%; top:6px; transform:translateX(-50%) translateY(4px);
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.02em;
+    color:var(--bridge-ink); text-align:center; width:200px; line-height:1.4;
+    opacity:0; transition:opacity .55s var(--ease) 1.0s, transform .55s var(--ease) 1.0s;
+  }
+  .drawn .why{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* the two people, with brushed-metal node rings (the chrome material) */
+  .person{
+    position:absolute; bottom:0; display:flex; flex-direction:column;
+    align-items:center; gap:7px; width:118px;
+  }
+  .person.l{ left:-4px; }
+  .person.r{ right:-4px; }
+  .node{
+    position:relative; width:58px; height:58px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    /* brushed-metal ring framing a tinted disc */
+    background:
+      conic-gradient(from 200deg,
+        var(--metal-hi) 0deg, var(--metal-lo) 80deg,
+        var(--metal-hi) 160deg, var(--metal-mid) 230deg,
+        var(--metal-lo) 300deg, var(--metal-hi) 360deg);
+    box-shadow:
+      0 4px 10px -5px oklch(0.40 0.03 255 / 0.45),
+      0 1px 0 oklch(1 0 0 / 0.6) inset,
+      0 0 0 1px oklch(0.30 0.02 60 / 0.10);
+  }
+  .node .face{
+    width:44px; height:44px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-weight:500; font-size:18px; color:var(--accent-ink);
+  }
+  .node.reyes .face{ background:linear-gradient(140deg, oklch(0.58 0.10 40), oklch(0.46 0.10 30)); }
+  .node.tan   .face{ background:linear-gradient(140deg, oklch(0.52 0.09 220), oklch(0.42 0.10 250)); }
+  /* a ring pulse confirms a "yes" lands on this node */
+  .node::after{
+    content:""; position:absolute; inset:-3px; border-radius:50%;
+    border:1.5px solid var(--confident); opacity:0; transform:scale(.96);
+  }
+  .person.said-yes .node::after{
+    animation:ring .7s var(--ease) forwards;
+  }
+  @keyframes ring{
+    0%{ opacity:.0; transform:scale(.92); }
+    35%{ opacity:.9; }
+    100%{ opacity:0; transform:scale(1.18); }
+  }
+  .person .nm{
+    font-family:var(--sans); font-size:12.5px; font-weight:500; color:var(--ink);
+    text-align:center; line-height:1.15;
+  }
+  .person .rl{
+    font-family:var(--mono); font-size:9px; letter-spacing:.02em; color:var(--muted);
+    text-align:center; line-height:1.3;
+  }
+
+  /* Leo's drafted intro, in Leo's serif voice */
+  .intro{
+    margin-top:8px; padding:13px 14px;
+    background:var(--sunken);
+    border:1px solid var(--hair-2);
+    border-radius:14px;
+  }
+  .intro .lbl{
+    font-family:var(--mono); font-size:9px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:6px;
+  }
+  .intro p{
+    font-family:var(--serif); font-style:italic; font-size:14.5px; line-height:1.5;
+    color:var(--ink);
+  }
+
+  /* consent ladder: two gates that resolve to yes */
+  .gates{ display:flex; gap:10px; margin-top:13px; }
+  .gate{
+    flex:1; padding:11px 10px; border-radius:12px;
+    border:1px solid var(--hair); background:var(--paper);
+    text-align:center;
+    transition:border-color .5s var(--ease), background .5s var(--ease);
+  }
+  .gate .g-nm{ font-family:var(--sans); font-size:12.5px; font-weight:500; color:var(--ink); }
+  .gate .g-st{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.02em;
+    color:var(--muted); margin-top:5px;
+    display:flex; align-items:center; justify-content:center; gap:5px;
+  }
+  .gate .g-st .pip{
+    width:6px; height:6px; border-radius:50%; background:var(--faint);
+    transition:background .4s var(--ease);
+  }
+  .gate.invited .g-st{ color:var(--bridge-ink); }
+  .gate.invited .g-st .pip{ background:var(--bridge); }
+  .gate.yes{
+    border-color:oklch(0.55 0.10 168 / 0.45);
+    background:oklch(0.55 0.10 168 / 0.07);
+  }
+  .gate.yes .g-st{ color:var(--confident); }
+  .gate.yes .g-st .pip{ background:var(--confident); }
+
+  /* the room opens (transform/opacity only, no layout animation) */
+  .opened{
+    margin-top:13px; text-align:center;
+    font-family:var(--serif); font-size:15px; line-height:1.4; color:var(--confident);
+    opacity:0; transform:translateY(8px);
+    visibility:hidden;
+    transition:opacity .5s var(--ease), transform .5s var(--ease), visibility 0s linear .5s;
+  }
+  .opened.show{ opacity:1; transform:translateY(0); visibility:visible; transition:opacity .5s var(--ease), transform .5s var(--ease); }
+  .opened span{ display:block; font-family:var(--mono); font-size:9.5px; letter-spacing:.06em;
+    color:var(--muted); margin-top:5px; }
+
+  /* actions */
+  .acts{ display:flex; gap:9px; margin-top:15px; }
+  .btn{
+    border-radius:var(--r-btn); border:none; cursor:pointer;
+    font-family:var(--sans); font-size:14.5px; font-weight:500;
+    min-height:48px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform .2s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), opacity .3s var(--ease);
+  }
+  .btn:active{ transform:translateY(1px); }
+  .btn-primary{
+    flex:1;
+    background:var(--accent); color:var(--accent-ink);
+    box-shadow:0 10px 22px -12px oklch(0.30 0.03 262 / 0.7);
+  }
+  .btn-primary:hover{ background:oklch(0.34 0.035 262); }
+  .btn-primary:focus-visible{ outline:none; box-shadow:0 10px 22px -12px oklch(0.30 0.03 262 / 0.7), 0 0 0 3px oklch(0.50 0.10 262 / 0.4); }
+  .btn-primary[disabled]{ opacity:.55; cursor:default; box-shadow:none; }
+  .btn-ghost{
+    flex:0 0 auto; padding:0 16px;
+    background:transparent; color:var(--body);
+    border:1px solid var(--hair);
+    font-size:13px; font-weight:450; min-height:48px;
+  }
+  .btn-ghost:hover{ color:var(--ink); border-color:oklch(0.30 0.02 60 / 0.18); }
+  .btn-ghost:focus-visible{ outline:none; box-shadow:0 0 0 3px oklch(0.50 0.10 262 / 0.34); border-radius:var(--r-btn); }
+
+  /* ---- quiet edge: calm signal + ledger ---- */
+  .quiet-edge{
+    flex:0 0 auto;
+    padding:11px 24px 0;
+    border-top:1px solid var(--hair-2);
+  }
+  .calm-signal{
+    display:flex; align-items:flex-start; gap:10px;
+    font-size:12.5px; color:var(--body); line-height:1.4;
+  }
+  .calm-signal .cdot{
+    width:7px; height:7px; border-radius:50%; flex:0 0 auto; margin-top:4px;
+    background:var(--uncertain);
+    box-shadow:0 0 0 3px oklch(0.63 0.12 72 / 0.13);
+  }
+  .calm-signal .cname{ color:var(--ink); font-weight:500; }
+  .ledger{
+    margin-top:8px; padding-bottom:14px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.03em;
+    color:var(--muted);
+  }
+  .ledger b{ color:var(--body); font-weight:500; }
+
+  @media (prefers-reduced-motion: reduce){
+    .seal::after{ animation:none; }
+    .arc, .why, .gate, .opened, .node::after{ transition:none; animation:none; }
+    .arc{ stroke-dashoffset:0; }
+    .opened.show{ transform:none; }
+    *{ transition-duration:.001ms !important; }
+  }
+
+  /* content visible by default, before JS boots */
+  html.nojs .arc{ stroke-dashoffset:0; }
+  html.nojs .why{ opacity:1; transform:translateX(-50%); }
+</style>
+</head>
+<body>
+  <div class="variant-caption">V18 PREMIUM MATERIAL x THE BRIDGE</div>
+
+  <div class="phone">
+    <div class="notch" aria-hidden="true"></div>
+    <div class="screen">
+
+      <div class="status">
+        <span>7:14</span>
+        <span class="right"><span>5G</span><span>87%</span></span>
+      </div>
+
+      <div class="topbar">
+        <span class="seal" aria-hidden="true"></span>
+        <div class="lede-wrap">
+          <span class="eyebrow">Today</span>
+          <span class="greet">Good morning, Dana.</span>
+        </div>
+      </div>
+
+      <main class="body">
+
+        <!-- triage rail: the 3 things that need her, terse on purpose -->
+        <div>
+          <div class="rail-label">Three things need you</div>
+          <div class="rail">
+            <div class="rail-item">
+              <span class="rail-dot due" aria-hidden="true"></span>
+              <div class="rail-main">
+                <div class="rail-title">A reply to the 142 Oak St offer is written and waiting</div>
+                <div class="rail-sub">It holds your full asking price and closes in 18 days. I will not send it until you say so.</div>
+              </div>
+              <span class="rail-when">by 10:00</span>
+            </div>
+            <div class="rail-item">
+              <span class="rail-dot fresh" aria-hidden="true"></span>
+              <div class="rail-main">
+                <div class="rail-title">Someone is looking at your 88 Linden listing right now</div>
+                <div class="rail-sub">Their loan is already approved. Reaching out in the next few minutes works best.</div>
+              </div>
+              <span class="rail-when">reach out now</span>
+            </div>
+            <div class="rail-item">
+              <span class="rail-dot watch" aria-hidden="true"></span>
+              <div class="rail-main">
+                <div class="rail-title">A buyer working with Marcus has stopped replying</div>
+                <div class="rail-sub">No reply in four days. A check-in from you, not Marcus, would land better.</div>
+              </div>
+              <span class="rail-when">teammate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE BRIDGE: the centerpiece -->
+        <section class="bridge-pane" aria-labelledby="bridge-lede">
+          <div class="bridge-head">
+            <span class="b-dot" aria-hidden="true"></span>
+            An introduction worth making
+            <span class="b-tag">little to lose, a lot to gain</span>
+          </div>
+
+          <h2 class="bridge-lede" id="bridge-lede">Two of your people should <b>meet</b>.</h2>
+
+          <div class="stage" id="stage">
+            <svg viewBox="0 0 320 150" aria-hidden="true" preserveAspectRatio="none">
+              <path class="arc-ghost" d="M44 132 Q160 6 276 132" />
+              <path class="arc" d="M44 132 Q160 6 276 132" />
+            </svg>
+            <div class="why">Both want a home in Cedar Park: one selling, one buying</div>
+
+            <div class="person l" id="pReyes">
+              <span class="node reyes" aria-hidden="true"><span class="face">R</span></span>
+              <div class="nm">The Reyes family</div>
+              <div class="rl">past clients, ready to sell</div>
+            </div>
+            <div class="person r" id="pTan">
+              <span class="node tan" aria-hidden="true"><span class="face">T</span></span>
+              <div class="nm">The Tan family</div>
+              <div class="rl">buyers, looking for four months</div>
+            </div>
+          </div>
+
+          <div class="intro">
+            <div class="lbl">A message I wrote for you</div>
+            <p>"You both have your eye on Cedar Park, one selling and one buying. I will only put you in touch if you both say yes."</p>
+          </div>
+
+          <div class="gates" aria-live="polite">
+            <div class="gate" id="g1">
+              <div class="g-nm">The Reyeses</div>
+              <div class="g-st"><span class="pip" aria-hidden="true"></span><span class="g-txt">not asked yet</span></div>
+            </div>
+            <div class="gate" id="g2">
+              <div class="g-nm">The Tans</div>
+              <div class="g-st"><span class="pip" aria-hidden="true"></span><span class="g-txt">not asked yet</span></div>
+            </div>
+          </div>
+
+          <div class="opened" id="opened">
+            Both said yes. I have introduced them.
+            <span>Both families are yours. Nothing went out until they both agreed.</span>
+          </div>
+
+          <div class="acts">
+            <button class="btn btn-primary" id="send">Ask both if they want to connect</button>
+            <button class="btn btn-ghost" id="not">Not now</button>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- quiet edge -->
+      <div class="quiet-edge">
+        <div class="calm-signal">
+          <span class="cdot" aria-hidden="true"></span>
+          <span><span class="cname">Crestview</span> has been quiet lately. Nothing urgent yet. I am keeping an eye on it for you.</span>
+        </div>
+        <div class="ledger"><b>I took care of 47 things overnight.</b> None needed to wake you.</div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  root.classList.remove('nojs');
+
+  var stage  = document.getElementById('stage');
+  var send   = document.getElementById('send');
+  var notBtn = document.getElementById('not');
+  var g1 = document.getElementById('g1'), g2 = document.getElementById('g2');
+  var pR = document.getElementById('pReyes'), pT = document.getElementById('pTan');
+  var opened = document.getElementById('opened');
+  var timers = [];
+
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+
+  function setStatus(gate, txt){ gate.querySelector('.g-txt').textContent = txt; }
+
+  // draw the arc: remove then re-add to retrigger the stroke transition
+  function draw(){
+    stage.classList.remove('drawn');
+    void stage.offsetWidth;
+    stage.classList.add('drawn');
+  }
+
+  function reset(){
+    clearTimers();
+    [g1, g2].forEach(function(g){ g.className = 'gate'; });
+    setStatus(g1, 'not asked yet');
+    setStatus(g2, 'not asked yet');
+    pR.classList.remove('said-yes');
+    pT.classList.remove('said-yes');
+    opened.classList.remove('show');
+    send.textContent = 'Ask both if they want to connect';
+    send.disabled = false;
+    draw();
+  }
+
+  send.addEventListener('click', function(){
+    if(send.disabled) return;
+    // both invited at once: the consent ladder begins
+    g1.classList.add('invited'); g2.classList.add('invited');
+    setStatus(g1, 'asked, waiting to hear back');
+    setStatus(g2, 'asked, waiting to hear back');
+    send.textContent = 'Both have been asked';
+    send.disabled = true;
+
+    // gates resolve to yes, one then the other, with the node ring pulse
+    later(function(){
+      g1.classList.add('yes'); setStatus(g1, 'said yes');
+      pR.classList.add('said-yes');
+    }, 950);
+    later(function(){
+      g2.classList.add('yes'); setStatus(g2, 'said yes');
+      pT.classList.add('said-yes');
+    }, 1750);
+    later(function(){ opened.classList.add('show'); }, 2300);
+  });
+
+  notBtn.addEventListener('click', reset);
+
+  // boot: draw the arc once on load
+  draw();
+})();
+</script>
+</body>
+</html>

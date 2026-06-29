@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · The Spoken Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.80 0.014 255); --muted:oklch(0.50 0.02 260); --soft:oklch(0.40 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+html,body{height:100%}
+body{background:radial-gradient(130% 90% at 50% 0%, oklch(0.26 0.05 60), oklch(0.14 0.03 280) 55%, oklch(0.09 0.02 270)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:linear-gradient(180deg, oklch(0.2 0.04 60) 0%, oklch(0.155 0.022 270) 42%); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:62px 26px 26px}
+
+/* big voice orb + amplitude ring */
+.voice{display:flex;flex-direction:column;align-items:center;gap:14px}
+.orb-wrap{position:relative;width:78px;height:78px;display:flex;align-items:center;justify-content:center}
+.orb{width:48px;height:48px;border-radius:50%;background:radial-gradient(60% 60% at 34% 30%, oklch(0.95 0.07 90), oklch(0.7 0.16 250) 46%, oklch(0.36 0.12 275));box-shadow:0 0 26px oklch(0.7 0.16 250 / .55)}
+.ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid oklch(0.7 0.16 250 / .4)}
+.speaking .orb{animation:amp 1.1s var(--exp) infinite}
+.speaking .ring{animation:ring 1.8s var(--exp) infinite}
+@keyframes amp{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.14);filter:brightness(1.18)}}
+@keyframes ring{0%{transform:scale(.85);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.bars{display:flex;align-items:center;gap:3px;height:18px}
+.bars i{width:3px;height:6px;border-radius:2px;background:oklch(0.7 0.16 250)}
+.speaking .bars i{animation:bar .9s var(--exp) infinite}
+.bars i:nth-child(2){animation-delay:.1s}.bars i:nth-child(3){animation-delay:.25s}.bars i:nth-child(4){animation-delay:.15s}.bars i:nth-child(5){animation-delay:.32s}.bars i:nth-child(6){animation-delay:.07s}.bars i:nth-child(7){animation-delay:.22s}
+@keyframes bar{0%,100%{height:6px}50%{height:17px}}
+.label{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* karaoke transcript */
+.transcript{font-family:var(--serif);font-size:23px;line-height:1.42;margin-top:24px;min-height:170px}
+.transcript .w{color:var(--soft);transition:color .35s ease, opacity .35s ease}
+.transcript .w.on{color:var(--ink)}
+.transcript .w.dim{opacity:.4}
+
+/* item cards */
+.items{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.item{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:14px 16px;opacity:.5;transform:translateY(6px) scale(.98);transition:opacity .5s var(--exp), transform .5s var(--exp), border-color .4s}
+.item.active{opacity:1;transform:none;border-color:var(--hair2);box-shadow:0 0 0 1px oklch(0.7 0.16 250 / .3), 0 14px 40px -18px rgba(0,0,0,.7)}
+.item.dimmed{opacity:.4}
+.item .it{display:flex;align-items:center;gap:9px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dc,var(--soft));flex:none}
+.item.urgent{--dc:var(--coral)} .item.uncertain{--dc:var(--uncertain)}
+.item .nm{font-family:var(--sans);font-size:15px;font-weight:600}
+.item .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--dc,var(--muted))}
+.item .sub{font-family:var(--sans);font-size:13px;color:var(--body);margin-top:5px}
+.acts{display:flex;gap:8px;margin-top:12px;max-height:0;overflow:hidden;transition:max-height .4s var(--exp)}
+.item.active .acts{max-height:50px}
+.acts button{flex:1;font-family:var(--sans);font-size:13px;font-weight:600;border-radius:10px;padding:9px;cursor:pointer;border:1px solid var(--hair2);background:transparent;color:var(--body)}
+.acts .bank{background:oklch(0.8 0.11 168 / .16);border-color:oklch(0.8 0.11 168 / .4);color:var(--confident)}
+.item.banked{opacity:.85} .item.banked .acts{max-height:0} .item.banked .nm::after{content:" · you'll act";font-family:var(--mono);font-size:10px;color:var(--confident);font-weight:400;letter-spacing:.04em}
+.item.deferred{opacity:.4} .item.deferred .acts{max-height:0} .item.deferred .nm::after{content:" · later";font-family:var(--mono);font-size:10px;color:var(--soft);font-weight:400}
+
+.controls{display:flex;gap:8px}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+.controls button:hover{color:var(--ink);background:oklch(0.96 0.01 250 / .12)}
+@media (prefers-reduced-motion: reduce){ .orb,.ring,.bars i{animation:none} }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · The Spoken Brief</div>
+<div class="phone"><div class="notch"></div><div class="screen" id="screen">
+  <div class="voice">
+    <div class="orb-wrap"><span class="ring"></span><span class="orb"></span></div>
+    <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="label" id="vlabel">Tap play · Leo will read your morning</div>
+  </div>
+  <div class="transcript" id="transcript"></div>
+  <div class="items">
+    <div class="item urgent" id="it-maple"><div class="it"><span class="dot"></span><span class="nm">Maplewood escrow</span><span class="tg">18h left</span></div><div class="sub">Inspection objection unanswered.</div><div class="acts"><button class="bank" data-bank>I'll act</button><button data-defer>Later</button></div></div>
+    <div class="item uncertain" id="it-crest"><div class="it"><span class="dot"></span><span class="nm">Crestview Ave</span><span class="tg">went quiet</span></div><div class="sub">No reply from the buyer's agent in 3 days.</div><div class="acts"><button class="bank" data-bank>I'll act</button><button data-defer>Later</button></div></div>
+  </div>
+</div></div>
+<div class="controls"><button id="play">▶ Play brief</button><button id="replay">↻ Replay</button></div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SEGS=[
+  {t:"Good morning, Dana. Six deals ran clean overnight. Two need you.", card:null},
+  {t:"First, Maplewood. The inspection objection is still unanswered, with eighteen hours left. I would respond this morning.", card:'it-maple'},
+  {t:"Second, Crestview just went quiet. No reply from the buyer's agent in three days.", card:'it-crest'},
+  {t:"That is your morning. The other forty-seven, I am handling.", card:null}
+];
+const screen=document.getElementById('screen'), tEl=document.getElementById('transcript'), vlabel=document.getElementById('vlabel');
+let timers=[];
+function clearAll(){ timers.forEach(t=>clearTimeout(t)); timers=[]; if(window.speechSynthesis)speechSynthesis.cancel(); }
+function reset(){ clearAll(); tEl.innerHTML=''; screen.classList.remove('speaking'); vlabel.textContent='Tap play · Leo will read your morning'; document.querySelectorAll('.item').forEach(i=>i.classList.remove('active','banked','deferred','dimmed')); }
+function play(){
+  reset(); screen.classList.add('speaking'); vlabel.textContent='Leo is reading your morning';
+  let delay=300;
+  SEGS.forEach((seg,si)=>{
+    timers.push(setTimeout(()=>{
+      // render this segment's words fresh
+      tEl.innerHTML = seg.t.split(' ').map(w=>`<span class="w">${w}</span>`).join(' ');
+      const words=[...tEl.querySelectorAll('.w')];
+      if(seg.card){ document.querySelectorAll('.item').forEach(i=>{ if(i.id!==seg.card && !i.classList.contains('banked') && !i.classList.contains('deferred')) i.classList.add('dimmed'); }); const cardEl=document.getElementById(seg.card); if(!cardEl.classList.contains('banked') && !cardEl.classList.contains('deferred')) cardEl.classList.add('active'); }
+      // optional real voice for live demo (silent in headless preview)
+      if(window.speechSynthesis && !reduce){ try{ const u=new SpeechSynthesisUtterance(seg.t); u.rate=1.02; u.pitch=1; speechSynthesis.speak(u); }catch(e){} }
+      // karaoke word highlight
+      words.forEach((w,wi)=>timers.push(setTimeout(()=>w.classList.add('on'), wi*165)));
+    }, delay));
+    delay += 700 + seg.t.split(' ').length*165;
+  });
+  timers.push(setTimeout(()=>{ screen.classList.remove('speaking'); vlabel.textContent='That is your morning'; },delay));
+}
+document.querySelectorAll('[data-bank]').forEach(b=>b.addEventListener('click',()=>b.closest('.item').classList.add('banked')));
+document.querySelectorAll('[data-defer]').forEach(b=>b.addEventListener('click',()=>b.closest('.item').classList.add('deferred')));
+document.getElementById('play').addEventListener('click',play);
+document.getElementById('replay').addEventListener('click',play);
+
+// a11y: make any click-bound non-button/non-link element keyboard operable
+(function(){
+  const sel='[onclick], .tab, .pill, .row, .card';
+  document.querySelectorAll(sel).forEach(el=>{
+    if(el.tagName==='BUTTON'||el.tagName==='A') return;
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  });
+})();
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  const el=e.target;
+  if(!el || !el.getAttribute) return;
+  const tag=el.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||el.isContentEditable) return;
+  if(tag==='BUTTON'||tag==='A') return;
+  if(el.getAttribute('role')!=='button') return;
+  e.preventDefault();
+  el.click();
+});
+
+setTimeout(play, 500);
+</script>
+</body>
+</html>

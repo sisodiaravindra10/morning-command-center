@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Interaction · Calm Sequence (Quiet Capital)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.80 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --on-coral:oklch(0.18 0.04 28);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:58px 28px 30px}
+.orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 11px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none;transition:box-shadow 1.5s ease, filter 1.5s ease}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.ember{box-shadow:0 0 4px oklch(0.64 0.17 250 / .3) !important;filter:saturate(.5) brightness(.7)}
+
+/* top: orb + arc + counter */
+.top{display:flex;align-items:center;gap:10px}
+.top .who{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.arc{margin-left:auto;display:flex;align-items:center;gap:10px}
+.arc .ct{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.arc svg{transform:rotate(-90deg)}
+.arc .prog{transition:stroke-dashoffset .7s var(--exp)}
+
+/* the single decision */
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative}
+.deck{position:relative}
+.decision{transition:opacity .5s var(--exp), transform .5s var(--exp)}
+.decision.leaving{opacity:0;transform:translateY(-22px) scale(.97)}
+.decision.entering{opacity:0;transform:translateY(18px)}
+.tagrow{display:flex;align-items:center;gap:9px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--st)}
+.decision.urgent{--st:var(--coral)} .decision.uncertain{--st:var(--uncertain)} .decision.confident{--st:var(--confident)}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--st)}
+.alt{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin-left:auto}
+.title{font-family:var(--serif);font-size:30px;line-height:1.12;letter-spacing:-.4px;margin-top:18px;color:var(--ink)}
+.why{font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--body);margin-top:16px}
+.rationale{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.5;color:var(--ink);margin-top:18px;padding-left:14px;border-left:1px solid var(--st)}
+.rationale .hedge{color:var(--uncertain)}
+.peek{margin-top:18px}
+.peek-btn{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:7px}
+.peek-btn .chev{transition:transform .35s var(--exp)}
+.peek.open .chev{transform:rotate(90deg)}
+.trace{max-height:0;overflow:hidden;transition:max-height .5s var(--exp)}
+.peek.open .trace{max-height:160px}
+.trace-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);padding:9px 0;border-top:1px solid var(--hair);margin-top:0}
+.trace-row:first-child{margin-top:12px}
+.trace-row .v{color:var(--body)}
+
+/* actions */
+.acts{display:flex;gap:10px;margin-top:auto;padding-top:24px}
+.btn{flex:1;height:52px;border-radius:15px;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s var(--exp)}
+.btn:active{transform:scale(.975)}
+.btn-p{background:var(--cobalt);color:var(--ink)} .btn-u{background:var(--coral);color:var(--on-coral)}
+.btn-g{background:transparent;color:var(--body);border:1px solid var(--hair2);flex:0 0 auto;padding:0 20px}
+
+/* clear state */
+.clear{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .7s var(--exp)}
+.clear.show{opacity:1}
+.clear .big{font-family:var(--serif);font-size:34px;letter-spacing:-.4px}
+.clear .sub{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--muted);margin-top:14px}
+
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){ .orb{animation:none} .decision,.trace,.arc .prog{transition:none} }
+</style>
+</head>
+<body>
+<div class="cap">Interaction · Calm Sequence · Quiet Capital</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="top">
+    <span class="orb" id="orb"></span><span class="who">Leo · this morning</span>
+    <span class="arc"><span class="ct" id="ct">1 of 3</span>
+      <svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="none" stroke="var(--hair2)" stroke-width="2"/><circle id="prog" class="prog" cx="13" cy="13" r="11" fill="none" stroke="var(--confident)" stroke-width="2" stroke-linecap="round" stroke-dasharray="69.1" stroke-dashoffset="69.1"/></svg>
+    </span>
+  </div>
+  <div class="stage">
+    <div class="deck" id="deck"></div>
+    <div class="clear" id="clear"><div class="big">You're clear.</div><div class="sub">Leo's watching the rest.</div></div>
+  </div>
+</div></div>
+<div class="controls"><button id="replay">↻ Replay the morning</button></div>
+<script>
+const ITEMS=[
+  {cls:'urgent',tag:'18h left',alt:'Your deal',title:'Maplewood escrow has an unanswered inspection objection.',why:'Deadline tomorrow 8:00a. Missing it lets the buyer walk with their deposit.',rationale:'I flagged this the moment the report came in. The repairs are minor; the clock is the risk.',trace:[['Source','Inspection report, p.4'],['Agent','Doc QA'],['Confidence','High']],primary:'Review and respond',kind:'u'},
+  {cls:'uncertain',tag:'Medium confidence',alt:'Your deal',title:'142 Oak St. Buyer countered $24k under ask.',why:'Leo drafted a counter but flagged a deadline it cannot verify.',rationale:'I\'d counter at $612k. <span class="hedge">But the buyer\'s agent hinted at a deadline I can\'t verify, so I held it.</span>',trace:[['Method','Negotiation Prep, 14 comps'],['Unknowns','2 flagged'],['Confidence','Medium']],primary:'Send Leo\'s counter',kind:'p'},
+  {cls:'confident',tag:'Confident',alt:'Team, Marcus',title:"Marcus's buyer is going quiet on Henderson.",why:'No logged contact in 3 days. The pattern usually precedes a drift.',rationale:'This is Marcus\'s deal, but a nudge from you now beats a save later.',trace:[['Source','Lead Qualification'],['Signal','4 views, 0 contact'],['Confidence','High']],primary:'Nudge Marcus',kind:'p'}
+];
+const C=69.1, deck=document.getElementById('deck');
+let i=0;
+function render(){
+  const it=ITEMS[i];
+  const el=document.createElement('div'); el.className='decision entering '+it.cls;
+  el.innerHTML=`<div class="tagrow"><span class="dot"></span><span class="tag">${it.tag}</span><span class="alt">${it.alt}</span></div>
+    <div class="title">${it.title}</div>
+    <p class="why">${it.why}</p>
+    <p class="rationale">${it.rationale}</p>
+    <div class="peek"><button class="peek-btn">How Leo knows this <span class="chev"><svg width="7" height="11" viewBox="0 0 8 13" fill="none"><path d="M1.5 1.5 6.5 6.5 1.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <div class="trace">${it.trace.map(([k,v])=>`<div class="trace-row"><span>${k}</span><span class="v">${v}</span></div>`).join('')}</div></div>
+    <div class="acts"><button class="btn btn-${it.kind}" data-act>${it.primary}</button><button class="btn btn-g" data-skip>Not now</button></div>`;
+  deck.innerHTML=''; deck.appendChild(el);
+  el.querySelector('.peek-btn').addEventListener('click',()=>el.querySelector('.peek').classList.toggle('open'));
+  el.querySelector('[data-act]').addEventListener('click',()=>advance());
+  el.querySelector('[data-skip]').addEventListener('click',()=>advance());
+  void el.offsetWidth; el.classList.remove('entering');
+  document.getElementById('ct').textContent=(i+1)+' of '+ITEMS.length;
+}
+function advance(){
+  const el=deck.querySelector('.decision'); if(!el)return;
+  el.classList.add('leaving');
+  i++;
+  document.getElementById('prog').style.strokeDashoffset = C*(1 - i/ITEMS.length);
+  setTimeout(()=>{
+    if(i>=ITEMS.length){ deck.innerHTML=''; document.getElementById('clear').classList.add('show'); document.getElementById('ct').textContent='done'; document.getElementById('orb').classList.add('ember'); }
+    else render();
+  }, 480);
+}
+function start(){ i=0; document.getElementById('clear').classList.remove('show'); document.getElementById('orb').classList.remove('ember'); document.getElementById('prog').style.strokeDashoffset=C; render(); }
+document.getElementById('replay').addEventListener('click',start);
+start();
+</script>
+</body>
+</html>

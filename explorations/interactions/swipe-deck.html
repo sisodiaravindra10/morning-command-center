@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Interaction · Swipe Deck (Daybook)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.97 0.013 90); --ink:oklch(0.23 0.02 60); --body:oklch(0.42 0.02 65); --muted:oklch(0.55 0.02 70); --soft:oklch(0.70 0.015 75);
+  --hair:oklch(0.23 0.02 60 / .10); --hair2:oklch(0.23 0.02 60 / .16);
+  --confident:oklch(0.52 0.13 165); --confident-bg:oklch(0.92 0.075 165);
+  --uncertain:oklch(0.58 0.14 70); --uncertain-bg:oklch(0.93 0.085 80);
+  --coral:oklch(0.58 0.18 30); --coral-bg:oklch(0.91 0.08 34); --ink-btn:oklch(0.22 0.02 60);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+  --spring:cubic-bezier(.34,1.56,.64,1); --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:oklch(0.89 0.02 80); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.5 0.03 70)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.16 0.01 60), 0 0 0 12px oklch(0.32 0.01 60), 0 40px 90px -22px oklch(0.3 0.03 60 / .5); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:oklch(0.16 0.01 60); border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:56px 22px 24px}
+.orb{width:22px;height:22px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.07 200), oklch(0.62 0.16 250) 44%, oklch(0.32 0.10 270));box-shadow:0 0 9px oklch(0.62 0.16 250 / .35);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.head{display:flex;align-items:center;gap:11px}
+.head .hi{font-family:var(--serif);font-size:21px}
+.head .chip{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--coral);background:var(--coral-bg);padding:5px 11px;border-radius:999px;transition:transform .3s var(--spring)}
+.head .chip.pop{transform:scale(1.18)}
+
+.deck{position:relative;flex:1;margin-top:18px}
+.swipe{position:absolute;left:0;right:0;top:0;background:var(--cbg);border-radius:26px;padding:18px;box-shadow:0 10px 34px -16px oklch(0.3 0.03 60 / .4);will-change:transform;touch-action:none;user-select:none}
+.swipe.urgent{--cbg:var(--coral-bg);--st:var(--coral)} .swipe.uncertain{--cbg:var(--uncertain-bg);--st:var(--uncertain)} .swipe.confident{--cbg:var(--confident-bg);--st:var(--confident)}
+.thumb{width:100%;height:128px;border-radius:18px;overflow:hidden;margin-bottom:14px}
+.s-top{display:flex;align-items:center;gap:8px}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px;color:var(--st);background:color-mix(in oklch,var(--st) 16%,transparent);display:inline-flex;align-items:center;gap:5px}
+.pill .d{width:5px;height:5px;border-radius:50%;background:var(--st)}
+.alt{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-left:auto}
+.swipe h3{font-family:var(--sans);font-size:21px;font-weight:600;letter-spacing:-.3px;line-height:1.22;margin-top:13px}
+.swipe .why{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--body);margin-top:9px}
+.swipe .leo{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--ink);margin-top:12px;opacity:.9}
+/* stamps */
+.stamp{position:absolute;top:26px;font-family:var(--sans);font-weight:700;font-size:24px;letter-spacing:.04em;padding:6px 14px;border-radius:12px;border:3px solid;opacity:0;transition:opacity .12s}
+.stamp.act{left:24px;color:var(--confident);border-color:var(--confident);transform:rotate(-14deg)}
+.stamp.later{right:24px;color:var(--uncertain);border-color:var(--uncertain);transform:rotate(14deg)}
+
+/* hint + actions */
+.hint{text-align:center;font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px;letter-spacing:.04em}
+.acts{display:flex;gap:12px;justify-content:center;margin-top:14px}
+.rnd{width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:oklch(1 0 0);box-shadow:0 6px 18px -8px oklch(0.3 0.03 60 / .4);transition:transform .2s var(--spring)}
+.rnd:active{transform:scale(.88)}
+.rnd.later{color:var(--uncertain)} .rnd.act{color:var(--confident)} .rnd.detail{width:48px;height:48px;align-self:center;color:var(--ink-btn)}
+
+/* empty state */
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .5s var(--exp)}
+.empty.show{opacity:1;pointer-events:auto}
+.empty .big{font-family:var(--serif);font-size:26px}
+.empty .sub{font-family:var(--sans);font-size:14px;color:var(--muted)}
+.empty button{margin-top:14px;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--canvas);background:var(--ink-btn);border:none;border-radius:13px;padding:12px 20px;cursor:pointer}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(1 0 0 / .5);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){ .orb{animation:none} .swipe{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="cap">Interaction · Swipe Deck · Daybook</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="head"><span class="orb"></span><span class="hi">Good morning, Dana.</span><span class="chip" id="chip">3 to triage</span></div>
+  <div class="deck" id="deck"></div>
+  <div class="empty" id="empty"><div class="big">All triaged.</div><div class="sub">Leo's on the rest.</div><button id="recheck">Pull to re-check</button></div>
+  <div class="hint" id="hint">Swipe right to act · left for later · or use the buttons</div>
+  <div class="acts" id="acts">
+    <button class="rnd later" data-cmd="later" title="Later"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2"/></svg></button>
+    <button class="rnd detail" data-cmd="detail" title="Open"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="rnd act" data-cmd="act" title="I'll act"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 10 17l9-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div></div>
+<div class="controls"><button id="replay">↻ Reset deck</button></div>
+<script>
+const SRC=[
+  {cls:'urgent',pill:'18h left',alt:'Your deal',h:'Maplewood escrow objection unanswered',why:'Deadline 8:00a tomorrow. The buyer could walk with their deposit.',leo:'The repairs are minor. The clock is the risk.',thumb:['oklch(0.82 0.13 45)','oklch(0.9 0.08 70)','oklch(0.45 0.05 40)']},
+  {cls:'uncertain',pill:'Medium',alt:'Your deal',h:'142 Oak St countered $24k under',why:'Leo drafted a counter at $612k but flagged a deadline it cannot verify.',leo:'I held it for your call.',thumb:['oklch(0.86 0.11 80)','oklch(0.92 0.07 95)','oklch(0.5 0.05 70)']},
+  {cls:'confident',pill:'Confident',alt:'Marcus',h:"Marcus's buyer is going quiet",why:'No contact in 3 days on Henderson. The pattern precedes a drift.',leo:'A nudge from you now beats a save later.',thumb:['oklch(0.84 0.10 165)','oklch(0.91 0.06 180)','oklch(0.42 0.05 175)']}
+];
+const deck=document.getElementById('deck'), chip=document.getElementById('chip');
+let cards=[];
+function thumbSvg(t){ return `<svg width="100%" height="128" viewBox="0 0 320 128" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t[0]}"/><stop offset="1" stop-color="${t[1]}"/></linearGradient></defs><rect width="320" height="128" fill="url(#g)"/><path d="M120 96 L160 60 L200 96 V128 H120 Z" fill="oklch(0.99 0.01 80 / .9)"/><path d="M120 96 L160 60 L200 96" fill="none" stroke="${t[2]}" stroke-width="2" stroke-linejoin="round"/><rect x="152" y="100" width="16" height="22" fill="${t[2]}" opacity=".4"/></svg>`; }
+function build(){
+  deck.innerHTML=''; cards=[];
+  SRC.forEach((d,idx)=>{
+    const c=document.createElement('div'); c.className='swipe '+d.cls;
+    c.innerHTML=`<div class="thumb">${thumbSvg(d.thumb)}</div>
+      <div class="s-top"><span class="pill"><span class="d"></span>${d.pill}</span><span class="alt">${d.alt}</span></div>
+      <h3>${d.h}</h3><p class="why">${d.why}</p><p class="leo">${d.leo}</p>
+      <span class="stamp act">I'll act</span><span class="stamp later">Later</span>`;
+    deck.appendChild(c); cards.push(c);
+  });
+  layout(); document.getElementById('empty').classList.remove('show');
+  document.getElementById('acts').style.display='flex'; document.getElementById('hint').style.visibility='visible';
+  setChip();
+}
+function setChip(){ chip.textContent = cards.length? cards.length+' to triage' : 'all clear'; }
+function layout(){
+  cards.forEach((c,i)=>{
+    c.style.transition='transform .5s var(--spring), opacity .4s ease';
+    c.style.zIndex=100-i;
+    if(i>2){ c.style.opacity=0; c.style.pointerEvents='none'; return; }
+    c.style.opacity = i===0?1:(i===1?.7:.4);
+    c.style.transform = `translateY(${i*12}px) scale(${1-i*.05})`;
+    c.style.pointerEvents = i===0?'auto':'none';
+  });
+}
+function commit(dir){
+  const c=cards.shift(); if(!c)return;
+  const off = dir==='act'?520 : dir==='later'? -520 : 0;
+  if(dir==='detail'){ // quick lift + settle (stand-in for opening detail)
+    c.style.transition='transform .25s var(--spring)'; c.style.transform='translateY(-14px) scale(1.02)';
+    setTimeout(()=>{ c.style.transform='translateY(0) scale(1)'; },230); cards.unshift(c); return;
+  }
+  c.style.transition='transform .5s var(--exp), opacity .5s ease';
+  c.style.transform=`translate(${off}px, -30px) rotate(${dir==='act'?16:-16}deg)`; c.style.opacity=0;
+  c.querySelector(dir==='act'?'.stamp.act':'.stamp.later').style.opacity=1;
+  chip.classList.add('pop'); setTimeout(()=>chip.classList.remove('pop'),320);
+  setTimeout(()=>{ c.remove(); layout(); setChip(); if(!cards.length){ document.getElementById('empty').classList.add('show'); document.getElementById('acts').style.display='none'; document.getElementById('hint').style.visibility='hidden'; } },480);
+}
+// pointer drag on the top card (delegated)
+let drag=null;
+deck.addEventListener('pointerdown',e=>{ const top=cards[0]; if(!top||!top.contains(e.target))return; drag={x:e.clientX,y:e.clientY,c:top}; top.style.transition='none'; top.setPointerCapture&&top.setPointerCapture(e.pointerId); });
+deck.addEventListener('pointermove',e=>{ if(!drag)return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.c.style.transform=`translate(${dx}px,${dy*.3}px) rotate(${dx*.05}deg)`; drag.c.querySelector('.stamp.act').style.opacity=Math.max(0,Math.min(1,dx/110)); drag.c.querySelector('.stamp.later').style.opacity=Math.max(0,Math.min(1,-dx/110)); });
+deck.addEventListener('pointerup',e=>{ if(!drag)return; const dx=e.clientX-drag.x; const c=drag.c; drag=null; if(dx>110){commit('act');} else if(dx<-110){commit('later');} else { c.style.transition='transform .5s var(--spring)'; c.style.transform='translateY(0) scale(1)'; c.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0); } });
+document.querySelectorAll('[data-cmd]').forEach(b=>b.addEventListener('click',()=>commit(b.dataset.cmd)));
+document.getElementById('recheck').addEventListener('click',build);
+document.getElementById('replay').addEventListener('click',build);
+build();
+</script>
+</body>
+</html>

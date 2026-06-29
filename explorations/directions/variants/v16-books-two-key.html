@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo - Morning Command Center - V16</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,ital,wght@6..72,0,400;6..72,0,500;6..72,1,400;6..72,1,500&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   V16  BOLD EDITORIAL x TWO-KEY
+   Lineage: the "books" lavender ground + huge black grotesk + big numerals,
+   but a fresh composition (a tall masthead, a stacked triage column, and a
+   wide low interlock pane) rather than V02's glass shelf + lens row.
+   Centerpiece: TWO-KEY. The one truly irreversible action of the morning is
+   releasing the 142 Oak St escrow wire. It needs TWO keys (Dana + a second
+   authorizer), a wire-fraud checklist, and a cooling-off countdown before the
+   release button unlocks. A deliberate human interlock, never a one-tap.
+   Signature motion: the two key-turns (CSS rotate to a green state) and the
+   cooling-off ring sweeping before the action arms.
+   Held to the warm-editorial-light tokens; color = a confidence state only.
+   ========================================================================= */
+:root{
+  /* lavender ground, kept warm so it never reads as cold tech */
+  --lav:        oklch(0.935 0.026 296);
+  --lav-deep:   oklch(0.905 0.032 298);
+  --paper:      oklch(0.976 0.011 86);
+  --card:       oklch(0.994 0.004 96);
+  --sunken:     oklch(0.955 0.015 296);
+  --hair:       oklch(0.30 0.03 296 / 0.13);
+  --hair-soft:  oklch(0.30 0.03 296 / 0.07);
+  --shadow:     0 16px 38px -20px oklch(0.34 0.06 296 / 0.40);
+  --shadow-lift:0 24px 56px -22px oklch(0.32 0.07 296 / 0.50);
+
+  --ink:   oklch(0.215 0.03 296);
+  --body:  oklch(0.44 0.022 296);
+  --muted: oklch(0.55 0.018 296);
+
+  /* AI / risk state accents - tuned for contrast on the lavender ground */
+  --seaglass: oklch(0.55 0.10 168);
+  --amber:    oklch(0.64 0.12 70);
+  --coral:    oklch(0.55 0.17 28);
+  --cobalt:   oklch(0.49 0.14 276);
+  --accent:   oklch(0.49 0.14 276);
+  --green:    oklch(0.56 0.13 152);
+
+  --coral-text:    oklch(0.46 0.17 28);
+  --amber-text:    oklch(0.47 0.12 70);
+  --seaglass-text: oklch(0.42 0.10 168);
+  --green-text:    oklch(0.43 0.12 152);
+
+  --coral-tint:    oklch(0.55 0.17 28 / 0.12);
+  --amber-tint:    oklch(0.64 0.12 70 / 0.14);
+  --seaglass-tint: oklch(0.55 0.10 168 / 0.12);
+  --cobalt-tint:   oklch(0.49 0.14 276 / 0.12);
+  --green-tint:    oklch(0.56 0.13 152 / 0.13);
+
+  --r-card: 20px;
+  --r-chip: 9px;
+  --r-sheet: 28px;
+  --r-btn: 13px;
+
+  --serif: 'Newsreader', Georgia, serif;
+  --sans:  'Inter', system-ui, sans-serif;
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:3px; border-radius:11px; }
+
+html,body{ height:100%; }
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(132% 92% at 50% -8%, oklch(0.965 0.018 300) 0%, oklch(0.932 0.024 296) 47%, oklch(0.902 0.026 290) 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center;
+  padding:30px 16px 56px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---- stage caption ---- */
+.stage{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+.page-caption{
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); text-align:center;
+}
+
+/* =========================================================================
+   PHONE FRAME
+   ========================================================================= */
+.phone{
+  position:relative;
+  width:393px; max-width:100%;
+  height:min(852px, calc(100svh - 36px));
+  background:var(--lav);
+  border-radius:48px;
+  box-shadow:
+    0 0 0 11px oklch(0.20 0.02 296),
+    0 0 0 13px oklch(0.30 0.02 296),
+    0 44px 100px -34px oklch(0.26 0.05 296 / 0.60);
+  overflow:hidden;
+  isolation:isolate;
+  display:flex; flex-direction:column;
+}
+
+/* status bar */
+.statusbar{
+  flex:0 0 auto; height:52px; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 28px 0;
+  font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink);
+  pointer-events:none;
+}
+.statusbar .icons{ display:flex; gap:6px; align-items:center; }
+.bars{ width:17px; height:11px; display:flex; gap:2px; align-items:flex-end; }
+.bars i{ width:3px; background:var(--ink); border-radius:1px; }
+.bars i:nth-child(1){ height:4px;} .bars i:nth-child(2){ height:6px;} .bars i:nth-child(3){ height:8px;} .bars i:nth-child(4){ height:11px;}
+.battery{ width:23px; height:12px; border:1.4px solid var(--ink); border-radius:3px; position:relative; opacity:.92; }
+.battery::after{ content:""; position:absolute; right:-3px; top:3px; width:2px; height:5px; background:var(--ink); border-radius:0 1px 1px 0; }
+.battery i{ position:absolute; inset:1.6px; width:74%; background:var(--ink); border-radius:1px; }
+
+/* scroll surface */
+.scroll{
+  flex:1 1 auto; overflow-y:auto; overflow-x:hidden;
+  padding:6px 22px 130px;
+  scrollbar-width:none;
+}
+.scroll::-webkit-scrollbar{ display:none; }
+
+/* =========================================================================
+   MASTHEAD - bold editorial, fresh composition (left rule + tall stack)
+   ========================================================================= */
+.masthead{ padding:12px 2px 4px; }
+.kicker{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:18px;
+}
+.kicker .orb{
+  width:9px; height:9px; border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 4px var(--cobalt-tint);
+  animation:breathe 3.6s var(--ease) infinite;
+}
+@keyframes breathe{ 0%,100%{ transform:scale(1); opacity:.95; } 50%{ transform:scale(1.34); opacity:.58; } }
+.kicker .sep{ width:1px; height:11px; background:var(--hair); }
+
+.greet{
+  font-family:var(--serif); font-size:16px; font-weight:400; color:var(--body);
+  font-style:italic; letter-spacing:.005em; margin-bottom:10px;
+}
+.greet b{ font-style:normal; font-weight:500; color:var(--ink); }
+
+/* heavy grotesk headline with an oversized numeral set as a drop figure */
+.headline{
+  font-family:var(--sans); font-weight:700;
+  font-size:50px; line-height:0.9; letter-spacing:-0.035em; color:var(--ink);
+  display:flex; align-items:flex-start; gap:14px;
+  text-wrap:balance;
+}
+.headline .num{
+  font-size:84px; line-height:0.74; letter-spacing:-0.05em;
+  font-variant-numeric:tabular-nums;
+}
+.headline .rest{ padding-top:7px; }
+.subhead{
+  font-family:var(--serif); font-size:15.5px; line-height:1.46; color:var(--body);
+  max-width:31ch; margin-top:14px;
+}
+.subhead b{ color:var(--ink); font-weight:500; }
+
+.mast-rule{
+  height:1px; background:var(--hair); margin:20px 2px 4px;
+}
+
+/* =========================================================================
+   TRIAGE COLUMN  - three stacked items, one focus each, NOT a card grid.
+   The first item (Oak St, the irreversible one) is the lead and is taller.
+   ========================================================================= */
+.column{ display:flex; flex-direction:column; gap:11px; margin-top:18px; }
+
+.colhead{
+  display:flex; align-items:baseline; justify-content:space-between;
+  margin:2px 2px 0;
+}
+.colhead .lhs{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--body); }
+.colhead .rhs{ font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--muted); }
+
+/* a triage item - content card, solid paper, no glass, no side-stripe */
+.item{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--hair-soft);
+  border-radius:var(--r-card);
+  padding:16px 17px 16px 18px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:13px; align-items:start;
+}
+.item .dot{
+  width:11px; height:11px; border-radius:50%; margin-top:5px; position:relative; flex:0 0 auto;
+}
+.item .dot::after{
+  content:""; position:absolute; inset:-5px; border-radius:50%;
+  border:1px solid currentColor; opacity:.28;
+}
+.dot.s-urgent{ background:var(--coral); color:var(--coral); }
+.dot.s-window{ background:var(--seaglass); color:var(--seaglass); }
+.dot.s-watch{ background:var(--amber); color:var(--amber); }
+
+.item .tagrow{ display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+.item .addr{ font-family:var(--sans); font-size:17px; font-weight:600; letter-spacing:-0.014em; color:var(--ink); }
+.altitude{
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--hair); border-radius:5px; padding:2px 6px;
+}
+.item .meta{ font-family:var(--serif); font-size:14px; line-height:1.46; color:var(--body); max-width:34ch; }
+.item .meta b{ color:var(--ink); font-weight:500; }
+
+.item .stake{ text-align:right; min-width:54px; }
+.item .stake .big{
+  font-family:var(--sans); font-weight:700; font-size:20px; letter-spacing:-0.03em; color:var(--ink);
+  line-height:1; display:block; font-variant-numeric:tabular-nums;
+}
+.item .stake .big.warm{ color:var(--coral-text); }
+.item .stake .lbl{
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+  margin-top:5px; display:block;
+}
+
+/* the two action items (Linden, Marcus) are tappable */
+.item.tappable{ cursor:pointer; transition:transform .26s var(--ease), box-shadow .26s var(--ease), border-color .26s var(--ease); }
+.item.tappable:hover{ box-shadow:var(--shadow); border-color:var(--hair); transform:translateY(-1px); }
+
+/* the secondary action chip rows inside an item */
+.actions{ grid-column:1 / -1; display:flex; gap:8px; margin-top:13px; }
+.act{
+  flex:1 1 0; min-height:44px;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  font-family:var(--sans); font-size:13px; font-weight:550; letter-spacing:-0.005em;
+  border-radius:var(--r-btn); cursor:pointer;
+  border:1px solid var(--hair);
+  background:var(--sunken); color:var(--ink);
+  transition:transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+.act:hover{ background:var(--card); border-color:var(--hair); }
+.act:active{ transform:translateY(1px); }
+.act.primary{ background:var(--ink); color:oklch(0.97 0.01 90); border-color:var(--ink); }
+.act.primary:hover{ background:oklch(0.27 0.03 296); }
+.act .k{ font-family:var(--mono); font-size:10px; color:var(--seaglass-text); }
+.act.primary .k{ color:oklch(0.85 0.04 168); }
+
+/* the lead item (Oak St) wraps the interlock - taller, the morning's hinge */
+.item.lead{ grid-template-columns:auto 1fr auto; }
+
+/* =========================================================================
+   TWO-KEY INTERLOCK  (the centerpiece) - lives inside the Oak St lead item,
+   spanning the full width below the header. A wide, low, deliberate pane.
+   ========================================================================= */
+.interlock{
+  grid-column:1 / -1;
+  margin-top:15px;
+  border-top:1px solid var(--hair-soft);
+  padding-top:15px;
+}
+.il-head{
+  display:flex; align-items:center; gap:9px; margin-bottom:4px;
+}
+.il-lockicon{ width:15px; height:15px; color:var(--coral-text); flex:0 0 auto; }
+.il-lockicon svg{ width:100%; height:100%; display:block; }
+.il-title{ font-family:var(--sans); font-size:13.5px; font-weight:600; letter-spacing:-0.01em; color:var(--ink); }
+.il-tag{
+  margin-left:auto; font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--coral-text); background:var(--coral-tint); border-radius:6px; padding:3px 7px;
+}
+.il-tag.armed{ color:var(--green-text); background:var(--green-tint); }
+.il-sub{
+  font-family:var(--serif); font-size:13px; line-height:1.45; color:var(--body); margin:3px 0 0; max-width:36ch;
+}
+.il-sub b{ color:var(--ink); font-weight:500; }
+
+/* wire-fraud verification checklist */
+.checklist{
+  margin-top:13px;
+  background:var(--sunken);
+  border:1px solid var(--hair-soft);
+  border-radius:14px;
+  padding:11px 13px;
+}
+.checklist .cl-title{
+  font-family:var(--mono); font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+  margin-bottom:9px;
+}
+.check{
+  display:flex; align-items:center; gap:9px; padding:5px 0;
+  font-family:var(--sans); font-size:12.5px; color:var(--body);
+}
+.check + .check{ border-top:1px solid var(--hair-soft); }
+.check .box{
+  width:17px; height:17px; border-radius:6px; flex:0 0 auto; position:relative;
+  border:1.5px solid var(--green); color:var(--green);
+}
+.check .box svg{
+  position:absolute; inset:0; width:100%; height:100%;
+  stroke-dasharray:22; stroke-dashoffset:22;
+  animation:draw .5s var(--ease) forwards;
+}
+.check:nth-child(2) .box svg{ animation-delay:.05s; }
+.check:nth-child(3) .box svg{ animation-delay:.12s; }
+.check:nth-child(4) .box svg{ animation-delay:.19s; }
+@keyframes draw{ to{ stroke-dashoffset:0; } }
+.check b{ color:var(--ink); font-weight:500; }
+.check .by{ margin-left:auto; font-family:var(--mono); font-size:9px; letter-spacing:.04em; color:var(--muted); }
+
+/* the two keys */
+.keys{ display:flex; gap:11px; margin-top:14px; }
+.keyslot{
+  flex:1 1 0; position:relative;
+  border-radius:15px;
+  background:var(--card);
+  border:1px solid var(--hair);
+  padding:14px 12px 13px;
+  text-align:center; cursor:pointer;
+  transition:border-color .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease);
+}
+.keyslot:hover{ border-color:oklch(0.49 0.14 276 / 0.32); }
+.keyslot:active{ transform:translateY(1px); }
+.keyslot[aria-disabled="true"]{ cursor:not-allowed; opacity:.62; }
+.keyslot .who{
+  font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  margin-bottom:9px;
+}
+/* the key glyph that rotates 90deg into a green turned state */
+.keydial{
+  width:42px; height:42px; margin:0 auto 9px; position:relative;
+  display:flex; align-items:center; justify-content:center;
+}
+.keydial .ring{
+  position:absolute; inset:0; border-radius:50%;
+  border:1.5px solid var(--hair);
+  transition:border-color .5s var(--ease), background .5s var(--ease);
+}
+.keydial .key{
+  width:22px; height:22px; color:var(--muted);
+  transform:rotate(-42deg); transform-origin:50% 50%;
+  transition:transform .62s var(--ease), color .5s var(--ease);
+}
+.keydial .key svg{ width:100%; height:100%; display:block; }
+.keystate{
+  font-family:var(--sans); font-size:12px; font-weight:550; color:var(--body);
+}
+.keyslot .keysub{
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.05em; color:var(--muted); margin-top:3px;
+}
+/* turned (green) state */
+.keyslot.turned .keydial .key{ transform:rotate(48deg); color:var(--green-text); }
+.keyslot.turned .keydial .ring{ border-color:var(--green); background:var(--green-tint); }
+.keyslot.turned .keystate{ color:var(--green-text); }
+.keyslot.turned{ border-color:oklch(0.56 0.13 152 / 0.4); }
+
+/* =========================================================================
+   COOLING-OFF + RELEASE  - the ring sweeps before the button arms
+   ========================================================================= */
+.cooloff{
+  display:flex; align-items:center; gap:13px;
+  margin-top:14px;
+  opacity:.45; pointer-events:none;
+  transition:opacity .5s var(--ease);
+}
+.cooloff.active{ opacity:1; }
+.ring-wrap{ width:46px; height:46px; flex:0 0 auto; position:relative; }
+.ring-wrap svg{ width:46px; height:46px; transform:rotate(-90deg); display:block; }
+.ring-wrap .track{ stroke:var(--hair); }
+.ring-wrap .prog{
+  stroke:var(--accent); stroke-linecap:round;
+  stroke-dasharray:126; stroke-dashoffset:126;
+}
+.cooloff.active .ring-wrap .prog{
+  animation:sweep 6s linear forwards;
+}
+@keyframes sweep{ to{ stroke-dashoffset:0; } }
+.ring-wrap .secs{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:13px; font-weight:500; color:var(--accent);
+  font-variant-numeric:tabular-nums;
+}
+.cooloff .cotext{ font-family:var(--serif); font-size:13px; line-height:1.42; color:var(--body); }
+.cooloff .cotext b{ color:var(--ink); font-weight:500; }
+
+.release{
+  width:100%; min-height:50px; margin-top:13px;
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  font-family:var(--sans); font-size:14.5px; font-weight:600; letter-spacing:-0.01em;
+  border-radius:var(--r-btn); border:1px solid var(--hair);
+  background:var(--sunken); color:var(--muted);
+  cursor:not-allowed;
+  transition:background .45s var(--ease), color .45s var(--ease), border-color .45s var(--ease), transform .2s var(--ease);
+}
+.release .rk{ font-family:var(--mono); font-size:10px; letter-spacing:.06em; opacity:.8; }
+.release.armed{
+  background:var(--green-text); color:oklch(0.97 0.02 150); border-color:var(--green-text);
+  cursor:pointer;
+}
+.release.armed:hover{ background:oklch(0.39 0.12 152); }
+.release.armed:active{ transform:translateY(1px); }
+.release.done{
+  background:var(--card); color:var(--green-text); border-color:oklch(0.56 0.13 152 / 0.4);
+  cursor:default;
+}
+
+/* the abort line - a calm exit, the human can always stop */
+.abort{
+  display:block; width:100%; text-align:center; margin-top:10px;
+  background:none; border:none; cursor:pointer;
+  font-family:var(--mono); font-size:10px; letter-spacing:.06em; color:var(--muted);
+  padding:6px; min-height:32px;
+  transition:color .2s var(--ease);
+}
+.abort:hover{ color:var(--coral-text); }
+
+/* =========================================================================
+   LEDGER  - the calm count-up + the silence line
+   ========================================================================= */
+.ledger{
+  margin-top:20px;
+  background:var(--sunken);
+  border:1px solid var(--hair-soft);
+  border-radius:var(--r-card);
+  padding:17px 18px;
+  display:flex; align-items:center; gap:16px;
+}
+.ledger .count{
+  font-family:var(--sans); font-weight:700; font-size:42px; letter-spacing:-0.04em; color:var(--ink);
+  line-height:0.92; font-variant-numeric:tabular-nums; min-width:62px;
+}
+.ledger .ltext{ font-family:var(--serif); font-size:14px; line-height:1.42; color:var(--body); }
+.ledger .ltext b{ color:var(--ink); font-weight:500; }
+.ledger .ltext .zero{ color:var(--seaglass-text); font-weight:500; }
+.ledger .lmeta{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  margin-top:6px; display:block;
+}
+
+/* calm signal line - Crestview going quiet */
+.signal{
+  margin-top:11px;
+  display:flex; align-items:center; gap:11px;
+  padding:13px 16px;
+  border:1px solid var(--hair-soft);
+  border-radius:var(--r-card);
+  background:oklch(0.99 0.006 95 / 0.5);
+  cursor:pointer;
+  transition:background .24s var(--ease), border-color .24s var(--ease);
+}
+.signal:hover{ border-color:var(--hair); background:var(--card); }
+.signal .sdot{ width:8px; height:8px; border-radius:50%; background:var(--amber); flex:0 0 auto; }
+.signal .stxt{ font-family:var(--serif); font-size:13.5px; line-height:1.4; color:var(--body); }
+.signal .stxt b{ color:var(--ink); font-weight:500; }
+.signal .stag{ margin-left:auto; font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--amber-text); flex:0 0 auto; }
+
+/* =========================================================================
+   TAB BAR  - count-badged
+   ========================================================================= */
+.tabbar{
+  position:absolute; left:0; right:0; bottom:0; z-index:50;
+  padding:10px 18px calc(20px + env(safe-area-inset-bottom));
+  display:flex; gap:6px; align-items:stretch;
+  background:linear-gradient(to top, oklch(0.92 0.024 296) 60%, oklch(0.92 0.024 296 / 0));
+}
+.tab{
+  flex:1 1 0; min-height:46px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  background:transparent; border:none; cursor:pointer; position:relative;
+  font-family:var(--sans); font-size:10.5px; font-weight:500; color:var(--muted);
+  transition:color .2s var(--ease);
+}
+.tab .glyph{ width:21px; height:21px; display:block; }
+.tab .glyph svg{ width:100%; height:100%; display:block; }
+.tab[aria-current="page"]{ color:var(--ink); }
+.tab[aria-current="page"] .glyph{ color:var(--accent); }
+.tab .badge{
+  position:absolute; top:-1px; right:50%; transform:translateX(20px);
+  min-width:16px; height:16px; padding:0 4px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:9px; font-weight:500; color:oklch(0.99 0.01 90);
+  background:var(--coral); border-radius:8px;
+}
+.tab .badge.cool{ background:var(--accent); }
+
+/* =========================================================================
+   TOAST  (release confirmation, restrained - no celebration)
+   ========================================================================= */
+.toast{
+  position:absolute; left:18px; right:18px; bottom:96px; z-index:60;
+  display:flex; align-items:center; gap:11px;
+  padding:13px 15px;
+  background:var(--card);
+  border:1px solid oklch(0.56 0.13 152 / 0.35);
+  border-radius:15px;
+  box-shadow:var(--shadow-lift);
+  opacity:0; transform:translateY(12px);
+  pointer-events:none;
+  transition:opacity .4s var(--ease), transform .4s var(--ease);
+}
+.toast.show{ opacity:1; transform:none; }
+.toast .tdot{ width:8px; height:8px; border-radius:50%; background:var(--green); flex:0 0 auto; }
+.toast .ttxt{ font-family:var(--serif); font-size:13px; line-height:1.4; color:var(--body); }
+.toast .ttxt b{ color:var(--ink); font-weight:500; }
+.toast .tundo{
+  margin-left:auto; flex:0 0 auto;
+  font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--accent);
+  background:none; border:none; cursor:pointer; padding:6px 4px; min-height:32px;
+}
+
+/* =========================================================================
+   ENTRANCES
+   ========================================================================= */
+@keyframes rise{ from{ opacity:0; transform:translateY(13px); } to{ opacity:1; transform:none; } }
+.anim{ animation:rise .56s var(--ease) both; }
+.d1{ animation-delay:.04s; } .d2{ animation-delay:.11s; } .d3{ animation-delay:.18s; }
+.d4{ animation-delay:.26s; } .d5{ animation-delay:.36s; } .d6{ animation-delay:.46s; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-delay:0s !important; transition-duration:.001ms !important; }
+  .kicker .orb{ animation:none; }
+  .cooloff.active .ring-wrap .prog{ animation:none; stroke-dashoffset:0; }
+}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <span class="page-caption">V16 BOLD EDITORIAL x TWO-KEY</span>
+
+    <div class="phone" role="application" aria-label="Leo morning command center">
+      <!-- status bar -->
+      <div class="statusbar">
+        <span>7:14</span>
+        <span class="icons">
+          <span class="bars"><i></i><i></i><i></i><i></i></span>
+          <span class="battery"><i></i></span>
+        </span>
+      </div>
+
+      <main class="scroll">
+        <!-- MASTHEAD -->
+        <header class="masthead">
+          <div class="kicker anim d1">
+            <span class="orb" aria-hidden="true"></span>
+            <span>Leo</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span>Sat, Jun 22</span>
+          </div>
+          <p class="greet anim d1"><b>Morning, Dana.</b> Three things need you to decide today.</p>
+          <h1 class="headline anim d2">
+            <span class="num">3</span>
+            <span class="rest">need<br>you</span>
+          </h1>
+          <p class="subhead anim d2">One of them sends money and cannot be taken back. I made it so it needs <b>two people to approve</b> and cannot be sent with one tap.</p>
+          <div class="mast-rule anim d2" aria-hidden="true"></div>
+        </header>
+
+        <section class="column" aria-label="The three that need you">
+          <div class="colhead anim d3">
+            <span class="lhs">In front of you</span>
+            <span class="rhs">most important first</span>
+          </div>
+
+          <!-- LEAD ITEM: 142 Oak St + the two-key escrow interlock -->
+          <article class="item lead anim d3" aria-label="142 Oak St, send the payment for closing">
+            <span class="dot s-urgent" aria-hidden="true"></span>
+            <div>
+              <div class="tagrow">
+                <span class="addr">142 Oak St</span>
+                <span class="altitude">your sale</span>
+              </div>
+              <p class="meta">The offer is signed. The <b>payment is ready to send</b> and due before the 10:00am closing. Once it is sent, it cannot be taken back.</p>
+            </div>
+            <div class="stake">
+              <span class="big warm">2:46</span>
+              <span class="lbl">until closing</span>
+            </div>
+
+            <!-- TWO-KEY INTERLOCK -->
+            <div class="interlock">
+              <div class="il-head">
+                <span class="il-lockicon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2.4"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                </span>
+                <span class="il-title">Send the payment to the closing company</span>
+                <span class="il-tag" id="ilTag">two approvals needed</span>
+              </div>
+              <p class="il-sub">Sending money cannot be undone, so it needs <b>two people</b> plus a short pause. Both of you approve to unlock it.</p>
+
+              <!-- safety checks done before sending -->
+              <div class="checklist" aria-label="Safety checks">
+                <div class="cl-title">Checked before this was set up</div>
+                <div class="check">
+                  <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4 4 10-10"/></svg></span>
+                  <span>Bank details match the <b>closing company</b> we have on file</span>
+                  <span class="by">phone check</span>
+                </div>
+                <div class="check">
+                  <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4 4 10-10"/></svg></span>
+                  <span>Account number is <b>the same</b> as on June 18</span>
+                  <span class="by">me</span>
+                </div>
+                <div class="check">
+                  <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4 4 10-10"/></svg></span>
+                  <span>No last-minute email asking to change the details</span>
+                  <span class="by">me</span>
+                </div>
+              </div>
+
+              <!-- the two keys -->
+              <div class="keys" role="group" aria-label="Two approvals">
+                <div class="keyslot" id="keyDana" role="button" tabindex="0"
+                     aria-pressed="false" aria-label="Tap to approve as Dana">
+                  <div class="who">Dana - you</div>
+                  <div class="keydial" aria-hidden="true">
+                    <span class="ring"></span>
+                    <span class="key">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="4.2"/><path d="M11 11l8 8"/><path d="M16 16l2-2"/><path d="M19 19l1.5-1.5"/></svg>
+                    </span>
+                  </div>
+                  <div class="keystate" id="stateDana">Tap to approve</div>
+                  <div class="keysub">tap, then Enter</div>
+                </div>
+
+                <div class="keyslot" id="keyMaria" role="button" tabindex="0"
+                     aria-disabled="true" aria-pressed="false" aria-label="Maria, second approver, waiting for Dana to approve">
+                  <div class="who">Maria - closing manager</div>
+                  <div class="keydial" aria-hidden="true">
+                    <span class="ring"></span>
+                    <span class="key">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="4.2"/><path d="M11 11l8 8"/><path d="M16 16l2-2"/><path d="M19 19l1.5-1.5"/></svg>
+                    </span>
+                  </div>
+                  <div class="keystate" id="stateMaria">Waiting on you</div>
+                  <div class="keysub" id="subMaria">she is ready</div>
+                </div>
+              </div>
+
+              <!-- cooling-off ring -->
+              <div class="cooloff" id="cooloff" aria-live="polite">
+                <span class="ring-wrap" aria-hidden="true">
+                  <svg viewBox="0 0 46 46">
+                    <circle class="track" cx="23" cy="23" r="20" fill="none" stroke-width="3"></circle>
+                    <circle class="prog" cx="23" cy="23" r="20" fill="none" stroke-width="3"></circle>
+                  </svg>
+                  <span class="secs" id="secs">6</span>
+                </span>
+                <p class="cotext"><b>Short pause.</b> A few seconds to catch a wrong detail before the money leaves. The send button unlocks when the pause ends.</p>
+              </div>
+
+              <!-- send button + stop -->
+              <button class="release" id="releaseBtn" type="button" disabled aria-disabled="true">
+                <span id="releaseLabel">Both people approve to unlock</span>
+                <span class="rk" id="releaseK"></span>
+              </button>
+              <button class="abort" id="abortBtn" type="button">Hold off, I will call the closing company first</button>
+            </div>
+          </article>
+
+          <!-- ITEM 2: 88 Linden lead, 5-minute window -->
+          <article class="item tappable anim d4" role="button" tabindex="0" aria-label="88 Linden new buyer, reply in the next five minutes">
+            <span class="dot s-window" aria-hidden="true"></span>
+            <div>
+              <div class="tagrow">
+                <span class="addr">88 Linden</span>
+                <span class="altitude">new buyer</span>
+              </div>
+              <p class="meta">Already approved for a loan. Reply in <b>the next 5 minutes</b> to be the first to get back to them. I have a friendly first message ready.</p>
+            </div>
+            <div class="stake">
+              <span class="big">4:50</span>
+              <span class="lbl">minutes left</span>
+            </div>
+            <div class="actions">
+              <button class="act primary" type="button">Send my message <span class="k">now</span></button>
+              <button class="act" type="button">Read it first</button>
+            </div>
+          </article>
+
+          <!-- ITEM 3: Marcus, teammate going quiet -->
+          <article class="item tappable anim d5" role="button" tabindex="0" aria-label="Marcus, his buyer has not replied in four days">
+            <span class="dot s-watch" aria-hidden="true"></span>
+            <div>
+              <div class="tagrow">
+                <span class="addr">Marcus, 30 Pine</span>
+                <span class="altitude">teammate</span>
+              </div>
+              <p class="meta">His buyer has not replied in <b>4 days.</b> A note from you would land better than a third message from him.</p>
+            </div>
+            <div class="stake">
+              <span class="big">4d</span>
+              <span class="lbl">no reply</span>
+            </div>
+            <div class="actions">
+              <button class="act" type="button">Send a note for Marcus</button>
+              <button class="act" type="button">Let him handle it</button>
+            </div>
+          </article>
+        </section>
+
+        <!-- LEDGER -->
+        <section class="ledger anim d6" aria-label="Handled overnight">
+          <span class="count" id="ledgerCount" aria-hidden="true">0</span>
+          <div>
+            <p class="ltext"><b>handled overnight.</b> I did not need to wake you for <span class="zero">any of them.</span></p>
+            <span class="lmeta">22 passed on - 18 replies written - 7 set up</span>
+          </div>
+        </section>
+
+        <!-- CALM SIGNAL -->
+        <div class="signal anim d6" role="button" tabindex="0" aria-label="Crestview has gone quiet, see details">
+          <span class="sdot" aria-hidden="true"></span>
+          <span class="stxt"><b>Crestview</b> has gone quiet. Not urgent, worth a look this week.</span>
+          <span class="stag">keeping an eye</span>
+        </div>
+      </main>
+
+      <!-- TOAST -->
+      <div class="toast" id="toast" role="status" aria-live="polite">
+        <span class="tdot" aria-hidden="true"></span>
+        <span class="ttxt"><b>Payment sent to the closing company.</b> Saved with both approvals.</span>
+        <button class="tundo" id="toastUndo" type="button">take it back (8s)</button>
+      </div>
+
+      <!-- TAB BAR -->
+      <nav class="tabbar" aria-label="Primary">
+        <button class="tab" type="button" aria-current="page">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg></span>
+          <span class="badge">3</span>
+          Today
+        </button>
+        <button class="tab" type="button">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9l5-4 5 4"/><path d="M14 19v-7l5-3v10"/><path d="M3 19h18"/></svg></span>
+          <span class="badge cool">9</span>
+          Deals
+        </button>
+        <button class="tab" type="button">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M17.5 19a5 5 0 0 0-3-4.6"/></svg></span>
+          People
+        </button>
+        <button class="tab" type="button">
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v11H9l-4 3z"/></svg></span>
+          Leo
+        </button>
+      </nav>
+    </div>
+
+    <span class="page-caption">turn Dana's key, Maria's unlocks, then a cooling-off hold arms the release</span>
+  </div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- count-up of the "47 handled" numeral (stepped timers, no rAF) ---------- */
+  var countEl = document.getElementById('ledgerCount');
+  var target = 47;
+  if (reduce){
+    countEl.textContent = target;
+  } else {
+    var dur = 1100, steps = 28, i = 0;
+    var ti = setInterval(function(){
+      i++;
+      var t = i / steps;
+      var e = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      countEl.textContent = Math.round(e * target);
+      if (i >= steps){ countEl.textContent = target; clearInterval(ti); }
+    }, dur / steps);
+  }
+
+  /* ---------- keyboard activation helper for clickable non-buttons ---------- */
+  function makeKeyable(el, fn){
+    el.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fn(el); }
+    });
+    el.addEventListener('click', function(){ fn(el); });
+  }
+
+  /* ---------- TWO-KEY INTERLOCK ---------- */
+  var keyDana   = document.getElementById('keyDana');
+  var keyMaria  = document.getElementById('keyMaria');
+  var stateDana = document.getElementById('stateDana');
+  var stateMaria= document.getElementById('stateMaria');
+  var subMaria  = document.getElementById('subMaria');
+  var ilTag     = document.getElementById('ilTag');
+  var cooloff   = document.getElementById('cooloff');
+  var secsEl    = document.getElementById('secs');
+  var releaseBtn= document.getElementById('releaseBtn');
+  var releaseLabel = document.getElementById('releaseLabel');
+  var releaseK  = document.getElementById('releaseK');
+  var abortBtn  = document.getElementById('abortBtn');
+  var toast     = document.getElementById('toast');
+  var toastUndo = document.getElementById('toastUndo');
+
+  var danaTurned = false, mariaTurned = false, coolingTimer = null, recallTimer = null;
+
+  function turnDana(){
+    if (danaTurned) return;
+    danaTurned = true;
+    keyDana.classList.add('turned');
+    keyDana.setAttribute('aria-pressed', 'true');
+    stateDana.textContent = 'Approved';
+    // Dana's approval unlocks Maria's (the second approver is now invited)
+    keyMaria.setAttribute('aria-disabled', 'false');
+    stateMaria.textContent = 'Tap to approve';
+    subMaria.textContent = 'your turn, Maria';
+    ilTag.textContent = 'one approval done';
+  }
+
+  function turnMaria(){
+    if (!danaTurned || mariaTurned) return;
+    mariaTurned = true;
+    keyMaria.classList.add('turned');
+    keyMaria.setAttribute('aria-pressed', 'true');
+    stateMaria.textContent = 'Approved';
+    subMaria.textContent = 'both agreed';
+    ilTag.textContent = 'both approvals done';
+    startCooloff();
+  }
+
+  function startCooloff(){
+    cooloff.classList.add('active');
+    var total = 6;
+    secsEl.textContent = total;
+    if (reduce){
+      secsEl.textContent = 0;
+      armRelease();
+      return;
+    }
+    var n = total;
+    coolingTimer = setInterval(function(){
+      n -= 1;
+      if (n <= 0){
+        secsEl.textContent = 0;
+        clearInterval(coolingTimer); coolingTimer = null;
+        armRelease();
+      } else {
+        secsEl.textContent = n;
+      }
+    }, 1000);
+  }
+
+  function armRelease(){
+    ilTag.textContent = 'ready to send';
+    ilTag.classList.add('armed');
+    releaseBtn.classList.add('armed');
+    releaseBtn.disabled = false;
+    releaseBtn.setAttribute('aria-disabled', 'false');
+    releaseLabel.textContent = 'Send the payment';
+    releaseK.textContent = '$870K';
+  }
+
+  function fireRelease(){
+    if (!releaseBtn.classList.contains('armed') || releaseBtn.classList.contains('done')) return;
+    releaseBtn.classList.remove('armed');
+    releaseBtn.classList.add('done');
+    releaseLabel.textContent = 'Sent - saved at 7:14am';
+    releaseK.textContent = '';
+    abortBtn.style.display = 'none';
+    // restrained confirmation: a quiet toast with a recall window, no celebration
+    toast.classList.add('show');
+    var rn = 8;
+    toastUndo.textContent = 'take it back (' + rn + 's)';
+    recallTimer = setInterval(function(){
+      rn -= 1;
+      if (rn <= 0){
+        clearInterval(recallTimer); recallTimer = null;
+        toast.classList.remove('show');
+      } else {
+        toastUndo.textContent = 'take it back (' + rn + 's)';
+      }
+    }, 1000);
+  }
+
+  function recall(){
+    if (recallTimer){ clearInterval(recallTimer); recallTimer = null; }
+    toast.classList.remove('show');
+    // taking it back returns to ready-to-send (the payment was caught in time)
+    releaseBtn.classList.remove('done');
+    releaseBtn.classList.add('armed');
+    releaseLabel.textContent = 'Send the payment';
+    releaseK.textContent = '$870K';
+    abortBtn.style.display = '';
+  }
+
+  function abort(){
+    // calm reset: any time before send, the human can stop the whole thing
+    if (coolingTimer){ clearInterval(coolingTimer); coolingTimer = null; }
+    danaTurned = false; mariaTurned = false;
+    keyDana.classList.remove('turned'); keyMaria.classList.remove('turned');
+    keyDana.setAttribute('aria-pressed', 'false'); keyMaria.setAttribute('aria-pressed', 'false');
+    keyMaria.setAttribute('aria-disabled', 'true');
+    stateDana.textContent = 'Tap to approve';
+    stateMaria.textContent = 'Waiting on you';
+    subMaria.textContent = 'she is ready';
+    cooloff.classList.remove('active');
+    secsEl.textContent = 6;
+    ilTag.textContent = 'two approvals needed';
+    ilTag.classList.remove('armed');
+    releaseBtn.classList.remove('armed', 'done');
+    releaseBtn.disabled = true;
+    releaseBtn.setAttribute('aria-disabled', 'true');
+    releaseLabel.textContent = 'Both people approve to unlock';
+    releaseK.textContent = '';
+  }
+
+  makeKeyable(keyDana, function(){ turnDana(); });
+  makeKeyable(keyMaria, function(){
+    if (keyMaria.getAttribute('aria-disabled') === 'true') return;
+    turnMaria();
+  });
+  releaseBtn.addEventListener('click', fireRelease);
+  abortBtn.addEventListener('click', abort);
+  toastUndo.addEventListener('click', recall);
+
+  /* ---------- light press feedback for the tappable items + signal ---------- */
+  function pulse(el){
+    if (reduce) return;
+    el.style.transition = 'transform .12s var(--ease)';
+    el.style.transform = 'scale(0.99)';
+    setTimeout(function(){ el.style.transform = ''; setTimeout(function(){ el.style.transition=''; }, 180); }, 110);
+  }
+  Array.prototype.slice.call(document.querySelectorAll('.item.tappable')).forEach(function(it){
+    makeKeyable(it, function(){
+      // don't pulse when the tap was on an inner action button
+      pulse(it);
+    });
+  });
+  // stop inner action buttons from also triggering the item pulse twice
+  Array.prototype.slice.call(document.querySelectorAll('.item .act')).forEach(function(b){
+    b.addEventListener('click', function(e){ e.stopPropagation(); });
+  });
+  var signal = document.querySelector('.signal');
+  if (signal) makeKeyable(signal, pulse);
+})();
+</script>
+</body>
+</html>

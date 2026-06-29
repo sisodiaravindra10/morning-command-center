@@ -1,0 +1,15 @@
+# dependencies (Remotion films project)
+node_modules/
+**/node_modules/
+
+# Remotion / build artifacts
+.remotion/
+out/
+films/out/
+
+# Vercel
+.vercel/
+
+# OS / editor
+.DS_Store
+*.log

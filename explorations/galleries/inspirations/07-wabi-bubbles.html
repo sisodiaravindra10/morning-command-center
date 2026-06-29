@@ -1,0 +1,522 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Leo - One Front Door</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: oklch(0.965 0.003 250);
+    --bg-2: oklch(0.985 0.002 250);
+    --ink: #0a0a0b;
+    --ink-soft: #1c1c1e;
+    --frame: #0c0c0e;
+    --screen-white: #ffffff;
+    --logo-dot: #b9bcc4;
+    --caption: rgba(28, 28, 34, 0.5);
+    --google-border: #e4e4e7;
+    --google-text: #1f1f23;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(120% 80% at 50% 0%, var(--bg-2) 0%, var(--bg) 60%, oklch(0.945 0.004 255) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 44px 16px 56px;
+    color: var(--ink);
+  }
+
+  .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--caption);
+    font-weight: 500;
+  }
+
+  /* ---------- iPhone frame ---------- */
+  .phone {
+    width: 390px;
+    height: 818px;
+    max-width: calc(100vw - 32px);
+    background: var(--frame);
+    border-radius: 58px;
+    padding: 11px;
+    box-shadow:
+      0 1px 0 1px rgba(255, 255, 255, 0.04) inset,
+      0 0 0 2px rgba(0, 0, 0, 0.55),
+      0 50px 100px -36px rgba(40, 44, 60, 0.45),
+      0 18px 40px -22px rgba(40, 44, 60, 0.35);
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 47px;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    background: var(--screen-white);
+  }
+
+  /* dynamic-island style pill */
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 108px;
+    height: 30px;
+    background: #050506;
+    border-radius: 16px;
+    z-index: 50;
+  }
+
+  /* ---------- status bar (TestFlight) ---------- */
+  .statusbar {
+    position: relative;
+    z-index: 40;
+    height: 52px;
+    flex: 0 0 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .sb-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .sb-left .tri {
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-right: 6px solid var(--ink);
+    margin-right: 1px;
+  }
+  .sb-left .tf {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .sb-right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .sb-right svg { display: block; }
+
+  /* ---------- content ---------- */
+  .content {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 30px 30px;
+  }
+
+  /* 6-dot cluster logo */
+  .logo {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 3.5px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+  }
+  .logo i {
+    display: block;
+    border-radius: 50%;
+    background: var(--logo-dot);
+  }
+
+  /* ---------- bubble garland ---------- */
+  .garland {
+    position: relative;
+    width: 360px;
+    max-width: 100%;
+    height: 286px;
+    margin-top: 4px;
+    flex: 0 0 auto;
+  }
+
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    overflow: hidden;
+    will-change: transform;
+    animation: float var(--dur, 9s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+
+  /* iridescent glass bubble base */
+  .glass {
+    background:
+      radial-gradient(120% 120% at 30% 26%,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.55) 9%,
+        rgba(255, 255, 255, 0.12) 20%,
+        rgba(255, 255, 255, 0.02) 38%,
+        rgba(228, 232, 240, 0.10) 100%);
+    box-shadow:
+      0 18px 30px -18px rgba(70, 80, 120, 0.5),
+      0 6px 12px -8px rgba(70, 80, 120, 0.35),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+      inset 6px -8px 22px -6px rgba(170, 120, 220, 0.30),
+      inset -8px 6px 22px -6px rgba(120, 200, 230, 0.30);
+  }
+  /* conic iridescent sheen overlay */
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      conic-gradient(from 200deg at 50% 50%,
+        rgba(255, 150, 200, 0.42) 0deg,
+        rgba(255, 214, 130, 0.34) 58deg,
+        rgba(140, 240, 210, 0.40) 130deg,
+        rgba(130, 200, 255, 0.42) 196deg,
+        rgba(196, 150, 255, 0.44) 268deg,
+        rgba(255, 150, 200, 0.42) 360deg);
+    mix-blend-mode: screen;
+    opacity: 0.9;
+  }
+  /* soft top-left specular highlight + thin bright rim */
+  .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(38% 30% at 30% 24%,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.0) 70%);
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+  }
+
+  /* photo bubbles */
+  .photo {
+    background: #eee;
+    box-shadow:
+      0 18px 30px -18px rgba(70, 80, 120, 0.5),
+      0 6px 12px -8px rgba(70, 80, 120, 0.35),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* skill label sitting inside a photo bubble */
+  .photo .skill-label {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 0 10%;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--ink-soft);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  }
+  /* glossy film + iridescent rim over photos so they read as bubbles */
+  .photo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(42% 34% at 28% 22%,
+        rgba(255, 255, 255, 0.85) 0%,
+        rgba(255, 255, 255, 0.0) 60%),
+      conic-gradient(from 210deg at 50% 50%,
+        rgba(255, 150, 200, 0.22) 0deg,
+        rgba(140, 240, 210, 0.20) 120deg,
+        rgba(130, 200, 255, 0.22) 220deg,
+        rgba(196, 150, 255, 0.24) 300deg,
+        rgba(255, 150, 200, 0.22) 360deg);
+    mix-blend-mode: screen;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+  }
+
+  /* center white "+" bubble */
+  .plus {
+    background:
+      radial-gradient(120% 120% at 32% 26%,
+        #ffffff 0%, #ffffff 55%, #f4f5f8 100%);
+    box-shadow:
+      0 22px 36px -16px rgba(60, 70, 110, 0.55),
+      0 8px 16px -8px rgba(60, 70, 110, 0.4),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.04),
+      inset 0 -8px 18px -8px rgba(180, 140, 230, 0.18);
+    display: grid;
+    place-items: center;
+    z-index: 12;
+  }
+  .plus svg { display: block; }
+
+  /* bubble placements (x, y, size set inline) */
+
+  @keyframes float {
+    0%   { transform: translate3d(0, 0, 0); }
+    50%  { transform: translate3d(var(--dx, 4px), var(--dy, -7px), 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+
+  /* ---------- headline ---------- */
+  .headline {
+    margin-top: 30px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 34px;
+    line-height: 1.08;
+    letter-spacing: -0.024em;
+    color: var(--ink);
+  }
+
+  /* ---------- auth buttons ---------- */
+  .actions {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 14px;
+  }
+  .btn {
+    width: 100%;
+    height: 58px;
+    border-radius: 30px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: transform 0.14s ease, box-shadow 0.18s ease, background 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn svg { display: block; flex: 0 0 auto; }
+
+  .btn-google {
+    background: #ffffff;
+    color: var(--google-text);
+    border: 1px solid var(--google-border);
+    box-shadow:
+      0 1px 2px rgba(20, 20, 35, 0.05),
+      0 8px 18px -12px rgba(20, 20, 35, 0.22);
+  }
+  .btn-google:hover {
+    background: #fcfcfd;
+    box-shadow:
+      0 1px 2px rgba(20, 20, 35, 0.06),
+      0 12px 24px -12px rgba(20, 20, 35, 0.3);
+    transform: translateY(-1px);
+  }
+  .btn-google:active {
+    transform: translateY(1px) scale(0.992);
+    background: #f4f4f6;
+    box-shadow: 0 1px 2px rgba(20, 20, 35, 0.08);
+  }
+
+  .btn-apple {
+    background: var(--ink);
+    color: #ffffff;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.18),
+      0 12px 26px -14px rgba(0, 0, 0, 0.55);
+  }
+  .btn-apple:hover {
+    background: #18181b;
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      0 16px 30px -14px rgba(0, 0, 0, 0.6);
+  }
+  .btn-apple:active {
+    transform: translateY(1px) scale(0.992);
+    background: #000000;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* home indicator */
+  .home-indicator {
+    position: absolute;
+    bottom: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 138px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.22);
+    z-index: 30;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bubble { animation: none !important; }
+    .btn { transition: none; }
+  }
+</style>
+
+<p class="caption">LEO - ONE FRONT DOOR</p>
+
+<div class="phone">
+  <div class="screen">
+    <div class="island"></div>
+
+    <!-- TestFlight status bar -->
+    <div class="statusbar">
+      <div class="sb-left">
+        <span class="tri"></span>
+        <span class="tf">TestFlight</span>
+      </div>
+      <div class="sb-right">
+        <!-- signal -->
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#0a0a0b"/>
+          <rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="#0a0a0b"/>
+          <rect x="10" y="3" width="3" height="9" rx="1" fill="#0a0a0b"/>
+          <rect x="15" y="0.5" width="3" height="11.5" rx="1" fill="#0a0a0b"/>
+        </svg>
+        <!-- wifi -->
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" aria-hidden="true">
+          <path d="M8.5 2.2c2.8 0 5.4 1.07 7.35 2.83.3.28.31.74.03 1.03l-.02.02c-.27.27-.7.28-.98.03A9.3 9.3 0 0 0 8.5 3.74 9.3 9.3 0 0 0 2.12 6.14c-.28.25-.71.24-.98-.03l-.02-.02a.74.74 0 0 1 .03-1.03A10.92 10.92 0 0 1 8.5 2.2Z" fill="#0a0a0b"/>
+          <path d="M8.5 5.6c1.86 0 3.57.69 4.86 1.83.3.27.32.73.04 1.02l-.02.01c-.26.27-.69.28-.97.04A5.92 5.92 0 0 0 8.5 7.06c-1.5 0-2.87.55-3.91 1.46-.28.24-.71.23-.97-.04l-.02-.01a.72.72 0 0 1 .04-1.02A7.32 7.32 0 0 1 8.5 5.6Z" fill="#0a0a0b"/>
+          <path d="M8.5 9.0c.86 0 1.64.32 2.24.85.3.27.32.74.03 1.03l-.84.84a.6.6 0 0 1-.86 0L8.5 10.9l-.61.82a.6.6 0 0 1-.86 0l-.84-.84a.71.71 0 0 1 .03-1.03A3.4 3.4 0 0 1 8.5 9Z" fill="#0a0a0b"/>
+        </svg>
+        <!-- battery -->
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none" aria-hidden="true">
+          <rect x="0.5" y="0.8" width="22" height="11.4" rx="3.2" stroke="#0a0a0b" stroke-opacity="0.4" fill="none"/>
+          <rect x="2.2" y="2.5" width="17" height="8" rx="1.8" fill="#0a0a0b"/>
+          <path d="M24.5 4.2c.9.3 1.6 1.2 1.6 2.3s-.7 2-1.6 2.3V4.2Z" fill="#0a0a0b" fill-opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- 6-dot logo -->
+      <div class="logo" aria-label="Leo logo">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+
+      <!-- bubble garland -->
+      <div class="garland">
+        <!-- far-left small glass -->
+        <div class="bubble glass" style="left:6px; top:96px; width:46px; height:46px; --dur:10s; --delay:-1s; --dx:3px; --dy:-6px;"></div>
+
+        <!-- skill bubble: Listing Research -->
+        <div class="bubble photo" style="left:24px; top:34px; width:76px; height:76px; --dur:11s; --delay:-3s; --dx:-3px; --dy:-8px;">
+          <span class="skill-label">Listing<br />Research</span>
+        </div>
+
+        <!-- left-lower medium glass -->
+        <div class="bubble glass" style="left:62px; top:130px; width:64px; height:64px; --dur:12s; --delay:-5s; --dx:4px; --dy:-7px;"></div>
+
+        <!-- skill bubble: Negotiation Prep -->
+        <div class="bubble photo" style="left:92px; top:18px; width:92px; height:92px; --dur:13s; --delay:-2s; --dx:-4px; --dy:-9px;">
+          <span class="skill-label">Negotiation<br />Prep</span>
+        </div>
+
+        <!-- top small glass between flower and dog -->
+        <div class="bubble glass" style="left:170px; top:0px; width:48px; height:48px; --dur:9.5s; --delay:-4s; --dx:3px; --dy:-6px;"></div>
+
+        <!-- skill bubble: Lead Qualification -->
+        <div class="bubble photo" style="left:208px; top:24px; width:84px; height:84px; --dur:12.5s; --delay:-1.5s; --dx:4px; --dy:-8px;">
+          <span class="skill-label">Lead<br />Qualification</span>
+        </div>
+
+        <!-- far-right medium glass -->
+        <div class="bubble glass" style="left:296px; top:62px; width:60px; height:60px; --dur:11.5s; --delay:-6s; --dx:-3px; --dy:-7px;"></div>
+
+        <!-- skill bubble: Compliance QA -->
+        <div class="bubble photo" style="left:248px; top:120px; width:80px; height:80px; --dur:13.5s; --delay:-3.5s; --dx:-4px; --dy:-8px;">
+          <span class="skill-label">Compliance<br />QA</span>
+        </div>
+
+        <!-- skill bubble: Scheduling -->
+        <div class="bubble photo" style="left:178px; top:160px; width:72px; height:72px; --dur:10.5s; --delay:-2.5s; --dx:3px; --dy:-7px;">
+          <span class="skill-label">Scheduling</span>
+        </div>
+
+        <!-- small accent glass bottom-left -->
+        <div class="bubble glass" style="left:118px; top:196px; width:44px; height:44px; --dur:9s; --delay:-5.5s; --dx:3px; --dy:-6px;"></div>
+
+        <!-- small accent glass right edge -->
+        <div class="bubble glass" style="left:332px; top:138px; width:38px; height:38px; --dur:10.5s; --delay:-1s; --dx:-2px; --dy:-5px;"></div>
+
+        <!-- center white + bubble (front): add a skill -->
+        <div class="bubble plus" style="left:128px; top:96px; width:96px; height:96px; --dur:14s; --delay:-4.5s; --dx:0px; --dy:-5px;" aria-label="Add a skill">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+            <path d="M17 5v24M5 17h24" stroke="#0a0a0b" stroke-width="3.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- headline -->
+      <h1 class="headline">
+        Meet Leo.<br />
+        The one front door<br />
+        to a hundred agents.
+      </h1>
+
+      <!-- auth buttons -->
+      <div class="actions">
+        <button class="btn btn-google" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.25" stroke="#1f1f23" stroke-width="1.6"/>
+            <path d="M8.2 12.4l2.6 2.6 5-5.4" stroke="#1f1f23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          See what Leo handled
+        </button>
+
+        <button class="btn btn-apple" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4.5 12h13.5M12.5 6.5l5.5 5.5-5.5 5.5" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Enter your morning
+        </button>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+</div>

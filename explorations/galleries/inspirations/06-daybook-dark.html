@@ -1,0 +1,570 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Leo Morning Command Center - Dark Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* deep near-black, slightly cool - oklch(13% 0.006 250) approx */
+    --bg: #0b0c0e;
+    --bg-2: #0d0f12;
+    --white: #f6f7f9;
+    --bright: #ffffff;
+    /* dim connective grey for the greeting */
+    --dim: #5d6066;
+    --dim-soft: #6f727a;
+    --grey-label: #8a8d95;
+    /* sheet (white) */
+    --sheet: #ffffff;
+    --sheet-ink: #14151a;
+    --sheet-ink-soft: #1c1e24;
+    --sheet-grey: #aeb1ba;
+    --sheet-grey-deep: #898d97;
+    --sheet-line: #e9eaee;
+    /* accents */
+    --red: #ff463a;
+    --green: #46c98b;
+    --green-deep: #34b878;
+    --purple: #9b8cff;
+    --orange: #ff9d3d;
+    --shadow-sheet: 0 -18px 50px -24px rgba(0, 0, 0, 0.55);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background: #e8e8ea;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 40px 16px;
+    color: var(--white);
+  }
+
+  .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #87898f;
+    font-weight: 500;
+  }
+
+  /* ---------- iPhone frame ---------- */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: #050607;
+    border-radius: 46px;
+    padding: 11px;
+    box-shadow:
+      0 50px 100px -40px rgba(0, 0, 0, 0.55),
+      0 0 0 2px rgba(255, 255, 255, 0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background: var(--bg);
+    isolation: isolate;
+  }
+
+  /* faint cool glow drifting from top-left, keeps it from being flat black */
+  .screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(95% 50% at 12% -6%, rgba(96, 104, 124, 0.16) 0%, rgba(96, 104, 124, 0) 52%),
+      radial-gradient(80% 40% at 92% 4%, rgba(60, 66, 80, 0.12) 0%, rgba(60, 66, 80, 0) 50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 128px;
+    height: 30px;
+    background: #050607;
+    border-radius: 0 0 18px 18px;
+    z-index: 40;
+  }
+
+  /* ---------- status bar (white glyphs) ---------- */
+  .statusbar {
+    position: relative;
+    z-index: 30;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 34px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--bright);
+  }
+  .statusbar .time { letter-spacing: 0.01em; }
+  .statusbar .sys { display: flex; align-items: center; gap: 7px; }
+  .statusbar .sys svg { display: block; }
+
+  /* ---------- content wrapper ---------- */
+  .content {
+    position: relative;
+    z-index: 10;
+    height: calc(100% - 50px);
+    padding: 8px 26px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- top row: big 09 + date ---------- */
+  .toprow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .daynum {
+    position: relative;
+    font-size: 92px;
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    color: var(--bright);
+  }
+  .daynum .dot {
+    position: absolute;
+    top: 9px;
+    right: -16px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 14px -1px rgba(255, 70, 58, 0.7);
+  }
+  .date {
+    text-align: right;
+    margin-top: 8px;
+  }
+  .date .mo {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--grey-label);
+    letter-spacing: 0.01em;
+  }
+  .date .dow {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--dim-soft);
+    margin-top: 2px;
+  }
+
+  /* ---------- greeting paragraph (mixed brightness) ---------- */
+  .greeting {
+    margin-top: 30px;
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--dim);
+    letter-spacing: -0.005em;
+    max-width: 320px;
+  }
+  .greeting b {
+    color: var(--bright);
+    font-weight: 600;
+  }
+  /* inline avatar inside the sentence */
+  .ava {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: -7px;
+    margin: 0 3px 0 2px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  /* inline glyphs */
+  .ig {
+    display: inline-block;
+    vertical-align: -3px;
+    margin: 0 4px 0 2px;
+  }
+
+  /* ---------- stats row ---------- */
+  .stats {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat svg { display: block; flex-shrink: 0; }
+  .stat .v {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+  }
+  .stat .v span { color: var(--dim-soft); font-weight: 500; }
+
+  /* ---------- bottom sheet ---------- */
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 43%;
+    background: var(--sheet);
+    border-radius: 30px 30px 0 0;
+    box-shadow: var(--shadow-sheet);
+    z-index: 20;
+    padding: 18px 26px 0;
+    overflow: hidden;
+    color: var(--sheet-ink);
+  }
+  .grabber {
+    width: 38px;
+    height: 5px;
+    border-radius: 3px;
+    background: #e2e3e7;
+    margin: 0 auto 12px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 2px;
+    cursor: pointer;
+    position: relative;
+    transition: opacity 0.16s ease;
+  }
+  .row:active { opacity: 0.6; }
+  /* dotted hairline under each row */
+  .row::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    bottom: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, var(--sheet-line) 0 60%, transparent 60% 100%);
+    background-size: 7px 1px;
+    background-repeat: repeat-x;
+  }
+
+  .row .ico {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+  }
+  .row .title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--sheet-grey-deep);
+    letter-spacing: -0.005em;
+  }
+  .row .time {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--sheet-grey);
+    letter-spacing: -0.005em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* active / now row: dark text */
+  .row.now .title { color: var(--sheet-ink); font-weight: 600; }
+  .row.now .time { color: var(--sheet-ink); font-weight: 600; }
+
+  /* task rows with checkbox: dark text */
+  .row.task .title { color: var(--sheet-ink); font-weight: 600; }
+
+  /* checkbox */
+  .check {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: 2px solid #c9cbd2;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease, transform 0.12s ease;
+    padding: 0;
+  }
+  .check:active { transform: scale(0.88); }
+  .check svg {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  .check.checked {
+    background: var(--green-deep);
+    border-color: var(--green-deep);
+  }
+  .check.checked svg { opacity: 1; transform: scale(1); }
+  .row.done .title {
+    color: var(--sheet-grey);
+    text-decoration: line-through;
+    text-decoration-color: var(--sheet-grey);
+  }
+
+  /* faint upcoming icon square */
+  .ico-faint {
+    width: 17px;
+    height: 17px;
+    border-radius: 5px;
+    border: 1.6px solid #d7d9df;
+  }
+
+  /* the last row is partially cut by the sheet edge */
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(20, 21, 26, 0.6);
+    z-index: 36;
+  }
+
+  /* ---------- entrance motion (gated) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .anim { opacity: 0; transform: translateY(12px); animation: rise 0.6s cubic-bezier(0.22, 0.8, 0.3, 1) forwards; }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.14s; }
+    .d3 { animation-delay: 0.24s; }
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .sheet {
+      transform: translateY(26px);
+      opacity: 0;
+      animation: sheetRise 0.7s cubic-bezier(0.22, 0.85, 0.28, 1) 0.3s forwards;
+    }
+    @keyframes sheetRise {
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .daynum .dot {
+      animation: pulse 2.6s ease-in-out infinite 1s;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 14px -1px rgba(255, 70, 58, 0.7); }
+      50% { box-shadow: 0 0 20px 1px rgba(255, 70, 58, 0.95); }
+    }
+  }
+</style>
+
+<div class="caption">LEO COMMAND CENTER - DARK MORNING BRIEF</div>
+
+<div class="phone">
+  <div class="screen">
+    <div class="notch"></div>
+
+    <!-- status bar (white) -->
+    <div class="statusbar">
+      <span class="time">9:41</span>
+      <span class="sys">
+        <!-- signal -->
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#f6f7f9"/>
+          <rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="#f6f7f9"/>
+          <rect x="10" y="3" width="3" height="9" rx="1" fill="#f6f7f9"/>
+          <rect x="15" y="0.5" width="3" height="11.5" rx="1" fill="#f6f7f9"/>
+        </svg>
+        <!-- wifi -->
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8.5 1.2C5.4 1.2 2.6 2.4 0.6 4.4L8.5 12 16.4 4.4C14.4 2.4 11.6 1.2 8.5 1.2Z" fill="#f6f7f9"/>
+        </svg>
+        <!-- battery -->
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#f6f7f9" stroke-opacity="0.45" fill="none"/>
+          <rect x="2.2" y="2.2" width="17" height="8.6" rx="2" fill="#f6f7f9"/>
+          <rect x="24" y="4" width="2" height="5" rx="1" fill="#f6f7f9" fill-opacity="0.45"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="content">
+      <!-- top row: big 09 + date -->
+      <div class="toprow anim d1">
+        <div class="daynum">09<span class="dot"></span></div>
+        <div class="date">
+          <div class="mo">Jan'24</div>
+          <div class="dow">Tuesday</div>
+        </div>
+      </div>
+
+      <!-- greeting with mixed brightness + inline glyphs -->
+      <p class="greeting anim d2">
+        <b>Good morning</b>,
+        <img class="ava" src="https://picsum.photos/seed/danareyes09/64/64" alt="" />
+        <b>Dana</b>.
+        <!-- calendar glyph -->
+        <svg class="ig" width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3.5" y="5" width="17" height="15" rx="3" stroke="#9b8cff" stroke-width="1.8"/>
+          <path d="M3.5 9.5h17" stroke="#9b8cff" stroke-width="1.8"/>
+          <path d="M8 3v4M16 3v4" stroke="#9b8cff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <b>3 deals</b> need you,
+        <!-- check-square glyph -->
+        <svg class="ig" width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" stroke="#46c98b" stroke-width="1.8"/>
+          <path d="M8 12.2l2.7 2.7L16.4 9" stroke="#46c98b" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <b>9 are handled</b> and
+        <!-- repeat / quiet glyph -->
+        <svg class="ig" width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 8.5h10.5a3.5 3.5 0 0 1 3.5 3.5v0" stroke="#ff9d3d" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M6.5 5.5 3.7 8.5l2.8 3" stroke="#ff9d3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M20 15.5H9.5A3.5 3.5 0 0 1 6 12v0" stroke="#ff9d3d" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="m17.5 18.5 2.8-3-2.8-3" stroke="#ff9d3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <b>1 is going quiet</b> today. You're <b>mostly clear</b> after the <b>Oak St counter</b>.
+      </p>
+
+      <!-- stats row -->
+      <div class="stats anim d3">
+        <!-- walking figure (green) -->
+        <div class="stat">
+          <svg width="20" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="13.5" cy="4.3" r="2.1" fill="#46c98b"/>
+            <path d="M12.4 8.2c-.9-.1-1.7.4-2 1.3L9 13.4l-2.6 1.1c-.7.3-1 1.1-.7 1.8.3.7 1.1 1 1.8.7l3.1-1.3c.4-.2.7-.5.9-.9l.3-.8.9 2-1.6 3.6c-.3.7 0 1.5.7 1.8.7.3 1.5 0 1.8-.7l1.9-4.3c.2-.5.2-1 0-1.5l-1-2.4 1.4.6 1 2.1c.3.6 1 .9 1.7.6.6-.3.9-1 .6-1.7l-1.2-2.6c-.2-.5-.6-.8-1.1-1l-3.9-1.6c-.2-.1-.4-.2-.6-.2Z" fill="#46c98b"/>
+          </svg>
+          <span class="v">47 <span>handled</span></span>
+        </div>
+        <!-- moon (purple) -->
+        <div class="stat">
+          <svg width="20" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 14.3A8.2 8.2 0 0 1 9.7 4a8.2 8.2 0 1 0 10.3 10.3Z" fill="#9b8cff"/>
+          </svg>
+          <span class="v">0 <span>woke you</span></span>
+        </div>
+        <!-- runner (green) -->
+        <div class="stat">
+          <svg width="20" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="15.2" cy="4.3" r="2.1" fill="#46c98b"/>
+            <path d="M13.8 7.9c-.8 0-1.5.4-1.9 1.1l-1.6 2.7-3.2.5c-.7.1-1.2.8-1.1 1.6.1.7.8 1.2 1.6 1.1l3.8-.6c.5-.1.9-.4 1.2-.8l.5-.9.6 1.6-2.6 2.9c-.5.5-.4 1.4.1 1.9.5.5 1.4.4 1.9-.1l3-3.4c.3-.4.4-.9.3-1.4l-.6-1.9 1.4 1 .2 2.4c.1.7.7 1.3 1.5 1.2.7-.1 1.3-.7 1.2-1.5l-.3-2.9c0-.5-.3-.9-.7-1.2l-3.3-2.4c-.5-.4-1-.6-1.5-.6Z" fill="#46c98b"/>
+          </svg>
+          <span class="v">3 <span>need you</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom white sheet with schedule -->
+    <div class="sheet">
+      <div class="grabber"></div>
+
+      <!-- now / active -->
+      <div class="row now">
+        <span class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="4.3" fill="#ff9d3d"/>
+            <g stroke="#ff9d3d" stroke-width="1.8" stroke-linecap="round">
+              <path d="M12 2.6v2.4M12 19v2.4M2.6 12H5M19 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/>
+            </g>
+          </svg>
+        </span>
+        <span class="title">Crestview escrow going quiet</span>
+        <span class="time">08:00</span>
+      </div>
+
+      <!-- upcoming meeting -->
+      <div class="row">
+        <span class="ico"><span class="ico-faint"></span></span>
+        <span class="title">Oak St counter due</span>
+        <span class="time">10:00</span>
+      </div>
+
+      <!-- upcoming -->
+      <div class="row">
+        <span class="ico"><span class="ico-faint"></span></span>
+        <span class="title">Maplewood walk-through</span>
+        <span class="time">13:00</span>
+      </div>
+
+      <!-- upcoming -->
+      <div class="row">
+        <span class="ico"><span class="ico-faint"></span></span>
+        <span class="title">Closing Birch Ln</span>
+        <span class="time">16:30</span>
+      </div>
+
+      <!-- task with checkbox -->
+      <div class="row task" data-row>
+        <button class="check" aria-label="Mark Qualify 2 new leads done">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12.5l4.2 4.2L19 7" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="title">Qualify 2 new leads</span>
+      </div>
+
+      <!-- last row cut off by sheet bottom -->
+      <div class="row task" data-row>
+        <button class="check" aria-label="Mark Review compliance done">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12.5l4.2 4.2L19 7" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="title">Review compliance</span>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // tappable checkboxes: toggle checked + strike the row title
+    var boxes = document.querySelectorAll(".check");
+    boxes.forEach(function (box) {
+      box.addEventListener("click", function (e) {
+        e.stopPropagation();
+        box.classList.toggle("checked");
+        var row = box.closest(".row");
+        if (row) row.classList.toggle("done", box.classList.contains("checked"));
+      });
+    });
+
+    // tapping a row toggles its checkbox too (whole row is tappable)
+    document.querySelectorAll(".row[data-row]").forEach(function (row) {
+      row.addEventListener("click", function () {
+        var box = row.querySelector(".check");
+        if (box) box.click();
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · Morning Command Center · V08</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* warm editorial light · tinted neutrals, no pure #000/#fff */
+  --paper:oklch(0.982 0.008 92);
+  --card:oklch(0.995 0.004 90);
+  --sunken:oklch(0.958 0.011 84);
+  --ink:oklch(0.24 0.018 62);
+  --body:oklch(0.45 0.016 64);
+  --muted:oklch(0.60 0.013 68);
+  --soft:oklch(0.72 0.011 74);
+  --hair:oklch(0.28 0.02 62 / .11);
+  --hair2:oklch(0.28 0.02 62 / .2);
+  --shadow:0 14px 34px -18px oklch(0.45 0.04 60 / .30);
+
+  /* AI confidence states (a dot / hairline / tinted chip only) */
+  --urgent:oklch(0.55 0.16 28);    --urgent-bg:oklch(0.95 0.035 36);
+  --uncertain:oklch(0.60 0.12 70); --uncertain-bg:oklch(0.95 0.04 80);
+  --confident:oklch(0.52 0.10 168);--confident-bg:oklch(0.95 0.035 168);
+  --accent:oklch(0.50 0.13 262);   /* one cobalt action */
+
+  --disp:'Space Grotesk',sans-serif;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:oklch(0.91 0.012 88);
+  font-family:var(--sans);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100dvh;padding:22px 16px 30px;gap:14px;
+  -webkit-font-smoothing:antialiased;color:var(--ink);
+}
+.cap{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.5 0.02 70)}
+
+/* ---- phone frame (chrome only) ---- */
+.phone{
+  position:relative;width:393px;height:812px;max-height:calc(100dvh - 96px);
+  background:var(--paper);border-radius:54px;overflow:hidden;
+  box-shadow:0 0 0 11px oklch(0.17 0.012 60), 0 0 0 12px oklch(0.34 0.012 60), 0 40px 90px -26px oklch(0.3 0.03 60 / .5);
+}
+.notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:32px;background:oklch(0.17 0.012 60);border-radius:18px;z-index:80}
+
+/* ---- masthead (sticky, the recompose lives here) ---- */
+.masthead{
+  position:absolute;top:0;left:0;right:0;z-index:60;
+  padding:50px 24px 14px;background:linear-gradient(180deg, var(--paper) 72%, oklch(0.982 0.008 92 / 0));
+  pointer-events:none;
+}
+.mast-rule{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--hair);padding-bottom:9px}
+.orb{
+  width:13px;height:13px;border-radius:50%;flex:none;
+  background:radial-gradient(60% 60% at 34% 30%, oklch(0.84 0.06 200), oklch(0.55 0.13 262) 46%, oklch(0.36 0.10 268));
+  box-shadow:0 0 7px oklch(0.55 0.13 262 / .35);
+  animation:breathe 5.2s var(--exp) infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.mast-name{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.mast-date{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:auto}
+/* the running count headline */
+.runline{
+  font-family:var(--serif);font-size:15.5px;line-height:1.3;color:var(--body);
+  margin-top:9px;height:20px;position:relative;overflow:hidden;
+}
+.runline .swap{display:inline-block;transition:transform .42s var(--exp),opacity .3s var(--exp)}
+.runline b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* ---- scrolling front page ---- */
+.scroller{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroller::-webkit-scrollbar{display:none}
+.front{padding:120px 24px 130px;display:flex;flex-direction:column}
+
+/* kinetic reveal: content visible by default, motion is enhancement */
+.k{opacity:1;transform:none}
+.js .k{opacity:0;transform:translateY(13px);animation:rise .62s var(--exp) forwards;animation-delay:calc(var(--ki,0)*70ms)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* the big standfirst headline */
+.standfirst{margin-bottom:6px}
+.standfirst .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.bighead{
+  font-family:var(--disp);font-weight:700;letter-spacing:-.045em;line-height:.9;color:var(--ink);
+  font-size:clamp(54px,18.5vw,74px);margin-top:14px;
+  display:flex;flex-wrap:wrap;align-baseline:baseline;column-gap:.18em;
+}
+.bighead .ct{
+  color:var(--urgent);font-variant-numeric:tabular-nums;
+  display:inline-block;transition:transform .42s var(--exp);
+}
+.bighead .cw{display:inline-block;transition:transform .42s var(--exp),opacity .3s var(--exp)}
+.bighead.pop .ct{transform:scale(1.08)}
+.bighead.clear .ct{color:var(--confident)}
+.standfirst .deck{
+  font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.45;color:var(--body);
+  margin-top:18px;max-width:30ch;
+}
+
+/* the section rule between headline and stories */
+.fold-rule{display:flex;align-items:center;gap:12px;margin:30px 0 4px;color:var(--muted)}
+.fold-rule .ln{height:1px;background:var(--hair);flex:1}
+.fold-rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+
+/* ---- a story (triage item) ---- */
+.story{
+  position:relative;padding:24px 0;border-bottom:1px solid var(--hair);
+  transition:opacity .5s var(--exp);
+}
+.story:first-of-type{border-top:1px solid var(--hair)}
+.story .meta{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.sdot{width:9px;height:9px;border-radius:50%;background:var(--st);flex:none;transition:background .5s var(--exp)}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--st);transition:color .5s var(--exp)}
+.altbadge{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);margin-left:auto}
+.headl{font-family:var(--disp);font-weight:600;font-size:27px;line-height:1.06;letter-spacing:-.025em;color:var(--ink)}
+.why{font-family:var(--sans);font-size:14.5px;line-height:1.55;color:var(--body);margin-top:12px;max-width:34ch}
+.leoline{font-family:var(--serif);font-style:italic;font-size:16.5px;line-height:1.45;color:var(--ink);margin-top:14px;max-width:32ch}
+
+.story.urgent{--st:var(--urgent);--stbg:var(--urgent-bg)}
+.story.uncertain{--st:var(--uncertain);--stbg:var(--uncertain-bg)}
+.story.confident{--st:var(--confident);--stbg:var(--confident-bg)}
+
+/* confidence chip + range (never a fake %) */
+.confbar{display:flex;align-items:center;gap:10px;margin-top:16px}
+.range{height:5px;width:104px;border-radius:3px;background:var(--sunken);position:relative;overflow:hidden}
+.range i{position:absolute;top:0;bottom:0;background:var(--st);border-radius:3px;transition:transform .6s var(--exp);transform-origin:left}
+.range.hi i{left:0;width:78%} .range.mid i{left:18%;width:46%}
+.conftxt{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* a draining window ring for the 5-min lead */
+.windowrow{display:flex;align-items:center;gap:13px;margin-top:16px;padding:13px 15px;background:var(--stbg);border-radius:13px}
+.ring{width:34px;height:34px;flex:none;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}
+.ring .trk{stroke:oklch(0.28 0.02 62 / .14)}
+.ring .arc{stroke:var(--st);stroke-linecap:round;stroke-dasharray:88;stroke-dashoffset:18;animation:drain 300s linear forwards}
+@keyframes drain{to{stroke-dashoffset:88}}
+.windowrow .wt{font-family:var(--sans);font-size:13.5px;line-height:1.4;color:var(--ink)}
+.windowrow .wt b{font-family:var(--mono);font-weight:500;color:var(--st);font-size:12.5px;letter-spacing:.04em}
+
+/* actions */
+.acts{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{
+  min-height:46px;padding:0 20px;border-radius:13px;font-family:var(--sans);font-size:14.5px;font-weight:600;
+  border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  transition:transform .16s var(--exp),background .2s var(--exp);
+}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.btn-p{background:var(--accent);color:oklch(0.985 0.006 92)}
+.btn-g{background:transparent;color:var(--ink);border:1px solid var(--hair2)}
+.btn-g:hover{background:var(--sunken)}
+
+/* resolved state */
+.story.done{opacity:.5}
+.story.done .acts,.story.done .windowrow,.story.done .confbar{display:none}
+.resolved{
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--confident);
+  margin-top:14px;opacity:0;height:0;overflow:hidden;transition:opacity .4s var(--exp);
+  display:flex;align-items:center;gap:7px;
+}
+.resolved::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--confident-bg);border:1.5px solid var(--confident);position:relative}
+.story.done .resolved{opacity:1;height:auto;margin-top:14px}
+
+/* ---- the calm signal (Crestview) ---- */
+.signal{
+  margin-top:30px;padding:20px;background:var(--sunken);border-radius:16px;
+}
+.signal:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.signal .row{display:flex;align-items:center;gap:9px}
+.signal .row .d{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.signal .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.signal h3{font-family:var(--serif);font-size:18px;font-weight:500;line-height:1.35;color:var(--ink);margin-top:12px}
+.signal p{font-family:var(--sans);font-size:13.5px;line-height:1.5;color:var(--body);margin-top:8px}
+.signal .pulse{display:flex;align-items:flex-end;gap:3px;height:26px;margin-top:14px}
+.signal .pulse span{width:5px;border-radius:2px;background:var(--soft);transition:height .5s var(--exp)}
+.signal .ghost-act{margin-top:14px;background:transparent;border:1px solid var(--hair2);color:var(--body);font-family:var(--sans);font-size:13px;font-weight:500;min-height:40px;padding:0 16px;border-radius:11px;cursor:pointer}
+.signal .ghost-act:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---- the silence ledger (quiet line) ---- */
+.ledger{
+  margin-top:24px;padding:18px 4px 6px;border-top:1px solid var(--hair);
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+}
+.ledger .num{font-family:var(--disp);font-weight:700;font-size:30px;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
+.ledger .txt{font-family:var(--serif);font-style:italic;font-size:15.5px;color:var(--muted);line-height:1.4}
+.ledger .txt b{font-style:normal;font-family:var(--sans);font-weight:600;color:var(--confident)}
+
+/* ---- bottom nav (chrome) ---- */
+.tabbar{
+  position:absolute;left:0;right:0;bottom:0;z-index:70;
+  height:84px;padding:10px 28px 26px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(0deg, var(--paper) 64%, oklch(0.982 0.008 92 / 0));
+}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;min-width:54px;min-height:46px;justify-content:center}
+.tab span{font-family:var(--sans);font-size:10.5px;font-weight:500;color:var(--muted);letter-spacing:.01em}
+.tab.on span{color:var(--ink)}
+.tab svg{width:22px;height:22px;stroke:var(--muted);fill:none;stroke-width:1.6}
+.tab.on svg{stroke:var(--ink)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+
+@media (prefers-reduced-motion: reduce){
+  .orb{animation:none}
+  .js .k{animation:none;opacity:1;transform:none}
+  .ring .arc{animation:none;stroke-dashoffset:48}
+  *{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="cap">V08 EDITORIAL WHITE x SCROLL STORY</div>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- MASTHEAD: the running count recomposes here as items resolve -->
+  <header class="masthead">
+    <div class="mast-rule">
+      <span class="orb" aria-hidden="true"></span>
+      <span class="mast-name">Leo</span>
+      <span class="mast-date">Mon · 7:14a</span>
+    </div>
+    <p class="runline" aria-live="polite"><span class="swap" id="runline">Good morning, Dana. <b id="runcount">Three</b> things need you before the day starts.</span></p>
+  </header>
+
+  <div class="scroller" id="scroller">
+    <div class="front">
+
+      <!-- THE BIG HEADLINE that rewrites itself -->
+      <section class="standfirst">
+        <p class="eyebrow k" style="--ki:0">Your morning</p>
+        <h1 class="bighead" id="bighead" aria-live="polite">
+          <span class="k" style="--ki:1"><span class="ct" id="count">Three</span></span>
+          <span class="cw k" id="word" style="--ki:2">things&nbsp;need&nbsp;you<span class="ct" style="color:var(--urgent)">.</span></span>
+        </h1>
+        <p class="deck k" style="--ki:3" id="deck">I took care of everything else overnight. Here are the three that need you, most important first.</p>
+      </section>
+
+      <div class="fold-rule k" style="--ki:4"><span class="lbl">Needs you now</span><span class="ln"></span></div>
+
+      <!-- STORY 1 · 142 Oak counter due 10:00a (uncertain, your deal) -->
+      <article class="story uncertain" data-story id="s1">
+        <div class="meta">
+          <span class="sdot"></span>
+          <span class="tag">Reply due by 10:00a</span>
+          <span class="altbadge">Your deal</span>
+        </div>
+        <h2 class="headl">Your reply on 142 Oak St is due at 10am.</h2>
+        <p class="why">The seller needs your answer by 10am. I wrote a reply offering 612,000 dollars, but I could not confirm their loan deadline, so I am waiting for you before I send it.</p>
+        <p class="leoline">The price looks right. The only thing I am unsure about is the timing.</p>
+        <div class="confbar">
+          <span class="range mid"><i></i></span>
+          <span class="conftxt">How sure I am: fairly sure</span>
+        </div>
+        <div class="acts">
+          <button class="btn btn-p" data-resolve="s1">Read and send</button>
+          <button class="btn btn-g" data-resolve="s1">Change it first</button>
+        </div>
+        <p class="resolved">Sent. I will let you know when they reply.</p>
+      </article>
+
+      <!-- STORY 2 · 88 Linden new lead, 5-min window, pre-approved (urgent) -->
+      <article class="story urgent" data-story id="s2">
+        <div class="meta">
+          <span class="sdot"></span>
+          <span class="tag">Reach out now</span>
+          <span class="altbadge">New buyer</span>
+        </div>
+        <h2 class="headl">A new buyer just asked about 88 Linden.</h2>
+        <p class="why">They reached out a few minutes ago, and a bank has already approved them for a loan. Whoever replies first usually gets the deal, so it is best to reach out now.</p>
+        <div class="windowrow">
+          <svg class="ring" viewBox="0 0 32 32" aria-hidden="true"><circle class="trk" cx="16" cy="16" r="14"/><circle class="arc" cx="16" cy="16" r="14"/></svg>
+          <p class="wt">Best to reply in the next <b>5 min</b>. I have written a first message you can send.</p>
+        </div>
+        <div class="acts">
+          <button class="btn btn-p" data-resolve="s2">Send my message</button>
+          <button class="btn btn-g" data-resolve="s2">Call them instead</button>
+        </div>
+        <p class="resolved">Message sent. Their reply will show up in your messages.</p>
+      </article>
+
+      <!-- STORY 3 · Marcus teammate lead going quiet (confident, team) -->
+      <article class="story confident" data-story id="s3">
+        <div class="meta">
+          <span class="sdot"></span>
+          <span class="tag">How sure I am: very sure</span>
+          <span class="altbadge">Marcus, your teammate</span>
+        </div>
+        <h2 class="headl">One of Marcus's buyers has gone quiet.</h2>
+        <p class="why">Marcus has not talked to the Briar Hollow buyer in three days. When buyers go quiet this long, they often stop replying for good.</p>
+        <p class="leoline">A quick word from you now is easier than trying to win them back later.</p>
+        <div class="confbar">
+          <span class="range hi"><i></i></span>
+          <span class="conftxt">The last 9 of 11 times, this buyer stopped replying</span>
+        </div>
+        <div class="acts">
+          <button class="btn btn-p" data-resolve="s3">Remind Marcus</button>
+          <button class="btn btn-g" data-resolve="s3">See the messages</button>
+        </div>
+        <p class="resolved">Reminder sent to Marcus.</p>
+      </article>
+
+      <div class="fold-rule k" style="--ki:5"><span class="lbl">Good to know</span><span class="ln"></span></div>
+
+      <!-- THE CALM SIGNAL · Crestview going quiet (not urgent) -->
+      <section class="signal"
+               role="button" tabindex="0" id="signal"
+               aria-label="The Crestview deal is slowing down, tap to see more">
+        <div class="row"><span class="d"></span><span class="lbl">Just so you know, nothing to do yet</span></div>
+        <h3>The Crestview deal is slowing down, but it is not in trouble.</h3>
+        <p>The buyer is taking longer to reply, but nothing is late. I am keeping an eye on it and will tell you only if it slows down more.</p>
+        <div class="pulse" aria-hidden="true">
+          <span style="height:60%"></span><span style="height:80%"></span><span style="height:50%"></span><span style="height:70%"></span><span style="height:40%"></span><span style="height:30%"></span><span style="height:34%"></span>
+        </div>
+        <button class="ghost-act" tabindex="-1">See more</button>
+      </section>
+
+      <!-- THE QUIET LEDGER -->
+      <div class="ledger">
+        <span class="num">47</span>
+        <span class="txt">things I took care of overnight. I woke you for <b>none of them</b>.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (chrome) -->
+  <nav class="tabbar">
+    <button class="tab on" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg><span>Today</span></button>
+    <button class="tab"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Deals</span></button>
+    <button class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg><span>People</span></button>
+    <button class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.6"/></svg><span>Leo</span></button>
+  </nav>
+</div>
+
+<script>
+(function(){
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+
+  var WORDS = ['Zero','One','Two','Three'];
+  var remaining = 3;
+
+  var bighead   = document.getElementById('bighead');
+  var countEl   = document.getElementById('count');   // big headline number word
+  var wordEl    = document.getElementById('word');     // "things need you."
+  var deckEl    = document.getElementById('deck');
+  var runcount  = document.getElementById('runcount'); // masthead number word
+  var runlineEl = document.getElementById('runline');
+
+  function recompose(){
+    var n = remaining;
+    // pop the big numeral
+    bighead.classList.add('pop');
+    setTimeout(function(){ bighead.classList.remove('pop'); }, 420);
+
+    if(n > 0){
+      countEl.textContent = WORDS[n];
+      wordEl.innerHTML = (n === 1 ? 'thing&nbsp;needs&nbsp;you' : 'things&nbsp;need&nbsp;you')
+        + '<span class="ct" style="color:var(--urgent)">.</span>';
+      bighead.classList.remove('clear');
+      deckEl.textContent = (n === 1)
+        ? 'One left. Finish it and your morning is done.'
+        : 'Two still to go, most important first.';
+      // masthead runline rewrites itself too
+      runlineEl.innerHTML = 'You have <b>' + WORDS[n].toLowerCase() + '</b> ' + (n===1?'thing':'things') + ' left this morning.';
+    } else {
+      // the front page rewrites to calm
+      countEl.textContent = 'All';
+      wordEl.innerHTML = 'done&nbsp;for&nbsp;now<span class="ct" style="color:var(--confident)">.</span>';
+      bighead.classList.add('clear');
+      deckEl.textContent = 'Nothing else needs you right now. I have the rest, and will only reach out if something changes.';
+      runlineEl.innerHTML = 'You are all caught up, Dana. <b>I am watching the rest.</b>';
+    }
+
+    // animate the masthead swap (opacity + transform only, no layout props)
+    var sw = runlineEl;
+    sw.style.transition = 'none'; sw.style.opacity = '0'; sw.style.transform = 'translateY(8px)';
+    nextTick(function(){
+      sw.style.transition = 'opacity .34s var(--exp), transform .34s var(--exp)';
+      sw.style.opacity = '1'; sw.style.transform = 'none';
+    });
+  }
+
+  // setTimeout, not rAF: content never depends on rAF firing in the preview
+  function nextTick(fn){ setTimeout(fn, 16); }
+
+  function resolveStory(story){
+    if(story.classList.contains('done')) return;
+    story.classList.add('done');
+    if(remaining > 0) remaining--;
+    recompose();
+  }
+
+  document.querySelectorAll('[data-resolve]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var story = document.getElementById(btn.getAttribute('data-resolve'));
+      if(story) resolveStory(story);
+    });
+  });
+
+  // the calm signal is a clickable non-button: keyboard accessible
+  var signal = document.getElementById('signal');
+  function openSignal(){
+    var btn = signal.querySelector('.ghost-act');
+    if(btn){ btn.style.transition='transform .16s var(--exp)'; btn.style.transform='scale(.97)';
+      setTimeout(function(){ btn.style.transform='none'; }, 160); }
+  }
+  signal.addEventListener('click', openSignal);
+  signal.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openSignal(); }
+  });
+})();
+</script>
+</body>
+</html>

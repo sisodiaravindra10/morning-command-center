@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Stake Lensing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.80 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --owner:oklch(0.74 0.12 300);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 86px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260)}
+.phone{position:relative; width:393px; height:760px; max-height:calc(100dvh - 150px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:54px 20px 16px}
+.orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 11px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.lede{font-family:var(--serif);font-size:20px;line-height:1.3;margin-top:12px;color:var(--ink)}
+.axis-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.axis-h b{color:var(--cobalt);font-weight:500}
+.feed{position:relative;flex:1;overflow:hidden}
+.card{position:relative;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;will-change:transform}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--dc,var(--soft))}
+.card.urgent{--dc:var(--coral)} .card.uncertain{--dc:var(--uncertain)} .card.confident{--dc:var(--confident)} .card.cobalt{--dc:var(--cobalt)} .card.calm{--dc:var(--soft)}
+.card .main{flex:1;min-width:0}
+.card .nm{font-family:var(--sans);font-size:15px;font-weight:600;letter-spacing:-.1px}
+.card .sub{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:3px}
+.card .tag{font-family:var(--mono);font-size:11px;color:var(--dc,var(--muted));background:color-mix(in oklch, var(--dc,var(--soft)) 13%, transparent);padding:5px 10px;border-radius:8px;white-space:nowrap;flex:none}
+.card .rank{font-family:var(--mono);font-size:11px;color:var(--soft);width:18px;text-align:right;flex:none}
+.lens{display:flex;gap:7px;margin-top:6px}
+.lens button{flex:1;font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--muted);background:var(--inset);border:1px solid var(--hair);border-radius:11px;padding:10px 4px;cursor:pointer;transition:all .2s}
+.lens button.on{color:var(--ink);background:oklch(0.66 0.16 262 / .16);border-color:oklch(0.66 0.16 262 / .5)}
+@media (prefers-reduced-motion: reduce){ .orb{animation:none} .card{transition:none !important} }
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · Stake Lensing</div>
+<div class="phone"><div class="notch"></div><div class="screen">
+  <div class="hi"><span class="orb"></span>Leo · ranked by what's at stake</div>
+  <div class="lede">I already did the 6am ranking you used to do in your head.</div>
+  <div class="axis-h">Ranking by <b id="axis-name">Deadline</b> · tap to re-lens</div>
+  <div class="feed" id="feed"></div>
+  <div class="lens" id="lens">
+    <button data-axis="deadline" class="on">Deadline</button>
+    <button data-axis="dollars">Dollars</button>
+    <button data-axis="relationship">Relationship</button>
+    <button data-axis="owner">Owner</button>
+  </div>
+</div></div>
+<div class="cap" id="hint">Loads in yesterday's order, then re-sorts. Tap a lens to re-rank.</div>
+<script>
+const DEALS=[
+  {id:'maplewood',nm:'Maplewood escrow',sub:'inspection objection open',cls:'urgent',s:{deadline:98,dollars:74,relationship:55,owner:42},t:{deadline:'18h left',dollars:'$840k',relationship:'active buyer',owner:'+$ to cap'}},
+  {id:'oak',nm:'142 Oak St',sub:'counter pending',cls:'uncertain',s:{deadline:72,dollars:64,relationship:50,owner:36},t:{deadline:'2d to expiry',dollars:'$612k',relationship:'new buyer',owner:'+$ to cap'}},
+  {id:'henderson',nm:'Marcus · Henderson',sub:'buyer going quiet',cls:'confident',s:{deadline:64,dollars:58,relationship:82,owner:30},t:{deadline:'drift risk',dollars:'$735k',relationship:'team save',owner:'team override'}},
+  {id:'alvarez',nm:'The Alvarez family',sub:'past client, move window',cls:'confident',s:{deadline:22,dollars:46,relationship:94,owner:52},t:{deadline:'no clock',dollars:'~$900k',relationship:'7yr window',owner:'repeat GCI'}},
+  {id:'priya',nm:'Priya · revenue share',sub:'nearing tier threshold',cls:'cobalt',s:{deadline:34,dollars:38,relationship:44,owner:96},t:{deadline:'this month',dollars:'recurring',relationship:'recruit',owner:'pays you'}},
+  {id:'birch',nm:'Birch Ln listing',sub:'12 showings booked',cls:'calm',s:{deadline:48,dollars:90,relationship:52,owner:64},t:{deadline:'open house Sat',dollars:'$1.2M',relationship:'seller',owner:'+$ to cap'}}
+];
+const feed=document.getElementById('feed');
+const byId={};
+DEALS.forEach(d=>{
+  const c=document.createElement('div'); c.className='card '+d.cls; c.id='c-'+d.id;
+  c.innerHTML=`<span class="dot"></span><div class="main"><div class="nm">${d.nm}</div><div class="sub">${d.sub}</div></div><span class="tag" data-tag>${d.t.deadline}</span>`;
+  feed.appendChild(c); byId[d.id]=c;
+});
+let axis='deadline';
+function orderFor(ax){ return [...DEALS].sort((a,b)=>b.s[ax]-a.s[ax]).map(d=>d.id); }
+function reorder(ax){
+  const cards=[...feed.children];
+  const first=new Map(); cards.forEach(c=>first.set(c,c.getBoundingClientRect().top));
+  orderFor(ax).forEach(id=>feed.appendChild(byId[id]));
+  DEALS.forEach(d=>{ byId[d.id].querySelector('[data-tag]').textContent=d.t[ax]; });
+  // FLIP without requestAnimationFrame (force reflow via offsetWidth)
+  cards.forEach(c=>{ const last=c.getBoundingClientRect().top; const dy=first.get(c)-last; c.style.transition='none'; c.style.transform=`translateY(${dy}px)`; });
+  void feed.offsetWidth;
+  cards.forEach(c=>{ c.style.transition='transform .8s var(--exp)'; c.style.transform=''; });
+  document.getElementById('axis-name').textContent=ax.charAt(0).toUpperCase()+ax.slice(1);
+  [...document.querySelectorAll('.lens button')].forEach(b=>b.classList.toggle('on',b.dataset.axis===ax));
+  axis=ax;
+}
+document.querySelectorAll('.lens button').forEach(b=>b.addEventListener('click',()=>reorder(b.dataset.axis)));
+// Boot-time keyboard sweep: promote click-bound non-button/non-anchor elements to operable controls.
+(function(){
+  const sel='[onclick], .card, .tag';
+  const targets=[...document.querySelectorAll(sel)].filter(el=>{
+    if(el.tagName==='BUTTON'||el.tagName==='A') return false; // do not double-bind native controls
+    const clickBound = el.hasAttribute('onclick') || (typeof el.onclick==='function');
+    return clickBound;
+  });
+  targets.forEach(el=>{ el.setAttribute('role','button'); el.setAttribute('tabindex','0'); });
+})();
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  const el=document.activeElement;
+  if(!el) return;
+  const tag=el.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||el.isContentEditable) return; // do not interfere with typing
+  if(tag==='BUTTON'||tag==='A') return; // native controls handle keys themselves
+  if(el.getAttribute('role')==='button' && el.getAttribute('tabindex')!==null){
+    e.preventDefault();
+    el.click();
+  }
+});
+// initial: show a shuffled "yesterday" order, then settle into today's Deadline ranking
+['birch','priya','alvarez','maplewood','henderson','oak'].forEach(id=>feed.appendChild(byId[id]));
+setTimeout(()=>reorder('deadline'), 650);
+</script>
+</body>
+</html>

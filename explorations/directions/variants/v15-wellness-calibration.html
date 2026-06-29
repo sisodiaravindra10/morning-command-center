@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Leo · Morning · V15 Wellness × Calibration Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* warm peach-light wellness surfaces, tinted neutrals (no pure #fff / #000) */
+    --paper:    oklch(0.975 0.016 64);
+    --paper-2:  oklch(0.964 0.020 56);
+    --card:     oklch(0.993 0.007 70);
+    --sunken:   oklch(0.955 0.018 60);
+    --rail:     oklch(0.948 0.022 54);
+    --hair:     oklch(0.40 0.03 48 / 0.12);
+    --hair-soft:oklch(0.40 0.03 48 / 0.07);
+    --shadow:   0 16px 40px -22px oklch(0.50 0.06 46 / 0.34);
+    --shadow-lift: 0 24px 54px -24px oklch(0.50 0.07 42 / 0.42);
+
+    /* ink */
+    --ink:   oklch(0.28 0.024 48);
+    --body:  oklch(0.46 0.020 52);
+    --muted: oklch(0.60 0.016 56);
+    --faint: oklch(0.72 0.014 60);
+
+    /* confidence-state hues (color encodes a tier, never decoration) */
+    --high:      oklch(0.55 0.10 168);
+    --likely:    oklch(0.66 0.12 70);
+    --uncertain: oklch(0.58 0.15 36);
+    --accent:    oklch(0.50 0.12 256); /* single primary action */
+
+    --serif: "Newsreader", Georgia, serif;
+    --sans: "Inter", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --r-card: 22px;
+    --r-chip: 11px;
+    --r-btn: 13px;
+    --ease: cubic-bezier(.16,1,.3,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(130% 60% at 18% 4%, var(--paper-2), transparent 58%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:34px 16px 48px;
+  }
+
+  .stage{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+
+  .caption{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--faint);
+  }
+
+  /* phone frame */
+  .phone{
+    width:393px;
+    max-width:100%;
+    height:830px;
+    border-radius:52px;
+    background:var(--paper);
+    position:relative;
+    box-shadow:
+      0 0 0 11px oklch(0.32 0.014 50),
+      0 0 0 12px oklch(0.44 0.018 50),
+      0 40px 92px -38px oklch(0.42 0.06 46 / 0.55);
+    overflow:hidden;
+  }
+  /* a soft warm wash, but anchored low-left (NOT a top peach glow like V01) */
+  .phone::before{
+    content:"";
+    position:absolute;
+    inset:auto 0 0 0;
+    height:300px;
+    background:
+      radial-gradient(120% 120% at 14% 112%, oklch(0.93 0.045 50 / 0.7), transparent 62%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .notch{
+    position:absolute;
+    top:13px; left:50%;
+    transform:translateX(-50%);
+    width:118px; height:32px;
+    background:oklch(0.26 0.014 50);
+    border-radius:18px;
+    z-index:40;
+  }
+
+  .screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    z-index:1;
+  }
+
+  /* status bar */
+  .statusbar{
+    height:52px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:0 28px 4px;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.02em;
+    color:var(--ink);
+    flex:0 0 auto;
+    position:relative;
+    z-index:5;
+  }
+  .statusbar .dots{ display:flex; gap:5px; align-items:center; }
+  .statusbar .dots span{ width:5px; height:5px; border-radius:50%; background:var(--muted); }
+  .statusbar .dots .bar{ width:18px; height:8px; border:1.5px solid var(--muted); border-radius:3px; }
+
+  .scroll{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:4px 22px 128px;
+    scrollbar-width:none;
+  }
+  .scroll::-webkit-scrollbar{ display:none; }
+
+  /* ---- header (no big orb; a quiet line, a tiny pulse mark) ---- */
+  .head{ padding:6px 2px 2px; }
+  .head .meta{
+    display:flex; align-items:center; gap:9px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .head .meta .mark{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--high);
+    position:relative;
+    flex:0 0 auto;
+  }
+  .head .meta .mark::after{
+    content:""; position:absolute; inset:-5px; border-radius:50%;
+    border:1px solid var(--high);
+    opacity:0.4;
+    animation:halo 4.8s var(--ease) infinite;
+  }
+  @keyframes halo{ 0%,100%{ transform:scale(0.7); opacity:0.45; } 50%{ transform:scale(1); opacity:0; } }
+  .head h1{
+    font-family:var(--serif);
+    font-weight:300;
+    font-size:30px;
+    line-height:1.08;
+    letter-spacing:-0.012em;
+    margin:9px 0 0;
+    color:var(--ink);
+  }
+  .head h1 b{ font-weight:500; }
+
+  /* ---- CENTERPIECE: the calibration card ---- */
+  .cal{
+    margin-top:22px;
+    background:var(--card);
+    border:1px solid var(--hair-soft);
+    border-radius:var(--r-card);
+    padding:20px 19px 18px;
+    box-shadow:var(--shadow);
+    position:relative;
+    opacity:0;
+    transform:translateY(12px);
+    animation:enter .6s var(--ease) .06s forwards;
+  }
+  .cal-head{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .cal-head .who{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .cal-head .who .seed{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--high);
+    animation:breathe 5.4s var(--ease) infinite;
+  }
+  @keyframes breathe{ 0%,100%{ transform:scale(0.86); } 50%{ transform:scale(1.06); } }
+  .cal-head .audit{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.06em;
+    color:var(--faint);
+  }
+  .cal-title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:21px;
+    line-height:1.3;
+    letter-spacing:-0.006em;
+    color:var(--ink);
+    margin:13px 0 2px;
+  }
+  .cal-title em{ font-style:italic; color:var(--body); }
+  .cal-sub{
+    font-size:12.5px;
+    line-height:1.5;
+    color:var(--body);
+    margin:7px 0 0;
+  }
+
+  /* tier rows, hairline-divided (no nested cards, no side stripes) */
+  .tiers{ margin-top:18px; }
+  .tier{
+    border-top:1px solid var(--hair-soft);
+    padding:14px 0 13px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tier:first-child{ border-top:none; padding-top:4px; }
+  .tier:focus-visible{
+    outline:none;
+    border-radius:var(--r-chip);
+    box-shadow:0 0 0 3px oklch(0.50 0.12 256 / 0.40);
+  }
+  .tier .trow{ display:flex; align-items:center; gap:11px; }
+  .tier .tdot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; background:var(--tc); }
+  .tier .tname{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.07em;
+    text-transform:uppercase;
+    color:var(--tc-text);
+  }
+  .tier .tcount{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--faint);
+    margin-left:1px;
+  }
+  .tier .tacc{
+    margin-left:auto;
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:21px;
+    line-height:1;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .tier .tacc .unit{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+
+  /* count-up of the calibrated range (transform/opacity only, no rAF). Each digit
+     sits in a viewport and a strip of 0..n rolls up via translateY + steps(),
+     landing on the real figure. The static range stays readable without JS. */
+  .num.counter{ display:inline-flex; align-items:baseline; gap:0; }
+  .num .seg{ font-variant-numeric:tabular-nums; }
+  .num .roll{
+    display:inline-block; height:1em; overflow:hidden; vertical-align:baseline;
+    position:relative; top:0.04em;
+  }
+  .num .roll .strip{
+    display:flex; flex-direction:column; align-items:center;
+    transform:translateY(calc(var(--stop) * -1em));
+  }
+  .num .roll .strip span{ height:1em; line-height:1; display:block; }
+  .armed .num .roll .strip{
+    animation:roll 1s var(--ease) var(--rd, .2s) both;
+  }
+  @keyframes roll{
+    from{ transform:translateY(0); }
+    to{ transform:translateY(calc(var(--stop) * -1em)); }
+  }
+  .tier .chev{
+    margin-left:11px; width:16px; height:16px; flex:0 0 auto;
+    color:var(--faint);
+    transition:transform .4s var(--ease);
+  }
+  .tier .chev svg{ width:16px; height:16px; stroke:currentColor; stroke-width:1.8; fill:none; }
+  .tier.open .chev{ transform:rotate(180deg); }
+
+  /* the confidence bar = a calibrated range, not a single fake number */
+  .bar{
+    position:relative;
+    height:6px;
+    border-radius:4px;
+    background:var(--sunken);
+    margin-top:11px;
+    overflow:hidden;
+  }
+  .bar .range{
+    position:absolute; top:0; bottom:0;
+    left:var(--lo); right:calc(100% - var(--hi));
+    background:var(--tc);
+    border-radius:4px;
+    transform:scaleX(0);
+    transform-origin:left center;
+    transition:transform 1s var(--ease);
+  }
+  .armed .bar .range{ transform:scaleX(1); }
+
+  /* the honest misses, disclosed on tap (animates max-height only on the inner) */
+  .misses{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .5s var(--ease);
+  }
+  .tier.open .misses{ grid-template-rows:1fr; }
+  .misses-in{ overflow:hidden; min-height:0; }
+  .miss-h{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:14px 0 2px;
+  }
+  .miss{
+    font-size:13px;
+    line-height:1.5;
+    color:var(--body);
+    padding:9px 0;
+    border-top:1px solid var(--hair-soft);
+    display:flex; gap:10px; align-items:baseline;
+  }
+  .miss .dt{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--faint);
+    margin-left:auto;
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+  .miss-more{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+    padding-top:11px;
+  }
+  /* the uncertain tier carries the honest AI-state copy when wrong */
+  .honest{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    line-height:1.5;
+    color:var(--body);
+    margin:13px 0 2px;
+  }
+
+  /* the self-correction drift line: an SVG path that draws on load */
+  .drift{
+    margin-top:18px;
+    padding:16px 16px 14px;
+    border-radius:var(--r-chip);
+    background:var(--sunken);
+    border:1px solid var(--hair-soft);
+  }
+  .drift-h{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .drift svg{ display:block; width:100%; height:46px; overflow:visible; }
+  .drift .track{ stroke:var(--hair); stroke-width:1; fill:none; }
+  .drift .line{
+    stroke:var(--high);
+    stroke-width:2.4;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:240;
+    stroke-dashoffset:240;
+  }
+  .armed .drift .line{ animation:draw 1.5s var(--ease) .35s forwards; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .drift .pt{ fill:var(--high); opacity:0; }
+  .armed .drift .pt{ animation:dot .4s var(--ease) forwards; animation-delay:var(--pd, 1.6s); }
+  @keyframes dot{ to{ opacity:1; } }
+  .drift p{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    line-height:1.55;
+    color:var(--ink);
+    margin:12px 0 0;
+  }
+  .drift p b{
+    font-style:normal;
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:500;
+    color:var(--high);
+  }
+
+  .cal-hint{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.06em;
+    color:var(--faint);
+    text-align:center;
+    margin-top:14px;
+  }
+
+  /* ---- what needs you (compact triage strip, not a card grid) ---- */
+  .needs{ margin-top:26px; }
+  .needs-h{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    margin-bottom:4px;
+  }
+  .needs-h .lbl{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .needs-h .cnt{ font-family:var(--mono); font-size:11px; color:var(--faint); }
+
+  .item{
+    display:flex; align-items:flex-start; gap:13px;
+    padding:15px 2px;
+    border-top:1px solid var(--hair-soft);
+    opacity:0;
+    transform:translateY(10px);
+    animation:enter .54s var(--ease) forwards;
+  }
+  .item .idot{ width:9px; height:9px; border-radius:50%; margin-top:6px; flex:0 0 auto; background:var(--ic); }
+  .item .ibody{ flex:1 1 auto; min-width:0; }
+  .item .itop{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .item .itag{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ic-text);
+  }
+  .item .iwhen{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--faint);
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+  .item h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:17px;
+    line-height:1.26;
+    letter-spacing:-0.006em;
+    color:var(--ink);
+    margin:6px 0 0;
+  }
+  .item.lead h2{ font-size:18.5px; }
+  .item p{ font-size:12.5px; line-height:1.5; color:var(--body); margin:5px 0 0; }
+  .item .iconf{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.01em;
+    color:var(--muted);
+    margin-top:7px;
+  }
+  .item .iact{ margin-top:11px; display:flex; gap:8px; }
+
+  .btn{
+    min-height:44px;
+    border-radius:var(--r-btn);
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:0.005em;
+    cursor:pointer;
+    border:1px solid var(--hair);
+    background:var(--card);
+    color:var(--ink);
+    padding:0 16px;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    transition:transform .2s var(--ease), background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0) scale(0.985); }
+  .btn.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:oklch(0.985 0.01 256);
+  }
+  .btn.primary:hover{ background:oklch(0.46 0.12 256); }
+  .btn:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px oklch(0.50 0.12 256 / 0.40);
+    border-color:var(--accent);
+  }
+  .item.done .iact{ display:none; }
+  .item.done{ opacity:0.6; }
+  .item .resolved{
+    display:none;
+    margin-top:11px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.03em;
+    color:var(--high);
+    align-items:center; gap:8px;
+  }
+  .item.done .resolved{ display:flex; }
+  .item.done.defer .resolved{ color:var(--muted); }
+  .item .resolved i{
+    width:13px; height:13px; border-radius:50%;
+    border:1.5px solid currentColor; position:relative; flex:0 0 auto;
+  }
+  .item .resolved i::after{
+    content:""; position:absolute; left:3px; top:4px; width:4px; height:6px;
+    border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor;
+    transform:rotate(40deg);
+  }
+
+  .ic-urgent{ --ic:var(--uncertain); --ic-text:var(--uncertain); }
+  .ic-high{ --ic:var(--high); --ic-text:var(--high); }
+  .ic-watch{ --ic:var(--likely); --ic-text:var(--likely); }
+
+  /* ---- calm signal (quiet, not a card) ---- */
+  .signal{
+    margin-top:24px;
+    padding:15px 17px;
+    border-radius:var(--r-card);
+    background:var(--rail);
+    border:1px solid var(--hair-soft);
+    display:flex; align-items:flex-start; gap:12px;
+    opacity:0;
+    transform:translateY(12px);
+    animation:enter .56s var(--ease) .5s forwards;
+  }
+  .signal .dot{ width:8px; height:8px; border-radius:50%; background:var(--likely); margin-top:5px; flex:0 0 auto; }
+  .signal .txt{ flex:1; }
+  .signal .txt .lbl{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);
+  }
+  .signal .txt p{
+    font-family:var(--serif); font-weight:400; font-size:14.5px; line-height:1.42; color:var(--body); margin:5px 0 0;
+  }
+  .signal .txt p b{ color:var(--ink); font-weight:500; }
+
+  /* ---- the silence ledger line ---- */
+  .ledger{
+    margin-top:18px;
+    text-align:center;
+    padding:0 8px;
+    opacity:0;
+    animation:enter .56s var(--ease) .62s forwards;
+  }
+  .ledger p{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    font-size:14.5px;
+    line-height:1.45;
+    color:var(--muted);
+    margin:0;
+  }
+  .ledger .n{ font-family:var(--mono); font-style:normal; font-weight:500; color:var(--body); }
+  .ledger .zero{ color:var(--high); }
+
+  @keyframes enter{ to{ opacity:1; transform:translateY(0); } }
+
+  /* ---- floating bottom nav ---- */
+  .nav{
+    position:absolute;
+    left:50%; bottom:18px;
+    transform:translateX(-50%);
+    z-index:30;
+    display:flex; align-items:center; gap:4px;
+    padding:7px 9px;
+    border-radius:26px;
+    background:oklch(0.99 0.006 70 / 0.78);
+    backdrop-filter:blur(18px) saturate(1.3);
+    -webkit-backdrop-filter:blur(18px) saturate(1.3);
+    border:1px solid var(--hair-soft);
+    box-shadow:var(--shadow-lift);
+  }
+  .nav button{
+    appearance:none; border:none; background:transparent; cursor:pointer;
+    min-width:60px; min-height:46px;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    border-radius:18px;
+    padding:6px 12px;
+    font-family:var(--sans); font-size:10.5px; font-weight:500; letter-spacing:0.02em;
+    color:var(--muted);
+    transition:color .2s var(--ease), background .2s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .nav button svg{ width:20px; height:20px; stroke:currentColor; stroke-width:1.6; fill:none; }
+  .nav button[aria-current="page"]{ color:var(--ink); background:var(--sunken); }
+  .nav button:hover{ color:var(--ink); }
+  .nav button:focus-visible{ outline:none; box-shadow:0 0 0 3px oklch(0.50 0.12 256 / 0.40); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    .cal, .item, .signal, .ledger{ opacity:1 !important; transform:none !important; }
+    .bar .range{ transform:scaleX(1) !important; }
+    .drift .line{ stroke-dashoffset:0 !important; }
+    .drift .pt{ opacity:1 !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone">
+      <div class="notch" aria-hidden="true"></div>
+      <div class="screen">
+
+        <div class="statusbar" aria-hidden="true">
+          <span>7:14</span>
+          <div class="dots">
+            <span></span><span></span><span></span>
+            <span class="bar"></span>
+          </div>
+        </div>
+
+        <main class="scroll">
+
+          <header class="head">
+            <div class="meta"><span class="mark" aria-hidden="true"></span>Mon · June 22 · clear</div>
+            <h1>Good morning, Dana.<br><b>Three</b> things need you.</h1>
+          </header>
+
+          <!-- CENTERPIECE: Leo audits its own accuracy, lists its misses, shows its drift -->
+          <section class="cal" id="cal" aria-label="How often Leo was right">
+            <div class="cal-head">
+              <span class="who"><span class="seed" aria-hidden="true"></span>Leo · how often I am right</span>
+              <span class="audit">last 30 days</span>
+            </div>
+            <h2 class="cal-title">Before you trust me today, here is <em>how often I was right.</em></h2>
+            <p class="cal-sub">When I say I am sure, I checked it against what actually happened. The times I got it wrong are listed here, not hidden. Tap a row to read them.</p>
+
+            <div class="tiers" id="tiers">
+
+              <article class="tier high" data-lo="91" data-hi="95" style="--tc:var(--high); --tc-text:var(--high);">
+                <div class="trow">
+                  <span class="tdot" aria-hidden="true"></span>
+                  <span class="tname">Very sure</span>
+                  <span class="tcount">211 times</span>
+                  <span class="tacc"><span class="num counter" data-lo="91" data-hi="95">91 to 95</span><span class="unit">% right</span></span>
+                  <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+                </div>
+                <div class="bar" aria-hidden="true"><span class="range" style="--lo:0%; --hi:95%;"></span></div>
+                <div class="misses"><div class="misses-in">
+                  <div class="miss-h">The 13 I got wrong</div>
+                  <div class="miss"><span>I said the Alvarez home would be valued high enough. It came in 8k low.</span><span class="dt">Mar 3</span></div>
+                  <div class="miss"><span>I said the Birchwood buyer would make one offer back. They walked away.</span><span class="dt">Feb 19</span></div>
+                  <div class="miss"><span>I said the Cedar Hollow inspection was clean. A roof problem turned up.</span><span class="dt">Jan 28</span></div>
+                  <div class="miss-more">10 more. Tap any one to open the deal it came from.</div>
+                </div></div>
+              </article>
+
+              <article class="tier likely" data-lo="76" data-hi="84" style="--tc:var(--likely); --tc-text:oklch(0.50 0.10 62);">
+                <div class="trow">
+                  <span class="tdot" aria-hidden="true"></span>
+                  <span class="tname">Fairly sure</span>
+                  <span class="tcount">148 times</span>
+                  <span class="tacc"><span class="num counter" data-lo="76" data-hi="84">76 to 84</span><span class="unit">% right</span></span>
+                  <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+                </div>
+                <div class="bar" aria-hidden="true"><span class="range" style="--lo:0%; --hi:84%;"></span></div>
+                <div class="misses"><div class="misses-in">
+                  <div class="miss-h">The 28 I got wrong</div>
+                  <div class="miss"><span>I said the Maple offer would hold together. It fell through over the loan.</span><span class="dt">Mar 11</span></div>
+                  <div class="miss"><span>I said the Quince seller would say yes by Friday. They asked for a week.</span><span class="dt">Feb 26</span></div>
+                  <div class="miss-more">26 more. Tap any one to open the deal it came from.</div>
+                </div></div>
+              </article>
+
+              <article class="tier low" data-lo="58" data-hi="66" style="--tc:var(--uncertain); --tc-text:var(--uncertain);">
+                <div class="trow">
+                  <span class="tdot" aria-hidden="true"></span>
+                  <span class="tname">Not sure</span>
+                  <span class="tcount">96 times</span>
+                  <span class="tacc"><span class="num counter" data-lo="58" data-hi="66">58 to 66</span><span class="unit">% right</span></span>
+                  <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+                </div>
+                <div class="bar" aria-hidden="true"><span class="range" style="--lo:0%; --hi:66%;"></span></div>
+                <div class="misses"><div class="misses-in">
+                  <p class="honest">When I am only this sure, I do not act on my own. I bring it to you and tell you I am not sure. About two out of five of these turn out the other way, which is why I leave them to you.</p>
+                </div></div>
+              </article>
+
+            </div>
+
+            <!-- self-correction drift: the line draws, the count holds honest -->
+            <div class="drift" aria-label="How often Leo was right when very sure, over six months">
+              <div class="drift-h"><span>Right when very sure · last 6 months</span><span>updated in May</span></div>
+              <svg viewBox="0 0 240 46" preserveAspectRatio="none" aria-hidden="true">
+                <line class="track" x1="0" y1="40" x2="240" y2="40"></line>
+                <path class="line" d="M2 10 L42 6 L82 9 L122 22 L162 30 L202 16 L238 14"></path>
+                <circle class="pt" cx="122" cy="22" r="3" style="--pd:1.7s"></circle>
+                <circle class="pt" cx="238" cy="14" r="3.2" style="--pd:1.95s"></circle>
+              </svg>
+              <p>When I say I am <b>very sure</b>, I am right about 91 to 93 percent of the time, down from the mid nineties in March. After a stretch of mistakes I got stricter about saying I am very sure, so the words still mean something.</p>
+            </div>
+
+            <div class="cal-hint">Tap a row to read everything I got wrong</div>
+          </section>
+
+          <!-- what needs you: a compact triage strip (hairline-divided, not a card grid) -->
+          <section class="needs" aria-label="What needs you this morning">
+            <div class="needs-h">
+              <span class="lbl">What needs you</span>
+              <span class="cnt">3 of 47</span>
+            </div>
+
+            <article class="item lead ic-urgent" id="i-oak" style="animation-delay:.16s">
+              <span class="idot" aria-hidden="true"></span>
+              <div class="ibody">
+                <div class="itop"><span class="itag">Your deal · offer back</span><span class="iwhen">due 10:00am</span></div>
+                <h2>142 Oak St: your reply to the buyer is ready</h2>
+                <p>The buyer offered 12k below your price. I wrote a reply that holds your price and gives them 48 hours to decide, the same way you closed Birchwood.</p>
+                <div class="iconf">How sure I am: very sure. Based on 3 similar nearby sales and your last 4 deals.</div>
+                <div class="iact">
+                  <button type="button" class="btn primary" aria-label="Read the reply I wrote for 142 Oak St">Read it</button>
+                  <button type="button" class="btn" data-act="defer" data-target="i-oak">Later</button>
+                </div>
+                <div class="resolved" role="status"><i aria-hidden="true"></i><span>Moved to 9:30. I will bring it back then.</span></div>
+              </div>
+            </article>
+
+            <article class="item ic-high" id="i-linden" style="animation-delay:.26s">
+              <span class="idot" aria-hidden="true"></span>
+              <div class="ibody">
+                <div class="itop"><span class="itag">New buyer · ready</span><span class="iwhen">reach out now</span></div>
+                <h2>88 Linden: a new buyer, loan already approved</h2>
+                <p>She got in touch 6 minutes ago and her loan is already approved. If you call in the next 5 minutes, you are far more likely to win her.</p>
+                <div class="iconf">How sure I am: very sure. Her lender confirmed the loan is approved.</div>
+                <div class="iact">
+                  <button type="button" class="btn primary" aria-label="Call the buyer at 88 Linden now">Call now</button>
+                  <button type="button" class="btn" data-act="bank" data-target="i-linden">Let me say hello</button>
+                </div>
+                <div class="resolved" role="status"><i aria-hidden="true"></i><span>I said hello and I am keeping the conversation going for you.</span></div>
+              </div>
+            </article>
+
+            <article class="item ic-watch" id="i-marcus" style="animation-delay:.36s">
+              <span class="idot" aria-hidden="true"></span>
+              <div class="ibody">
+                <div class="itop"><span class="itag">Team · Marcus</span><span class="iwhen">no reply in 3 days</span></div>
+                <h2>One of Marcus's buyers has gone quiet</h2>
+                <p>No reply since Tuesday from a 410k buyer. I can send Marcus a reminder, or you can step in yourself.</p>
+                <div class="iconf">How sure I am: fairly sure. This looks like a buyer going cold, but it is not certain yet.</div>
+                <div class="iact">
+                  <button type="button" class="btn" data-act="bank" data-target="i-marcus">Remind Marcus</button>
+                  <button type="button" class="btn" data-act="defer" data-target="i-marcus">Not now</button>
+                </div>
+                <div class="resolved" role="status"><i aria-hidden="true"></i><span>Reminder sent to Marcus. I will watch for a reply.</span></div>
+              </div>
+            </article>
+          </section>
+
+          <!-- calm signal, quietly noted (not urgent) -->
+          <section class="signal" aria-label="A calm signal">
+            <span class="dot" aria-hidden="true"></span>
+            <div class="txt">
+              <span class="lbl">Worth a glance</span>
+              <p><b>Crestview</b> has gone a little quiet. Nothing is due yet, but things have slowed down since the inspection. I am flagging it now so it does not catch you off guard next week.</p>
+            </div>
+          </section>
+
+          <!-- the silence ledger -->
+          <div class="ledger" role="status">
+            <p>Overnight I handled <span class="n">47</span> things and woke you for <span class="n zero">zero</span>.</p>
+          </div>
+
+        </main>
+
+        <nav class="nav" aria-label="Primary">
+          <button type="button" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/></svg>
+            Today
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h9"/></svg>
+            Deals
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.2"/><path d="M5.5 19c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/></svg>
+            People
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6"/></svg>
+            Leo
+          </button>
+        </nav>
+
+      </div>
+    </div>
+    <div class="caption">V15 WELLNESS × CALIBRATION CARD</div>
+  </div>
+
+  <script>
+    document.documentElement.classList.remove('no-js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var cal = document.getElementById('cal');
+
+    // Build the CSS-only digit rollers (transform translateY + steps via keyframes,
+    // no rAF). The static "91 to 95" text is the fallback; JS swaps in rollers that
+    // count up from 0 to each digit when the card is armed.
+    function rollerFor(value){
+      var s = String(value), out = '';
+      for (var i = 0; i < s.length; i++){
+        var target = parseInt(s[i], 10);
+        var strip = '';
+        for (var d = 0; d <= target; d++){ strip += '<span>' + d + '</span>'; }
+        var rd = (0.2 + i * 0.07).toFixed(2);
+        out += '<span class="roll"><span class="strip" style="--stop:' + target + '; --rd:' + rd + 's">' + strip + '</span></span>';
+      }
+      return out;
+    }
+    document.querySelectorAll('.num.counter').forEach(function(n){
+      var lo = n.getAttribute('data-lo'), hi = n.getAttribute('data-hi');
+      n.innerHTML =
+        '<span class="seg">' + rollerFor(lo) + '</span>' +
+        '<span class="seg" style="padding:0 .28em">to</span>' +
+        '<span class="seg">' + rollerFor(hi) + '</span>';
+    });
+
+    // Arm the calibration card: this single class drives the CSS-only count-up
+    // rollers, the range bars filling, and the drift line drawing. No rAF, no
+    // layout-property animation (transform + opacity only).
+    function armCalibration(){ cal.classList.add('armed'); }
+    if (reduce){ armCalibration(); }
+    else { setTimeout(armCalibration, 520); }
+
+    // tier expand / collapse (keyboard-accessible, see boot sweep below)
+    document.querySelectorAll('.tier').forEach(function(t){
+      t.addEventListener('click', function(){
+        var open = t.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+
+    // item bank / defer affordances: toggle state, no layout animation
+    document.querySelectorAll('.btn[data-act]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var card = document.getElementById(btn.getAttribute('data-target'));
+        if (!card) return;
+        card.classList.remove('done','defer');
+        if (btn.getAttribute('data-act') === 'defer') card.classList.add('defer');
+        card.classList.add('done');
+      });
+    });
+
+    // nav: move aria-current only (single screen)
+    document.querySelectorAll('.nav button').forEach(function(b){
+      b.addEventListener('click', function(){
+        document.querySelectorAll('.nav button').forEach(function(x){ x.removeAttribute('aria-current'); });
+        b.setAttribute('aria-current','page');
+      });
+    });
+
+    // make the non-button tier rows keyboard-operable
+    function isNative(el){ return el.matches('button, a, input, textarea, select'); }
+    document.querySelectorAll('.tier').forEach(function(el){
+      if (isNative(el)) return;
+      el.setAttribute('role','button');
+      el.setAttribute('tabindex','0');
+      if (!el.hasAttribute('aria-expanded')) el.setAttribute('aria-expanded','false');
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+      var el = e.target;
+      if (!el || isNative(el)) return;
+      if (el.getAttribute('role') !== 'button') return;
+      e.preventDefault();
+      el.click();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Interaction · Scroll Story (Headline)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.985 0.006 95); --ink:oklch(0.18 0.012 60); --body:oklch(0.40 0.018 65); --muted:oklch(0.56 0.018 70); --soft:oklch(0.72 0.012 75);
+  --hair:oklch(0.18 0.012 60 / .12); --hair2:oklch(0.18 0.012 60 / .2);
+  --coral:oklch(0.56 0.17 30); --coral-bg:oklch(0.93 0.05 40); --uncertain:oklch(0.58 0.12 70); --uncertain-bg:oklch(0.94 0.045 82); --confident:oklch(0.50 0.11 168); --confident-bg:oklch(0.93 0.045 168);
+  --disp:'Space Grotesk',sans-serif; --serif:'Newsreader',Georgia,serif; --sans:'Inter',sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:oklch(0.92 0.012 90); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.5 0.03 70)}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.16 0.01 60), 0 0 0 12px oklch(0.32 0.01 60), 0 40px 90px -22px oklch(0.3 0.03 60 / .5); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:oklch(0.16 0.01 60); border-radius:20px; z-index:60}
+
+/* sticky recompose header */
+.railtop{position:absolute;top:0;left:0;right:0;height:50px;display:flex;align-items:center;gap:9px;padding:16px 24px 0;z-index:50;pointer-events:none}
+.orb{width:15px;height:15px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.07 200), oklch(0.62 0.16 250) 44%, oklch(0.32 0.10 270));box-shadow:0 0 8px oklch(0.62 0.16 250 / .4);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.railtop .cnt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);opacity:0;transition:opacity .4s}
+.railtop.show .cnt{opacity:1}
+.railtop .cnt b{color:var(--coral);font-weight:500;display:inline-block;transition:transform .3s var(--exp)}
+.railtop .cnt b.pop{transform:scale(1.4)}
+
+/* page dots */
+.dots{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:50}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--hair2);transition:all .3s var(--exp)}
+.dots i.on{background:var(--ink);transform:scale(1.3)}
+
+.scroller{position:absolute;inset:0;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none}
+.scroller::-webkit-scrollbar{display:none}
+.page{min-height:100%;scroll-snap-align:start;padding:64px 26px 30px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.page.headline-pg{min-height:88%}
+
+/* kinetic reveal (content visible by default; .reveal plays the entrance) */
+.k{will-change:transform,opacity}
+.page.reveal .k{animation:rise .8s var(--exp) both;animation-delay:calc(var(--ki,0)*90ms)}
+@keyframes rise{from{opacity:0;transform:translateY(26px)} to{opacity:1;transform:none}}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.headline{font-family:var(--disp);font-weight:700;font-size:clamp(56px,19vw,78px);line-height:.9;letter-spacing:-.04em;color:var(--ink);margin-top:16px}
+.headline .n{color:var(--coral);font-variant-numeric:tabular-nums}
+.sub{font-family:var(--sans);font-size:15px;color:var(--muted);margin-top:18px;max-width:28ch;line-height:1.5}
+
+/* item page */
+.item .e-top{display:flex;align-items:center;gap:10px}
+.sdot{width:10px;height:10px;border-radius:50%;background:var(--st)}
+.item.urgent{--st:var(--coral);--bg:var(--coral-bg)} .item.uncertain{--st:var(--uncertain);--bg:var(--uncertain-bg)} .item.confident{--st:var(--confident);--bg:var(--confident-bg)}
+.item .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--st)}
+.item .alt{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin-left:auto}
+.item h2{font-family:var(--disp);font-weight:700;font-size:34px;line-height:1.04;letter-spacing:-.03em;color:var(--ink);margin-top:18px}
+.item .why{font-family:var(--sans);font-size:15.5px;line-height:1.55;color:var(--body);margin-top:16px;max-width:32ch}
+.item .leo{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.5;color:var(--ink);margin-top:18px}
+.block{height:96px;border-radius:20px;background:var(--bg);margin-top:24px;display:flex;align-items:flex-end;padding:16px}
+.page.reveal .block{animation:rise .9s var(--exp) .25s both}
+.block .num{font-family:var(--disp);font-weight:700;font-size:30px;color:var(--st);font-variant-numeric:tabular-nums}
+.acts{display:flex;gap:10px;margin-top:26px}
+.btn{height:50px;padding:0 22px;border-radius:14px;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;transition:transform .18s var(--exp)}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--ink);color:var(--canvas)} .btn-g{background:transparent;color:var(--ink);border:1px solid var(--hair2)}
+.item.done .acts{opacity:.5;pointer-events:none}
+.done-tag{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--confident);margin-top:18px;opacity:0;transition:opacity .4s}
+.item.done .done-tag{opacity:1}
+
+/* closing */
+.closing{align-items:flex-start}
+.closing .big{font-family:var(--disp);font-weight:700;font-size:46px;line-height:.98;letter-spacing:-.03em}
+.closing .cl-sub{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--muted);margin-top:16px}
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(1 0 0 / .5);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){ .orb{animation:none} .k,.block{animation:none;opacity:1;transform:none} }
+</style>
+</head>
+<body>
+<div class="cap">Interaction · Scroll Story · Headline</div>
+<div class="phone"><div class="notch"></div>
+  <div class="railtop" id="railtop"><span class="orb"></span><span class="cnt"><b id="cnt">3</b> need you</span></div>
+  <div class="dots" id="dots"></div>
+  <div class="scroller" id="scroller">
+
+    <section class="page headline-pg" data-page="0">
+      <div class="eyebrow k" style="--ki:0">Leo · Friday morning</div>
+      <h1 class="headline k" style="--ki:1"><span class="n" id="hl">3</span> need you<span class="n">.</span></h1>
+      <p class="sub k" style="--ki:2">Everything else, I handled overnight. Scroll through the three, ranked by what's at stake.</p>
+    </section>
+
+    <section class="page item urgent" data-page="1" data-item>
+      <div class="e-top k" style="--ki:0"><span class="sdot"></span><span class="tag">18h left</span><span class="alt">Your deal</span></div>
+      <h2 class="k" style="--ki:1">Maplewood escrow objection unanswered.</h2>
+      <p class="why k" style="--ki:2">Deadline tomorrow 8:00a. Missing it lets the buyer walk with their deposit.</p>
+      <p class="leo k" style="--ki:3">The repairs are minor. The clock is the risk.</p>
+      <div class="block"><span class="num">18h</span></div>
+      <div class="acts k" style="--ki:4"><button class="btn btn-p" data-act>Review and respond</button><button class="btn btn-g" data-act>Later</button></div>
+      <div class="done-tag">Resolved · Leo will track it</div>
+    </section>
+
+    <section class="page item uncertain" data-page="2" data-item>
+      <div class="e-top k" style="--ki:0"><span class="sdot"></span><span class="tag">Medium confidence</span><span class="alt">Your deal</span></div>
+      <h2 class="k" style="--ki:1">142 Oak St countered $24k under ask.</h2>
+      <p class="why k" style="--ki:2">Leo drafted a counter at $612k but flagged a deadline it cannot verify.</p>
+      <p class="leo k" style="--ki:3">I held it for your call.</p>
+      <div class="block"><span class="num">$612k</span></div>
+      <div class="acts k" style="--ki:4"><button class="btn btn-p" data-act>Send Leo's counter</button><button class="btn btn-g" data-act>Edit</button></div>
+      <div class="done-tag">Resolved · Leo will track it</div>
+    </section>
+
+    <section class="page item confident" data-page="3" data-item>
+      <div class="e-top k" style="--ki:0"><span class="sdot"></span><span class="tag">Confident</span><span class="alt">Marcus</span></div>
+      <h2 class="k" style="--ki:1">Marcus's buyer is going quiet on Henderson.</h2>
+      <p class="why k" style="--ki:2">No logged contact in 3 days. The pattern usually precedes a drift.</p>
+      <p class="leo k" style="--ki:3">A nudge from you now beats a save later.</p>
+      <div class="block"><span class="num">3d</span></div>
+      <div class="acts k" style="--ki:4"><button class="btn btn-p" data-act>Nudge Marcus</button><button class="btn btn-g" data-act>See thread</button></div>
+      <div class="done-tag">Resolved · Leo will track it</div>
+    </section>
+
+    <section class="page closing" data-page="4">
+      <div class="big k" style="--ki:0" id="closeBig">You're clear.</div>
+      <div class="cl-sub k" style="--ki:1">That's your morning. The other 47, I'm handling.</div>
+    </section>
+
+  </div>
+</div></div>
+<div class="controls"><button id="top">↑ Back to top</button></div>
+<script>
+const scroller=document.getElementById('scroller'), dotsWrap=document.getElementById('dots'), pages=[...document.querySelectorAll('.page')];
+pages.forEach((p,i)=>{ const d=document.createElement('i'); if(i===0)d.classList.add('on'); dotsWrap.appendChild(d); });
+const dots=[...dotsWrap.children];
+let remaining=3;
+// scroll-driven active-page detection (robust; fires on programmatic + user scroll)
+function update(){
+  const st=scroller.scrollTop; let active=0,best=1e9;
+  pages.forEach((p,i)=>{ const d=Math.abs(p.offsetTop-st); if(d<best){best=d;active=i;} });
+  pages[active].classList.add('reveal');
+  dots.forEach((d,i)=>d.classList.toggle('on',i===active));
+  document.getElementById('railtop').classList.toggle('show', active>0);
+}
+scroller.addEventListener('scroll',update,{passive:true});
+update();
+// act -> mark resolved + recompose the count
+document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{
+  const pg=b.closest('.item'); if(pg.classList.contains('done'))return; pg.classList.add('done');
+  remaining=Math.max(0,remaining-1);
+  const cnt=document.getElementById('cnt'); cnt.textContent=remaining; cnt.classList.add('pop'); setTimeout(()=>cnt.classList.remove('pop'),320);
+  document.getElementById('hl').textContent=remaining;
+  if(remaining===0){ document.getElementById('closeBig').textContent="You're clear."; }
+}));
+document.getElementById('top').addEventListener('click',()=>scroller.scrollTo({top:0,behavior:'smooth'}));
+</script>
+</body>
+</html>

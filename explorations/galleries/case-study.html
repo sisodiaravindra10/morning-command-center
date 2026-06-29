@@ -1,0 +1,1101 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Case Study - The calm is the product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    /* AI-state palette (OKLCH) - never pure black or white */
+    --seaglass:  oklch(0.80 0.11 168);  /* confident */
+    --amber:     oklch(0.82 0.12 72);   /* uncertain */
+    --coral:     oklch(0.73 0.16 28);   /* urgent / wrong */
+    --cobalt:    oklch(0.66 0.16 262);  /* thinking */
+    --ghost:     oklch(0.66 0.02 262);  /* silent */
+
+    /* cinematic ground, tinted toward hue 260 */
+    --canvas:    oklch(0.155 0.022 260);
+    --card:      oklch(0.20 0.024 260);
+    --card-2:    oklch(0.235 0.026 260);
+    --hair:      oklch(0.96 0.01 250 / 0.10);
+    --hair-2:    oklch(0.96 0.01 250 / 0.06);
+
+    --ink:       oklch(0.96 0.012 260);
+    --ink-soft:  oklch(0.74 0.018 260);
+    --ink-faint: oklch(0.56 0.018 260);
+    --ink-ghost: oklch(0.44 0.016 260);
+
+    --serif: 'Newsreader', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --maxw: 1180px;
+    --readw: 720px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background:
+      radial-gradient(130% 90% at 50% -8%, oklch(0.19 0.03 262) 0%, transparent 50%),
+      var(--canvas);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: oklch(0.66 0.16 262 / 0.35); color: var(--ink); }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+  .read { max-width: var(--readw); }
+
+  /* ----------------------------------------------------------------
+     PROGRESS RAIL + STICKY SECTION NAV
+  ---------------------------------------------------------------- */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cobalt), var(--seaglass));
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    z-index: 200;
+  }
+  /* fallback animation-timeline progress only where supported; harmless elsewhere */
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      animation: growbar linear both;
+      animation-timeline: scroll(root block);
+    }
+    @keyframes growbar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }
+
+  .sectnav {
+    position: fixed; top: 50%; left: 22px; transform: translateY(-50%);
+    z-index: 150;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .sectnav a {
+    display: flex; align-items: center; gap: 11px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+    color: var(--ink-ghost);
+    padding: 4px 0;
+    transition: color 0.4s var(--ease);
+  }
+  .sectnav .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    border: 1px solid var(--ink-ghost);
+    flex-shrink: 0;
+    transition: all 0.4s var(--ease);
+  }
+  .sectnav .lbl {
+    opacity: 0; transform: translateX(-6px);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  .sectnav a:hover { color: var(--ink-soft); }
+  .sectnav a:hover .lbl { opacity: 1; transform: translateX(0); }
+  .sectnav a:hover .dot { border-color: var(--seaglass); background: oklch(0.80 0.11 168 / 0.25); }
+
+  @media (max-width: 1100px) { .sectnav { display: none; } }
+
+  /* ----------------------------------------------------------------
+     TYPE SYSTEM
+  ---------------------------------------------------------------- */
+  .kicker {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .kicker .tick { color: var(--seaglass); }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.08; letter-spacing: -0.01em; }
+
+  .thesis {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.6rem, 7vw, 5.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+  .thesis em { font-style: italic; color: var(--seaglass); }
+
+  .sect-no {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.14em; color: var(--ink-ghost);
+    display: block; margin-bottom: 14px;
+  }
+  .sect-title {
+    font-size: clamp(2rem, 4.4vw, 3.2rem);
+    margin-bottom: 8px;
+  }
+  .sect-lede {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-bottom: 44px;
+    max-width: 640px;
+  }
+
+  p.body { font-size: 1.0625rem; line-height: 1.72; color: var(--ink-soft); margin-bottom: 22px; }
+  p.body strong { color: var(--ink); font-weight: 600; }
+  p.body em { font-style: italic; color: var(--ink); }
+  .lead-cap::first-letter {
+    font-family: var(--serif); float: left; font-size: 3.6rem; line-height: 0.78;
+    padding: 6px 12px 0 0; color: var(--seaglass); font-weight: 400;
+  }
+
+  .mono-note { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--ink-faint); }
+
+  /* ----------------------------------------------------------------
+     SECTION FRAME
+  ---------------------------------------------------------------- */
+  section { padding: 108px 0; position: relative; }
+  section + section { border-top: 1px solid var(--hair-2); }
+
+  .reveal { opacity: 0; transform: translateY(20px); animation: rise 1s var(--ease) forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ----------------------------------------------------------------
+     COVER
+  ---------------------------------------------------------------- */
+  .cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 0 96px;
+    border-top: none;
+    position: relative;
+  }
+  .cover .wrap { width: 100%; }
+  .cover-kicker { margin-bottom: 40px; opacity: 0; animation: rise 1s var(--ease) 0.1s forwards; }
+  .cover .thesis { opacity: 0; animation: rise 1.3s var(--ease) 0.3s forwards; }
+  .cover-scope {
+    margin-top: 44px; max-width: 560px;
+    font-size: 1.0625rem; color: var(--ink-soft); line-height: 1.66;
+    opacity: 0; animation: rise 1.1s var(--ease) 0.7s forwards;
+  }
+  .cover-meta {
+    margin-top: 64px; display: flex; flex-wrap: wrap; gap: 28px 48px;
+    opacity: 0; animation: rise 1.1s var(--ease) 0.95s forwards;
+  }
+  .cover-meta .item .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-ghost); margin-bottom: 6px; }
+  .cover-meta .item .v { font-size: 0.95rem; color: var(--ink); }
+
+  /* breathing field of state-orbs behind the cover */
+  .orbfield { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(48px); opacity: 0.16; animation: float 18s var(--ease) infinite alternate; }
+  .orb.o1 { width: 380px; height: 380px; background: var(--cobalt); top: -8%; right: 6%; }
+  .orb.o2 { width: 300px; height: 300px; background: var(--seaglass); bottom: 4%; left: -4%; animation-delay: -6s; }
+  .orb.o3 { width: 240px; height: 240px; background: var(--amber); top: 38%; right: 30%; animation-delay: -11s; opacity: 0.10; }
+  @keyframes float { to { transform: translate3d(40px, -30px, 0) scale(1.12); } }
+
+  .scrollcue { position: absolute; bottom: 36px; left: 32px; display: flex; align-items: center; gap: 12px; }
+  .scrollcue .bar { width: 1px; height: 34px; background: linear-gradient(var(--ink-faint), transparent); overflow: hidden; position: relative; }
+  .scrollcue .bar::after { content: ""; position: absolute; inset: 0; background: var(--seaglass); transform: translateY(-100%); animation: cue 2.4s var(--ease) infinite; }
+  @keyframes cue { 0% { transform: translateY(-100%); } 55%,100% { transform: translateY(100%); } }
+
+  /* ----------------------------------------------------------------
+     PILLS + CALLOUTS
+  ---------------------------------------------------------------- */
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+    padding: 5px 11px; border-radius: 999px; border: 1px solid var(--hair);
+    color: var(--ink-soft); background: oklch(0.96 0.01 250 / 0.03);
+  }
+  .pill .pdot { width: 7px; height: 7px; border-radius: 50%; }
+
+  .callout {
+    border-left: 2px solid var(--seaglass);
+    padding: 4px 0 4px 26px; margin: 36px 0;
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.42; color: var(--ink);
+    max-width: 660px;
+  }
+  .callout.amber { border-color: var(--amber); }
+  .callout.coral { border-color: var(--coral); }
+
+  /* ----------------------------------------------------------------
+     RUBRIC BARS (THE BRIEF)
+  ---------------------------------------------------------------- */
+  .rubric { display: grid; gap: 16px; margin-top: 40px; max-width: 660px; }
+  .rubric-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .rubric-row .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .rubric-row .name { font-size: 0.98rem; color: var(--ink); }
+  .rubric-row .name b { font-weight: 600; }
+  .rubric-row .wt { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); letter-spacing: 0.04em; }
+  .rubric-track { height: 6px; border-radius: 4px; background: oklch(0.96 0.01 250 / 0.06); overflow: hidden; }
+  .rubric-fill { height: 100%; border-radius: 4px; transform-origin: 0 50%; transform: scaleX(var(--w, 0.5)); animation: barfill 1.2s var(--ease) forwards; }
+  @keyframes barfill { from { transform: scaleX(0); } }
+  .rubric-row.heavy .name b { color: var(--seaglass); }
+
+  /* ----------------------------------------------------------------
+     WRONG TURN
+  ---------------------------------------------------------------- */
+  .deadgrid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: start; margin-top: 12px; }
+  @media (max-width: 880px) { .deadgrid { grid-template-columns: 1fr; } }
+
+  .mission-mock {
+    border: 1px solid var(--hair); border-radius: 16px; padding: 22px;
+    background: linear-gradient(160deg, var(--card-2), var(--card));
+    position: relative; overflow: hidden;
+  }
+  .mission-mock .mm-bar { display: flex; gap: 6px; margin-bottom: 18px; }
+  .mission-mock .mm-bar i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+  .mm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .mm-tile { aspect-ratio: 1.5 / 1; border-radius: 8px; border: 1px solid var(--hair-2); background: oklch(0.96 0.01 250 / 0.03); padding: 9px; display: flex; flex-direction: column; justify-content: space-between; }
+  .mm-tile .t-l { font-family: var(--mono); font-size: 8px; letter-spacing: 0.06em; color: var(--ink-ghost); }
+  .mm-tile .t-n { font-family: var(--mono); font-size: 15px; color: var(--ink-soft); }
+  .mm-tile .t-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .strikewrap { position: relative; }
+  .strikeline {
+    position: absolute; left: -4%; top: 50%; width: 108%; height: 2px;
+    background: var(--coral); transform: rotate(-7deg) scaleX(0); transform-origin: 0 50%;
+    box-shadow: 0 0 16px oklch(0.73 0.16 28 / 0.6);
+    animation: strike 0.9s var(--ease) 0.3s forwards;
+    z-index: 4;
+  }
+  @keyframes strike { to { transform: rotate(-7deg) scaleX(1); } }
+  .rejected-tag {
+    position: absolute; top: 14px; right: 14px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--coral); border: 1px solid oklch(0.73 0.16 28 / 0.5); border-radius: 5px;
+    padding: 4px 8px; z-index: 5; background: oklch(0.155 0.022 260 / 0.8);
+  }
+
+  .dead-cards { display: grid; gap: 14px; }
+  .dead-card { border: 1px solid var(--hair); border-radius: 12px; padding: 18px 20px; background: var(--card); transition: border-color 0.4s var(--ease), transform 0.4s var(--ease); }
+  .dead-card:hover { border-color: oklch(0.73 0.16 28 / 0.4); transform: translateX(3px); }
+  .dead-card .dc-no { font-family: var(--mono); font-size: 10px; color: var(--coral); letter-spacing: 0.1em; }
+  .dead-card .dc-t { font-family: var(--serif); font-size: 1.18rem; margin: 4px 0 6px; }
+  .dead-card .dc-d { font-size: 0.92rem; color: var(--ink-faint); line-height: 1.55; }
+
+  /* ----------------------------------------------------------------
+     DANA PORTRAIT
+  ---------------------------------------------------------------- */
+  .dana-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 56px; align-items: center; }
+  @media (max-width: 880px) { .dana-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .dana-portrait {
+    aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden; position: relative;
+    border: 1px solid var(--hair);
+    background:
+      radial-gradient(80% 60% at 50% 22%, oklch(0.30 0.04 262) 0%, transparent 70%),
+      linear-gradient(170deg, var(--card-2), oklch(0.13 0.02 260));
+  }
+  .dana-portrait .silhouette {
+    position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+    width: 62%; height: 70%;
+    background:
+      radial-gradient(50% 38% at 50% 22%, oklch(0.45 0.03 262) 0%, transparent 72%),
+      radial-gradient(70% 80% at 50% 100%, oklch(0.40 0.03 262) 0%, transparent 70%);
+    filter: blur(2px);
+  }
+  .dana-portrait .glint { position: absolute; top: 18%; left: 24%; width: 3px; height: 3px; border-radius: 50%; background: var(--seaglass); box-shadow: 0 0 14px 4px oklch(0.80 0.11 168 / 0.6); animation: glint 6s var(--ease) infinite; }
+  @keyframes glint { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+  .dana-portrait .pcap { position: absolute; left: 20px; bottom: 18px; }
+  .dana-portrait .pcap .n { font-family: var(--serif); font-size: 1.5rem; }
+  .dana-portrait .pcap .r { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-top: 2px; }
+
+  .dana-facts { display: grid; gap: 18px; margin: 30px 0; }
+  .dana-fact { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; }
+  .dana-fact .fi { font-family: var(--mono); font-size: 11px; color: var(--cobalt); letter-spacing: 0.06em; padding-top: 3px; white-space: nowrap; }
+  .dana-fact .fd { font-size: 0.98rem; color: var(--ink-soft); line-height: 1.55; }
+
+  /* ----------------------------------------------------------------
+     REFRAME (three principles)
+  ---------------------------------------------------------------- */
+  .three-up { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; }
+  @media (max-width: 880px) { .three-up { grid-template-columns: 1fr; } }
+  .princip { border: 1px solid var(--hair); border-radius: 16px; padding: 28px 24px; background: var(--card); position: relative; overflow: hidden; }
+  .princip::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent, var(--seaglass)); opacity: 0.7; }
+  .princip .pn { font-family: var(--mono); font-size: 11px; color: var(--ink-ghost); letter-spacing: 0.1em; }
+  .princip h3 { font-size: 1.4rem; margin: 14px 0 10px; }
+  .princip p { font-size: 0.95rem; color: var(--ink-faint); line-height: 1.6; }
+
+  /* ----------------------------------------------------------------
+     THREE APPROACHES (mini device mocks)
+  ---------------------------------------------------------------- */
+  .approaches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 8px; }
+  @media (max-width: 880px) { .approaches { grid-template-columns: 1fr; max-width: 360px; margin: 8px auto 0; } }
+  .appr { text-align: center; }
+  .mini-phone {
+    width: 100%; max-width: 230px; margin: 0 auto 22px;
+    aspect-ratio: 9 / 17.5; border-radius: 26px; padding: 9px;
+    background: linear-gradient(160deg, oklch(0.30 0.02 260), oklch(0.16 0.02 260));
+    border: 1px solid var(--hair);
+    box-shadow: 0 30px 70px -30px oklch(0 0 0 / 0.8);
+    position: relative;
+    transition: transform 0.5s var(--ease);
+  }
+  .appr:hover .mini-phone { transform: translateY(-6px); }
+  .mini-screen { width: 100%; height: 100%; border-radius: 19px; overflow: hidden; position: relative; padding: 26px 14px 14px; display: flex; flex-direction: column; gap: 9px; }
+  .mini-phone .island { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 58px; height: 16px; border-radius: 999px; background: oklch(0.06 0.01 260); z-index: 5; }
+  /* skin A: quiet capital - dark monochrome */
+  .skin-qc { background: linear-gradient(180deg, oklch(0.16 0.02 260), oklch(0.13 0.018 260)); }
+  /* skin B: daybook - warm cream */
+  .skin-db { background: linear-gradient(180deg, oklch(0.95 0.02 84), oklch(0.91 0.03 80)); }
+  /* skin C: headline - bold editorial dark */
+  .skin-hl { background: linear-gradient(180deg, oklch(0.14 0.02 262), oklch(0.10 0.015 262)); }
+  .ms-h { font-family: var(--mono); font-size: 7px; letter-spacing: 0.08em; opacity: 0.5; }
+  .skin-db .ms-h { color: oklch(0.30 0.04 60); }
+  .skin-qc .ms-h, .skin-hl .ms-h { color: var(--ink-faint); }
+  .ms-row { border-radius: 7px; padding: 8px 9px; font-size: 8px; line-height: 1.4; }
+  .skin-qc .ms-row { background: oklch(0.22 0.02 260); color: var(--ink-soft); border: 1px solid var(--hair-2); }
+  .skin-db .ms-row { background: oklch(0.99 0.01 90); color: oklch(0.28 0.03 60); box-shadow: 0 2px 6px oklch(0.3 0.04 60 / 0.08); }
+  .skin-hl .ms-headline { font-family: var(--serif); font-size: 15px; line-height: 1.12; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 4px; }
+  .skin-hl .ms-headline b { color: var(--amber); font-weight: 500; }
+  .ms-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .appr .a-name { font-family: var(--serif); font-size: 1.4rem; }
+  .appr .a-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--ink-ghost); text-transform: uppercase; margin: 4px 0 10px; }
+  .appr .a-line { font-size: 0.92rem; color: var(--ink-faint); line-height: 1.55; max-width: 250px; margin: 0 auto; }
+
+  /* ----------------------------------------------------------------
+     CHOSEN DESIGN (annotated phone)
+  ---------------------------------------------------------------- */
+  .chosen-stage {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+    margin-top: 16px;
+  }
+  @media (max-width: 980px) { .chosen-stage { grid-template-columns: 1fr; gap: 56px; } }
+
+  .phone-frame {
+    width: 300px; max-width: 84vw; margin: 0 auto;
+    aspect-ratio: 393 / 820; border-radius: 46px; padding: 12px;
+    background: linear-gradient(160deg, oklch(0.32 0.02 260), oklch(0.14 0.02 260));
+    border: 1px solid var(--hair);
+    box-shadow: 0 50px 110px -36px oklch(0 0 0 / 0.85), inset 0 1px 0 oklch(1 0 0 / 0.05);
+    position: relative;
+  }
+  .phone-frame .di { position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 92px; height: 26px; border-radius: 999px; background: oklch(0.05 0.01 260); z-index: 10; }
+  .phone-screen {
+    width: 100%; height: 100%; border-radius: 36px; overflow: hidden; position: relative;
+    background: radial-gradient(120% 70% at 50% 0%, oklch(0.205 0.026 262) 0%, var(--canvas) 60%);
+    padding: 54px 16px 18px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .ps-status { position: absolute; top: 18px; left: 0; right: 0; padding: 0 26px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--ink-soft); z-index: 6; }
+  .ps-head .greet { font-family: var(--serif); font-size: 1.18rem; line-height: 1.15; }
+  .ps-head .sub { font-family: var(--mono); font-size: 9px; letter-spacing: 0.04em; color: var(--ink-faint); margin-top: 4px; }
+  .ps-card { border-radius: 13px; padding: 13px 13px 12px; background: var(--card); border: 1px solid var(--hair); position: relative; }
+  .ps-card.urgent { border-color: oklch(0.73 0.16 28 / 0.4); }
+  .ps-card .cl { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+  .ps-card .statedot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .ps-card .badge { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--hair); color: var(--ink-faint); }
+  .ps-card .ctitle { font-family: var(--serif); font-size: 0.92rem; line-height: 1.2; color: var(--ink); }
+  .ps-card .cbody { font-size: 9px; color: var(--ink-faint); line-height: 1.4; margin-top: 5px; }
+  .ps-card .csrc { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.04em; color: var(--seaglass); border: 1px solid oklch(0.80 0.11 168 / 0.3); border-radius: 999px; padding: 3px 8px; }
+  .ps-ledger { margin-top: auto; border-radius: 13px; padding: 12px 13px; background: oklch(0.96 0.01 250 / 0.03); border: 1px dashed var(--hair); }
+  .ps-ledger .ll { font-family: var(--serif); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.35; }
+  .ps-ledger .lm { font-family: var(--mono); font-size: 8px; color: var(--ghost); margin-top: 6px; letter-spacing: 0.04em; }
+
+  /* numbered pins */
+  .pin { position: absolute; z-index: 20; }
+  .pin .knob {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--canvas); border: 1.5px solid var(--seaglass);
+    color: var(--seaglass); font-family: var(--mono); font-size: 11px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 4px oklch(0.155 0.022 260 / 0.6), 0 0 18px oklch(0.80 0.11 168 / 0.4);
+    cursor: default;
+  }
+  .pin::after { content: ""; position: absolute; height: 1px; background: linear-gradient(90deg, var(--seaglass), transparent); top: 50%; }
+
+  .anno-list { display: grid; gap: 16px; }
+  .anno {
+    display: grid; grid-template-columns: 28px 1fr; gap: 16px; align-items: start;
+    padding: 16px 18px; border-radius: 12px; border: 1px solid var(--hair); background: var(--card);
+    transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
+  }
+  .anno:hover { border-color: oklch(0.80 0.11 168 / 0.35); background: var(--card-2); }
+  .anno .an { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--seaglass); color: var(--seaglass); font-family: var(--mono); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+  .anno h4 { font-family: var(--serif); font-size: 1.12rem; font-weight: 400; margin-bottom: 4px; }
+  .anno p { font-size: 0.92rem; color: var(--ink-faint); line-height: 1.55; }
+
+  /* ----------------------------------------------------------------
+     FIVE VOICES
+  ---------------------------------------------------------------- */
+  .voices { display: grid; gap: 12px; margin-top: 8px; }
+  .voice {
+    display: grid; grid-template-columns: 150px 1fr 1.1fr; gap: 26px; align-items: center;
+    padding: 22px 26px; border-radius: 14px; border: 1px solid var(--hair);
+    background: linear-gradient(100deg, var(--vtint, transparent), transparent 40%);
+    transition: transform 0.4s var(--ease);
+  }
+  .voice:hover { transform: translateX(4px); }
+  @media (max-width: 760px) { .voice { grid-template-columns: 1fr; gap: 12px; } }
+  .voice .vlabel { display: flex; align-items: center; gap: 11px; }
+  .voice .vswatch { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; position: relative; }
+  .voice .vname { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .voice .vmech { font-size: 0.93rem; color: var(--ink-soft); line-height: 1.5; }
+  .voice .vfeel { font-family: var(--serif); font-style: italic; font-size: 1.02rem; color: var(--ink); line-height: 1.42; }
+  .voice .vfeel::before { content: "\201C"; color: var(--ink-faint); }
+  .voice .vfeel::after { content: "\201D"; color: var(--ink-faint); }
+
+  /* live mechanic in the swatch */
+  .vswatch.thinking { background: var(--cobalt); overflow: hidden; }
+  .vswatch.thinking::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, oklch(1 0 0 / 0.5) 50%, transparent 70%); transform: translateX(-100%); animation: shimmer 1.8s linear infinite; }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+  .vswatch.confident { background: var(--seaglass); }
+  .vswatch.uncertain { background: var(--amber); animation: breathe 3.4s var(--ease) infinite; }
+  @keyframes breathe { 50% { opacity: 0.55; } }
+  .vswatch.wrong { background: var(--coral); }
+  .vswatch.wrong::after { content: ""; position: absolute; inset: 0; border: 2px solid oklch(1 0 0 / 0.6); border-radius: 9px; animation: pulse 1.6s var(--ease) infinite; }
+  @keyframes pulse { 0% { transform: scale(0.7); opacity: 0.9; } 100% { transform: scale(1.25); opacity: 0; } }
+  .vswatch.silent { background: var(--ghost); }
+  .vswatch.silent::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 4px, oklch(0.155 0.022 260 / 0.5) 4px, oklch(0.155 0.022 260 / 0.5) 5px); }
+
+  /* ----------------------------------------------------------------
+     ORCHESTRATION DIAGRAM
+  ---------------------------------------------------------------- */
+  .orch-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  @media (max-width: 980px) { .orch-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .orch-svg-wrap { border: 1px solid var(--hair); border-radius: 18px; padding: 26px; background: radial-gradient(80% 70% at 50% 30%, oklch(0.19 0.026 262), var(--card)); }
+  .orch-svg { width: 100%; height: auto; display: block; }
+  .orch-edge { stroke: var(--hair); stroke-width: 1; fill: none; stroke-dasharray: 4 4; animation: flow 30s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -200; } }
+  .orch-node-leo { fill: oklch(0.66 0.16 262 / 0.16); stroke: var(--cobalt); stroke-width: 1.5; }
+  .orch-node-skill { fill: var(--card-2); stroke: var(--hair); stroke-width: 1; }
+  .orch-label { font-family: var(--mono); font-size: 9px; fill: var(--ink-soft); letter-spacing: 0.02em; }
+  .orch-label-leo { font-family: var(--serif); font-size: 15px; fill: var(--ink); }
+  .orch-sub { font-family: var(--mono); font-size: 7px; fill: var(--ink-faint); }
+
+  .disclosure { display: grid; gap: 12px; margin-top: 22px; }
+  .disc-row { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 14px 18px; border-radius: 11px; border: 1px solid var(--hair); background: var(--card); }
+  .disc-row .dl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--cobalt); padding-top: 2px; white-space: nowrap; }
+  .disc-row .dd { font-size: 0.93rem; color: var(--ink-soft); line-height: 1.5; }
+  .disc-row .dd b { color: var(--ink); }
+
+  .orch-stat { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+  .orch-stat .st { border: 1px solid var(--hair); border-radius: 12px; padding: 16px 20px; flex: 1; min-width: 140px; }
+  .orch-stat .st .v { font-family: var(--serif); font-size: 1.8rem; color: var(--seaglass); }
+  .orch-stat .st .l { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-top: 4px; line-height: 1.4; }
+
+  /* ----------------------------------------------------------------
+     HOW I WORKED
+  ---------------------------------------------------------------- */
+  .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; }
+  @media (max-width: 880px) { .work-grid { grid-template-columns: 1fr; } }
+  .work-card { border: 1px solid var(--hair); border-radius: 16px; padding: 28px 26px; background: var(--card); }
+  .work-card .wh { font-family: var(--serif); font-size: 1.3rem; margin-bottom: 12px; }
+  .work-card p { font-size: 0.95rem; color: var(--ink-faint); line-height: 1.62; }
+  .work-card p strong { color: var(--ink); font-weight: 600; }
+  .work-card.span2 { grid-column: 1 / -1; }
+
+  .toollog { display: grid; gap: 0; margin-top: 18px; }
+  .tl-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; padding: 16px 0; border-top: 1px solid var(--hair-2); }
+  .tl-row:first-child { border-top: none; }
+  @media (max-width: 760px) { .tl-row { grid-template-columns: 1fr; gap: 8px; } }
+  .tl-row .tl-l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tl-row .tl-prompt .tl-l { color: var(--ink-ghost); }
+  .tl-row .tl-kept .tl-l { color: var(--seaglass); }
+  .tl-row .tl-rework .tl-l { color: var(--amber); }
+  .tl-row .tl-d { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.5; margin-top: 5px; }
+
+  /* ----------------------------------------------------------------
+     NEXT WEEK
+  ---------------------------------------------------------------- */
+  .next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; }
+  @media (max-width: 880px) { .next-grid { grid-template-columns: 1fr; } }
+  .next-card { border: 1px solid var(--hair); border-radius: 16px; padding: 30px 28px; background: linear-gradient(155deg, var(--card-2), var(--card)); position: relative; overflow: hidden; }
+  .next-card .nn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cobalt); }
+  .next-card h3 { font-size: 1.55rem; margin: 12px 0 12px; }
+  .next-card p { font-size: 0.96rem; color: var(--ink-soft); line-height: 1.62; }
+
+  .warroom-mini { margin-top: 22px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 8px; height: 90px; }
+  .warroom-mini > div { border: 1px solid var(--hair-2); border-radius: 8px; background: oklch(0.96 0.01 250 / 0.03); }
+
+  /* ----------------------------------------------------------------
+     FOOTER
+  ---------------------------------------------------------------- */
+  footer { padding: 96px 0 72px; border-top: 1px solid var(--hair); background: linear-gradient(180deg, transparent, oklch(0.12 0.02 260)); }
+  .foot-thesis { font-family: var(--serif); font-weight: 300; font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1.18; letter-spacing: -0.01em; max-width: 760px; margin-bottom: 48px; }
+  .foot-thesis em { font-style: italic; color: var(--seaglass); }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 50px; }
+  .foot-link {
+    display: inline-flex; align-items: center; gap: 12px;
+    border: 1px solid var(--hair); border-radius: 12px; padding: 16px 22px;
+    background: var(--card); transition: border-color 0.4s var(--ease), transform 0.4s var(--ease), background 0.4s var(--ease);
+  }
+  .foot-link:hover { border-color: var(--seaglass); transform: translateY(-3px); background: var(--card-2); }
+  .foot-link:active { transform: translateY(-1px); }
+  .foot-link .fi { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: oklch(0.96 0.01 250 / 0.05); flex-shrink: 0; }
+  .foot-link .ft { display: flex; flex-direction: column; }
+  .foot-link .ft .a { font-size: 0.98rem; color: var(--ink); }
+  .foot-link .ft .b { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.04em; margin-top: 2px; }
+  .foot-credit { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 36px; border-top: 1px solid var(--hair-2); }
+  .foot-credit .name { font-family: var(--serif); font-size: 1.15rem; }
+  .foot-credit .meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: uppercase; }
+
+  /* ----------------------------------------------------------------
+     RESPONSIVE
+  ---------------------------------------------------------------- */
+  @media (max-width: 600px) {
+    .wrap { padding: 0 20px; }
+    section { padding: 76px 0; }
+    .cover { padding: 64px 0 80px; }
+    .scrollcue { left: 20px; }
+    .chosen-stage { gap: 44px; }
+    .voice .vfeel { font-size: 0.96rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal, .cover-kicker, .cover .thesis, .cover-scope, .cover-meta { opacity: 1 !important; transform: none !important; }
+    .strikeline { transform: rotate(-7deg) scaleX(1); }
+    .rubric-fill { transform: scaleX(var(--w)); }
+    .scroll-progress { display: none; }
+  }
+</style>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<!-- sticky section nav -->
+<nav class="sectnav" aria-label="Sections">
+  <a href="#cover"><span class="dot"></span><span class="lbl">Cover</span></a>
+  <a href="#brief"><span class="dot"></span><span class="lbl">The brief</span></a>
+  <a href="#wrongturn"><span class="dot"></span><span class="lbl">Wrong turn</span></a>
+  <a href="#dana"><span class="dot"></span><span class="lbl">Dana</span></a>
+  <a href="#reframe"><span class="dot"></span><span class="lbl">The reframe</span></a>
+  <a href="#approaches"><span class="dot"></span><span class="lbl">Three approaches</span></a>
+  <a href="#chosen"><span class="dot"></span><span class="lbl">Chosen design</span></a>
+  <a href="#voices"><span class="dot"></span><span class="lbl">Five voices</span></a>
+  <a href="#orchestration"><span class="dot"></span><span class="lbl">Orchestration</span></a>
+  <a href="#worked"><span class="dot"></span><span class="lbl">How I worked</span></a>
+  <a href="#next"><span class="dot"></span><span class="lbl">Next week</span></a>
+  <a href="#foot"><span class="dot"></span><span class="lbl">End</span></a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- 1. COVER                                                     -->
+<!-- ============================================================ -->
+<section class="cover" id="cover">
+  <div class="orbfield" aria-hidden="true">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+  </div>
+  <div class="wrap">
+    <p class="kicker cover-kicker">Real <span class="tick">/</span> Lead AI Product Designer <span class="tick">/</span> take-home</p>
+    <h1 class="thesis">The agents are<br>not the product.<br><em>The calm is the product.</em></h1>
+    <p class="cover-scope">A mobile morning command center for a real-estate team lead. One hundred Leo AI skills work overnight. The screen's only job is to break the silence on the few things quietly leaking, and hand back the decisions only a human should make.</p>
+    <div class="cover-meta">
+      <div class="item"><div class="l">Role</div><div class="v">Lead AI Product Designer, IC track</div></div>
+      <div class="item"><div class="l">Surface</div><div class="v">iOS, the first 30 seconds of the morning</div></div>
+      <div class="item"><div class="l">Built in</div><div class="v">Three days, hand-coded</div></div>
+      <div class="item"><div class="l">Designer</div><div class="v">Ravindra Sisodia</div></div>
+    </div>
+  </div>
+  <div class="scrollcue" aria-hidden="true"><span class="bar"></span><span class="mono-note">scroll</span></div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 2. THE BRIEF                                                 -->
+<!-- ============================================================ -->
+<section id="brief">
+  <div class="wrap">
+    <span class="sect-no reveal">01 / The brief</span>
+    <h2 class="sect-title reveal">What Real actually asked</h2>
+    <p class="sect-lede reveal">Design the AI-powered morning command center for a team lead agent, fronting a hundred background skills. On paper it reads as a dashboard problem. It is not.</p>
+    <div class="read">
+      <p class="body reveal lead-cap">The team lead agent lives at two altitudes at once. She closes her own deals and she runs a team of twelve. Both demand attention, all day, from the same pair of eyes. Behind her, the AI named Leo runs a hundred skills overnight: listing research, compliance review, negotiation prep, scheduling, lead qualification. The brief was to design the first screen she sees when she wakes up.</p>
+      <p class="body reveal">The grading rubric told me where the real weight sat. Microinteractions and AI behavior, and agent orchestration, were the heaviest two dimensions. Everything else mattered, but those two were the test.</p>
+    </div>
+    <div class="rubric reveal" role="img" aria-label="Rubric weighting">
+      <div class="rubric-row heavy">
+        <div class="head"><span class="name"><b>Microinteractions and AI behavior</b></span><span class="wt">heaviest</span></div>
+        <div class="rubric-track"><div class="rubric-fill" style="--w:1; background:linear-gradient(90deg,var(--seaglass),var(--cobalt))"></div></div>
+      </div>
+      <div class="rubric-row heavy">
+        <div class="head"><span class="name"><b>Agent orchestration</b></span><span class="wt">heaviest</span></div>
+        <div class="rubric-track"><div class="rubric-fill" style="--w:0.94; background:linear-gradient(90deg,var(--cobalt),var(--seaglass))"></div></div>
+      </div>
+      <div class="rubric-row">
+        <div class="head"><span class="name">Problem framing and scope</span><span class="wt">heavy</span></div>
+        <div class="rubric-track"><div class="rubric-fill" style="--w:0.74; background:var(--amber)"></div></div>
+      </div>
+      <div class="rubric-row">
+        <div class="head"><span class="name">User empathy</span><span class="wt">core</span></div>
+        <div class="rubric-track"><div class="rubric-fill" style="--w:0.62; background:var(--amber)"></div></div>
+      </div>
+      <div class="rubric-row">
+        <div class="head"><span class="name">Craft and AI-tool fluency</span><span class="wt">core</span></div>
+        <div class="rubric-track"><div class="rubric-fill" style="--w:0.58; background:var(--ghost)"></div></div>
+      </div>
+    </div>
+    <div class="callout reveal">The constraint underneath every other constraint was not layout. It was trust. The real brief was: design how an agent earns, keeps, and recovers a skeptical human's trust.</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 3. THE WRONG TURN                                            -->
+<!-- ============================================================ -->
+<section id="wrongturn">
+  <div class="wrap">
+    <span class="sect-no reveal">02 / The wrong turn</span>
+    <h2 class="sect-title reveal">The dashboard dead-end</h2>
+    <p class="sect-lede reveal">A hundred agents are running, so show me the hundred agents. I sketched the mission-control grid. The moment I looked at it, I knew I had built the thing she is already drowning in.</p>
+
+    <div class="deadgrid">
+      <div class="strikewrap reveal">
+        <div class="mission-mock" aria-label="Rejected mission-control dashboard mock">
+          <span class="rejected-tag">rejected</span>
+          <div class="mm-bar"><i style="background:var(--coral)"></i><i style="background:var(--amber)"></i><i style="background:var(--seaglass)"></i></div>
+          <div class="mm-grid">
+            <div class="mm-tile"><span class="t-l">PIPELINE</span><span class="t-n">$4.2M</span><span class="t-dot" style="background:var(--seaglass)"></span></div>
+            <div class="mm-tile"><span class="t-l">AGENTS UP</span><span class="t-n">97</span><span class="t-dot" style="background:var(--seaglass)"></span></div>
+            <div class="mm-tile"><span class="t-l">BLOCKED</span><span class="t-n">3</span><span class="t-dot" style="background:var(--coral)"></span></div>
+            <div class="mm-tile"><span class="t-l">LEADS</span><span class="t-n">41</span><span class="t-dot" style="background:var(--amber)"></span></div>
+            <div class="mm-tile"><span class="t-l">TEAM</span><span class="t-n">12</span><span class="t-dot" style="background:var(--seaglass)"></span></div>
+            <div class="mm-tile"><span class="t-l">TASKS</span><span class="t-n">218</span><span class="t-dot" style="background:var(--amber)"></span></div>
+            <div class="mm-tile"><span class="t-l">CLOSE %</span><span class="t-n">68</span><span class="t-dot" style="background:var(--seaglass)"></span></div>
+            <div class="mm-tile"><span class="t-l">ALERTS</span><span class="t-n">29</span><span class="t-dot" style="background:var(--coral)"></span></div>
+          </div>
+          <div class="strikeline" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="read reveal">
+        <p class="body">I had taken a problem of <em>too much information</em> and answered it with more information. More surfaces, more numbers, more red dots. The dashboard scales anxiety with agent count. The healthier the AI gets, the busier the screen gets. That is exactly backwards.</p>
+        <div class="callout coral">I answered a too-much-information problem with more information.</div>
+        <p class="body">So I threw it out and asked a different question. Not what can the agents show me, but what is the one moment where the AI either earns her trust or loses it forever. The answer was the first thirty seconds of her morning. One hand on the phone. She is not browsing. She is bracing.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.4rem; margin:56px 0 18px;" class="reveal">The other three roads I did not take</h3>
+    <div class="three-up">
+      <div class="dead-cards reveal">
+        <div class="dead-card">
+          <span class="dc-no">DEAD END / B</span>
+          <div class="dc-t">Two separate tabs</div>
+          <p class="dc-d">A My-Deals tab and a Team tab. It forces her to mentally diff two lists every morning, the exact context-switch the product should remove. This dead end is what justified the unified signal currency.</p>
+        </div>
+      </div>
+      <div class="dead-cards reveal" style="animation-delay:0.08s">
+        <div class="dead-card">
+          <span class="dc-no">DEAD END / C</span>
+          <div class="dc-t">A single chatbot as the whole UX</div>
+          <p class="dc-d">Just talk to Leo. One chat bubble cannot express confident, uncertain, or silent at a glance, or hold two altitudes. Conversation became one affordance, not the spine.</p>
+        </div>
+      </div>
+      <div class="dead-cards reveal" style="animation-delay:0.16s">
+        <div class="dead-card">
+          <span class="dc-no">DEAD END / D</span>
+          <div class="dc-t">Raw percentage confidence</div>
+          <p class="dc-d">An 87 percent confident chip. People misread the precision, and it manufactures false certainty. Switched to categorical confidence with visible unknowns.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 4. DANA                                                      -->
+<!-- ============================================================ -->
+<section id="dana">
+  <div class="wrap">
+    <span class="sect-no reveal">03 / The user</span>
+    <h2 class="sect-title reveal">Dana Reyes</h2>
+    <p class="sect-lede reveal">Every decision after the reframe came from her, not from me.</p>
+    <div class="dana-grid">
+      <div class="dana-portrait reveal" aria-label="Portrait of Dana Reyes">
+        <div class="silhouette"></div>
+        <div class="glint"></div>
+        <div class="pcap"><div class="n">Dana Reyes</div><div class="r">Team Lead Agent</div></div>
+      </div>
+      <div class="reveal">
+        <div class="dana-facts">
+          <div class="dana-fact"><span class="fi">ROLE</span><span class="fd">Runs a team of twelve agents inside a brokerage heading toward a hundred and eighty thousand agents after the RE/MAX merger.</span></div>
+          <div class="dana-fact"><span class="fi">TENSION</span><span class="fd">A producer who became a manager without ever being given a manager's tools. Her own deals and her team's deals fight for the same attention all day.</span></div>
+          <div class="dana-fact"><span class="fi">HISTORY</span><span class="fd">Burned by software before. Every tool promised to help and then cried wolf. She has learned a quiet helplessness, and she does not trust the green checkmark.</span></div>
+        </div>
+        <div class="callout amber">For Dana, trust is not the default state. Trust is scarce, and it has to be earned on every single screen.</div>
+        <p class="body">So the brief was never really design a dashboard. It was design trust. How does an agent talk when it is confident, when it is unsure, when it is wrong, and when it has nothing to say. Get those voices right and Dana relaxes. Get them wrong and she goes back to doing it all in her head.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 5. THE REFRAME                                               -->
+<!-- ============================================================ -->
+<section id="reframe">
+  <div class="wrap">
+    <span class="sect-no reveal">04 / The reframe</span>
+    <h2 class="sect-title reveal">A triage of exceptions</h2>
+    <p class="sect-lede reveal">The hundred agents already did the work overnight. The first screen does one thing: surface the few things quietly going wrong, and hand back the decisions only a human should make.</p>
+    <div class="three-up">
+      <div class="princip reveal" style="--accent:var(--coral)">
+        <div class="pn">PRINCIPLE 01</div>
+        <h3>Triage, not dashboard</h3>
+        <p>A dashboard answers how is everything. Dana already knows the answer is mostly fine with a few fires. So the screen shows the fires, ranked, about three a morning. The default state is nothing needs you, and that is a designed result, not an empty screen.</p>
+      </div>
+      <div class="princip reveal" style="--accent:var(--seaglass); animation-delay:0.08s">
+        <div class="pn">PRINCIPLE 02</div>
+        <h3>One signal currency</h3>
+        <p>Every item, her deal or a teammate's, is the same underlying event: money quietly leaking while no one was looking. Rank by what is at stake. Hers and theirs compete in one list, so nothing slips because it was on the wrong tab.</p>
+      </div>
+      <div class="princip reveal" style="--accent:var(--cobalt); animation-delay:0.16s">
+        <div class="pn">PRINCIPLE 03</div>
+        <h3>Altitude as a badge</h3>
+        <p>Whose deal it is becomes a small badge on the card, not a separate screen. That one move dissolves the two-altitude tension instead of displaying it. A filter she can apply, never the default she has to swivel between.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 6. THREE APPROACHES                                          -->
+<!-- ============================================================ -->
+<section id="approaches">
+  <div class="wrap">
+    <span class="sect-no reveal">05 / Three approaches</span>
+    <h2 class="sect-title reveal">I built the calm three ways</h2>
+    <p class="sect-lede reveal">I did not trust myself to guess the right calm once. So I built it three complete, navigable ways and lived in each one. The choice between them was the design.</p>
+    <div class="approaches">
+      <div class="appr reveal">
+        <div class="mini-phone">
+          <span class="island"></span>
+          <div class="mini-screen skin-qc">
+            <div class="ms-h">QUIET CAPITAL / 6:42</div>
+            <div class="ms-row"><span class="ms-dot" style="background:var(--coral)"></span>Oak St counter expires 9am</div>
+            <div class="ms-row"><span class="ms-dot" style="background:var(--amber)"></span>Lender unconfirmed, Maple</div>
+            <div class="ms-row"><span class="ms-dot" style="background:var(--seaglass)"></span>3 handled overnight</div>
+          </div>
+        </div>
+        <div class="a-name">Quiet Capital</div>
+        <div class="a-tag">a private bank statement</div>
+        <p class="a-line">Restrained, monochrome, the AI almost whispers. Reveals on calm scroll.</p>
+      </div>
+
+      <div class="appr reveal" style="animation-delay:0.1s">
+        <div class="mini-phone">
+          <span class="island"></span>
+          <div class="mini-screen skin-db">
+            <div class="ms-h">DAYBOOK / TUESDAY</div>
+            <div class="ms-row"><span class="ms-dot" style="background:var(--coral)"></span>Good morning, Dana. Oak Street needs you first.</div>
+            <div class="ms-row"><span class="ms-dot" style="background:var(--amber)"></span>I think this is Sarah's lender. Confirm?</div>
+          </div>
+        </div>
+        <div class="a-name">Daybook</div>
+        <div class="a-tag">a hand-written ledger</div>
+        <p class="a-line">Warmer, more color, Leo in full sentences. A swipe-to-triage deck, act or later.</p>
+      </div>
+
+      <div class="appr reveal" style="animation-delay:0.2s">
+        <div class="mini-phone">
+          <span class="island"></span>
+          <div class="mini-screen skin-hl">
+            <div class="ms-h">HEADLINE / 06:42</div>
+            <div class="ms-headline">One deal needs you before <b>9am.</b> The rest is quiet.</div>
+            <div class="ms-row" style="background:oklch(0.18 0.02 262); color:var(--ink-faint); border:none;">Oak Street . counter . expiring</div>
+          </div>
+        </div>
+        <div class="a-name">Headline</div>
+        <div class="a-tag">the front page</div>
+        <p class="a-line">One big editorial sentence that recomposes as the day changes. The type is the triage.</p>
+      </div>
+    </div>
+    <div class="callout reveal" style="margin-top:48px;">The pixels are easy. Knowing which calm is the right calm for a person who does not trust software, that is the job.</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 7. THE CHOSEN DESIGN                                         -->
+<!-- ============================================================ -->
+<section id="chosen">
+  <div class="wrap">
+    <span class="sect-no reveal">06 / The chosen design</span>
+    <h2 class="sect-title reveal">The morning command center</h2>
+    <p class="sect-lede reveal">I converged on the calmest of the three and folded the best of the other two into it. Five pins, five decisions worth defending.</p>
+    <div class="chosen-stage">
+      <div class="reveal" style="position:relative;">
+        <div class="phone-frame">
+          <span class="di"></span>
+          <div class="phone-screen">
+            <div class="ps-status"><span>6:42</span><span>LEO</span></div>
+
+            <!-- pin 1: calm header -->
+            <div class="ps-head" style="position:relative;">
+              <div class="greet">Morning, Dana.</div>
+              <div class="sub">3 NEED YOU . 47 HANDLED . 6 HELD BACK</div>
+              <div class="pin" style="left:-46px; top:8px;"><span class="knob">1</span></div>
+            </div>
+
+            <!-- pin 2: ranked triage / pin 3 badge / pin 4 source -->
+            <div class="ps-card urgent" style="position:relative;">
+              <div class="cl">
+                <span class="statedot" style="background:var(--coral)"></span>
+                <span class="badge" style="border-color:oklch(0.73 0.16 28 / 0.4); color:var(--coral)">YOUR DEAL</span>
+              </div>
+              <div class="ctitle">Oak Street counter expires at 9am</div>
+              <div class="cbody">Leo drafted a response holding your price. Review before it sends.</div>
+              <span class="csrc">Negotiation Prep . 14 comps</span>
+              <div class="pin" style="left:-46px; top:-2px;"><span class="knob">2</span></div>
+              <div class="pin" style="right:-44px; top:6px;"><span class="knob">3</span></div>
+              <div class="pin" style="right:-44px; bottom:6px;"><span class="knob">4</span></div>
+            </div>
+
+            <div class="ps-card">
+              <div class="cl">
+                <span class="statedot" style="background:var(--amber)"></span>
+                <span class="badge">SARAH . TEAM</span>
+              </div>
+              <div class="ctitle">Maple Ave lender unconfirmed</div>
+              <div class="cbody">Likely Sarah's usual lender. I could not verify, so I held it.</div>
+              <span class="csrc" style="color:var(--amber); border-color:oklch(0.82 0.12 72 / 0.35)">Lead Qualification</span>
+            </div>
+
+            <!-- pin 5: silence ledger -->
+            <div class="ps-ledger" style="position:relative;">
+              <div class="ll">I handled 47 things overnight and chose not to interrupt you on 6 of them.</div>
+              <div class="lm">TAP TO SEE THE NEAR-MISSES</div>
+              <div class="pin" style="left:-46px; top:14px;"><span class="knob">5</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="mono-note" style="text-align:center; margin-top:18px;">COMMAND-CENTER.HTML . THE LIVE PROTOTYPE</p>
+      </div>
+
+      <div class="reveal">
+        <div class="anno-list">
+          <div class="anno"><span class="an">1</span><div><h4>The calm header</h4><p>One serif line in Leo's voice, then a single mono ledger summary. No KPI wall. The header sets the emotional default: mostly handled.</p></div></div>
+          <div class="anno"><span class="an">2</span><div><h4>Ranked triage</h4><p>Items sorted by what is at stake, not by recency or owner. The thing expiring at 9am sits above everything, regardless of whose deal it is.</p></div></div>
+          <div class="anno"><span class="an">3</span><div><h4>Altitude badge</h4><p>Your deal or a teammate's, shown as a quiet chip on the card. Altitude is metadata, not a tab. The two-altitude tension dissolves.</p></div></div>
+          <div class="anno"><span class="an">4</span><div><h4>The source chip</h4><p>Every claim names the skill that produced it and how. Tap to drill to the page of the report it came from. Nothing is a black box.</p></div></div>
+          <div class="anno"><span class="an">5</span><div><h4>The Silence Ledger</h4><p>Silence gets a surface. For a person trained by flaky tools, the most trust-building line an AI can say is here is everything I did not bother you with, and here is the receipt.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 8. THE FIVE VOICES                                           -->
+<!-- ============================================================ -->
+<section id="voices">
+  <div class="wrap">
+    <span class="sect-no reveal">07 / The five voices</span>
+    <h2 class="sect-title reveal">How the AI talks</h2>
+    <p class="sect-lede reveal">The heaviest-weighted dimension. Leo has five voices, and each one is a color, a mechanic, and a feeling. Watch the swatch.</p>
+    <div class="voices">
+      <div class="voice reveal" style="--vtint:oklch(0.66 0.16 262 / 0.10)">
+        <div class="vlabel"><span class="vswatch thinking" aria-hidden="true"></span><span class="vname" style="color:var(--cobalt)">Thinking</span></div>
+        <div class="vmech">No spinner. A named shimmer, sized to the answer it is about to give, telling you which skill is working on what. The wait becomes proof of work.</div>
+        <div class="vfeel">A colleague glancing up to say, give me a second, I am checking.</div>
+      </div>
+      <div class="voice reveal" style="--vtint:oklch(0.80 0.11 168 / 0.10); animation-delay:0.05s">
+        <div class="vlabel"><span class="vswatch confident" aria-hidden="true"></span><span class="vname" style="color:var(--seaglass)">Confident</span></div>
+        <div class="vmech">Deliberately boring. A calm reveal, one line of reasoning, tappable source chips. No confetti. A confident AI that celebrates is a tool that does not respect your time.</div>
+        <div class="vfeel">A reliable colleague, not a slot machine.</div>
+      </div>
+      <div class="voice reveal" style="--vtint:oklch(0.82 0.12 72 / 0.10); animation-delay:0.1s">
+        <div class="vlabel"><span class="vswatch uncertain" aria-hidden="true"></span><span class="vname" style="color:var(--amber)">Uncertain</span></div>
+        <div class="vmech">The type literally gets lighter. Uncertainty becomes visual weight. It gives ranges, not fake precision, says what it is missing, and always offers accept or reject.</div>
+        <div class="vfeel">Someone honest enough to say, I think so, but please confirm.</div>
+      </div>
+      <div class="voice reveal" style="--vtint:oklch(0.73 0.16 28 / 0.10); animation-delay:0.15s">
+        <div class="vlabel"><span class="vswatch wrong" aria-hidden="true"></span><span class="vname" style="color:var(--coral)">Wrong</span></div>
+        <div class="vmech">The design assumes it. No dead end. Acknowledge, correct, escalate if needed, with a timed undo. One correction propagates to every relevant skill at once. One human nudge, a hundred-agent consistency.</div>
+        <div class="vfeel">A teammate who owns the mistake and fixes it everywhere, fast.</div>
+      </div>
+      <div class="voice reveal" style="--vtint:oklch(0.66 0.02 262 / 0.10); animation-delay:0.2s">
+        <div class="vlabel"><span class="vswatch silent" aria-hidden="true"></span><span class="vname" style="color:var(--ghost)">Silent</span></div>
+        <div class="vmech">The one I am proudest of. Silence gets a surface, the Silence Ledger. Handled 47, chose not to interrupt on 6. Tap to see the near-misses. The receipt for restraint.</div>
+        <div class="vfeel">The quiet of a desk where someone already cleared the small fires.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 9. ORCHESTRATION                                             -->
+<!-- ============================================================ -->
+<section id="orchestration">
+  <div class="wrap">
+    <span class="sect-no reveal">08 / Orchestration</span>
+    <h2 class="sect-title reveal">A hundred into one</h2>
+    <p class="sect-lede reveal">A hundred agents cannot each have a voice, or it is chaos. One orchestrator, named skill-workers underneath. Dana only ever talks to Leo.</p>
+    <div class="orch-grid">
+      <div class="orch-svg-wrap reveal">
+        <svg class="orch-svg" viewBox="0 0 420 360" role="img" aria-label="Orchestration diagram: Dana talks to Leo, Leo coordinates six named skills">
+          <!-- edges Dana to Leo -->
+          <path class="orch-edge" d="M210 56 L210 120" />
+          <!-- edges Leo to skills -->
+          <path class="orch-edge" d="M170 168 L70 250" />
+          <path class="orch-edge" d="M186 176 L150 250" />
+          <path class="orch-edge" d="M204 178 L228 250" />
+          <path class="orch-edge" d="M236 176 L310 250" />
+          <path class="orch-edge" d="M250 168 L350 230" />
+          <path class="orch-edge" d="M210 178 L60 200" />
+          <!-- Dana -->
+          <rect x="160" y="22" width="100" height="34" rx="10" fill="var(--card-2)" stroke="var(--hair)" />
+          <text x="210" y="44" text-anchor="middle" class="orch-label" style="fill:var(--ink)">DANA</text>
+          <!-- Leo orchestrator -->
+          <circle cx="210" cy="148" r="34" class="orch-node-leo" />
+          <text x="210" y="146" text-anchor="middle" class="orch-label-leo">Leo</text>
+          <text x="210" y="160" text-anchor="middle" class="orch-sub">ORCHESTRATOR</text>
+          <!-- skill nodes -->
+          <g>
+            <rect x="14" y="250" width="96" height="30" rx="8" class="orch-node-skill" />
+            <text x="62" y="269" text-anchor="middle" class="orch-label">Listing Research</text>
+          </g>
+          <g>
+            <rect x="118" y="250" width="92" height="30" rx="8" class="orch-node-skill" />
+            <text x="164" y="269" text-anchor="middle" class="orch-label">Compliance QA</text>
+          </g>
+          <g>
+            <rect x="218" y="250" width="100" height="30" rx="8" class="orch-node-skill" />
+            <text x="268" y="269" text-anchor="middle" class="orch-label">Negotiation Prep</text>
+          </g>
+          <g>
+            <rect x="40" y="298" width="92" height="30" rx="8" class="orch-node-skill" />
+            <text x="86" y="317" text-anchor="middle" class="orch-label">Scheduling</text>
+          </g>
+          <g>
+            <rect x="140" y="298" width="110" height="30" rx="8" class="orch-node-skill" />
+            <text x="195" y="317" text-anchor="middle" class="orch-label">Lead Qualification</text>
+          </g>
+          <g>
+            <rect x="258" y="298" width="100" height="30" rx="8" class="orch-node-skill" />
+            <text x="308" y="317" text-anchor="middle" class="orch-label">Market Analysis</text>
+          </g>
+          <text x="378" y="266" text-anchor="middle" class="orch-sub" style="fill:var(--ink-ghost)">+ 94 more</text>
+        </svg>
+      </div>
+      <div class="reveal">
+        <p class="body">Underneath Leo sit named skill-workers: Listing Research, Compliance QA, Negotiation Prep, Scheduling, Lead Qualification, Market Analysis. The hundred are drill-down detail. Every piece of the UI maps to one of three disclosure levels.</p>
+        <div class="disclosure">
+          <div class="disc-row"><span class="dl">L1 . GLYPH</span><span class="dd">A status. A colored dot, a state. <b>What</b> is happening, at a glance.</span></div>
+          <div class="disc-row"><span class="dl">L2 . LINE</span><span class="dd">One line of why, plus the metric. <b>Why</b> Leo flagged it, in a sentence.</span></div>
+          <div class="disc-row"><span class="dl">L3 . TRACE</span><span class="dd">The full trace, drillable to page four of the inspection report, checked by Compliance QA. <b>Where</b> the claim came from.</span></div>
+        </div>
+        <p class="body" style="margin-top:24px;">The notification logic is built to <strong>suppress, not surface</strong>. Four tiers. Needs-you rises to the top. Handled goes silently into the ledger. Noise never appears.</p>
+        <div class="orch-stat">
+          <div class="st"><div class="v">~3</div><div class="l">items surfaced a morning</div></div>
+          <div class="st"><div class="v">5-15%</div><div class="l">healthy escalation rate to watch</div></div>
+          <div class="st"><div class="v">1 of N</div><div class="l">one correction, all skills realign</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 10. HOW I WORKED                                             -->
+<!-- ============================================================ -->
+<section id="worked">
+  <div class="wrap">
+    <span class="sect-no reveal">09 / How I worked</span>
+    <h2 class="sect-title reveal">Vibe-coded, honestly logged</h2>
+    <p class="sect-lede reveal">This role is about building, not just drawing. Three things about the craft.</p>
+    <div class="work-grid">
+      <div class="work-card reveal">
+        <div class="wh">Hand-coded, not assembled</div>
+        <p>The entire prototype is hand-built HTML, CSS, and JavaScript. No page builder. Three complete navigable apps and the live state machine, written and debugged in three days. Vibe-coding is not a shortcut here, it is the medium.</p>
+      </div>
+      <div class="work-card reveal" style="animation-delay:0.08s">
+        <div class="wh">CSS motion, not JS timing</div>
+        <p>One deliberate engineering call: every animation lives in CSS keyframes and transitions, never JavaScript timing loops. <strong>Content is fully visible by default; motion is pure enhancement.</strong> It survives a strict content-security-policy and degrades gracefully. That is the design-engineering bridge the role asks for.</p>
+      </div>
+      <div class="work-card span2 reveal" style="animation-delay:0.16s">
+        <div class="wh">The AI-tooling log: where I kept the AI, and where I overrode it</div>
+        <div class="toollog">
+          <div class="tl-row">
+            <div class="tl-prompt"><span class="tl-l">Prompted</span><div class="tl-d">A loading state for Leo while a skill runs.</div></div>
+            <div class="tl-kept"><span class="tl-l">Kept</span><div class="tl-d">The scaffold and easing, generated fast.</div></div>
+            <div class="tl-rework"><span class="tl-l">Reworked</span><div class="tl-d">Generic shimmer became a named shimmer, so load time doubles as orchestration transparency.</div></div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-prompt"><span class="tl-l">Prompted</span><div class="tl-d">A confidence display for Leo's suggestions.</div></div>
+            <div class="tl-kept"><span class="tl-l">Kept</span><div class="tl-d">The chip component.</div></div>
+            <div class="tl-rework"><span class="tl-l">Reworked</span><div class="tl-d">Rejected the AI's numeric percent for categorical confidence plus visible unknowns. The less responsible pattern was its first instinct.</div></div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-prompt"><span class="tl-l">Prompted</span><div class="tl-d">An AI-readable design system, DESIGN.md.</div></div>
+            <div class="tl-kept"><span class="tl-l">Kept</span><div class="tl-d">Token structure and AI-state color semantics.</div></div>
+            <div class="tl-rework"><span class="tl-l">Reworked</span><div class="tl-d">Added the three-voice type system, serif human, sans interface, mono machine. The model did not propose it. I did.</div></div>
+          </div>
+        </div>
+        <p style="margin-top:22px; font-family:var(--serif); font-style:italic; font-size:1.1rem; color:var(--ink); line-height:1.5;">AI made me faster and more thorough. It did not make the decisions. The thesis, the signal currency, the three-voice type, the Silence Ledger, all came from overriding the AI's first, more conventional instinct. That override is the craft.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 11. NEXT WEEK                                                -->
+<!-- ============================================================ -->
+<section id="next">
+  <div class="wrap">
+    <span class="sect-no reveal">10 / Next week</span>
+    <h2 class="sect-title reveal">If I had another week</h2>
+    <p class="sect-lede reveal">I would not add features. The scarcest resource here is not screens. It is calibrated trust, and you only earn that with real users.</p>
+    <div class="next-grid">
+      <div class="next-card reveal">
+        <div class="nn">SURFACE 02</div>
+        <h3>The desktop war room</h3>
+        <p>The same signal currency at a different altitude. The mobile triage is the decision surface; the desktop is where side-by-side density and the altitude handoff live. Start triage on the phone, drop into the deal on the desktop with no context reload.</p>
+        <div class="warroom-mini" aria-hidden="true"><div></div><div></div></div>
+      </div>
+      <div class="next-card reveal" style="animation-delay:0.1s">
+        <div class="nn">CALIBRATION</div>
+        <h3>Real-user calibration</h3>
+        <p>Run this in front of three real team leads and tune the escalation threshold against their actual mornings. The line between needs-you and handled is hand-tuned today; it needs behavioral data. And test how rarely the Silence Ledger should surface before it reads as noise instead of trust.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 12. FOOTER                                                   -->
+<!-- ============================================================ -->
+<footer id="foot">
+  <div class="wrap">
+    <p class="kicker" style="margin-bottom:28px;">The close</p>
+    <p class="foot-thesis">A hundred agents worked all night so Dana could look at her phone for thirty seconds, see the three things that matter, trust the rest was handled, and put the phone down. <em>The agents are not the product. The calm is.</em></p>
+
+    <div class="foot-links">
+      <a class="foot-link" href="../prototype/command-center.html" target="_blank" rel="noopener">
+        <span class="fi" style="color:var(--seaglass)">&#9655;</span>
+        <span class="ft"><span class="a">The live prototype</span><span class="b">../prototype/command-center.html</span></span>
+      </a>
+      <a class="foot-link" href="keynote/video.html" target="_blank" rel="noopener">
+        <span class="fi" style="color:var(--cobalt)">&#9673;</span>
+        <span class="ft"><span class="a">The keynote film</span><span class="b">keynote/video.html</span></span>
+      </a>
+      <a class="foot-link" href="landing.html" target="_blank" rel="noopener">
+        <span class="fi" style="color:var(--amber)">&#8962;</span>
+        <span class="ft"><span class="a">The showcase landing</span><span class="b">../landing.html</span></span>
+      </a>
+    </div>
+
+    <div class="foot-credit">
+      <div>
+        <div class="name">Ravindra Sisodia</div>
+        <div class="meta" style="margin-top:4px;">Lead AI Product Designer take-home . Real</div>
+      </div>
+      <div class="meta">The morning command center . 2026</div>
+    </div>
+  </div>
+</footer>
+
+<!--
+  All entrance motion is CSS-only. Every .reveal element animates in via the
+  pure-CSS "rise" keyframe (animation-fill-mode: forwards), so all content is
+  fully visible by default with no JavaScript. The scroll-progress bar is a
+  CSS scroll-driven animation under @supports (animation-timeline: scroll());
+  where unsupported it simply stays hidden. No scroll listeners, no rAF, no
+  IntersectionObserver, no external libraries.
+-->

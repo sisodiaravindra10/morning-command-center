@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leo - My Deals Board + Negotiation Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --backdrop:#e9e9ec;
+    --ink:#0c0d12;
+    --jakarta:'Plus Jakarta Sans','Inter',system-ui,-apple-system,sans-serif;
+
+    /* phone 1 - dark notes board */
+    --p1-bg:#0e1018;          /* near black, slightly blue-tinted */
+    --p1-surface:#171a24;
+    --p1-pill:#1c2030;
+    --p1-pill-text:#9aa0b3;
+    --p1-pill-active:#f1f1ee;
+    --note-orange:#ff8a3d;
+    --note-yellow:#ffd23f;
+    --note-cream:#f4f1e8;
+    --note-green:#a6e26b;
+    --note-blue:#6ba8ff;
+
+    /* phone 2 - cream case study editor */
+    --p2-bg:#f3efe0;
+    --p2-card:#fbf9f2;
+    --p2-ink:#171511;
+    --p2-body:#4f4b41;
+    --p2-faint:#a39e90;
+  }
+
+  *{box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+  html,body{margin:0;}
+  body{
+    background:var(--backdrop);
+    font-family:var(--jakarta);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:40px 20px 64px;
+  }
+
+  .caption{
+    font-family:'Inter',ui-monospace,monospace;
+    font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#7c7c84;
+    margin:0 0 30px;
+    text-align:center;
+  }
+
+  .stage{
+    display:flex;
+    gap:40px;
+    align-items:flex-start;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  /* ---------- phone shell ---------- */
+  .phone{
+    position:relative;
+    width:372px;
+    height:790px;
+    border-radius:46px;
+    background:#000;
+    padding:11px;
+    box-shadow:0 30px 60px rgba(20,22,30,.22), 0 4px 12px rgba(20,22,30,.16);
+    flex:0 0 auto;
+  }
+  .screen{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:36px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  /* notch */
+  .notch{
+    position:absolute;
+    top:0;left:50%;
+    transform:translateX(-50%);
+    width:148px;height:28px;
+    background:#000;
+    border-radius:0 0 18px 18px;
+    z-index:30;
+  }
+  /* status bar */
+  .statusbar{
+    position:relative;
+    z-index:20;
+    height:46px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 26px;
+    font-size:14px;
+    font-weight:600;
+    font-family:'Inter',sans-serif;
+  }
+  .statusbar .clock{padding-top:6px;}
+  .statusbar .glyphs{display:flex;align-items:center;gap:6px;padding-top:6px;}
+  .glyphs svg{display:block;}
+
+  /* ============ PHONE 1 ============ */
+  .p1 .screen{background:var(--p1-bg);}
+  .p1 .statusbar{color:#f3f3f0;}
+  .p1-body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:6px 22px 30px;
+    position:relative;
+  }
+  .p1-body::-webkit-scrollbar{width:0;}
+
+  .p1-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin:6px 0 18px;
+  }
+  .p1-title{
+    margin:0;
+    color:#fff;
+    font-weight:700;
+    font-size:46px;
+    line-height:.98;
+    letter-spacing:-.02em;
+  }
+  .dotbtn{
+    width:46px;height:46px;flex:0 0 auto;
+    border-radius:50%;
+    background:var(--p1-surface);
+    border:none;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    margin-top:6px;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .dotbtn:hover{background:#1f2330;}
+  .dotbtn:active{transform:scale(.93);}
+  .dotgrid{
+    display:grid;
+    grid-template-columns:repeat(2,5px);
+    grid-template-rows:repeat(3,5px);
+    gap:4px;
+  }
+  .dotgrid span{width:5px;height:5px;border-radius:50%;background:#c7c9d2;}
+
+  /* pills */
+  .pills{
+    display:flex;
+    gap:9px;
+    overflow-x:auto;
+    margin:0 -22px 20px;
+    padding:2px 22px;
+    scrollbar-width:none;
+  }
+  .pills::-webkit-scrollbar{display:none;}
+  .pill{
+    flex:0 0 auto;
+    border:none;
+    cursor:pointer;
+    font-family:var(--jakarta);
+    font-weight:600;
+    font-size:14.5px;
+    padding:11px 18px;
+    border-radius:30px;
+    background:var(--p1-pill);
+    color:var(--p1-pill-text);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    white-space:nowrap;
+    transition:background .18s ease, color .18s ease, transform .12s ease;
+  }
+  .pill:active{transform:scale(.96);}
+  .pill.active{background:var(--p1-pill-active);color:#15161c;}
+  .pill .badge{
+    font-size:11px;
+    font-weight:700;
+    background:#15161c;
+    color:#f1f1ee;
+    border-radius:20px;
+    padding:2px 7px;
+    line-height:1.3;
+  }
+  .pill.active .badge{background:#15161c;color:#fff;}
+
+  /* masonry */
+  .masonry{
+    column-count:2;
+    column-gap:14px;
+  }
+  .note{
+    break-inside:avoid;
+    margin-bottom:14px;
+    border-radius:22px;
+    padding:18px 17px;
+    position:relative;
+    color:#171511;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);
+  }
+  .note h3{
+    margin:0 0 13px;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:-.01em;
+    line-height:1.12;
+  }
+  .note.full{column-span:all;}
+
+  .note.orange{background:var(--note-orange);}
+  .note.yellow{background:var(--note-yellow);}
+  .note.green{background:var(--note-green);}
+  .note.blue{background:var(--note-blue);color:#0d2447;}
+  .note.cream{background:var(--note-cream);}
+
+  /* checklist rows */
+  .check{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:9px 0;
+    font-size:14.5px;
+    font-weight:600;
+    cursor:pointer;
+    user-select:none;
+  }
+  .box{
+    width:19px;height:19px;flex:0 0 auto;
+    border-radius:6px;
+    border:2px solid rgba(20,17,12,.42);
+    display:grid;place-items:center;
+    transition:background .15s ease,border-color .15s ease;
+  }
+  .box svg{opacity:0;transition:opacity .15s ease;}
+  .check.done .box{background:#171511;border-color:#171511;}
+  .check.done .box svg{opacity:1;}
+  .check.done .label{text-decoration:line-through;opacity:.5;}
+  .green .box{border-color:rgba(20,17,12,.5);}
+  .green .check.done .box{background:#1f3d0a;border-color:#1f3d0a;}
+
+  /* image note */
+  .note .photo{
+    width:100%;
+    border-radius:15px;
+    display:block;
+    object-fit:cover;
+  }
+  .note.yellow .photo{height:168px;}
+  .note.blue .photo{height:96px;margin-bottom:12px;}
+
+  /* lectures pill card */
+  .note.cream.lectures{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 15px;
+    border-radius:40px;
+  }
+  .lectures .avatar{
+    width:42px;height:42px;border-radius:50%;
+    object-fit:cover;flex:0 0 auto;
+  }
+  .lectures .lec-text h3{margin:0;font-size:16px;}
+  .lectures .lec-text .sub{font-size:12.5px;font-weight:600;color:#8a8678;margin-top:2px;}
+  .lectures .heart{margin-left:auto;flex:0 0 auto;color:#171511;cursor:pointer;}
+
+  /* blue homework foot */
+  .note.blue .foot{
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .mic{
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(13,36,71,.16);
+    display:grid;place-items:center;color:#0d2447;
+  }
+
+  /* fab */
+  .fab{
+    position:absolute;
+    left:50%;bottom:30px;
+    transform:translateX(-50%);
+    width:62px;height:62px;
+    border-radius:50%;
+    background:#0a0b10;
+    border:1px solid #2a2d3a;
+    color:#fff;
+    display:grid;place-items:center;
+    cursor:pointer;
+    z-index:25;
+    box-shadow:0 10px 24px rgba(0,0,0,.5);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .fab:hover{background:#15161f;}
+  .fab:active{transform:translateX(-50%) scale(.92);}
+
+  /* ============ PHONE 2 ============ */
+  .p2 .screen{background:var(--p2-bg);}
+  .p2 .statusbar{color:#171511;}
+  .p2-body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:4px 26px 28px;
+    scrollbar-width:none;
+  }
+  .p2-body::-webkit-scrollbar{display:none;}
+
+  .p2-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin:8px 0 26px;
+  }
+  .backbtn{
+    width:46px;height:46px;border-radius:50%;
+    background:var(--p2-card);
+    border:1px solid #e6e1cf;
+    display:grid;place-items:center;cursor:pointer;color:#171511;
+    transition:transform .15s ease,background .15s ease;
+  }
+  .backbtn:hover{background:#fff;}
+  .backbtn:active{transform:scale(.93);}
+  .p2-head .right{display:flex;align-items:center;gap:14px;}
+  .avstack{display:flex;align-items:center;}
+  .avstack img{
+    width:34px;height:34px;border-radius:50%;
+    border:2.5px solid var(--p2-bg);object-fit:cover;
+  }
+  .avstack img:not(:first-child){margin-left:-12px;}
+  .miniicon{color:#171511;cursor:pointer;display:grid;place-items:center;}
+
+  .p2-title{
+    margin:0 0 24px;
+    color:var(--p2-ink);
+    font-weight:700;
+    font-size:42px;
+    line-height:1.04;
+    letter-spacing:-.025em;
+  }
+  .p2-title .word{position:relative;display:inline-block;}
+  .p2-title .word .dot{
+    position:absolute;
+    top:-2px;right:-15px;
+    width:13px;height:13px;border-radius:50%;
+    background:url('https://picsum.photos/seed/leo7/40/40') center/cover;
+    border:2px solid var(--p2-bg);
+  }
+
+  .p2-body p.lede{
+    margin:0 0 22px;
+    color:var(--p2-body);
+    font-size:15.5px;
+    line-height:1.62;
+    text-align:justify;
+    font-weight:400;
+  }
+  .p2-body p.lede u{text-decoration-thickness:1.5px;text-underline-offset:2px;}
+
+  .editline{
+    display:flex;align-items:center;gap:1px;
+    margin:0 0 24px;
+    font-size:15.5px;
+    color:var(--p2-faint);
+    font-weight:400;
+  }
+  .caret{
+    display:inline-block;
+    width:2px;height:21px;
+    background:#171511;
+    margin-right:6px;
+    animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .toolbar{
+    display:flex;align-items:center;gap:12px;
+    margin:0 0 30px;
+  }
+  .toolbar .tplus{
+    width:46px;height:46px;border-radius:14px;
+    background:#171511;color:#fff;border:none;cursor:pointer;
+    display:grid;place-items:center;
+    transition:transform .15s ease;
+  }
+  .toolbar .tplus:active{transform:scale(.92);}
+  .toolbar .ticon{
+    width:46px;height:46px;border-radius:14px;
+    background:var(--p2-card);border:1px solid #e6e1cf;cursor:pointer;
+    display:grid;place-items:center;color:#3b3830;
+    transition:transform .15s ease,background .15s ease;
+  }
+  .toolbar .ticon:hover{background:#fff;}
+  .toolbar .ticon:active{transform:scale(.92);}
+
+  .p2-sub{
+    margin:0 0 16px;
+    color:var(--p2-ink);
+    font-size:21px;font-weight:700;letter-spacing:-.01em;
+  }
+  .bar{
+    display:block;width:100%;
+    background:var(--p2-card);
+    border:1px solid #e9e4d3;
+    border-radius:18px;
+    padding:18px 20px;
+    margin-bottom:12px;
+    color:#2c2920;
+    font-size:15.5px;font-weight:600;
+    cursor:pointer;
+    text-align:left;
+    display:flex;align-items:center;justify-content:space-between;
+    transition:transform .14s ease,background .14s ease;
+  }
+  .bar:hover{background:#fff;}
+  .bar:active{transform:scale(.985);}
+  .bar .num{
+    width:24px;height:24px;border-radius:50%;
+    background:#efe9d6;color:#8a8472;
+    font-size:12px;font-weight:700;
+    display:grid;place-items:center;
+  }
+  .bar .left{display:flex;align-items:center;gap:13px;}
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+
+  /* stack on narrow */
+  @media (max-width:840px){
+    .stage{flex-direction:column;gap:48px;align-items:center;}
+  }
+</style>
+</head>
+<body>
+  <p class="caption">Leo - My Deals Board + Negotiation Brief</p>
+
+  <div class="stage">
+
+    <!-- ================= PHONE 1 ================= -->
+    <div class="phone p1">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span class="clock">9:41</span>
+          <span class="glyphs">
+            <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#f3f3f0"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></g></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2C10 2.2 11.8 3 13.1 4.3L14.5 2.8C12.8 1.1 10.5 0 8 0S3.2 1.1 1.5 2.8L2.9 4.3C4.2 3 6 2.2 8 2.2Z" fill="#f3f3f0"/><path d="M8 5.4C9.1 5.4 10.1 5.8 10.8 6.6L8 9.6 5.2 6.6C5.9 5.8 6.9 5.4 8 5.4Z" fill="#f3f3f0"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" fill="none" stroke="#f3f3f0" stroke-opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="1.6" fill="#f3f3f0"/><rect x="22" y="3.5" width="2" height="5" rx="1" fill="#f3f3f0" fill-opacity=".5"/></svg>
+          </span>
+        </div>
+
+        <div class="p1-body">
+          <div class="p1-head">
+            <h1 class="p1-title">My<br>Deals</h1>
+            <button class="dotbtn" aria-label="Menu">
+              <span class="dotgrid"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+            </button>
+          </div>
+
+          <div class="pills">
+            <button class="pill active">All <span class="badge">12</span></button>
+            <button class="pill">Needs you</button>
+            <button class="pill">Closing</button>
+          </div>
+
+          <div class="masonry">
+            <!-- orange -->
+            <div class="note orange">
+              <h3>Maplewood Dr escrow</h3>
+              <div class="check done"><span class="box"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L4 7.5L10 1" stroke="#ff8a3d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="label">Order appraisal</span></div>
+              <div class="check"><span class="box"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L4 7.5L10 1" stroke="#ff8a3d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="label">Confirm wire</span></div>
+              <div class="check"><span class="box"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L4 7.5L10 1" stroke="#ff8a3d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="label">Schedule walk-through</span></div>
+            </div>
+
+            <!-- yellow image note -->
+            <div class="note yellow">
+              <h3>142 Oak St counter</h3>
+              <img class="photo" src="https://picsum.photos/seed/oakst142/300/360" alt="142 Oak St listing" loading="lazy">
+            </div>
+
+            <!-- lectures full pill -->
+            <div class="note cream lectures full">
+              <img class="avatar" src="https://picsum.photos/seed/crestview8/80/80" alt="">
+              <div class="lec-text">
+                <h3>Crestview going quiet</h3>
+                <div class="sub">No reply 3d</div>
+              </div>
+              <span class="heart" role="button" aria-label="Favorite">
+                <svg width="22" height="20" viewBox="0 0 22 20" fill="none"><path d="M11 18S1.5 12.4 1.5 6.2C1.5 3.3 3.8 1 6.6 1 8.4 1 10 1.9 11 3.3 12 1.9 13.6 1 15.4 1 18.2 1 20.5 3.3 20.5 6.2 20.5 12.4 11 18 11 18Z" stroke="#171511" stroke-width="1.7" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+
+            <!-- green groceries -->
+            <div class="note green">
+              <h3>Closing checklist - Birch Ln</h3>
+              <div class="check done"><span class="box"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L4 7.5L10 1" stroke="#a6e26b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="label">Title cleared</span></div>
+              <div class="check"><span class="box"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.5L4 7.5L10 1" stroke="#a6e26b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="label">Final walk</span></div>
+            </div>
+
+            <!-- blue homework -->
+            <div class="note blue">
+              <h3>New lead - 88 Linden</h3>
+              <img class="photo" src="https://picsum.photos/seed/linden88/300/200" alt="" loading="lazy">
+              <div class="foot">
+                <span style="font-size:13px;font-weight:700;opacity:.75;">2 min</span>
+                <span class="mic">
+                  <svg width="14" height="18" viewBox="0 0 14 18" fill="none"><rect x="4.5" y="1" width="5" height="9" rx="2.5" fill="#0d2447"/><path d="M1.5 8C1.5 11 4 13.2 7 13.2S12.5 11 12.5 8M7 13.2V16.5M4.2 16.5H9.8" stroke="#0d2447" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button class="fab" aria-label="New note">
+            <svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 4V18M4 11H18" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PHONE 2 ================= -->
+    <div class="phone p2">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span class="clock">9:41</span>
+          <span class="glyphs">
+            <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#171511"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></g></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2C10 2.2 11.8 3 13.1 4.3L14.5 2.8C12.8 1.1 10.5 0 8 0S3.2 1.1 1.5 2.8L2.9 4.3C4.2 3 6 2.2 8 2.2Z" fill="#171511"/><path d="M8 5.4C9.1 5.4 10.1 5.8 10.8 6.6L8 9.6 5.2 6.6C5.9 5.8 6.9 5.4 8 5.4Z" fill="#171511"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" fill="none" stroke="#171511" stroke-opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="1.6" fill="#171511"/><rect x="22" y="3.5" width="2" height="5" rx="1" fill="#171511" fill-opacity=".5"/></svg>
+          </span>
+        </div>
+
+        <div class="p2-body">
+          <div class="p2-head">
+            <button class="backbtn" aria-label="Back">
+              <svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9 1L2 9L9 17" stroke="#171511" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="right">
+              <span class="avstack">
+                <img src="https://picsum.photos/seed/collab1/60/60" alt="">
+                <img src="https://picsum.photos/seed/collab2/60/60" alt="">
+                <img src="https://picsum.photos/seed/collab3/60/60" alt="">
+              </span>
+              <span class="miniicon" role="button" aria-label="More">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.7" fill="#171511"/><circle cx="10" cy="10" r="1.7" fill="#171511"/><circle cx="10" cy="16" r="1.7" fill="#171511"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <h1 class="p2-title">Negotiation<br>brief <span class="word">142<span class="dot"></span></span><br>Oak St</h1>
+
+          <p class="lede">Leo drafted this counter: we hold firm and <u>anchor at 612k</u>, well above their opening so the midpoint still clears your seller's floor. Keep the <u>inspection contingency</u> intact rather than waiving it, since the roof note gives us room to ask for a credit. The buyer has paid for two appraisals already, so a tight reply window should pull a quick yes.</p>
+
+          <div class="editline"><span class="caret"></span>Tap to edit Leo's draft...</div>
+
+          <div class="toolbar">
+            <button class="tplus" aria-label="Add">
+              <svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 4V16M4 10H16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
+            </button>
+            <button class="ticon" aria-label="Image">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2.5" stroke="#3b3830" stroke-width="1.6"/><circle cx="7" cy="8" r="1.6" fill="#3b3830"/><path d="M3 14L8 9.5L12 13L14.5 11L17 13.5" stroke="#3b3830" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="ticon" aria-label="Draw">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13.5 2.5L17.5 6.5L7 17H3V13L13.5 2.5Z" stroke="#3b3830" stroke-width="1.6" stroke-linejoin="round"/><path d="M11.5 4.5L15.5 8.5" stroke="#3b3830" stroke-width="1.6"/></svg>
+            </button>
+            <button class="ticon" aria-label="List">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 5H17M7 10H17M7 15H17" stroke="#3b3830" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="1.3" fill="#3b3830"/><circle cx="3" cy="10" r="1.3" fill="#3b3830"/><circle cx="3" cy="15" r="1.3" fill="#3b3830"/></svg>
+            </button>
+          </div>
+
+          <h2 class="p2-sub">Counter strategy:</h2>
+          <button class="bar"><span class="left"><span class="num">1</span>Anchor the price</span></button>
+          <button class="bar"><span class="left"><span class="num">2</span>Address the contingency</span></button>
+          <button class="bar"><span class="left"><span class="num">3</span>Set the deadline</span></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // trivial vanilla toggles - fidelity-first tappable feel for the deals board
+  document.querySelectorAll('.p1 .check').forEach(function(row){
+    row.addEventListener('click', function(){ row.classList.toggle('done'); });
+  });
+  document.querySelectorAll('.p1 .pill').forEach(function(pill){
+    pill.addEventListener('click', function(){
+      document.querySelectorAll('.p1 .pill').forEach(function(p){ p.classList.remove('active'); });
+      pill.classList.add('active');
+    });
+  });
+  var heart = document.querySelector('.p1 .lectures .heart');
+  if(heart){
+    heart.addEventListener('click', function(){
+      var path = heart.querySelector('path');
+      var filled = path.getAttribute('fill') !== 'none';
+      path.setAttribute('fill', filled ? 'none' : '#171511');
+    });
+  }
+</script>
+</body>
+</html>

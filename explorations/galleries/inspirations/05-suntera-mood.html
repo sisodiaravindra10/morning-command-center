@@ -1,0 +1,515 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inspiration 05 - Leo Pipeline Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* phone 1 - warm */
+    --p1-pink: #FBD9CC;
+    --p1-pink-soft: #FCE3D9;
+    --p1-orange: #F4511E;
+    --p1-orange-deep: #E1480F;
+    --p1-head: #FF8A3D;
+    --p1-head-deep: #FB7322;
+    /* phone 2 - cool */
+    --p2-yellow: #FFD23E;
+    --p2-yellow-soft: #FFDE6B;
+    --p2-green: #2E9E5B;
+    --p2-green-deep: #248B4D;
+    --p2-hill: #3FB56C;
+    --p2-hill-deep: #2E9E5B;
+    /* shared */
+    --pill-glass: rgba(255, 255, 255, 0.22);
+    --pill-glass-line: rgba(255, 255, 255, 0.42);
+    --pill-text: #ffffff;
+    --select: #FFD23E;
+    --ink: #141414;
+    --lav: #C9BEF0;
+    --lav-deep: #B7A8EB;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    /* lavender / purple backdrop */
+    background:
+      radial-gradient(140% 90% at 20% 0%, var(--lav) 0%, var(--lav-deep) 55%, #A693E6 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 48px 16px 64px;
+    position: relative;
+    color: var(--ink);
+  }
+
+  .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(40, 24, 70, 0.62);
+    font-weight: 500;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: row;
+    gap: 44px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* decorative "//" bottom-right of backdrop */
+  .slashmark {
+    position: fixed;
+    right: 30px;
+    bottom: 22px;
+    font-family: "Anton", sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: rgba(40, 24, 70, 0.32);
+    transform: skewX(-12deg);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* ---------- iPhone frame ---------- */
+  .phone {
+    width: 360px;
+    height: 760px;
+    background: #0b0b0d;
+    border-radius: 52px;
+    padding: 10px;
+    box-shadow:
+      0 60px 110px -44px rgba(50, 30, 80, 0.5),
+      0 0 0 2px rgba(255, 255, 255, 0.05) inset;
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 43px;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 116px;
+    height: 28px;
+    background: #0b0b0d;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    z-index: 40;
+  }
+
+  /* status bar */
+  .statusbar {
+    position: relative;
+    z-index: 30;
+    height: 44px;
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 26px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .statusbar .glyphs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .statusbar .glyphs svg { display: block; }
+
+  /* ---------- screen backgrounds (no hard seam) ---------- */
+  .screen.warm {
+    background: linear-gradient(
+      180deg,
+      var(--p1-pink) 0%,
+      var(--p1-pink) 16%,
+      var(--p1-head) 33%,
+      var(--p1-orange) 56%,
+      var(--p1-orange) 100%
+    );
+    color: var(--ink);
+  }
+  .screen.cool {
+    background: linear-gradient(
+      180deg,
+      var(--p2-yellow) 0%,
+      var(--p2-yellow) 20%,
+      var(--p2-hill) 40%,
+      var(--p2-green) 62%,
+      var(--p2-green) 100%
+    );
+    color: var(--ink);
+  }
+
+  /* ---------- top bar (wordmark + grid button) ---------- */
+  .topbar {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 24px 0;
+    flex: 0 0 auto;
+  }
+  .wordmark {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    color: #111;
+    font-size: 27px;
+    letter-spacing: 0.005em;
+    line-height: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  .wordmark sup {
+    font-size: 9px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    top: 0.2em;
+  }
+  .gridbtn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease;
+  }
+  .gridbtn:active { transform: scale(0.94); }
+  .gridbtn.orange { background: var(--p1-orange-deep); }
+  .gridbtn.green { background: var(--p2-green-deep); }
+  .gridbtn .dots {
+    display: grid;
+    grid-template-columns: repeat(3, 4px);
+    grid-template-rows: repeat(2, 4px);
+    gap: 3px;
+  }
+  .gridbtn .dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  /* ---------- character zone ---------- */
+  .character {
+    position: relative;
+    z-index: 10;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: 4px 0 0;
+  }
+  .character svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* eye blink (gentle idle) */
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    96% { transform: scaleY(0.08); }
+  }
+  .blink-eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: blink 5.5s ease-in-out infinite;
+  }
+  .blink-eye.delay { animation-delay: 0.12s; }
+
+  @keyframes sway {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    50% { transform: translateX(3px) rotate(0.6deg); }
+  }
+  .sway {
+    transform-box: fill-box;
+    transform-origin: 50% 90%;
+    animation: sway 7s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blink-eye, .sway { animation: none !important; }
+  }
+
+  /* ---------- bottom content block ---------- */
+  .panel {
+    position: relative;
+    z-index: 20;
+    flex: 0 0 auto;
+    padding: 0 22px 24px;
+  }
+  .headline {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 48px;
+    line-height: 0.94;
+    letter-spacing: 0.004em;
+    text-align: left;
+  }
+  .datestamp {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 12px 0 16px;
+  }
+
+  /* ---------- pill grid ---------- */
+  .pillgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+  }
+  .pill {
+    appearance: none;
+    border: 1px solid var(--pill-glass-line);
+    background: var(--pill-glass);
+    color: var(--pill-text);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 999px;
+    padding: 13px 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: transform 0.14s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+    text-align: center;
+  }
+  .pill:hover { background: rgba(255, 255, 255, 0.3); }
+  .pill:active { transform: scale(0.96); }
+  .pill[aria-pressed="true"] {
+    background: var(--select);
+    color: var(--ink);
+    border-color: var(--select);
+    box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.4);
+    font-weight: 700;
+  }
+
+  /* ---------- responsive: stack vertically ---------- */
+  @media (max-width: 820px) {
+    .stage { flex-direction: column; gap: 36px; align-items: center; }
+  }
+</style>
+
+<div class="caption">INSPIRATION 05 - LEO PIPELINE PULSE</div>
+
+<div class="stage">
+
+  <!-- ============ PHONE 1 - WARM (orange cloud) ============ -->
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen warm">
+      <!-- status bar -->
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="glyphs">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="#141414"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l-1.4 1.5A6.6 6.6 0 0 0 8 4.2 6.6 6.6 0 0 0 3.4 6.1L2 4.6A8.6 8.6 0 0 1 8 2.2Z" fill="#141414"/><path d="M8 6.1c1.2 0 2.3.5 3.1 1.3L8 10.6 4.9 7.4A4.5 4.5 0 0 1 8 6.1Z" fill="#141414"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="#141414" stroke-opacity="0.5" fill="none"/><rect x="2.2" y="2.2" width="15.5" height="7.6" rx="1.6" fill="#141414"/><rect x="22" y="3.8" width="1.8" height="4.4" rx="0.9" fill="#141414" fill-opacity="0.5"/></svg>
+        </span>
+      </div>
+
+      <!-- top bar -->
+      <div class="topbar">
+        <div class="wordmark">Leo<sup>(R)</sup></div>
+        <button class="gridbtn orange" aria-label="menu">
+          <span class="dots"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </button>
+      </div>
+
+      <!-- character: orange fluffy cloud head -->
+      <div class="character">
+        <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" aria-label="Friendly Leo pipeline-pulse mascot, calm">
+          <g class="sway">
+            <!-- fluffy cloud / blob head -->
+            <path fill="var(--p1-head)" d="
+              M180 16
+              C 232 12 270 44 274 92
+              C 318 86 350 116 344 162
+              C 360 196 338 250 292 262
+              C 286 304 232 320 188 308
+              C 150 326 92 318 76 280
+              C 30 274 10 222 34 184
+              C 8 150 30 96 78 92
+              C 86 44 128 16 180 16 Z"/>
+            <!-- subtle inner shade for depth -->
+            <path fill="var(--p1-head-deep)" opacity="0.35" d="
+              M292 262 C 286 304 232 320 188 308 C 150 326 92 318 76 280
+              C 120 296 188 300 232 286 C 264 276 282 270 292 262 Z"/>
+
+            <!-- left happy half-moon eye (closed arc) -->
+            <path class="blink-eye" d="M120 150 a30 30 0 0 1 56 0" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+            <!-- right happy half-moon eye -->
+            <path class="blink-eye delay" d="M196 150 a30 30 0 0 1 56 0" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+
+            <!-- wide open smiling mouth -->
+            <path fill="#23150C" d="
+              M130 196
+              C 152 240 210 240 232 196
+              C 230 224 206 244 181 244
+              C 156 244 132 224 130 196 Z"/>
+            <!-- two square white teeth -->
+            <rect x="163" y="198" width="16" height="14" rx="3" fill="#fff"/>
+            <rect x="183" y="198" width="16" height="14" rx="3" fill="#fff"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- bottom panel -->
+      <div class="panel">
+        <h1 class="headline">What needs<br>you<br>today</h1>
+        <div class="datestamp">this morning</div>
+        <div class="pillgrid" role="group" aria-label="Deal state">
+          <button class="pill" aria-pressed="false">Escrow</button>
+          <button class="pill" aria-pressed="false">Counter</button>
+          <button class="pill" aria-pressed="true">Going quiet</button>
+          <button class="pill" aria-pressed="false">New lead</button>
+          <button class="pill" aria-pressed="false">Closing</button>
+          <button class="pill" aria-pressed="false">Steady</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PHONE 2 - COOL (green hill) ============ -->
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen cool">
+      <!-- status bar -->
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="glyphs">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="#141414"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l-1.4 1.5A6.6 6.6 0 0 0 8 4.2 6.6 6.6 0 0 0 3.4 6.1L2 4.6A8.6 8.6 0 0 1 8 2.2Z" fill="#141414"/><path d="M8 6.1c1.2 0 2.3.5 3.1 1.3L8 10.6 4.9 7.4A4.5 4.5 0 0 1 8 6.1Z" fill="#141414"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="#141414" stroke-opacity="0.5" fill="none"/><rect x="2.2" y="2.2" width="15.5" height="7.6" rx="1.6" fill="#141414"/><rect x="22" y="3.8" width="1.8" height="4.4" rx="0.9" fill="#141414" fill-opacity="0.5"/></svg>
+        </span>
+      </div>
+
+      <!-- top bar -->
+      <div class="topbar">
+        <div class="wordmark">Leo<sup>(R)</sup></div>
+        <button class="gridbtn green" aria-label="menu">
+          <span class="dots"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </button>
+      </div>
+
+      <!-- character: green mountain/hill face -->
+      <div class="character">
+        <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" aria-label="Friendly Leo pipeline-pulse mascot, watching a deal">
+          <g class="sway">
+            <!-- hill / mountain body -->
+            <path fill="var(--p2-hill)" d="
+              M180 40
+              C 250 40 312 150 332 256
+              C 340 290 322 320 286 320
+              L 74 320
+              C 38 320 20 290 28 256
+              C 48 150 110 40 180 40 Z"/>
+            <!-- shaded slope -->
+            <path fill="var(--p2-hill-deep)" opacity="0.32" d="
+              M180 40 C 250 40 312 150 332 256 C 340 290 322 320 286 320
+              C 300 280 286 220 250 168 C 222 128 200 96 180 40 Z"/>
+
+            <!-- white + pink striped headband across the top -->
+            <g>
+              <path d="M126 92 C 150 70 210 70 234 92 L 226 110 C 204 92 156 92 134 110 Z" fill="#fff"/>
+              <path d="M134 110 C 156 92 204 92 226 110 L 219 126 C 200 110 160 110 141 126 Z" fill="#FF6FA5"/>
+              <path d="M141 126 C 160 110 200 110 219 126 L 213 140 C 196 126 164 126 147 140 Z" fill="#fff"/>
+            </g>
+
+            <!-- two big round white eyes with dark pupils -->
+            <g class="blink-eye">
+              <circle cx="146" cy="180" r="24" fill="#fff"/>
+              <circle cx="150" cy="184" r="10" fill="#1A1A1A"/>
+            </g>
+            <g class="blink-eye delay">
+              <circle cx="214" cy="180" r="24" fill="#fff"/>
+              <circle cx="210" cy="184" r="10" fill="#1A1A1A"/>
+            </g>
+
+            <!-- small neutral mouth -->
+            <rect x="162" y="232" width="36" height="9" rx="4.5" fill="#163E27"/>
+
+            <!-- two blue teardrop sweat drops, upper-right -->
+            <path fill="#4FB8F5" d="M250 128 c 9 14 14 22 14 29 a14 14 0 0 1 -28 0 c 0 -7 5 -15 14 -29 Z"/>
+            <path fill="#7FCCF8" opacity="0.85" d="M278 96 c 7 11 11 17 11 22 a11 11 0 0 1 -22 0 c 0 -5 4 -11 11 -22 Z"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- bottom panel -->
+      <div class="panel">
+        <h1 class="headline">What needs<br>you<br>today</h1>
+        <div class="datestamp">this morning</div>
+        <div class="pillgrid" role="group" aria-label="Deal state">
+          <button class="pill" aria-pressed="false">Escrow</button>
+          <button class="pill" aria-pressed="true">Counter</button>
+          <button class="pill" aria-pressed="false">Going quiet</button>
+          <button class="pill" aria-pressed="false">New lead</button>
+          <button class="pill" aria-pressed="false">Closing</button>
+          <button class="pill" aria-pressed="false">Steady</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="slashmark">//</div>
+
+<script>
+  // Deal-state pills: tap to select, one per phone grid.
+  document.querySelectorAll(".pillgrid").forEach(function (grid) {
+    grid.addEventListener("click", function (e) {
+      var btn = e.target.closest(".pill");
+      if (!btn || !grid.contains(btn)) return;
+      grid.querySelectorAll(".pill").forEach(function (p) {
+        p.setAttribute("aria-pressed", "false");
+      });
+      btn.setAttribute("aria-pressed", "true");
+    });
+  });
+</script>

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Feature · Visible Memory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:oklch(0.155 0.022 260); --card:oklch(0.205 0.024 260); --inset:oklch(0.13 0.02 260);
+  --ink:oklch(0.96 0.008 250); --body:oklch(0.82 0.014 255); --muted:oklch(0.64 0.018 258); --soft:oklch(0.50 0.02 260);
+  --hair:oklch(0.96 0.01 250 / .09); --hair2:oklch(0.96 0.01 250 / .15);
+  --confident:oklch(0.80 0.11 168); --uncertain:oklch(0.82 0.12 72); --coral:oklch(0.73 0.16 28); --cobalt:oklch(0.66 0.16 262); --on:oklch(0.99 0 0);
+  --serif:'Newsreader',Georgia,serif; --sans:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace; --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+/* the editor input clears its native outline; restore a visible ring on keyboard focus */
+.editor input:focus-visible{ outline:2px solid var(--cobalt); outline-offset:2px; }
+html,body{height:100%}
+body{background:radial-gradient(120% 80% at 50% -10%, oklch(0.22 0.04 262), oklch(0.10 0.02 260) 60%, oklch(0.08 0.015 260)); font-family:var(--sans); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:20px 16px 40px; gap:14px; -webkit-font-smoothing:antialiased}
+.cap{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.6 0.03 260); text-align:center}
+.phone{position:relative; width:393px; height:780px; max-height:calc(100dvh - 110px); background:var(--canvas); border-radius:54px; box-shadow:0 0 0 11px oklch(0.13 0.02 260), 0 0 0 12px oklch(0.28 0.02 260), 0 40px 90px -22px rgba(0,0,0,.7); overflow:hidden}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:122px; height:33px; background:#000; border-radius:20px; z-index:40}
+.status{position:absolute; top:18px; left:0; right:0; padding:0 34px; display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:12px; color:var(--body); z-index:30}
+.status .dots{display:flex; gap:3px; align-items:center}
+.status .dots i{width:4px;height:4px;border-radius:50%;background:var(--body)}
+.screen{position:absolute; inset:0; color:var(--ink); display:flex; flex-direction:column; padding:58px 22px 24px; overflow-y:auto; scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+
+.orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(60% 60% at 32% 28%, oklch(0.92 0.08 200), oklch(0.64 0.17 250) 44%, oklch(0.34 0.11 270));box-shadow:0 0 11px oklch(0.64 0.17 250 / .5);animation:breathe 5s var(--exp) infinite;flex:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hi{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+
+.head{margin-top:14px}
+.kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.title{font-family:var(--serif);font-size:29px;letter-spacing:-.4px;margin-top:7px;color:var(--ink)}
+.sub{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:7px;line-height:1.4}
+
+/* memory card */
+.card{margin-top:18px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:8px 6px}
+.fact{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-radius:13px;transition:background .3s var(--exp)}
+.fact + .fact{border-top:1px solid var(--hair)}
+.fact .dot{width:6px;height:6px;border-radius:50%;background:var(--soft);margin-top:7px;flex:none;transition:background .4s var(--exp),box-shadow .4s var(--exp)}
+.fact .body{flex:1;min-width:0}
+.fact .label{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--soft)}
+.fact .val{font-family:var(--sans);font-size:15.5px;font-weight:500;color:var(--ink);margin-top:3px;line-height:1.35;letter-spacing:-.1px}
+.fact .edit{flex:none;width:32px;height:32px;border-radius:9px;border:1px solid var(--hair2);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s var(--exp),color .2s,border-color .2s,background .2s}
+.fact .edit:hover{color:var(--ink);border-color:var(--hair2);background:oklch(0.96 0.01 250 / .05)}
+.fact .edit:active{transform:scale(.9)}
+/* the fact being edited */
+.fact.editing{background:oklch(0.66 0.16 262 / .08)}
+.fact.editing .dot{background:var(--cobalt);box-shadow:0 0 8px var(--cobalt)}
+.fact.justchanged .dot{background:var(--confident);box-shadow:0 0 9px var(--confident)}
+
+.editor{display:none;margin-top:8px;gap:9px;align-items:center}
+.fact.editing .val{display:none}
+.fact.editing .editor{display:flex}
+.editor input{flex:1;font-family:var(--sans);font-size:15.5px;font-weight:500;color:var(--ink);background:var(--inset);border:1px solid var(--cobalt);border-radius:10px;padding:9px 12px;outline:none;min-width:0}
+.editor .save{flex:none;height:36px;padding:0 14px;border-radius:10px;border:none;background:var(--cobalt);color:var(--on);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:transform .16s var(--exp)}
+.editor .save:active{transform:scale(.95)}
+
+/* edited-by line under a changed fact */
+.fact .changed-by{font-family:var(--mono);font-size:9.5px;color:var(--confident);margin-top:6px;display:none;align-items:center;gap:6px}
+.fact.justchanged .changed-by{display:flex}
+
+/* ripple */
+.ripple{margin-top:18px;border:1px solid var(--hair);border-radius:18px;background:var(--inset);padding:0 16px;max-height:0;overflow:hidden;opacity:0;transition:max-height .55s var(--exp),opacity .4s ease,padding .4s var(--exp),margin-top .4s var(--exp);border-color:transparent}
+.ripple.show{max-height:340px;opacity:1;padding:16px;border-color:var(--hair)}
+.r-head{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;color:var(--cobalt);letter-spacing:.02em}
+.r-head .spin{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--cobalt);border-top-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ripple.settled .r-head{color:var(--confident)}
+.ripple.settled .r-head .spin{display:none}
+.r-head .check{display:none;color:var(--confident)}
+.ripple.settled .r-head .check{display:inline-flex}
+
+.chips{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.chip{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:12px;background:var(--card);border:1px solid var(--hair);opacity:.45;transform:translateY(2px);transition:opacity .35s var(--exp),transform .35s var(--exp),border-color .35s var(--exp)}
+.chip .ic{width:28px;height:28px;border-radius:8px;background:oklch(0.96 0.01 250 / .05);display:flex;align-items:center;justify-content:center;color:var(--soft);flex:none;transition:background .35s var(--exp),color .35s var(--exp)}
+.chip .nm{flex:1;font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--body);transition:color .35s}
+.chip .st{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);transition:color .35s;display:flex;align-items:center;gap:5px}
+.chip .st .live{width:5px;height:5px;border-radius:50%;background:var(--cobalt);box-shadow:0 0 6px var(--cobalt);display:none}
+/* sequenced light-up: cobalt while updating */
+.ripple.run .chip{animation:lightup 2.6s var(--exp) forwards}
+.ripple.run .chip:nth-child(1){animation-delay:.15s}
+.ripple.run .chip:nth-child(2){animation-delay:.5s}
+.ripple.run .chip:nth-child(3){animation-delay:.85s}
+.ripple.run .chip:nth-child(4){animation-delay:1.2s}
+@keyframes lightup{
+  0%{opacity:.45;transform:translateY(2px);border-color:var(--hair)}
+  18%{opacity:1;transform:translateY(0);border-color:oklch(0.66 0.16 262 / .55)}
+  92%{border-color:oklch(0.66 0.16 262 / .55)}
+  100%{opacity:1;transform:translateY(0);border-color:oklch(0.80 0.11 168 / .4)}
+}
+/* while a chip is mid-update its icon glows cobalt, then settles seaglass */
+.ripple.run .chip .ic{animation:icrun 2.6s var(--exp) forwards}
+.ripple.run .chip:nth-child(1) .ic{animation-delay:.15s}
+.ripple.run .chip:nth-child(2) .ic{animation-delay:.5s}
+.ripple.run .chip:nth-child(3) .ic{animation-delay:.85s}
+.ripple.run .chip:nth-child(4) .ic{animation-delay:1.2s}
+@keyframes icrun{
+  0%{background:oklch(0.96 0.01 250 / .05);color:var(--soft)}
+  18%{background:oklch(0.66 0.16 262 / .18);color:var(--cobalt)}
+  90%{background:oklch(0.66 0.16 262 / .18);color:var(--cobalt)}
+  100%{background:oklch(0.80 0.11 168 / .16);color:var(--confident)}
+}
+/* status text: updating... -> synced */
+.ripple.settled .chip{opacity:1;transform:none;border-color:oklch(0.80 0.11 168 / .4)}
+.ripple.settled .chip .ic{background:oklch(0.80 0.11 168 / .16);color:var(--confident)}
+.ripple.settled .chip .st{color:var(--confident)}
+.ripple.settled .chip .st .live{display:none}
+.ripple.settled .chip .st .lbl-run{display:none}
+.chip .st .lbl-synced{display:none}
+.ripple.settled .chip .st .lbl-synced{display:inline}
+
+/* payoff serif line */
+.payoff{font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.5;color:var(--ink);text-align:center;margin:18px 6px 4px;max-height:0;overflow:hidden;opacity:0;transition:max-height .6s var(--exp),opacity .5s ease,margin .5s var(--exp)}
+.payoff.show{max-height:90px;opacity:1}
+.payoff b{font-style:normal;color:var(--confident);font-family:var(--serif)}
+
+.controls button{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--body);background:oklch(0.96 0.01 250 / .06);border:1px solid var(--hair2);border-radius:11px;padding:10px 16px;cursor:pointer;transition:transform .16s var(--exp),color .2s}
+.controls button:hover{color:var(--ink)} .controls button:active{transform:scale(.96)}
+
+@media (prefers-reduced-motion: reduce){
+  .orb,.r-head .spin{animation:none}
+  .ripple.run .chip,.ripple.run .chip .ic{animation:none}
+  .ripple.run .chip{opacity:1;transform:none;border-color:oklch(0.80 0.11 168 / .4)}
+  .ripple.run .chip .ic{background:oklch(0.80 0.11 168 / .16);color:var(--confident)}
+  .ripple,.payoff,.fact .dot,.editor input{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="cap">Feature demo · Visible Memory</div>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status"><span>9:14</span><span class="dots"><i></i><i></i><i></i></span></div>
+  <div class="screen" id="screen">
+    <div class="hi"><span class="orb"></span>Leo · what I remember</div>
+    <div class="head">
+      <div class="kicker">Client memory</div>
+      <div class="title">The Alvarez family</div>
+      <div class="sub">Here's what I'm carrying for them. Anything off, fix it once and it reaches every skill I run.</div>
+    </div>
+
+    <div class="card" id="card">
+      <div class="fact" data-fact="budget">
+        <span class="dot"></span>
+        <div class="body">
+          <div class="label">Budget</div>
+          <div class="val">~$900k</div>
+          <div class="editor"><input type="text" value="~$950k" aria-label="Edit budget"><button class="save">Save</button></div>
+          <div class="changed-by"><span>you corrected this just now</span></div>
+        </div>
+        <button class="edit" aria-label="Edit budget"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M11 2.5 13.5 5 5.5 13H3v-2.5L11 2.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="fact" data-fact="yard">
+        <span class="dot"></span>
+        <div class="body">
+          <div class="label">Must-have</div>
+          <div class="val">Wants a yard for the dog</div>
+          <div class="editor"><input type="text" value="Wants a yard for the dog" aria-label="Edit must-have"><button class="save">Save</button></div>
+          <div class="changed-by"><span>you corrected this just now</span></div>
+        </div>
+        <button class="edit" aria-label="Edit must-have"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M11 2.5 13.5 5 5.5 13H3v-2.5L11 2.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="fact" data-fact="lender">
+        <span class="dot"></span>
+        <div class="body">
+          <div class="label">Financing</div>
+          <div class="val">Pre-approved with Sarah at Summit</div>
+          <div class="editor"><input type="text" value="Pre-approved with Sarah at Summit" aria-label="Edit financing"><button class="save">Save</button></div>
+          <div class="changed-by"><span>you corrected this just now</span></div>
+        </div>
+        <button class="edit" aria-label="Edit financing"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M11 2.5 13.5 5 5.5 13H3v-2.5L11 2.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="fact" data-fact="timing">
+        <span class="dot"></span>
+        <div class="body">
+          <div class="label">Timing</div>
+          <div class="val">Moving after the school year</div>
+          <div class="editor"><input type="text" value="Moving after the school year" aria-label="Edit timing"><button class="save">Save</button></div>
+          <div class="changed-by"><span>you corrected this just now</span></div>
+        </div>
+        <button class="edit" aria-label="Edit timing"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M11 2.5 13.5 5 5.5 13H3v-2.5L11 2.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <div class="ripple" id="ripple">
+      <div class="r-head">
+        <span class="spin"></span>
+        <span class="check"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 7.5 6 10.5 11.5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span id="r-text">Updating 4 skills...</span>
+      </div>
+      <div class="chips">
+        <div class="chip">
+          <span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.3"/><path d="M10.2 10.2 13.5 13.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+          <span class="nm">Listing Research</span>
+          <span class="st"><span class="live"></span><span class="lbl-run">updating</span><span class="lbl-synced">synced</span></span>
+        </div>
+        <div class="chip">
+          <span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2.5 13.5V2.5M2.5 13.5H13.5M5 11l2.5-3 2 1.5L13 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="nm">Market Analysis</span>
+          <span class="st"><span class="live"></span><span class="lbl-run">updating</span><span class="lbl-synced">synced</span></span>
+        </div>
+        <div class="chip">
+          <span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2.5 13 5v3.5c0 3-2.2 4.6-5 5.5-2.8-.9-5-2.5-5-5.5V5l5-2.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
+          <span class="nm">Negotiation Prep</span>
+          <span class="st"><span class="live"></span><span class="lbl-run">updating</span><span class="lbl-synced">synced</span></span>
+        </div>
+        <div class="chip">
+          <span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 6.5h11M5.5 2v2.5M10.5 2v2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+          <span class="nm">Scheduling</span>
+          <span class="st"><span class="live"></span><span class="lbl-run">updating</span><span class="lbl-synced">synced</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="payoff" id="payoff">Teach me once. <b>Every skill knows it.</b></div>
+  </div>
+</div>
+<div class="cap">Visible Memory - correct Leo once, everywhere.</div>
+<div class="controls"><button id="replay">↻ Replay</button></div>
+
+<script>
+const card=document.getElementById('card');
+const ripple=document.getElementById('ripple');
+const payoff=document.getElementById('payoff');
+const rText=document.getElementById('r-text');
+let timers=[];
+function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+
+// open an editor on edit-tap
+card.querySelectorAll('.fact').forEach(fact=>{
+  const editBtn=fact.querySelector('.edit');
+  const input=fact.querySelector('.editor input');
+  const saveBtn=fact.querySelector('.save');
+  editBtn.addEventListener('click',()=>{
+    // close any other open editor
+    card.querySelectorAll('.fact.editing').forEach(f=>{ if(f!==fact) f.classList.remove('editing'); });
+    fact.classList.add('editing');
+    fact.classList.remove('justchanged');
+    input.focus(); input.select();
+  });
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter') commit(fact,input); });
+  saveBtn.addEventListener('click',()=>commit(fact,input));
+});
+
+function commit(fact,input){
+  const v=input.value.trim();
+  if(v){ fact.querySelector('.val').textContent=v; }
+  fact.classList.remove('editing');
+  fact.classList.add('justchanged');
+  runRipple();
+}
+
+function runRipple(){
+  clearTimers();
+  // reset
+  ripple.classList.remove('settled');
+  payoff.classList.remove('show');
+  rText.textContent='Updating 4 skills...';
+  ripple.classList.add('show');
+  // restart the chip sequence cleanly
+  ripple.classList.remove('run'); void ripple.offsetWidth; ripple.classList.add('run');
+  // after the 4 chips finish lighting up in sequence, settle to seaglass + synced
+  timers.push(setTimeout(()=>{
+    ripple.classList.add('settled');
+    rText.textContent='4 skills synced';
+  },2700));
+  // then reveal the serif payoff
+  timers.push(setTimeout(()=>{ payoff.classList.add('show'); },3200));
+}
+
+// --- keyboard operability sweep (boot-time) ---
+// Promote any non-native click target to a focusable button-role element.
+// Selects elements with an onclick attribute that are not already <button>/<a>,
+// plus primary interactive row/card/item/tab/pill classes ONLY if click-bound
+// (i.e. they carry an onclick attribute). Native <button>/<a> are never touched.
+(function(){
+  const seen=new Set();
+  const promote=el=>{
+    if(!el || seen.has(el)) return;
+    const tag=el.tagName;
+    if(tag==='BUTTON' || tag==='A') return; // already operable
+    el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    seen.add(el);
+  };
+  document.querySelectorAll('[onclick]').forEach(promote);
+  // primary interactive classes, but only when actually click-bound via onclick
+  document.querySelectorAll('.fact,.card,.chip,.tab,.pill,.row,.item').forEach(el=>{
+    if(el.hasAttribute('onclick')) promote(el);
+  });
+})();
+
+// one document-level keydown: Enter/Space activates a promoted role=button element
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  const t=e.target;
+  if(!t || t.getAttribute('role')!=='button') return;
+  // never hijack typing inside form fields or native buttons/links
+  const tag=t.tagName;
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || tag==='BUTTON' || tag==='A' || t.isContentEditable) return;
+  e.preventDefault();
+  t.click();
+});
+
+document.getElementById('replay').addEventListener('click',()=>{
+  clearTimers();
+  card.querySelectorAll('.fact').forEach(f=>f.classList.remove('editing','justchanged'));
+  // restore original values
+  const orig={budget:'~$900k',yard:'Wants a yard for the dog',lender:'Pre-approved with Sarah at Summit',timing:'Moving after the school year'};
+  card.querySelectorAll('.fact').forEach(f=>{
+    const k=f.dataset.fact; f.querySelector('.val').textContent=orig[k];
+    const ed=f.querySelector('.editor input');
+    if(k==='budget') ed.value='~$950k'; else ed.value=orig[k];
+  });
+  ripple.classList.remove('show','run','settled');
+  payoff.classList.remove('show');
+  document.getElementById('screen').scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

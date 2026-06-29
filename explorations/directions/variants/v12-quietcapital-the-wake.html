@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Leo · V12 Quiet Capital x The Wake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* deep WARM charcoal, never pure black: tinted toward dawn */
+  --void:oklch(0.205 0.014 58);     /* backdrop behind phone */
+  --bg:oklch(0.238 0.013 56);       /* app surface */
+  --bg2:oklch(0.272 0.013 54);      /* raised surface / rows */
+  --sunken:oklch(0.222 0.012 58);   /* lower than bg, for the calm signal */
+  --hair:oklch(0.86 0.02 70 / 0.10);
+  --hair2:oklch(0.86 0.02 70 / 0.18);
+  --shadow:0 18px 44px -22px oklch(0.12 0.02 50 / 0.7);
+
+  /* warm bone ink on charcoal, never pure white */
+  --ink:oklch(0.945 0.012 78);
+  --body:oklch(0.80 0.014 74);
+  --muted:oklch(0.66 0.014 70);
+  --soft:oklch(0.55 0.013 66);
+
+  /* single seaglass accent + supporting confidence states */
+  --sea:oklch(0.78 0.075 178);       --sea-bg:oklch(0.40 0.05 182);
+  --uncertain:oklch(0.82 0.10 86);   --uncertain-bg:oklch(0.40 0.055 88);
+  --warm:oklch(0.78 0.105 44);       --warm-bg:oklch(0.40 0.06 42);
+  --on-state:oklch(0.20 0.012 58);
+
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --exp:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--void);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center; min-height:100dvh;
+  padding:26px 16px 56px; -webkit-font-smoothing:antialiased; color:var(--ink);
+}
+
+.caption{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:oklch(0.66 0.014 70 / .7); white-space:nowrap;
+}
+
+/* phone */
+.phone{
+  position:relative; width:393px; height:852px; max-height:calc(100dvh - 96px);
+  background:var(--bg); border-radius:54px;
+  box-shadow:0 0 0 11px oklch(0.14 0.01 56), 0 0 0 12px oklch(0.32 0.012 58), 0 48px 104px -30px oklch(0.10 0.02 50 / .75);
+  overflow:hidden; isolation:isolate;
+}
+.notch{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:120px; height:32px; background:oklch(0.14 0.01 56); border-radius:20px; z-index:80}
+.statusbar{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:15px 30px 0; font-family:var(--mono); font-size:13px; font-weight:500; z-index:70; pointer-events:none; color:var(--ink)}
+.statusbar .ic{display:flex; gap:7px; opacity:.7}
+
+/* breathing orb (the only idle motion) */
+.orb{
+  width:24px;height:24px;border-radius:50%;flex:none;
+  background:radial-gradient(60% 60% at 36% 32%, oklch(0.92 0.05 180), oklch(0.72 0.085 184) 48%, oklch(0.50 0.075 196));
+  box-shadow:0 0 14px oklch(0.72 0.085 184 / .34), inset 0 1px 2px oklch(0.97 0.012 80 / .45);
+  animation:breathe 5.4s var(--exp) infinite;
+}
+.orb.sm{width:18px;height:18px}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.085)}}
+
+/* avatars */
+.av{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;color:oklch(0.96 0.008 80);font-family:var(--sans)}
+.av.dana{background:linear-gradient(135deg,oklch(0.56 0.105 40),oklch(0.46 0.09 28))}
+.av.marcus{background:linear-gradient(135deg,oklch(0.52 0.075 184),oklch(0.44 0.06 196))}
+
+/* =========================================================
+   THE WAKE  (lock screen -> serif line -> triage rises)
+   ========================================================= */
+.lock{
+  position:absolute; inset:0; z-index:60; background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:0 42px; text-align:center; gap:26px;
+  transition:opacity .9s var(--exp), transform .9s var(--exp);
+}
+.lock.gone{opacity:0; transform:scale(1.035); pointer-events:none}
+.lock .clock{
+  font-family:var(--serif); font-weight:300; font-size:74px; line-height:1; letter-spacing:-1.5px;
+  color:var(--ink); opacity:0; transform:translateY(10px);
+  animation:rise 1s var(--exp) .15s forwards;
+}
+.lock .date{
+  font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted);
+  opacity:0; transform:translateY(10px); animation:rise 1s var(--exp) .35s forwards;
+}
+.lock .wakeorb{
+  opacity:0; transform:scale(.7);
+  animation:wakeorb 1.1s var(--exp) 1.2s forwards;
+}
+@keyframes wakeorb{to{opacity:1; transform:scale(1)}}
+.lock .line{
+  font-family:var(--serif); font-size:21px; line-height:1.55; color:var(--body); max-width:24ch;
+}
+.lock .line span{display:block; opacity:0; transform:translateY(12px)}
+.lock .line .l1{animation:rise 1.1s var(--exp) 1.55s forwards}
+.lock .line .l2{animation:rise 1.1s var(--exp) 2.35s forwards}
+.lock .line .l2 em{font-style:normal; font-weight:600; color:var(--ink)}
+.lock .enter{
+  margin-top:6px; height:48px; padding:0 26px; border-radius:14px;
+  background:transparent; border:1px solid var(--hair2); color:var(--body);
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
+  display:inline-flex; align-items:center; gap:9px;
+  opacity:0; transform:translateY(12px); animation:rise 1.1s var(--exp) 3.05s forwards;
+  transition:background .2s var(--exp), color .2s var(--exp);
+}
+.lock .enter:hover{background:oklch(0.86 0.02 70 / .06); color:var(--ink)}
+.lock .enter:focus-visible{outline:2px solid var(--sea); outline-offset:3px}
+.lock .enter .dot{width:7px;height:7px;border-radius:50%;background:var(--sea);animation:breathe 2.4s var(--exp) infinite}
+
+@keyframes rise{to{opacity:1; transform:none}}
+
+/* screen (revealed under the lock) */
+.screen{position:absolute; inset:0; overflow-y:auto; scrollbar-width:none; padding:54px 18px 28px}
+.screen::-webkit-scrollbar{display:none}
+
+/* mixed-weight greeting */
+.head{display:flex; align-items:center; gap:11px; padding:8px 6px 4px}
+.head .hi{font-family:var(--serif); font-size:24px; letter-spacing:-.2px; color:var(--soft); font-weight:400}
+.head .hi b{font-weight:500; color:var(--ink)}
+.head .now{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted)}
+.lede{font-family:var(--serif); font-size:17px; line-height:1.55; color:var(--body); padding:8px 6px 0; max-width:32ch}
+.lede em{font-style:italic; color:var(--ink)}
+
+.list-head{display:flex; align-items:baseline; gap:8px; font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--soft); padding:24px 6px 13px}
+.list-head .n{color:var(--sea)}
+
+/* triage rows: staggered rise, varied composition, hairline structure (no side-stripes) */
+#rows{display:flex; flex-direction:column; gap:13px}
+.row{
+  border-radius:20px; padding:16px; background:var(--bg2); border:1px solid var(--hair);
+  box-shadow:var(--shadow); position:relative; cursor:pointer;
+}
+.reveal #rows .row{opacity:0; transform:translateY(16px); animation:rise .7s var(--exp) forwards}
+.reveal #rows .row:nth-child(1){animation-delay:.05s}
+.reveal #rows .row:nth-child(2){animation-delay:.16s}
+.reveal #rows .row:nth-child(3){animation-delay:.27s}
+.row:focus-visible{outline:2px solid var(--sea); outline-offset:3px}
+.row .top{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+.pill{font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:4px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; line-height:1; color:var(--ink)}
+.pill .dot{width:6px;height:6px;border-radius:50%}
+.pill.warm{color:var(--warm); background:var(--warm-bg)} .pill.warm .dot{background:var(--warm)}
+.pill.uncertain{color:var(--uncertain); background:var(--uncertain-bg)} .pill.uncertain .dot{background:var(--uncertain)}
+.pill.sea{color:var(--sea); background:var(--sea-bg)} .pill.sea .dot{background:var(--sea)}
+.pill.alt{color:var(--body); background:oklch(0.86 0.02 70 / .07)}
+.row .when{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.row .title{font-family:var(--sans); font-size:17.5px; font-weight:600; line-height:1.28; letter-spacing:-.2px; color:var(--ink); margin-top:12px}
+.row .why{font-family:var(--serif); font-size:14.5px; line-height:1.5; color:var(--body); margin-top:7px}
+.row .foot{display:flex; align-items:center; gap:9px; margin-top:14px}
+.row .who{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.row .go{margin-left:auto; width:38px; height:38px; border-radius:50%; background:oklch(0.86 0.02 70 / .08); color:var(--ink); border:none; display:flex; align-items:center; justify-content:center; flex:none; transition:transform .2s var(--exp); pointer-events:none}
+.row:active .go{transform:scale(.92)}
+.row.lead .title .free{color:var(--sea)}
+.row.lead .window{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; color:var(--sea); background:var(--sea-bg); padding:4px 9px; border-radius:999px}
+.row.lead .window .pulse{width:6px;height:6px;border-radius:50%;background:var(--sea);animation:winp 1.7s var(--exp) infinite}
+@keyframes winp{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+
+/* calm signal: lower density, sunken, not a card-grid clone */
+.signal{margin:14px 0 0; padding:15px 17px; border-radius:18px; background:var(--sunken); border:1px solid var(--hair)}
+.signal .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:8px}
+.signal .lbl .d{width:6px;height:6px;border-radius:50%;background:var(--uncertain)}
+.signal .txt{font-family:var(--serif); font-size:15px; line-height:1.5; color:var(--body); margin-top:8px}
+.signal .txt b{color:var(--ink); font-weight:500}
+
+/* quiet ledger line */
+.ledger{margin:24px 6px 8px; display:flex; align-items:flex-start; gap:10px; font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--muted); line-height:1.55}
+.ledger .b{width:5px;height:5px;border-radius:50%;background:var(--soft);flex:none;margin-top:7px}
+.ledger b{color:var(--ink); font-weight:500}
+
+/* reveal stagger for header + signal + ledger */
+.reveal .head,.reveal .lede,.reveal .list-head,.reveal .signal,.reveal .ledger{opacity:0; transform:translateY(16px); animation:rise .7s var(--exp) forwards}
+.reveal .head{animation-delay:0s}
+.reveal .lede{animation-delay:.06s}
+.reveal .list-head{animation-delay:.1s}
+.reveal .signal{animation-delay:.4s}
+.reveal .ledger{animation-delay:.5s}
+
+/* =========================================================
+   THE COUNTER SHEET (confidence-gated handback)
+   ========================================================= */
+.scrim{position:absolute; inset:0; background:oklch(0.12 0.02 50 / .58); opacity:0; pointer-events:none; transition:opacity .34s var(--exp); z-index:90}
+.scrim.on{opacity:1; pointer-events:auto}
+.sheet{
+  position:absolute; left:0; right:0; bottom:0; z-index:91;
+  background:var(--bg); border-radius:26px 26px 0 0; border-top:1px solid var(--hair2);
+  box-shadow:0 -24px 64px -26px oklch(0.10 0.02 50 / .7);
+  transform:translateY(102%); transition:transform .46s var(--exp);
+  max-height:90%; overflow-y:auto; scrollbar-width:none; padding:8px 20px 28px;
+}
+.sheet::-webkit-scrollbar{display:none}
+.sheet.on{transform:none}
+.grab{width:38px;height:5px;border-radius:5px;background:var(--hair2);margin:8px auto 14px}
+.sh-head{display:flex; align-items:center; gap:10px}
+.sh-head .who{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.sh-head .x{margin-left:auto; width:34px; height:34px; border-radius:50%; background:oklch(0.86 0.02 70 / .07); border:none; color:var(--body); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.sh-head .x:focus-visible{outline:2px solid var(--sea); outline-offset:2px}
+
+.rv{opacity:0; transform:translateY(12px)}
+.sheet.on .rv{animation:rise .5s var(--exp) forwards}
+.sheet.on .rv.d1{animation-delay:.10s}
+.sheet.on .rv.d2{animation-delay:.18s}
+.sheet.on .rv.d3{animation-delay:.26s}
+.sheet.on .rv.d4{animation-delay:.34s}
+.sheet.on .rv.d5{animation-delay:.42s}
+
+.sh-read{font-family:var(--serif); font-size:18px; line-height:1.55; color:var(--ink); margin:16px 2px 2px}
+.sh-read em{font-style:normal; font-weight:600}
+.sh-read .num{font-variant-numeric:tabular-nums}
+
+.confchip{display:inline-flex; align-items:center; gap:7px; margin:14px 0 0; padding:6px 12px; border-radius:999px; font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--sea); background:var(--sea-bg)}
+.confchip .dot{width:7px;height:7px;border-radius:50%;background:var(--sea)}
+
+.sources{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
+.src{display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:11px; background:var(--bg2); border:1px solid var(--hair); font-family:var(--mono); font-size:11px; color:var(--body)}
+.src .tick{width:14px;height:14px;border-radius:4px;background:var(--sea-bg);display:flex;align-items:center;justify-content:center;flex:none}
+.src .tick svg{display:block}
+
+.unknowns{margin:16px 0 0; padding:15px 16px; border-radius:16px; background:var(--uncertain-bg)}
+.unknowns .h{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--uncertain); display:flex; align-items:center; gap:7px}
+.unknowns .h .d{width:7px;height:7px;border-radius:50%;background:var(--uncertain)}
+.unknowns ul{list-style:none; margin:12px 0 0; display:flex; flex-direction:column; gap:10px}
+.unknowns li{display:flex; gap:9px; font-family:var(--sans); font-size:13.5px; line-height:1.45; color:oklch(0.88 0.014 80)}
+.unknowns li .q{font-family:var(--mono); color:var(--uncertain); font-size:13px; flex:none; line-height:1.45}
+.unknowns li b{color:var(--ink); font-weight:600}
+
+.range{margin:18px 2px 0}
+.range .cap{display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:10px}
+.range .track{position:relative; height:46px; border-radius:13px; overflow:hidden; background:var(--sunken); border:1px solid var(--hair)}
+.range .band{position:absolute; top:0; bottom:0; background:color-mix(in oklch, var(--sea) 30%, transparent)}
+.range .band.thin{background:repeating-linear-gradient(135deg, oklch(0.82 0.10 86 / .3) 0 7px, transparent 7px 14px)}
+.range .leo{position:absolute; top:-4px; bottom:-4px; width:3px; background:var(--ink); border-radius:3px}
+.range .leo::after{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;background:var(--ink);border:2px solid var(--bg)}
+.range .ticks{display:flex; justify-content:space-between; margin-top:9px; font-family:var(--mono); font-size:10.5px; color:var(--soft)}
+.range .note{font-family:var(--serif); font-size:13.5px; line-height:1.5; color:var(--body); margin-top:11px}
+.range .note b{color:var(--ink); font-weight:600}
+
+.review-note{display:flex; align-items:center; justify-content:center; gap:8px; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:22px 0 12px}
+.review-note .lk{width:6px;height:6px;border-radius:50%;background:var(--sea)}
+.acts{display:flex; flex-direction:column; gap:10px}
+.btn{height:50px; border-radius:14px; border:none; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .18s var(--exp), filter .18s var(--exp)}
+.btn:active{transform:scale(.985)}
+.btn:focus-visible{outline:2px solid var(--sea); outline-offset:2px}
+.btn-p{background:var(--sea); color:var(--on-state)}
+.btn-p:hover{filter:brightness(1.06)}
+.btn-s{background:transparent; color:var(--body); border:1px solid var(--hair2); height:46px; font-weight:500}
+.btn-s:hover{background:oklch(0.86 0.02 70 / .05)}
+
+/* resolve-to-Sent: calm, no celebration */
+.sent{position:absolute; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 40px; opacity:0; pointer-events:none; transition:opacity .4s var(--exp); z-index:92; text-align:center}
+.sent.on{opacity:1; pointer-events:auto}
+.sent .mark{width:62px;height:62px;border-radius:50%;background:var(--sea-bg);display:flex;align-items:center;justify-content:center;transform:scale(.6);opacity:0}
+.sent.on .mark{animation:markin .5s var(--exp) .04s forwards}
+@keyframes markin{to{transform:scale(1);opacity:1}}
+.sent .mark svg{transform:scale(.6);opacity:0}
+.sent.on .mark svg{animation:markin .42s var(--exp) .22s forwards}
+.sent .t{font-family:var(--serif); font-size:22px; color:var(--ink); opacity:0; transform:translateY(8px)}
+.sent.on .t{animation:rise .44s var(--exp) .3s forwards}
+.sent .s{font-family:var(--serif); font-size:15.5px; line-height:1.55; color:var(--body); max-width:30ch; opacity:0; transform:translateY(8px)}
+.sent.on .s{animation:rise .44s var(--exp) .4s forwards}
+.sent .meta{font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--muted); opacity:0; transform:translateY(8px)}
+.sent.on .meta{animation:rise .44s var(--exp) .5s forwards}
+.sent .close{margin-top:6px; height:46px; padding:0 26px; border-radius:14px; background:oklch(0.86 0.02 70 / .08); color:var(--ink); border:none; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; opacity:0}
+.sent.on .close{animation:rise .44s var(--exp) .58s forwards}
+.sent .close:focus-visible{outline:2px solid var(--sea); outline-offset:2px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important}
+  .orb{animation:none}
+  .lock .clock,.lock .date,.lock .wakeorb,.lock .line span,.lock .enter{opacity:1;transform:none}
+  .reveal .head,.reveal .lede,.reveal .list-head,.reveal .signal,.reveal .ledger,
+  .reveal #rows .row,.rv,.sent .mark,.sent .t,.sent .s,.sent .meta,.sent .close{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="phone" role="application" aria-label="Leo morning command center">
+  <div class="notch"></div>
+  <div class="statusbar"><span>5:58</span><span class="ic"><span>5G</span><span>92</span></span></div>
+
+  <!-- ===== THE WAKE: lock screen ===== -->
+  <section class="lock" id="lock" aria-label="Lock screen, Leo's overnight summary">
+    <div class="clock">5:58</div>
+    <div class="date">Tuesday, June 22</div>
+    <span class="orb wakeorb" aria-hidden="true"></span>
+    <p class="line">
+      <span class="l1">While you slept I took care of 47 things.</span>
+      <span class="l2"><em>Three need you.</em></span>
+    </p>
+    <button class="enter" id="enterBtn">
+      <span class="dot" aria-hidden="true"></span>See the three
+    </button>
+  </section>
+
+  <main class="screen" id="screen">
+    <header class="head">
+      <span class="orb sm" aria-hidden="true"></span>
+      <span class="hi">Good morning, <b>Dana</b></span>
+      <span class="now">TUE 5:58</span>
+    </header>
+    <p class="lede">Three things need you this morning. Everything else can wait. <em>Start at the top.</em></p>
+
+    <div class="list-head">Needs you<span aria-hidden="true">·</span><span class="n">3 left</span></div>
+
+    <div id="rows">
+      <!-- 1. The counter (centerpiece entry) -->
+      <div class="row" id="rowCounter" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open the reply I wrote for 142 Oak Street, due 10am">
+        <div class="top">
+          <span class="pill uncertain"><span class="dot"></span>Reply ready</span>
+          <span class="pill alt">One of yours</span>
+          <span class="when">Reply by 10:00am</span>
+        </div>
+        <div class="title">142 Oak St: your reply is ready</div>
+        <p class="why">I wrote a reply to the buyer's offer. It is in good shape, with two things I could not check. Take a look before it goes.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>I wrote this for you</span>
+          <span class="go" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- 2. New lead, 5-minute window -->
+      <div class="row lead" role="button" tabindex="0" aria-label="New buyer for 88 Linden, loan already approved, best to call in the next 5 minutes">
+        <div class="top">
+          <span class="pill sea"><span class="dot"></span>New buyer</span>
+          <span class="window"><span class="pulse" aria-hidden="true"></span>Call within 5 min</span>
+          <span class="when">2 min ago</span>
+        </div>
+        <div class="title">New buyer for 88 Linden, <span class="free">loan already approved</span></div>
+        <p class="why">They reached out keen and ready. Reach out fast and this one is yours. I have a first reply written for you to okay.</p>
+        <div class="foot">
+          <span class="who"><span class="av dana" aria-hidden="true">D</span>Yours if you want it</span>
+          <span class="go" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- 3. Teammate Marcus lead going quiet -->
+      <div class="row" role="button" tabindex="0" aria-label="Marcus has a buyer who has gone quiet and could use a friendly check-in">
+        <div class="top">
+          <span class="pill warm"><span class="dot"></span>No reply in 3 days</span>
+          <span class="pill alt">Teammate · Marcus</span>
+          <span class="when">Quiet 3 days</span>
+        </div>
+        <div class="title">Marcus's Birchwood buyer has gone quiet</div>
+        <p class="why">No reply since Friday. Marcus has not noticed yet. A friendly check-in from you would help.</p>
+        <div class="foot">
+          <span class="who"><span class="av marcus" aria-hidden="true">M</span>Your team</span>
+          <span class="go" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-head">Worth a glance</div>
+    <section class="signal" aria-label="Heads-up, the Crestview deal is slowing down">
+      <div class="lbl"><span class="d" aria-hidden="true"></span>Slowing down a little</div>
+      <p class="txt">The <b>Crestview</b> deal is slowing, not stopping. The buyer is replying slower this week. Nothing to do yet. I am keeping an eye on it and will flag it here if it slows more.</p>
+    </section>
+
+    <p class="ledger">
+      <span class="b" aria-hidden="true"></span>
+      Last night I took care of <b>47</b> things and woke you for <b>0</b>. You can see everything I did under Activity.
+    </p>
+  </main>
+
+  <!-- ===== THE COUNTER SHEET ===== -->
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="The reply I wrote for 142 Oak Street" aria-hidden="true">
+    <div class="grab" aria-hidden="true"></div>
+
+    <div class="sh-head rv d1">
+      <span class="orb sm" aria-hidden="true"></span>
+      <span class="who">My draft reply · 142 Oak St</span>
+      <button class="x" id="sheetClose" aria-label="Close this draft">&times;</button>
+    </div>
+
+    <p class="sh-read rv d1">I would reply with <em class="num">$612k</em>. It is close enough to their offer to keep things friendly, and it does not give away room you still have.</p>
+
+    <span class="confchip rv d2"><span class="dot" aria-hidden="true"></span>I am confident in this number</span>
+
+    <div class="sources rv d2" aria-label="What I based this on">
+      <span class="src"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--sea)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>6 similar recent sales</span>
+      <span class="src"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--sea)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>Their past offers</span>
+      <span class="src"><span class="tick"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--sea)" stroke-width="3.4"><path d="M5 13l4 4L19 7"/></svg></span>How long it has been listed</span>
+    </div>
+
+    <div class="unknowns rv d3">
+      <div class="h"><span class="d" aria-hidden="true"></span>2 things I could not check</div>
+      <ul>
+        <li><span class="q" aria-hidden="true">?</span><span>The buyer hinted they need to <b>move in by a certain date</b>, but I could not confirm it. If that is true, you can hold firm a bit more than this number assumes.</span></li>
+        <li><span class="q" aria-hidden="true">?</span><span>One of the sales I compared, 9 Maple, has <b>not closed yet</b>. I leaned on it only a little. If that sale falls through, the high end of the range drops a bit.</span></li>
+      </ul>
+    </div>
+
+    <div class="range rv d4" aria-label="A fair range for your reply, and the number I would pick">
+      <div class="cap"><span>A fair range</span><span>What I would pick</span></div>
+      <div class="track">
+        <div class="band" style="left:22.2%; width:44.4%;"></div>
+        <div class="band thin" style="left:66.6%; width:33.4%;" title="fewer recent sales support a price above 625"></div>
+        <div class="leo" style="left:37.8%;" aria-hidden="true"></div>
+      </div>
+      <div class="ticks"><span>$595k</span><span>$612k</span><span>$640k</span></div>
+      <p class="note"><b>Anything up to $625k is easy to back up.</b> Above that there are fewer recent sales to point to, so expect more back-and-forth. Below $605k you are leaving money behind.</p>
+    </div>
+
+    <div class="review-note rv d5"><span class="lk" aria-hidden="true"></span>Nothing is sent until you tap Send</div>
+    <div class="acts rv d5">
+      <button class="btn btn-p" id="sendBtn">Send this reply</button>
+      <button class="btn btn-s" id="tuneBtn">Change the number first</button>
+    </div>
+  </section>
+
+  <!-- resolve-to-Sent -->
+  <div class="sent" id="sent" role="status" aria-hidden="true">
+    <div class="mark" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--sea)" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div class="t">Reply sent</div>
+    <p class="s">Your $612k reply is on its way to the buyer's agent. I will tell you the moment they reply.</p>
+    <div class="meta">142 OAK ST · 5:59AM · SAVED TO THIS DEAL</div>
+    <button class="close" id="sentClose">Back to today</button>
+  </div>
+</div>
+
+<div class="caption">V12 QUIET CAPITAL (refined dark) x THE WAKE</div>
+
+<script>
+  document.documentElement.classList.add('js');
+  var lock = document.getElementById('lock');
+  var enterBtn = document.getElementById('enterBtn');
+  var phone = document.querySelector('.phone');
+  var screen = document.getElementById('screen');
+
+  function wake(){
+    lock.classList.add('gone');
+    // trigger the staggered rise of the triage once the lock starts dissolving
+    phone.classList.add('reveal');
+    setTimeout(function(){ lock.setAttribute('aria-hidden','true'); }, 900);
+  }
+  enterBtn.addEventListener('click', wake);
+
+  var rowCounter = document.getElementById('rowCounter');
+  var scrim = document.getElementById('scrim');
+  var sheet = document.getElementById('sheet');
+  var sheetClose = document.getElementById('sheetClose');
+  var sendBtn = document.getElementById('sendBtn');
+  var tuneBtn = document.getElementById('tuneBtn');
+  var sent = document.getElementById('sent');
+  var sentClose = document.getElementById('sentClose');
+
+  function openSheet(){
+    scrim.classList.add('on');
+    sheet.classList.add('on');
+    sheet.setAttribute('aria-hidden','false');
+    sheet.querySelectorAll('.rv').forEach(function(el){
+      el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+    });
+    setTimeout(function(){ sheetClose.focus(); }, 60);
+  }
+  function closeSheet(){
+    scrim.classList.remove('on');
+    sheet.classList.remove('on');
+    sheet.setAttribute('aria-hidden','true');
+    rowCounter.focus();
+  }
+  function activate(el, fn){
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fn(); }
+    });
+  }
+
+  activate(rowCounter, openSheet);
+  sheetClose.addEventListener('click', closeSheet);
+  scrim.addEventListener('click', closeSheet);
+  tuneBtn.addEventListener('click', closeSheet);
+
+  sendBtn.addEventListener('click', function(){
+    sheet.classList.remove('on');
+    scrim.classList.remove('on');
+    sheet.setAttribute('aria-hidden','true');
+    sent.classList.add('on');
+    sent.setAttribute('aria-hidden','false');
+    setTimeout(function(){ sentClose.focus(); }, 620);
+  });
+
+  sentClose.addEventListener('click', function(){
+    sent.classList.remove('on');
+    sent.setAttribute('aria-hidden','true');
+    var pill = rowCounter.querySelector('.pill.uncertain');
+    if(pill){
+      pill.className='pill sea';
+      pill.innerHTML='<span class="dot"></span>Reply sent';
+    }
+    var why = rowCounter.querySelector('.why');
+    if(why){ why.textContent='Sent at 5:59am. I am watching for the buyer\'s agent to reply.'; }
+    rowCounter.style.opacity='.6';
+    rowCounter.focus();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){
+      if(sheet.classList.contains('on')) closeSheet();
+    }
+  });
+</script>
+</body>
+</html>
