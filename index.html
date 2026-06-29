@@ -25,7 +25,7 @@
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
   body{
-    margin:0; background:var(--canvas); color:var(--body);
+    margin:0; overflow-x:hidden; background:var(--canvas); color:var(--body);
     font-family:var(--sans); font-size:16px; line-height:1.6;
     -webkit-font-smoothing:antialiased;
     background-image:
@@ -54,7 +54,18 @@
   @media(max-width:560px){ .topbar .mark{font-size:10.5px} }
 
   /* ---- hero ---- */
-  header.hero{padding:78px 0 30px}
+  header.hero{padding:78px 0 30px; position:relative}
+  header.hero .label, header.hero h1, header.hero .sub, header.hero .ctarow{position:relative; z-index:1}
+  /* hero globe: a faded world echoing the prototype's command center, behind the headline */
+  .hero-globe{position:absolute; top:24px; right:-140px; width:420px; height:420px; z-index:0; opacity:.5; pointer-events:none}
+  .hero-globe canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+  .hg-fallback{position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 36% 30%, rgba(203,214,251,.26), transparent 50%), radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 80%);
+    box-shadow:inset -14px -18px 50px rgba(0,0,0,.7), inset 10px 12px 38px rgba(174,194,246,.10), 0 0 70px rgba(174,194,246,.07)}
+  .hg-fallback::before, .hg-fallback::after{content:""; position:absolute; inset:0; border-radius:50%; border:1px solid rgba(174,194,246,.12)}
+  .hg-fallback::before{transform:scaleX(.46)}
+  .hg-fallback::after{transform:scaleY(.9); border-color:rgba(174,194,246,.06)}
+  @media(max-width:760px){ .hero-globe{width:270px; height:270px; right:-104px; top:2px; opacity:.36} }
   header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
     font-size:clamp(38px,6vw,64px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0; max-width:18ch}
   header.hero h1 em{font-style:normal; color:var(--accent)}
@@ -151,6 +162,7 @@
 <div class="wrap">
 
   <header class="hero rise">
+    <div class="hero-globe" aria-hidden="true"><div class="hg-fallback"></div><canvas id="heroGlobe" width="560" height="560"></canvas></div>
     <div class="label">Lead AI Product Designer · take-home</div>
     <h1>The morning <em>command center</em> for a real-estate team lead.</h1>
     <p class="sub">A calm surface that ranks a team lead's own deals and the team's together, shows its reasoning, reviews every message before it sends, and proves it handled the night. Less, ranked, and honest about its own confidence.</p>
@@ -329,5 +341,23 @@
   <div class="conf">Confidential, for candidate use.</div>
 </div></footer>
 
+<!-- hero globe: a real WebGL globe (cobe), faded, echoing the prototype. Static CSS globe
+     behind it if WebGL or the module is unavailable; the page never depends on it. -->
+<script type="module">
+(async function(){
+  var cv = document.getElementById('heroGlobe'); if(!cv) return;
+  try{
+    var createGlobe = (await import('https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm')).default;
+    var phi = 4.0, spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    createGlobe(cv, {
+      devicePixelRatio:2, width:560, height:560, phi:4.0, theta:0.28, dark:1, diffuse:1.2,
+      mapSamples:16000, mapBrightness:7.0,
+      baseColor:[0.20,0.22,0.32], markerColor:[0.68,0.76,0.96], glowColor:[0.10,0.12,0.20],
+      markers:[{location:[30.27,-97.74],size:0.07},{location:[29.76,-95.37],size:0.06},{location:[32.78,-96.80],size:0.06},{location:[40.71,-74.00],size:0.05},{location:[34.05,-118.24],size:0.05}],
+      onRender:function(s){ s.phi = phi; if(spin) phi += 0.003; }
+    });
+  }catch(e){ cv.style.display='none'; }
+})();
+</script>
 </body>
 </html>
