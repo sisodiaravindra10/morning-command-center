@@ -97,7 +97,7 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .sevdot.red{background:var(--danger)}
 .sevdot.amber{background:var(--signal)}
 .tcard .fbody{padding:13px 14px 12px}
-.tcard h3{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.32;margin:0 0 4px}
+.tcard h3{font-size:17px;font-weight:600;letter-spacing:-.015em;line-height:1.28;margin:0 0 5px}
 .tcard .agent-tag{margin-bottom:7px}
 .tcard.row .fbody{display:none}
 .tcard.row .row-line{display:flex}
@@ -205,7 +205,7 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .card .ts{font-family:var(--mono);font-size:9.5px;color:var(--ink-subtle);margin-left:auto;letter-spacing:.04em}
 .chip{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:none;padding:3px 7px 2px;border-radius:var(--r);border:1px solid;display:inline-flex;align-items:center;gap:5px}
 .chip .cd{width:5px;height:5px;border-radius:50%}
-.chip.needs{color:var(--signal-hi);border-color:var(--signal-line);background:var(--signal-wash)}.chip.needs .cd{background:var(--signal)}
+.chip.needs{color:var(--danger);border-color:var(--danger-line);background:var(--danger-wash)}.chip.needs .cd{background:var(--danger)}
 .chip.risk{color:var(--danger);border-color:var(--danger-line);background:var(--danger-wash)}.chip.risk .cd{background:var(--danger)}
 .chip.done{color:var(--good);border-color:var(--good-line);background:var(--good-wash)}.chip.done .cd{background:var(--good)}
 .chip.think{color:var(--info);border-color:rgba(174,194,246,.4);background:var(--info-wash)}.chip.think .cd{background:var(--info);animation:breathe 1.6s var(--ease-io) infinite}
@@ -217,7 +217,7 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .wave{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
 .wave span{width:2.5px;background:var(--signal);border-radius:1px;opacity:.85}
 .wave.muted span{background:var(--ink-subtle);opacity:.5}
-.conf{display:flex;align-items:center;gap:8px;margin-top:10px;font-family:var(--mono);font-size:10.5px;color:var(--ink-muted)}
+.conf{display:flex;align-items:center;gap:9px;margin-top:13px;padding:9px 12px;background:var(--signal-wash);border-radius:var(--r);font-family:var(--font);font-size:12.5px;color:var(--ink-muted);line-height:1.4}
 .conf b{color:var(--signal-hi);font-weight:600}
 .actions{display:flex;gap:8px;margin-top:12px}
 .btn{font-family:var(--font);font-size:13px;font-weight:600;padding:9px 14px;border-radius:var(--r);transition:transform var(--dur-fast),background var(--dur-fast),border-color var(--dur-fast),color var(--dur-fast);display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
@@ -860,7 +860,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <h3>I paused a 3 AM bulk export on Marcus's account and locked the session.</h3>
                 <p class="ctx">412 client records, heading to an unrecognized device in another state. I stopped it. <b>Was I right?</b></p>
                 <div class="actions">
-                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Confirmed, session stays locked","sub":"Marcus must re-verify · security notified","undo":true}'>Keep it locked</button>
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Confirmed, session stays locked","sub":"Marcus must re-verify · security notified","undo":true}'>Approve</button>
                   <button class="btn btn-ghost btn-sm" data-sheet="anomaly">Details</button>
                 </div>
                 <button class="change" data-teach='{"rule":"Marcus runs bulk exports Friday afternoons from his laptop, do not flag those.","scope":"Marcus · bulk export"}'>It was actually Marcus &rarr; teach me</button>
@@ -876,8 +876,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <h3>I almost sent an outreach line that reads as steering.</h3>
                 <p class="ctx">My draft described the "kind of people" in the area, a <b>Fair Housing</b> risk. I held it and rewrote it.</p>
                 <div class="actions">
-                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Approved the compliant rewrite","sub":"Sent · original draft logged for audit","undo":true}'>Approve safe version</button>
-                  <button class="btn btn-ghost btn-sm" data-sheet="fairhousing">See change</button>
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Approved the compliant rewrite","sub":"Sent · original draft logged for audit","undo":true}'>Approve</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="fairhousing">Details</button>
                 </div>
               </div>
             </article>
@@ -892,8 +892,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <p class="ctx">MLS <b>Pending</b>, CRM <b>Active</b>, dotloop has an <b>unsigned addendum</b>. I think dotloop is current.</p>
                 <div class="conf"><span class="wave" aria-hidden="true"><span style="height:6px"></span><span style="height:11px"></span><span style="height:14px"></span><span style="height:9px"></span></span> <b>fairly sure</b> dotloop is the truth</div>
                 <div class="actions">
-                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Marsh deal reconciled","sub":"MLS, CRM &amp; dotloop now all read Under contract","undo":true}'>Trust dotloop · fix all 3</button>
-                  <button class="btn btn-ghost btn-sm" data-sheet="reconciler">Review</button>
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Marsh deal reconciled","sub":"MLS, CRM &amp; dotloop now all read Under contract","undo":true}'>Approve</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="reconciler">Details</button>
                 </div>
               </div>
             </article>
@@ -905,7 +905,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <div class="agent-tag"><span class="tdot"></span>Handoff agent</div>
                 <h3>Sofia's out till Monday. I rerouted 9 deals; 2 need your call.</h3>
                 <p class="ctx">The routine ones are auto-covered. Two are <b>relationships</b>, not just records.</p>
-                <div class="actions"><button class="btn btn-amber btn-full" data-sheet="handoff">Review the 2</button></div>
+                <div class="actions"><button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Approved the coverage reroute","sub":"9 deals stay routed · 2 flagged for your call","undo":true}'>Approve</button><button class="btn btn-ghost btn-sm" data-sheet="handoff">Details</button></div>
               </div>
             </article>
 
@@ -919,8 +919,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <p class="ctx">$635K · Westlake. Warm, then silent after the inspection report.</p>
                 <div class="conf"><span class="wave" aria-hidden="true"><span style="height:5px"></span><span style="height:9px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:11px"></span></span> <b>leaning yes</b>, a soft nudge helps</div>
                 <div class="actions">
-                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Soft nudge queued to the Crestview buyers","sub":"No-pressure check-in · goes out 9:05 AM","undo":true}'>Send the nudge</button>
-                  <button class="btn btn-ghost btn-sm" data-sheet="mehta">Change</button>
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Soft nudge queued to the Crestview buyers","sub":"No-pressure check-in · goes out 9:05 AM","undo":true}'>Approve</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="mehta">Details</button>
                 </div>
               </div>
             </article>
@@ -934,8 +934,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <h3>3 messages are drafted but need your actual voice.</h3>
                 <p class="ctx">A counter-offer, a grieving seller, and one of <b>Jenna's</b> replies that's off-brand.</p>
                 <div class="actions">
-                  <button class="btn btn-amber btn-full" data-sheet="voiceoutbox">Open outbox</button>
-                  <button class="btn btn-ghost btn-sm" data-dispose data-toast='{"msg":"Approved all 3 as drafted","sub":"I’ll watch for replies and brief you","undo":true}'>Approve all</button>
+                  <button class="btn btn-amber btn-full" data-dispose data-toast='{"msg":"Approved all 3 as drafted","sub":"I’ll watch for replies and brief you","undo":true}'>Approve</button>
+                  <button class="btn btn-ghost btn-sm" data-sheet="voiceoutbox">Details</button>
                 </div>
               </div>
             </article>
