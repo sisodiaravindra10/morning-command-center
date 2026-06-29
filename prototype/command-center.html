@@ -564,22 +564,21 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    zone, so type is never set over a busy image. CSS-only paging.
    ============================================================ */
 /* ============================================================
-   Boot loader: six full-height bars, each filling with periwinkle from
-   the bottom up, staggered left to right so the fill rolls up the screen
-   as a rising wave, then the field fades into the onboarding (~2s).
-   CSS-only motion; sits above #onboarding (z 90).
+   Boot loader: six flush opaque columns cover the onboarding; each recedes
+   upward (scaleY to 0 from the top), staggered left to right, so the
+   onboarding behind is revealed from the bottom up through the now-transparent
+   columns, a curtain lifting in a staircase (~2s). CSS-only; above #onboarding.
    ============================================================ */
-#boot-loader{position:absolute;inset:0;z-index:95;background:var(--canvas);display:flex;align-items:stretch;gap:5px;opacity:1;transition:opacity .5s var(--ease-out)}
+#boot-loader{position:absolute;inset:0;z-index:95;background:transparent;display:flex;align-items:stretch;gap:0;opacity:1;transition:opacity .4s var(--ease-out)}
 #boot-loader.gone{opacity:0;pointer-events:none}
-.bl-bar{flex:1;position:relative;overflow:hidden;background:var(--p1)}
-.bl-bar i{position:absolute;inset:0;background:linear-gradient(180deg,var(--signal-hi),var(--signal));transform:scaleY(0);transform-origin:bottom;will-change:transform;animation:kBarRise 1.5s var(--ease-out) forwards}
-.bl-bar:nth-child(1) i{animation-delay:0s}
-.bl-bar:nth-child(2) i{animation-delay:.1s}
-.bl-bar:nth-child(3) i{animation-delay:.2s}
-.bl-bar:nth-child(4) i{animation-delay:.3s}
-.bl-bar:nth-child(5) i{animation-delay:.4s}
-.bl-bar:nth-child(6) i{animation-delay:.5s}
-@keyframes kBarRise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.bl-bar{flex:1;background:var(--canvas);transform-origin:top;will-change:transform;animation:kReveal 1.5s var(--ease-out) forwards}
+.bl-bar:nth-child(1){animation-delay:0s}
+.bl-bar:nth-child(2){animation-delay:.09s}
+.bl-bar:nth-child(3){animation-delay:.18s}
+.bl-bar:nth-child(4){animation-delay:.27s}
+.bl-bar:nth-child(5){animation-delay:.36s}
+.bl-bar:nth-child(6){animation-delay:.45s}
+@keyframes kReveal{from{transform:scaleY(1)}to{transform:scaleY(0)}}
 @media (prefers-reduced-motion:reduce){#boot-loader{display:none}}
 #onboarding{position:absolute;inset:0;z-index:90;background:var(--canvas);display:flex;flex-direction:column;overflow:hidden}
 #onboarding.gone{opacity:0;pointer-events:none;transition:opacity .5s var(--ease-out)}
@@ -1186,12 +1185,12 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
   <!-- boot loader: a rising conveyor of periwinkle blocks; fades into onboarding after ~2s -->
   <div id="boot-loader" role="status" aria-label="Loading">
-    <span class="bl-bar"><i></i></span>
-    <span class="bl-bar"><i></i></span>
-    <span class="bl-bar"><i></i></span>
-    <span class="bl-bar"><i></i></span>
-    <span class="bl-bar"><i></i></span>
-    <span class="bl-bar"><i></i></span>
+    <span class="bl-bar"></span>
+    <span class="bl-bar"></span>
+    <span class="bl-bar"></span>
+    <span class="bl-bar"></span>
+    <span class="bl-bar"></span>
+    <span class="bl-bar"></span>
   </div>
 
   <!-- 3-step onboarding: image-led, the photo fades into a clean dark text zone -->
