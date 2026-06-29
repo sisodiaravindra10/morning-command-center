@@ -565,12 +565,12 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    ============================================================ */
 #onboarding{position:absolute;inset:0;z-index:90;background:var(--canvas);display:flex;flex-direction:column;overflow:hidden}
 #onboarding.gone{opacity:0;pointer-events:none;transition:opacity .5s var(--ease-out)}
-.ob-track{display:flex;flex:1;width:300%;height:100%;transition:transform var(--dur-slow) var(--ease-out)}
+.ob-track{display:flex;flex:1;width:300%;height:100%;transition:transform var(--dur-slow) var(--ease-out);will-change:transform}
 #onboarding[data-ob="1"] .ob-track{transform:translateX(-33.3333%)}
 #onboarding[data-ob="2"] .ob-track{transform:translateX(-66.6667%)}
 .ob-slide{position:relative;width:33.3333%;flex:0 0 33.3333%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
 /* photo: a wide layer that trails the foreground for parallax; image + Ken-Burns live on ::before */
-.ob-bg{position:absolute;top:0;left:-40%;width:140%;height:62%;overflow:hidden;transition:transform var(--dur-slow) var(--ease-io)}
+.ob-bg{position:absolute;top:0;left:-40%;width:140%;height:62%;overflow:hidden;transition:transform var(--dur-slow) var(--ease-out);will-change:transform}
 .ob-bg::before{content:"";position:absolute;inset:0;background-size:cover;background-position:center}
 .ob-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,16,.14) 0%,rgba(10,11,16,0) 32%,rgba(10,11,16,.6) 74%,var(--canvas) 100%)}
 .ob-1 .ob-bg::before{background-image:url('assets/onboard-1.jpg');background-position:center 28%}
