@@ -568,31 +568,37 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .ob-track{display:flex;flex:1;width:300%;height:100%;transition:transform var(--dur-slow) var(--ease-out)}
 #onboarding[data-ob="1"] .ob-track{transform:translateX(-33.3333%)}
 #onboarding[data-ob="2"] .ob-track{transform:translateX(-66.6667%)}
-.ob-slide{position:relative;width:33.3333%;flex:0 0 33.3333%;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
-.ob-bg{position:absolute;top:0;left:0;right:0;height:62%;background-size:cover;background-position:center}
-.ob-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,16,.14) 0%,rgba(10,11,16,0) 34%,rgba(10,11,16,.6) 76%,var(--canvas) 100%)}
-.ob-1 .ob-bg{background-image:url('assets/onboard-1.jpg');background-position:center 28%}
-.ob-2 .ob-bg{background-image:url('assets/onboard-2.jpg')}
-.ob-3 .ob-bg{background-image:url('assets/onboard-3.jpg');background-position:center 42%}
-.ob-body{position:relative;z-index:2;padding:0 26px 16px}
-.ob-logo{display:flex;align-items:center;gap:9px;margin-bottom:13px}
-.ob-logo .orb{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));box-shadow:0 0 16px -2px rgba(174,194,246,.6)}
-.ob-logo .wm{font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em}
-.ob-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-subtle);margin-bottom:9px}
-.ob-h{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.08;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
+.ob-slide{position:relative;width:33.3333%;flex:0 0 33.3333%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+/* photo: a wide layer that trails the foreground for parallax; image + Ken-Burns live on ::before */
+.ob-bg{position:absolute;top:0;left:-40%;width:140%;height:62%;overflow:hidden;transition:transform var(--dur-slow) var(--ease-io)}
+.ob-bg::before{content:"";position:absolute;inset:0;background-size:cover;background-position:center}
+.ob-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,16,.14) 0%,rgba(10,11,16,0) 32%,rgba(10,11,16,.6) 74%,var(--canvas) 100%)}
+.ob-1 .ob-bg::before{background-image:url('assets/onboard-1.jpg');background-position:center 28%}
+.ob-2 .ob-bg::before{background-image:url('assets/onboard-2.jpg')}
+.ob-3 .ob-bg::before{background-image:url('assets/onboard-3.jpg');background-position:center 42%}
+/* parallax: the photo trails as the track pages between slides */
+#onboarding[data-ob="0"] .ob-bg{transform:translateX(0)}
+#onboarding[data-ob="1"] .ob-bg{transform:translateX(14%)}
+#onboarding[data-ob="2"] .ob-bg{transform:translateX(28%)}
+.ob-body{position:relative;z-index:2;padding:0 28px 40px}
+.ob-logo{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.ob-logo .orb{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));box-shadow:0 0 16px -2px rgba(174,194,246,.6)}
+.ob-logo .wm{font-family:var(--serif);font-weight:600;font-size:16px;letter-spacing:-.01em}
+.ob-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-subtle);margin-bottom:18px}
+.ob-h{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.1;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
 .ob-h em{font-style:normal;color:var(--signal-hi)}
 .ob-3 .ob-h em{color:var(--danger)}
-.ob-sub{font-size:14px;color:var(--ink-muted);line-height:1.5;margin-top:11px;max-width:31ch}
-.ob-foot{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:14px 26px calc(20px + env(safe-area-inset-bottom))}
-.ob-dots{display:flex;gap:7px;flex:1}
+.ob-sub{font-size:14.5px;color:var(--ink-muted);line-height:1.55;margin-top:18px;max-width:32ch}
+.ob-foot{flex:0 0 auto;display:flex;flex-direction:column;gap:10px;padding:16px 26px calc(22px + env(safe-area-inset-bottom))}
+.ob-dots{display:flex;gap:7px;justify-content:center;margin-bottom:8px}
 .ob-dots i{width:7px;height:7px;border-radius:50%;background:var(--p4);transition:width var(--dur-med) var(--ease-out),background var(--dur-med)}
 #onboarding[data-ob="0"] .ob-dots i:nth-child(1),
 #onboarding[data-ob="1"] .ob-dots i:nth-child(2),
 #onboarding[data-ob="2"] .ob-dots i:nth-child(3){width:20px;border-radius:4px;background:var(--signal)}
-.ob-skip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-subtle)}
+.ob-next{width:100%;font-family:var(--font);font-weight:600;font-size:14px;color:var(--signal-ink);background:linear-gradient(180deg,var(--signal-hi),var(--signal));border-radius:var(--r-md);padding:15px;box-shadow:0 10px 26px -12px rgba(174,194,246,.55)}
+.ob-next:active{transform:scale(.985)}
+.ob-skip{width:100%;font-family:var(--font);font-size:13.5px;letter-spacing:0;color:var(--ink-muted);background:none;padding:12px;border-radius:var(--r-md)}
 .ob-skip:hover{color:var(--ink)}
-.ob-next{font-family:var(--font);font-weight:600;font-size:13px;color:var(--signal-ink);background:linear-gradient(180deg,var(--signal-hi),var(--signal));border-radius:var(--r);padding:10px 18px;box-shadow:0 8px 20px -10px rgba(174,194,246,.6)}
-.ob-next:active{transform:scale(.97)}
 @media (prefers-reduced-motion:reduce){#onboarding{display:none}}
 
 /* the status pill becomes a live Dynamic Island: it morphs to carry a Leo notice */
@@ -670,7 +676,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .tour.show .tour-card{animation:tcRise .42s var(--ease-out)}
 @keyframes tcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 /* onboarding: a slow, barely-there drift so the photo feels alive, the one place atmosphere is earned */
-@media (prefers-reduced-motion:no-preference){.ob-bg{animation:obDrift 19s ease-in-out infinite alternate}}
+@media (prefers-reduced-motion:no-preference){.ob-bg::before{animation:obDrift 19s ease-in-out infinite alternate}}
 @keyframes obDrift{from{transform:scale(1.004)}to{transform:scale(1.05)}}
 /* the active glass-tab label tracks the accent smoothly */
 .tab .tl{transition:color var(--dur-med) var(--ease-out)}
@@ -1176,8 +1182,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     </div>
     <div class="ob-foot">
       <div class="ob-dots"><i></i><i></i><i></i></div>
-      <button class="ob-skip" id="ob-skip">Skip</button>
       <button class="ob-next" id="ob-next">Next</button>
+      <button class="ob-skip" id="ob-skip">Skip</button>
     </div>
   </div>
 
