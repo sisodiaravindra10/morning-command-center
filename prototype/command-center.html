@@ -62,17 +62,18 @@ body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #1
 .greet{font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.05}
 .greet .sub{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:none;color:var(--ink-subtle);margin-top:5px;font-weight:500}
 .avatar{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-weight:600;font-size:13px;color:var(--signal-ink);background:linear-gradient(150deg,var(--signal-hi),var(--signal));border:1px solid var(--signal-line)}
-.iconbtn{width:34px;height:34px;border-radius:var(--r);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-muted);transition:color var(--dur-fast),border-color var(--dur-fast);position:relative;flex:0 0 auto}
-.iconbtn:hover{color:var(--ink);border-color:var(--ink-subtle)}
+.iconbtn{width:32px;height:32px;border-radius:var(--r);border:none;background:none;display:grid;place-items:center;color:var(--ink-muted);transition:color var(--dur-fast);position:relative;flex:0 0 auto}
+.iconbtn:hover{color:var(--ink)}
 .iconbtn .bdg{position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--signal);color:var(--signal-ink);font-family:var(--mono);font-size:8.5px;font-weight:600;display:grid;place-items:center}
 .appbar-tools{display:flex;align-items:center;gap:8px}
 
 /* ---- trust ledger strip ---- */
-.ledger{padding:1px 2px 0}
-.lg-txt{font-size:12.5px;color:var(--ink-muted);font-variant-numeric:tabular-nums;line-height:1.4}
-.lg-txt b{color:var(--ink);font-weight:600}
-.lg-need{color:var(--signal-hi);font:inherit;font-variant-numeric:tabular-nums}
-.lg-need b{color:var(--signal-hi)}
+.ledger{display:flex;gap:7px;padding:0}
+.lkpi{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;padding:6px 9px;border-radius:var(--r-md);background:var(--p1);border:1px solid var(--line);text-align:left}
+.lkpi b{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.15}
+.lkpi span{font-family:var(--mono);font-size:8px;letter-spacing:.05em;color:var(--ink-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lkpi-need{background:var(--signal-wash);border-color:var(--signal-line);cursor:pointer}
+.lkpi-need b,.lkpi-need span{color:var(--signal-hi)}
 
 /* ---- cover-for-me pinned chip ---- */
 .cover-chip{display:flex;align-items:center;gap:10px;margin:0 18px;padding:10px 12px;border:1px solid var(--signal-line);background:var(--signal-wash);border-radius:var(--r-md);cursor:pointer}
@@ -519,7 +520,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .tcard.focus[data-sev="red"]{background:linear-gradient(178deg,rgba(231,199,156,.08),#15171F 60%);border-color:var(--danger-line)}
 .card.alert{background:linear-gradient(178deg,rgba(231,199,156,.08),#15171F 60%);border-color:var(--danger-line)}
 /* greeting: display presence */
-.greet{font-size:25px;font-weight:600;letter-spacing:-.02em}
+.greet{font-size:19px;font-weight:600;letter-spacing:-.015em;white-space:nowrap;line-height:1.2}
 /* Leo's presence: a soft periwinkle glow on the orb-avatar */
 .avatar{box-shadow:0 0 16px -2px rgba(174,194,246,.45)}
 /* micro-interactions: lift on hover, settle on press */
@@ -587,9 +588,9 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 #onboarding[data-ob="2"] .ob-track{transform:translateX(-66.6667%)}
 .ob-slide{position:relative;width:33.3333%;flex:0 0 33.3333%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
 /* photo: a wide layer that trails the foreground for parallax; image + Ken-Burns live on ::before */
-.ob-bg{position:absolute;top:0;left:-40%;width:140%;height:62%;overflow:hidden;transition:transform var(--dur-slow) var(--ease-out);will-change:transform}
+.ob-bg{position:absolute;top:0;left:-40%;width:140%;height:112%;overflow:hidden;transition:transform var(--dur-slow) var(--ease-out);will-change:transform}
 .ob-bg::before{content:"";position:absolute;inset:0;background-size:cover;background-position:center}
-.ob-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,16,.14) 0%,rgba(10,11,16,0) 32%,rgba(10,11,16,.6) 74%,var(--canvas) 100%)}
+.ob-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,16,.16) 0%,rgba(10,11,16,0) 15%,rgba(10,11,16,.62) 33%,var(--canvas) 45%)}
 .ob-1 .ob-bg::before{background-image:url('assets/onboard-1.jpg');background-position:center 28%}
 .ob-2 .ob-bg::before{background-image:url('assets/onboard-2.jpg')}
 .ob-3 .ob-bg::before{background-image:url('assets/onboard-3.jpg');background-position:center 42%}
@@ -601,7 +602,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .ob-logo{display:flex;align-items:center;gap:10px;margin-bottom:22px}
 .ob-logo .orb{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));box-shadow:0 0 16px -2px rgba(174,194,246,.6)}
 .ob-logo .wm{font-family:var(--serif);font-weight:600;font-size:16px;letter-spacing:-.01em}
-.ob-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-subtle);margin-bottom:18px}
+.ob-eyebrow{display:none}
 .ob-h{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.1;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
 .ob-h em{font-style:normal;color:var(--signal-hi)}
 .ob-3 .ob-h em{color:var(--danger)}
@@ -727,7 +728,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .bd-pdot{width:5px;height:5px;border-radius:50%;background:var(--signal);flex:0 0 auto;box-shadow:0 0 8px var(--signal)}
 .bd-as{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--ink-subtle);margin-top:10px}
 /* the globe, bleeding off the right edge, faded into the dark */
-.globe-stage{position:absolute;z-index:1;top:48%;right:-82px;transform:translateY(-50%);width:288px;height:288px;opacity:.6;pointer-events:none}
+.globe-stage{position:absolute;z-index:1;top:48%;right:-82px;transform:translateY(-50%);width:288px;height:288px;opacity:.62;pointer-events:none;background:radial-gradient(circle at 46% 46%, rgba(174,194,246,.16), rgba(174,194,246,.05) 42%, transparent 64%)}
 .globe-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .globe-fallback{position:absolute;inset:0;border-radius:50%;
   background:radial-gradient(circle at 36% 30%, rgba(203,214,251,.30), transparent 50%),radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 79%);
@@ -756,16 +757,16 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 @media (prefers-reduced-motion: reduce){.bd-orb{animation:none}.alt-ind{transition:none}}
 
 /* ---------- bottom nav: compact icon-only at rest, labels on interaction ---------- */
-.tabbar{transition:padding .34s var(--ease-snap),background var(--dur-med)}
+.tabbar{left:50%;right:auto;transform:translateX(-50%);width:362px;transition:width .42s var(--ease-snap),padding .34s var(--ease-snap),background var(--dur-med)}
 .tab{transition:color var(--dur-fast),gap .34s var(--ease-snap)}
 .tab .tl{transition:color var(--dur-med) var(--ease-out),max-height .34s var(--ease-snap),opacity .24s var(--ease-out),margin-top .34s var(--ease-snap)}
-.tabbar.mini{padding:9px 7px}
+.tabbar.mini{padding:9px 7px;width:178px}
 .tabbar.mini .tab{gap:0;padding:4px 0}
 .tabbar.mini .tab .tl{max-height:0;opacity:0;margin-top:0;overflow:hidden;pointer-events:none}
-.tabbar.mini:hover,.tabbar.mini:focus-within{padding:7px}
+.tabbar.mini:hover,.tabbar.mini:focus-within{padding:7px;width:362px}
 .tabbar.mini:hover .tab,.tabbar.mini:focus-within .tab{gap:4px;padding:6px 0}
 .tabbar.mini:hover .tab .tl,.tabbar.mini:focus-within .tab .tl{max-height:14px;opacity:1;margin-top:0;pointer-events:auto}
-.tabbar.mini.nav-open{padding:7px}
+.tabbar.mini.nav-open{padding:7px;width:362px}
 .tabbar.mini.nav-open .tab{gap:4px;padding:6px 0}
 .tabbar.mini.nav-open .tab .tl{max-height:14px;opacity:1;margin-top:0;pointer-events:auto}
 @media (prefers-reduced-motion:reduce){.tabbar,.tab,.tab .tl{transition-duration:.001ms}}
@@ -799,7 +800,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
         </div>
       </div>
       <div class="ledger" id="ledger" aria-label="Trust ledger">
-        <span class="lg-txt"><b>47</b> handled overnight&ensp;·&ensp;<button class="lg-need" id="lg-need"><b id="need-n">2</b> need you</button>&ensp;·&ensp;<b>1</b> corrected</span>
+        <div class="lkpi"><b>47</b><span>handled</span></div>
+        <button class="lkpi lkpi-need" id="lg-need"><b id="need-n">2</b><span>need you</span></button>
+        <div class="lkpi"><b>1</b><span>corrected</span></div>
       </div>
     </div>
 
@@ -825,8 +828,6 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
             <div class="bd-leo"><span class="bd-orb"></span>Leo, on watch overnight</div>
             <div class="bd-big">$14.2M</div>
             <div class="bd-line">pipeline, 22 live across 6 metros</div>
-            <div class="bd-tick"><span class="bd-pdot"></span>North Hills warming, 3 new leads before dawn</div>
-            <div class="bd-as">100+ agents active &middot; as of 6:52am</div>
           </div>
           <div class="banner-fade" aria-hidden="true"></div>
         </div>
@@ -1365,7 +1366,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   /* bottom nav: expand from icon-only to labels on interaction; keep the gliding pill seated */
   {const _tabbar=$('.tabbar');
    if(_tabbar){
-     const reseat=()=>{syncNav();setTimeout(syncNav,360);};
+     const reseat=()=>{syncNav();[140,300,460].forEach(t=>setTimeout(syncNav,t));};
      const open=()=>{_tabbar.classList.add('nav-open');reseat();};
      const close=()=>{_tabbar.classList.remove('nav-open');reseat();};
      _tabbar.addEventListener('pointerenter',open);
@@ -1590,6 +1591,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       ],
       onRender: function(state){ state.phi = phi; if(spin) phi += 0.0036; }
     });
+    var fb = document.querySelector('.globe-fallback'); if(fb) fb.style.display = 'none'; /* real globe loaded, drop the static circle behind it */
   }catch(e){
     cv.style.display = 'none'; /* keep the static CSS globe behind */
   }
