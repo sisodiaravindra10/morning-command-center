@@ -40,6 +40,10 @@ The whole thing is one HTML file with CSS and a little vanilla JavaScript, plus 
 
 For the walkthrough, open the slide deck: [deck.html](deck.html).
 
+## How I built it (the process)
+
+[PROCESS.md](PROCESS.md) is the end-to-end build journal: the order things happened in, the decisions that turned the work, and the dead ends I kept because they earned their place. It connects the rationale (doc 06) and the AI-tool account (doc 07) into one chronology, from reading the brief through the warm-light detour to the disciplined dark, and it carries through the most recent screen-by-screen craft pass, staying honest about what is done and what is still ahead.
+
 ## The range I explored (`explorations/`)
 
 The lead is one prototype, but it came from a lot of trying and cutting. [explorations/index.html](explorations/index.html) is the appendix that shows how much changed on the way: 30 concepts across two waves, 22 built feature demos, 3 interaction models, 5 visual directions and 20 fused variants, plus 10 aesthetic studies and the keynote films. It includes the honest detour (a warm-light version a reviewer pushed for) that did not survive. The explorations are kept in their original styles on purpose, because they are the journey, not the destination.
