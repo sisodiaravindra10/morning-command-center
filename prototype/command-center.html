@@ -563,6 +563,23 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    Photo sits in the top zone and fades into a clean dark text
    zone, so type is never set over a busy image. CSS-only paging.
    ============================================================ */
+/* ============================================================
+   Boot loader: a rising conveyor of periwinkle blocks on near-black.
+   Five equal rectangles travel continuously up a clipped column and
+   recycle, each lagging the previous, then the field fades into the
+   onboarding (~2s). CSS-only motion; sits above #onboarding (z 90).
+   ============================================================ */
+#boot-loader{position:absolute;inset:0;z-index:95;background:var(--canvas);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .5s var(--ease-out)}
+#boot-loader.gone{opacity:0;pointer-events:none}
+.bl-stage{position:relative;width:78px;height:236px;overflow:hidden}
+.bl-blk{position:absolute;left:0;right:0;bottom:-26px;height:26px;border-radius:6px;background:linear-gradient(180deg,var(--signal-hi),var(--signal));box-shadow:0 0 15px -3px rgba(174,194,246,.5),inset 0 1px 0 rgba(255,255,255,.3);opacity:0;will-change:transform,opacity;animation:kBootRise 2s linear infinite}
+.bl-blk:nth-child(1){animation-delay:0s}
+.bl-blk:nth-child(2){animation-delay:.4s}
+.bl-blk:nth-child(3){animation-delay:.8s}
+.bl-blk:nth-child(4){animation-delay:1.2s}
+.bl-blk:nth-child(5){animation-delay:1.6s}
+@keyframes kBootRise{0%{transform:translateY(0);opacity:0}6%{opacity:1}94%{opacity:1}100%{transform:translateY(-288px);opacity:0}}
+@media (prefers-reduced-motion:reduce){#boot-loader{display:none}}
 #onboarding{position:absolute;inset:0;z-index:90;background:var(--canvas);display:flex;flex-direction:column;overflow:hidden}
 #onboarding.gone{opacity:0;pointer-events:none;transition:opacity .5s var(--ease-out)}
 .ob-track{display:flex;flex:1;width:300%;height:100%;transition:transform var(--dur-slow) var(--ease-out);will-change:transform}
@@ -737,6 +754,21 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 .altitude .cnt{font-size:10px;color:var(--ink-subtle)}
 .altitude button[aria-pressed=true] .cnt{color:var(--signal-hi)}
 @media (prefers-reduced-motion: reduce){.bd-orb{animation:none}.alt-ind{transition:none}}
+
+/* ---------- bottom nav: compact icon-only at rest, labels on interaction ---------- */
+.tabbar{transition:padding .34s var(--ease-snap),background var(--dur-med)}
+.tab{transition:color var(--dur-fast),gap .34s var(--ease-snap)}
+.tab .tl{transition:color var(--dur-med) var(--ease-out),max-height .34s var(--ease-snap),opacity .24s var(--ease-out),margin-top .34s var(--ease-snap)}
+.tabbar.mini{padding:9px 7px}
+.tabbar.mini .tab{gap:0;padding:4px 0}
+.tabbar.mini .tab .tl{max-height:0;opacity:0;margin-top:0;overflow:hidden;pointer-events:none}
+.tabbar.mini:hover,.tabbar.mini:focus-within{padding:7px}
+.tabbar.mini:hover .tab,.tabbar.mini:focus-within .tab{gap:4px;padding:6px 0}
+.tabbar.mini:hover .tab .tl,.tabbar.mini:focus-within .tab .tl{max-height:14px;opacity:1;margin-top:0;pointer-events:auto}
+.tabbar.mini.nav-open{padding:7px}
+.tabbar.mini.nav-open .tab{gap:4px;padding:6px 0}
+.tabbar.mini.nav-open .tab .tl{max-height:14px;opacity:1;margin-top:0;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){.tabbar,.tab,.tab .tl{transition-duration:.001ms}}
 </style>
 </head>
 <body>
@@ -1109,7 +1141,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       </section>
     </main>
 
-    <nav class="tabbar" role="tablist" aria-label="Sections">
+    <nav class="tabbar mini" role="tablist" aria-label="Sections">
       <span class="tab-ind" id="tab-ind" aria-hidden="true"></span>
       <button class="tab" data-go="today" aria-selected="true"><span class="badge">4</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h10M4 18h7" stroke-linecap="round"/></svg><span class="tl">Today</span></button>
       <button class="tab" data-go="day" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2" stroke-linecap="round"/></svg><span class="tl">Day</span></button>
@@ -1149,6 +1181,17 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     </div>
 
     <div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
+  </div>
+
+  <!-- boot loader: a rising conveyor of periwinkle blocks; fades into onboarding after ~2s -->
+  <div id="boot-loader" role="status" aria-label="Loading">
+    <div class="bl-stage" aria-hidden="true">
+      <span class="bl-blk"></span>
+      <span class="bl-blk"></span>
+      <span class="bl-blk"></span>
+      <span class="bl-blk"></span>
+      <span class="bl-blk"></span>
+    </div>
   </div>
 
   <!-- 3-step onboarding: image-led, the photo fades into a clean dark text zone -->
@@ -1320,6 +1363,20 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     root.dataset.screen=name;syncNav();
     scroll.scrollTop=0;}
   $$('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.go)));
+  /* bottom nav: expand from icon-only to labels on interaction; keep the gliding pill seated */
+  {const _tabbar=$('.tabbar');
+   if(_tabbar){
+     const reseat=()=>{syncNav();setTimeout(syncNav,360);};
+     const open=()=>{_tabbar.classList.add('nav-open');reseat();};
+     const close=()=>{_tabbar.classList.remove('nav-open');reseat();};
+     _tabbar.addEventListener('pointerenter',open);
+     _tabbar.addEventListener('pointerleave',close);
+     _tabbar.addEventListener('pointerdown',open);
+     _tabbar.addEventListener('focusin',open);
+     _tabbar.addEventListener('focusout',e=>{if(!_tabbar.contains(e.relatedTarget))close();});
+     _tabbar.addEventListener('transitionend',e=>{if(e.target===_tabbar||e.target.classList.contains('tl'))syncNav();});
+   }
+  }
   {const _sj=$('#screen-jump');if(_sj)_sj.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.go);});}
   $('#orch-btn').addEventListener('click',()=>go('orch'));
   $('#pause-btn').addEventListener('click',()=>sheetOpen('pause'));
@@ -1441,6 +1498,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   /* ---------- orchestration cloud ---------- */
   const fc=$('#f-cloud');if(fc){let h='';for(let i=0;i<60;i++){h+=(i%17===0)?'<i class="live"></i>':'<i></i>';}fc.innerHTML=h;}
   layoutTriage();syncGlance();syncNav();
+
+  /* ---------- boot loader: fade into onboarding after ~2s ---------- */
+  setTimeout(function(){var bl=document.getElementById('boot-loader');if(bl)bl.classList.add('gone');},2000);
 
   /* ---------- onboarding (3-step, image-led opening) ---------- */
   const ob=$('#onboarding'),obNext=$('#ob-next');let obIdx=0;const OB_N=3;
