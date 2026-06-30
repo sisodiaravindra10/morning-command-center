@@ -878,6 +878,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .rv-globe{width:148px;height:148px;margin:4px auto 16px;position:relative;opacity:0}
 .regionview.show .rv-globe{animation:rvGlobeIn .62s var(--ease-out) .08s both}
 @keyframes rvGlobeIn{from{opacity:0;transform:scale(.55)}to{opacity:.92;transform:none}}
+@keyframes globeFlip{from{transform:translate(var(--fx,0),var(--fy,0)) scale(var(--fs,1));opacity:.82}to{transform:none;opacity:.92}}
 .rv-fb{position:absolute;inset:0}
 .rv-fb i{width:5px;height:5px}
 .rv-fb i:nth-child(1){top:30%;left:38%;background:var(--danger);box-shadow:0 0 9px var(--danger)}
@@ -1717,8 +1718,27 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
   /* #11 region / map view, opened from the globe banner */
   const regionview=$('#regionview');
-  function openRegion(){if(typeof sheetClose==='function')sheetClose();if(regionview){regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');}}
-  function closeRegion(){if(regionview){regionview.classList.remove('show');regionview.setAttribute('aria-hidden','true');}}
+  function openRegion(){if(typeof sheetClose==='function')sheetClose();if(!regionview)return;
+    var src=$('#globe-banner .globe-stage'),rvg=regionview.querySelector('.rv-globe');
+    regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');
+    /* #48: the region globe flies in from the banner globe's position, one continuous globe */
+    if(src&&rvg&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
+      rvg.style.animation='none';rvg.style.opacity='.92';void rvg.offsetWidth; /* kill the base entrance so T measures the natural size */
+      var B=src.getBoundingClientRect(),T=rvg.getBoundingClientRect();
+      if(T.width){
+        var dx=(B.left+B.width/2)-(T.left+T.width/2),dy=(B.top+B.height/2)-(T.top+T.height/2),sc=Math.max(.25,B.width/T.width);
+        rvg.style.setProperty('--fx',dx+'px');rvg.style.setProperty('--fy',dy+'px');rvg.style.setProperty('--fs',sc);
+        rvg.style.transformOrigin='center center';
+        rvg.style.animation='globeFlip .64s var(--ease-out) forwards';
+        /* guarantee the globe lands correct even if the animation never advances */
+        setTimeout(function(){rvg.style.animation='none';rvg.style.transform='none';rvg.style.opacity='.92';},720);
+      }
+    }}
+  function closeRegion(){if(!regionview)return;
+    regionview.classList.remove('show','zoomed');regionview.setAttribute('aria-hidden','true');
+    regionview.querySelectorAll('.rv-fb i.sel').forEach(function(d){d.classList.remove('sel');});
+    var _rf=regionview.querySelector('.rv-fb');if(_rf)_rf.style.transformOrigin='';
+    var rvg=regionview.querySelector('.rv-globe');if(rvg)setTimeout(function(){rvg.style.transition='';rvg.style.transform='';rvg.style.opacity='';rvg.style.animation='';},420);}
   {const _gb=$('#globe-banner');if(_gb)_gb.addEventListener('click',openRegion);}
   {const _rb=$('#rv-back');if(_rb)_rb.addEventListener('click',closeRegion);}
   /* region zoom + inline detail (#73) */
