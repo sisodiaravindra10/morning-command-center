@@ -77,26 +77,6 @@ html[data-theme="light"] .globe-fallback{background:radial-gradient(circle at 38
 html[data-theme="light"] .globe-fallback::before,html[data-theme="light"] .globe-fallback::after{border-color:rgba(16,52,38,.16)}
 html[data-theme="light"] .globe-fallback i{background:var(--signal);box-shadow:0 0 8px rgba(10,124,80,.45)}
 html[data-theme="light"] .rv-fb i:nth-child(1){background:var(--danger)}
-/* light mode, Today only: an emerald hero (header + globe banner) so the light triage sheet pops as it rises over it. White content on the green; other tabs stay clean light. */
-html[data-theme="light"][data-screen="today"]:not([data-region]) .app{background:linear-gradient(168deg,#12895c 0%,#0b7149 60%,#0a6a45 100%)}
-html[data-theme="light"][data-screen="today"] .greet{color:#fff}
-html[data-theme="light"][data-screen="today"] .greet .sub{color:rgba(255,255,255,.72)}
-html[data-theme="light"][data-screen="today"] .appbar-tools .iconbtn{color:#fff}
-html[data-theme="light"][data-screen="today"] .iconbtn .bdg{background:#fff;color:#0a7048}
-html[data-theme="light"][data-screen="today"] .avatar{border-color:rgba(255,255,255,.5)}
-html[data-theme="light"][data-screen="today"] .lkpi-need{background:#fff;border-color:rgba(143,90,11,.5)}
-html[data-theme="light"][data-screen="today"] .cover-chip{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3)}
-html[data-theme="light"][data-screen="today"] .cover-chip,html[data-theme="light"][data-screen="today"] .cover-chip b,html[data-theme="light"][data-screen="today"] .cover-chip .cgo{color:#fff}
-html[data-theme="light"][data-screen="today"] .bd-leo{color:rgba(255,255,255,.85)}
-html[data-theme="light"][data-screen="today"] .bd-orb{background:#fff;box-shadow:0 0 9px rgba(255,255,255,.6)}
-html[data-theme="light"][data-screen="today"] .bd-big{color:#fff}
-html[data-theme="light"][data-screen="today"] .bd-line{color:rgba(255,255,255,.85)}
-html[data-theme="light"][data-screen="today"] .bd-explore{color:#fff}
-html[data-theme="light"] .today-sheet{box-shadow:0 -14px 30px -16px rgba(8,40,28,.42)}
-/* a soft white globe reads on the emerald (the pale fallback would vanish) */
-html[data-theme="light"][data-screen="today"] .globe-fallback{background:radial-gradient(circle at 40% 32%, rgba(255,255,255,.46), transparent 56%),radial-gradient(circle at 50% 55%, rgba(255,255,255,.3) 0%, rgba(255,255,255,.12) 60%, rgba(255,255,255,.04) 82%);box-shadow:inset -14px -16px 38px rgba(8,40,28,.24),inset 12px 14px 26px rgba(255,255,255,.32),0 0 0 1px rgba(255,255,255,.1)}
-html[data-theme="light"][data-screen="today"] .globe-fallback::before,html[data-theme="light"][data-screen="today"] .globe-fallback::after{border-color:rgba(255,255,255,.16)}
-html[data-theme="light"][data-screen="today"] .globe-fallback i{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.65)}
 /* ---- top-right stage controls: theme toggle + guided-tour entry ---- */
 .stage-controls{position:fixed;top:18px;right:18px;display:flex;gap:8px;z-index:130}
 .sc-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:999px;font-family:var(--font);font-size:13px;font-weight:600;color:var(--ink);background:var(--p1);border:1px solid var(--line);cursor:pointer;transition:border-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out),color var(--dur-fast)}
@@ -1803,9 +1783,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     /* clear any residual inline transform so the centered CSS scale-in (rvGlobeIn) runs clean and the globe lands dead-centre */
     var rvg=regionview.querySelector('.rv-globe');
     if(rvg){rvg.style.animation='';rvg.style.transform='';rvg.style.opacity='';rvg.style.transformOrigin='';}
-    regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');document.documentElement.setAttribute('data-region','open');}
+    regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');}
   function closeRegion(){if(!regionview)return;
-    regionview.classList.remove('show','zoomed');regionview.setAttribute('aria-hidden','true');document.documentElement.removeAttribute('data-region');
+    regionview.classList.remove('show','zoomed');regionview.setAttribute('aria-hidden','true');
     regionview.querySelectorAll('.rv-fb i.sel').forEach(function(d){d.classList.remove('sel');});
     var _rf=regionview.querySelector('.rv-fb');if(_rf)_rf.style.transformOrigin='';
     var rvg=regionview.querySelector('.rv-globe');if(rvg)setTimeout(function(){rvg.style.transition='';rvg.style.transform='';rvg.style.opacity='';rvg.style.animation='';},420);}
