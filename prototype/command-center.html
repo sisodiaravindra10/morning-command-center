@@ -2058,7 +2058,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
   /* ---------- guided tour: one step at a time ---------- */
   const device=$('.device'),tour=$('#tour'),tspot=$('#tour-spot'),tcard=$('#tour-card');
-  function setAlt(a){root.dataset.altitude=a;$$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.alt===a));$$('[data-altblock]').forEach(x=>x.style.display=(x.dataset.altblock===a)?'flex':'none');}
+  function setAlt(a){root.dataset.altitude=a;$$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.alt===a));$$('[data-altblock]').forEach(x=>x.style.display=(x.dataset.altblock===a)?'flex':'none');if(a==='team'&&typeof layoutTeam==='function')layoutTeam();}
   function tReset(){const o=$('#onboarding');if(o)o.style.display='none';sheetClose();go('today');setAlt('me');root.dataset.morning='calm';$$('.tcard.exc',triage).forEach(c=>{c.style.display='';c.classList.remove('gone');});layoutTriage();$('#scroll').scrollTop=0;}
   function tHeavy(){go('today');setAlt('me');root.dataset.morning='heavy';$$('.tcard.exc',triage).forEach(c=>{c.style.display='';c.classList.remove('gone');});layoutTriage();$('#scroll').scrollTop=0;}
   const TOUR=[
@@ -2067,7 +2067,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     {sel:'#triage .tcard.focus',t:'The few that need judgment',d:'One focus card at a time. Leo says how sure it is in plain words and a range, never a fake percent.'},
     {sel:'#island',t:'Leo, at the system level',d:'The status pill is alive. It morphs into a notice, and when you approve a card it carries the work out right here, then settles back with an Undo.',before:()=>islandAlert('<b>Leo</b> &middot; new lead at 88 Linden, pre-approved')},
     {sel:'#triage [data-card="fairhousing"]',t:'It catches itself',d:'On a busier morning the guardrails surface. Here Leo held an outreach line that read as steering, and rewrote it.',before:tHeavy},
-    {sel:'#scroll .card',t:'Your team, ranked alongside',d:'A hot lead has waited 3h 12m on Marcus. Reassign in a tap, or open any teammate to read their pipeline.',before:()=>{go('today');setAlt('team');$('#scroll').scrollTop=0;}},
+    {sel:'#triage-team .tcard.focus',t:'Your team, ranked alongside',d:'A hot lead has waited 3h 12m on Marcus. Reassign in a tap, or open any teammate to read their pipeline.',before:()=>{go('today');setAlt('team');$('#scroll').scrollTop=0;}},
     {sel:'#globe-banner',t:'The map, one tap in',d:'Tap the banner to zoom the globe to any metro and read its deals in place, your whole pipeline by region.',before:tReset},
     {sel:'.tabbar',t:'The rest, a tap away',d:'Day, Team, and Leads. The morning lives on Today; the depth is one tap down.',before:tReset},
     {sel:'.funnel',t:'A hundred become the few',d:'Every agent filtered by confidence, stakes, and whether it needs your voice, down to the few that reached you.',before:()=>go('orch')},
