@@ -1375,7 +1375,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
     <!-- spec popover -->
     <div class="spec-pop" id="spec-pop" role="dialog" aria-label="Microinteraction spec">
-      <button class="x" data-spec-close>✕</button>
+      <button class="x" data-spec-close aria-label="Close">✕</button>
       <div class="se" id="sp-eyebrow">◆ microinteraction</div>
       <h4 id="sp-title"></h4>
       <dl><dt>Trigger</dt><dd id="sp-trigger"></dd><dt>Says</dt><dd id="sp-says"></dd><dt>Why</dt><dd id="sp-why"></dd></dl>
@@ -1661,7 +1661,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   const host=$('#sheet-host'), scrim=$('#scrim');let openSheet=null;
   function buildSheet(id){const d=SHEETS[id];if(!d)return null;
     const el=document.createElement('div');el.className='sheet';el.id='sheet-'+id;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');
-    el.innerHTML=`<span class="grab"></span><div class="sheet-head"><div class="sh-meta"><span class="sh-ag"><span class="d" style="background:${d.agc||'var(--ink-subtle)'}"></span>${d.ag}</span><h2>${d.title}</h2></div><button class="x" data-close>✕</button></div><div class="sheet-body">${d.body}</div>`;
+    el.innerHTML=`<span class="grab"></span><div class="sheet-head"><div class="sh-meta"><span class="sh-ag"><span class="d" style="background:${d.agc||'var(--ink-subtle)'}"></span>${d.ag}</span><h2>${d.title}</h2></div><button class="x" data-close aria-label="Close">✕</button></div><div class="sheet-body">${d.body}</div>`;
     host.appendChild(el);return el;}
   function sheetOpen(id){let el=$('#sheet-'+id)||buildSheet(id);if(!el)return;
     if(openSheet&&openSheet!==el){openSheet.classList.remove('show','mounted');}
