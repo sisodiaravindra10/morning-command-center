@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-mode="signal" data-altitude="me" data-spec="off" data-morning="calm" data-screen="today">
+<html lang="en" data-mode="signal" data-altitude="me" data-spec="off" data-morning="calm" data-screen="today" data-theme="dark">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
@@ -40,6 +40,51 @@ ul{list-style:none}
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
   --serif:"Host Grotesk","Inter",system-ui,sans-serif;
 }
+/* ============================================================
+   LIGHT MODE  ·  a fresh emerald-on-white skin, toggled top-right.
+   The token overrides flip every var()-driven surface; the few
+   hardcoded dark backgrounds (cards, tour) are re-pointed at light
+   surfaces. The phone bezel, the Dynamic Island and the modal scrim
+   stay dark on purpose: a real phone, a real notch, a dimmed backdrop.
+   ============================================================ */
+html[data-theme="light"]{
+  --canvas:#EDF0EE; --p1:#FFFFFF; --p2:#F3F6F3; --p3:#E9EDEA; --p4:#E0E5E1;
+  --line:rgba(16,52,38,.13); --line-soft:rgba(16,52,38,.07);
+  --ink:#10201A; --ink-muted:#46554E; --ink-subtle:#76847D;
+  --paper:#FFFFFF; --paper-soft:#F3F6F3; --paper-line:rgba(16,52,38,.13);
+  --paper-ink:#10201A; --paper-body:#46554E; --paper-muted:#76847D;
+  --signal:#0E9E66; --signal-hi:#0A7C50; --signal-ink:#FFFFFF;
+  --signal-wash:rgba(14,158,102,.12); --signal-line:rgba(14,158,102,.30);
+  --good:#3E8E6E; --good-wash:rgba(62,142,110,.14); --good-line:rgba(62,142,110,.42);
+  --warn:#946312; --danger:#B0700F; --danger-wash:rgba(176,112,15,.13); --danger-line:rgba(176,112,15,.36);
+  --info:#0E9E66; --info-wash:rgba(14,158,102,.12);
+}
+html[data-theme="light"] body{background:radial-gradient(125% 80% at 50% -10%, #F6F8F6 0%, var(--canvas) 55%),var(--canvas)}
+html[data-theme="light"] .device,html[data-theme="light"] .app{background:var(--canvas)}
+html[data-theme="light"] .tcard,
+html[data-theme="light"] .card,
+html[data-theme="light"] .lead-banner,
+html[data-theme="light"] .legend{
+  background:var(--p1);
+  box-shadow:0 10px 26px -20px rgba(16,40,30,.30),inset 0 1px 0 rgba(255,255,255,.7);
+}
+html[data-theme="light"] .tour-cta,
+html[data-theme="light"] .tour-card{background:var(--p1);color:var(--ink)}
+html[data-theme="light"] .altitude{background:rgba(16,52,38,.05);border-color:rgba(16,52,38,.13)}
+html[data-theme="light"] .tabbar{background:rgba(255,255,255,.74);border-color:rgba(16,52,38,.12);border-top-color:rgba(16,52,38,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 18px 40px -16px rgba(16,40,30,.26),0 3px 10px -5px rgba(16,40,30,.16)}
+html[data-theme="light"] .tabbar::before{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 46%)}
+/* ---- top-right stage controls: theme toggle + guided-tour entry ---- */
+.stage-controls{position:fixed;top:18px;right:18px;display:flex;gap:8px;z-index:130}
+.sc-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:999px;font-family:var(--font);font-size:13px;font-weight:600;color:var(--ink);background:var(--p1);border:1px solid var(--line);cursor:pointer;transition:border-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out),color var(--dur-fast)}
+.sc-btn:hover{border-color:var(--signal);transform:translateY(-1px)}
+.sc-btn:active{transform:translateY(0)}
+.sc-btn svg{width:17px;height:17px;display:block}
+.sc-btn.sc-icon{width:38px;padding:0;justify-content:center}
+.sc-tour .tc-cta-dot{width:7px;height:7px;border-radius:50%;background:var(--signal);box-shadow:none;animation:none}
+#theme-toggle .ic-moon{display:none}
+html[data-theme="light"] #theme-toggle .ic-sun{display:none}
+html[data-theme="light"] #theme-toggle .ic-moon{display:block}
+@media (max-width:480px){.stage-controls{top:10px;right:10px}.sc-btn{height:36px}}
 html,body{height:100%}
 body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #17191F 0%, var(--canvas) 55%),var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:30px 16px 60px;gap:20px}
 
@@ -1352,7 +1397,13 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   </div>
 </div>
 
-<button class="tour-cta" id="tour-start"><span class="tc-cta-dot"></span>Take the tour</button>
+<div class="stage-controls">
+  <button class="sc-btn sc-icon" id="theme-toggle" aria-label="Switch to light mode" title="Light / dark mode">
+    <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M21.5 12h-2M4.5 12h-2M18.4 5.6l-1.4 1.4M7 17l-1.4 1.4M18.4 18.4 17 17M7 7 5.6 5.6"/></svg>
+    <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5Z"/></svg>
+  </button>
+  <button class="sc-btn sc-tour" id="tour-start" aria-label="Take the guided tour"><span class="tc-cta-dot"></span>Tour</button>
+</div>
 
 <script>
 (function(){
@@ -1566,7 +1617,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   {const _rb=$('#rv-back');if(_rb)_rb.addEventListener('click',closeRegion);}
 
   /* ---------- theme + spec ---------- */
-  {const _tm=$('#theme-seg');if(_tm)_tm.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.mode=b.dataset.mode;$$('#theme-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));});}
+  {const _tt=$('#theme-toggle');if(_tt)_tt.addEventListener('click',()=>{const nx=root.dataset.theme==='light'?'dark':'light';root.dataset.theme=nx;_tt.setAttribute('aria-label',nx==='light'?'Switch to dark mode':'Switch to light mode');});}
   {const _sp=$('#spec-seg');if(_sp)_sp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});}
 
   /* ---------- altitude ---------- */
