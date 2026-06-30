@@ -387,6 +387,11 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .blast .bt{font-size:13px;font-weight:500}
 .blast .bt span{display:block;font-size:11px;color:var(--ink-muted);margin-top:2px;font-weight:400}
 .resume-chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:none;color:var(--ink-muted);border:1px solid var(--line);border-radius:var(--r);padding:6px 10px;margin-top:14px}
+.pause-durlabel{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ink-subtle);margin:16px 0 8px}
+.pause-dur{display:flex;gap:7px}
+.pause-dur button{flex:1;font-family:var(--font);font-size:12.5px;font-weight:500;color:var(--ink-muted);background:var(--p2);border:1px solid var(--line);border-radius:var(--r);padding:9px 6px;cursor:pointer;transition:border-color var(--dur-fast),color var(--dur-fast),background var(--dur-fast)}
+.pause-dur button:hover{color:var(--ink)}
+.pause-dur button.on{color:var(--ink);border-color:var(--signal-line);background:var(--signal-wash)}
 
 /* day spine */
 .spine{position:relative;padding-left:30px;margin-top:4px}
@@ -1574,12 +1579,18 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Team report ready","sub":"PDF · this week · saved to Files"}'>Download PDF</button><button class="btn btn-ghost" data-toast='{"msg":"Scheduled","sub":"Every Monday 7 AM to your inbox"}'>Email it weekly</button></div>`},
 
     pause:{ag:'Orchestrator · all agents',title:'Pause all agents?',body:`
-      <p class="ctx" style="margin-bottom:14px">Here's exactly what goes quiet, and what stays on for safety.</p>
+      <p class="ctx" style="margin-bottom:13px">While paused, the agents stop acting for you and nothing new goes out in your name. Here is exactly what changes, and what stays on for safety.</p>
       <div><div class="blast"><span class="bn held">14</span><div class="bt">In-flight actions held<span>drafts, comp pulls, doc prep, frozen mid-step</span></div></div>
       <div class="blast"><span class="bn paused">3</span><div class="bt">Client-facing replies paused<span>nothing auto-sends to a client while paused</span></div></div>
       <div class="blast" style="border-bottom:0"><span class="bn safe">2</span><div class="bt">Showings still auto-confirm<span>safety-listed: confirmed viewings must not silently drop</span></div></div></div>
-      <div class="resume-chip">⟳ auto-resumes in 2h unless you extend</div>
-      <div class="actions" style="margin-top:14px"><button class="btn btn-danger btn-full" data-toast='{"msg":"All agents paused","sub":"14 held · 3 replies paused · resumes in 2h","undo":true}'>Pause everything</button><button class="btn btn-ghost" data-close>Keep running</button></div>`}
+      <div class="pause-durlabel">Pause for</div>
+      <div class="pause-dur" id="pause-dur" role="group" aria-label="How long to pause">
+        <button type="button" class="on" data-btn="Pause for 1 hour" data-note="&#10227; Resumes automatically in 1 hour, or turn them back on sooner" data-toast="14 held &middot; 3 replies paused &middot; resumes in 1 hour">1 hour</button>
+        <button type="button" data-btn="Pause until 5 PM" data-note="&#10227; Resumes automatically at 5 PM, or turn them back on sooner" data-toast="14 held &middot; 3 replies paused &middot; resumes at 5 PM">Until 5 PM</button>
+        <button type="button" data-btn="Pause until I resume" data-note="&#10227; Stays paused until you turn them back on" data-toast="14 held &middot; 3 replies paused &middot; paused until you resume">Until I resume</button>
+      </div>
+      <div class="resume-chip" id="pause-resume">&#10227; Resumes automatically in 1 hour, or turn them back on sooner</div>
+      <div class="actions" style="margin-top:14px"><button class="btn btn-danger btn-full" id="pause-go">Pause for 1 hour</button><button class="btn btn-ghost" data-close>Keep running</button></div>`}
   };
 
   /* mount + open sheets */
@@ -1772,6 +1783,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     const pin=e.target.closest('.spec-pin'); if(pin){e.stopPropagation();openSpec(pin.dataset.specId);return;}
     if(e.target.closest('[data-spec-close]')){closeSpec();return;}
     if(e.target.closest('[data-close]')||e.target===scrim){sheetClose();return;}
+    const pd=e.target.closest('#pause-dur button'); if(pd){$$('#pause-dur button').forEach(x=>x.classList.toggle('on',x===pd));const _rn=$('#pause-resume');if(_rn)_rn.textContent=pd.dataset.note;const _pg=$('#pause-go');if(_pg)_pg.textContent=pd.dataset.btn;return;}
+    const pgo=e.target.closest('#pause-go'); if(pgo){const _on=$('#pause-dur button.on');toast({msg:'All agents paused',sub:(_on?_on.dataset.toast:'14 held · 3 replies paused · resumes in 1 hour'),undo:true});return;}
     const rl=e.target.closest('.row-line'); if(rl){promote(rl.closest('.tcard'));return;}
     const dp=e.target.closest('[data-dispose]'); if(dp){openWork(dp);return;}
     const ra=e.target.closest('#recon-accept'); if(ra){runReconcile();return;}
