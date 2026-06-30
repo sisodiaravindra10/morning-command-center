@@ -93,8 +93,8 @@ body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #1
 /* ---- device ---- */
 .device{width:390px;height:844px;flex:0 0 auto;position:relative;background:var(--canvas);border-radius:46px;box-shadow:0 0 0 11px #1b1c20,0 0 0 13px #2a2c31,0 40px 90px -30px rgba(0,0,0,.9);overflow:hidden}
 .device::after{content:"";position:absolute;inset:0;border-radius:46px;pointer-events:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
-.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--canvas)}
-.statusbar{height:48px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-family:var(--mono);font-size:13px;font-weight:500;position:relative;z-index:5;background:transparent}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--canvas);padding-top:48px}
+.statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-family:var(--mono);font-size:13px;font-weight:500;position:absolute;top:0;left:0;right:0;z-index:110;background:transparent;pointer-events:none}
 .statusbar .right{display:flex;align-items:center;gap:6px}
 .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#000;border-radius:16px}
 .batt{width:24px;height:12px;border:1px solid var(--ink-muted);border-radius:3px;position:relative;display:inline-block}
@@ -667,7 +667,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .bl-bar:nth-child(6){animation-delay:.45s}
 @keyframes kReveal{from{transform:scaleY(1)}to{transform:scaleY(0)}}
 @media (prefers-reduced-motion:reduce){#boot-loader{display:none}}
-#onboarding{position:absolute;top:48px;left:0;right:0;bottom:0;z-index:90;background:var(--canvas);display:flex;flex-direction:column;overflow:hidden}
+#onboarding{position:absolute;top:0;left:0;right:0;bottom:0;z-index:90;background:var(--canvas);display:flex;flex-direction:column;overflow:hidden}
 #onboarding.gone{opacity:0;pointer-events:none;transition:opacity .5s var(--ease-out)}
 .ob-track{display:flex;flex:1;width:300%;height:100%;transition:transform var(--dur-slow) var(--ease-out);will-change:transform}
 #onboarding[data-ob="1"] .ob-track{transform:translateX(-33.3333%)}
