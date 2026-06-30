@@ -884,7 +884,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .rv-back svg{width:13px;height:13px}
 .rv-back:hover{border-color:var(--signal-line);color:var(--ink)}
 .rv-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:64px 18px 26px;-webkit-overflow-scrolling:touch}
-.rv-globe{width:160px;height:160px;margin:4px auto 16px;position:relative;opacity:0;border-radius:50%;transform-origin:center center;transition:transform .6s var(--ease-out)}
+.rv-globe{width:184px;height:184px;margin:2px auto 14px;position:relative;opacity:0;transform-origin:center center;transition:transform .6s var(--ease-out)}
 .regionview.show .rv-globe{animation:rvGlobeIn .62s var(--ease-out) .08s both}
 @keyframes rvGlobeIn{from{opacity:0}to{opacity:.92}}
 .rv-fb{position:absolute;inset:0}
@@ -923,11 +923,10 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 /* region zoom + inline detail (#73) */
 .rv-hint{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--ink-subtle);text-align:center;margin:0 0 10px}
 .regionview.zoomed .rv-hint{display:none}
-.rv-globe{overflow:hidden}
-.rv-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:50%}
-.rv-fb,.rv-canvas{transform:scale(1.08)}
-/* zoom the whole circle (mask + globe together) so it grows as one unit, never clips */
-.regionview.zoomed .rv-globe{transform:scale(1.2)}
+.rv-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* no hard circular frame: cobe fills its square buffer opaque, so feather the corners to transparent with a soft radial mask. The globe just floats, centered, no ring, no square. */
+.rv-fb,.rv-canvas{transform:scale(.96);-webkit-mask:radial-gradient(circle at 50% 50%,#000 52%,transparent 72%);mask:radial-gradient(circle at 50% 50%,#000 52%,transparent 72%)}
+.regionview.zoomed .rv-globe{transform:scale(1.22)}
 .rv-fb i{transition:transform .4s var(--ease-out),opacity .4s var(--ease-out)}
 .regionview.zoomed .rv-fb i{opacity:.22}
 .regionview.zoomed .rv-fb i.sel{opacity:1;transform:scale(1.5);box-shadow:0 0 0 4px var(--signal-wash)}
