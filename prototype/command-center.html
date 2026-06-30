@@ -419,6 +419,8 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .tick .prep{margin-top:8px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;font-size:12.5px;color:var(--ink-muted);line-height:1.5;cursor:pointer;transition:border-color var(--dur-fast)}
 .tick .prep:hover{border-color:var(--ink-subtle)}
 .tick .prep .pl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:none;color:var(--signal-hi);display:block;margin-bottom:5px}
+.tick .prep .prep-go{display:block;margin-top:8px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--ink-subtle);transition:color var(--dur-fast)}
+.tick .prep:hover .prep-go{color:var(--signal-hi)}
 .now-flag{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:none;color:var(--signal-ink);background:var(--signal);padding:2px 7px;border-radius:var(--r);margin-left:8px}
 
 /* team rows + region */
@@ -1232,13 +1234,13 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
         <div class="spine">
           <div class="tick past"><span class="node"></span><div class="tm">07:30 · done</div><div class="ev">School-run + inbox triage</div></div>
           <div class="tick now"><span class="node"></span><div class="tm">Now · 6:52<span class="now-flag">live</span></div><div class="ev">Morning command center</div>
-            <div class="prep" data-toast='{"msg":"4 items need you before 9","sub":"~11 min to clear at this altitude"}'><span class="pl">Scheduler agent</span>Clear 38-min window before your 9:00. Enough to clear the 4 and prep Bennett's close.</div></div>
+            <div class="prep" data-go="today"><span class="pl">Scheduler agent</span>Clear 38-min window before your 9:00. Enough to clear the 4 and prep Bennett's close.<span class="prep-go">open the command center ›</span></div></div>
           <div class="tick"><span class="node"></span><div class="tm">09:00</div><div class="ev">Call · Oak St counter-offer</div>
-            <div class="prep" data-toast='{"msg":"Oak St brief opened","sub":"Hold $612K · 3 objection-handlers ready"}'><span class="pl">Negotiator · brief ready</span>Their last 3 objections, your floor, and the comp that wins the call.</div></div>
+            <div class="prep" data-sheet="daycall"><span class="pl">Negotiator · brief ready</span>Their last 3 objections, your floor, and the comp that wins the call.<span class="prep-go">open the call brief ›</span></div></div>
           <div class="tick"><span class="node"></span><div class="tm">11:00</div><div class="ev">Showing · Lakeside</div>
-            <div class="prep" data-toast='{"msg":"Showing brief opened","sub":"Comps + objections + leave-behind"}'><span class="pl">Comps + Listing agent</span>Comps pulled, buyer must-haves matched to 3 rooms, leave-behind on your phone.</div></div>
+            <div class="prep" data-sheet="dayshow"><span class="pl">Comps + Listing agent</span>Comps pulled, buyer must-haves matched to 3 rooms, leave-behind on your phone.<span class="prep-go">open the showing brief ›</span></div></div>
           <div class="tick"><span class="node"></span><div class="tm">16:00</div><div class="ev">Closing · Bennett</div>
-            <div class="prep" data-toast='{"msg":"Closing paperwork ready","sub":"11 docs checked · ready to send"}'><span class="pl">Doc-prep · ready</span>Signing paperwork assembled and checked hours ago. Nothing to chase.</div></div>
+            <div class="prep" data-sheet="khanna"><span class="pl">Doc-prep · ready</span>Signing paperwork assembled and checked hours ago. Nothing to chase.<span class="prep-go">open the closing pack ›</span></div></div>
         </div>
       </section>
 
@@ -1666,6 +1668,31 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       </div>
       <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-sheet="pipe-${t.k}">Open ${t.n}’s pipeline</button>${sec}</div>`};
   });
+
+  /* day-brief sheets: each appointment on the Day timeline opens what the agents prepped for it */
+  SHEETS['daycall']={ag:'Negotiator agent · brief ready · 09:00',title:'Oak St counter, your 9:00 call',body:`
+    <div class="tm-rows">
+      <div class="tm-row"><span class="tm-rk">Your floor</span><span class="tm-rv">$612K, 30-day close</span></div>
+      <div class="tm-row"><span class="tm-rk">List / their offer</span><span class="tm-rv">$625K / $590K</span></div>
+      <div class="tm-row"><span class="tm-rk">Comp that wins</span><span class="tm-rv">Maple Ave, closed $618K, 3 weeks ago</span></div>
+    </div>
+    <div class="paper"><div class="pey">◆ their last 3 objections, with your answer</div>
+      <p><b>"It needs a new roof."</b> The inspection shows 6 to 8 years left. Offer a one-year warranty, not a price cut.</p>
+      <p><b>"We can wait for spring."</b> Two comparable listings just went pending. Spring brings more buyers, and more competition for them.</p>
+      <p><b>"$590K is our number."</b> Meet at $612K with the close-date they asked for. It costs you nothing and lands the deal.</p>
+    </div>
+    <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Brief sent to your phone","sub":"Talking points ready for the 9:00 call"}'>Send brief to my phone</button></div>`};
+
+  SHEETS['dayshow']={ag:'Comps + Listing agents · brief ready · 11:00',title:'Lakeside showing, your 11:00',body:`
+    <div class="tm-rows">
+      <div class="tm-row"><span class="tm-rk">Buyers</span><span class="tm-rv">The Ramirez family, pre-approved $700K</span></div>
+      <div class="tm-row"><span class="tm-rk">Must-haves</span><span class="tm-rv">Home office, big kitchen, top schools</span></div>
+      <div class="tm-row tm-row-now"><span class="tm-rk">Matched to 3 rooms</span><span class="tm-rv">The study off the entry, the open kitchen, and the school-zone map are set to lead with.</span></div>
+    </div>
+    <div class="paper"><div class="pey">◆ ready on your phone</div>
+      <p>Comps pulled for the three homes they shortlisted, a one-page leave-behind, and a financing note matched to their pre-approval.</p>
+    </div>
+    <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Leave-behind opened","sub":"One-pager ready to hand over or text"}'>Open the leave-behind</button></div>`};
 
   const host=$('#sheet-host'), scrim=$('#scrim');let openSheet=null;
   function buildSheet(id){const d=SHEETS[id];if(!d)return null;
