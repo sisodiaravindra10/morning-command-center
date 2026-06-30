@@ -2103,11 +2103,11 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     createGlobe(cv, {
       devicePixelRatio: 2, width: 600, height: 600,
-      phi: 4.2, theta: 0.26, dark: 0.5, diffuse: 1.6,
-      mapSamples: 17000, mapBrightness: 10,
-      baseColor: [0.1, 0.18, 0.14],
+      phi: 4.2, theta: 0.26, dark: 0.12, diffuse: 1.25,
+      mapSamples: 17000, mapBrightness: 8,
+      baseColor: [0.1, 0.17, 0.13],
       markerColor: [0.1, 0.85, 0.55],
-      glowColor: [0.1, 0.26, 0.19],
+      glowColor: [0.06, 0.16, 0.11],
       markers: [
         { location: [30.27, -97.74], size: 0.08 },
         { location: [29.42, -98.49], size: 0.06 },
@@ -2128,9 +2128,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       try{
         createGlobe(rcv, {
           devicePixelRatio: 2, width: 520, height: 520,
-          phi: rvPhi, theta: rvTheta, dark: 0.5, diffuse: 1.6,
-          mapSamples: 16000, mapBrightness: 10,
-          baseColor: [0.1,0.18,0.14], markerColor: [0.1,0.85,0.55], glowColor: [0.1,0.26,0.19],
+          phi: rvPhi, theta: rvTheta, dark: 0.12, diffuse: 1.25,
+          mapSamples: 16000, mapBrightness: 8,
+          baseColor: [0.1,0.17,0.13], markerColor: [0.1,0.85,0.55], glowColor: [0.06,0.16,0.11],
           markers: [
             { location: [30.27,-97.74], size: 0.11 },
             { location: [29.42,-98.49], size: 0.08 },
