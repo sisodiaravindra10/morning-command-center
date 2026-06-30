@@ -50,14 +50,14 @@ ul{list-style:none}
 html[data-theme="light"]{
   --canvas:#EDF0EE; --p1:#FFFFFF; --p2:#F3F6F3; --p3:#E9EDEA; --p4:#E0E5E1;
   --line:rgba(16,52,38,.13); --line-soft:rgba(16,52,38,.07);
-  --ink:#10201A; --ink-muted:#46554E; --ink-subtle:#76847D;
+  --ink:#10201A; --ink-muted:#46554E; --ink-subtle:#586860;
   --paper:#FFFFFF; --paper-soft:#F3F6F3; --paper-line:rgba(16,52,38,.13);
-  --paper-ink:#10201A; --paper-body:#46554E; --paper-muted:#76847D;
-  --signal:#0E9E66; --signal-hi:#0A7C50; --signal-ink:#FFFFFF;
-  --signal-wash:rgba(14,158,102,.12); --signal-line:rgba(14,158,102,.30);
-  --good:#3E8E6E; --good-wash:rgba(62,142,110,.14); --good-line:rgba(62,142,110,.42);
-  --warn:#946312; --danger:#B0700F; --danger-wash:rgba(176,112,15,.13); --danger-line:rgba(176,112,15,.36);
-  --info:#0E9E66; --info-wash:rgba(14,158,102,.12);
+  --paper-ink:#10201A; --paper-body:#46554E; --paper-muted:#586860;
+  --signal:#0A7C50; --signal-hi:#066B45; --signal-ink:#FFFFFF;
+  --signal-wash:rgba(10,124,80,.13); --signal-line:rgba(10,124,80,.32);
+  --good:#2E7D5C; --good-wash:rgba(46,125,92,.14); --good-line:rgba(46,125,92,.42);
+  --warn:#8A5A10; --danger:#8F5A0B; --danger-wash:rgba(143,90,11,.13); --danger-line:rgba(143,90,11,.4);
+  --info:#0A7C50; --info-wash:rgba(10,124,80,.13);
 }
 html[data-theme="light"] body{background:radial-gradient(125% 80% at 50% -10%, #F6F8F6 0%, var(--canvas) 55%),var(--canvas)}
 html[data-theme="light"] .device,html[data-theme="light"] .app{background:var(--canvas)}
@@ -73,6 +73,10 @@ html[data-theme="light"] .tour-card{background:var(--p1);color:var(--ink)}
 html[data-theme="light"] .altitude{background:rgba(16,52,38,.05);border-color:rgba(16,52,38,.13)}
 html[data-theme="light"] .tabbar{background:rgba(255,255,255,.74);border-color:rgba(16,52,38,.12);border-top-color:rgba(16,52,38,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 18px 40px -16px rgba(16,40,30,.26),0 3px 10px -5px rgba(16,40,30,.16)}
 html[data-theme="light"] .tabbar::before{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 46%)}
+html[data-theme="light"] .globe-fallback{background:radial-gradient(circle at 36% 30%, rgba(10,124,80,.10), transparent 50%),radial-gradient(circle at 50% 52%, #E6ECE8 0%, #D6DFD9 56%, #C7D2CB 79%);box-shadow:inset -14px -18px 46px rgba(16,40,30,.16),inset 10px 12px 34px rgba(255,255,255,.55),0 0 0 1px rgba(16,52,38,.05)}
+html[data-theme="light"] .globe-fallback::before,html[data-theme="light"] .globe-fallback::after{border-color:rgba(16,52,38,.12)}
+html[data-theme="light"] .globe-fallback i{background:var(--signal);box-shadow:none}
+html[data-theme="light"] .rv-fb i:nth-child(1){background:var(--danger)}
 /* ---- top-right stage controls: theme toggle + guided-tour entry ---- */
 .stage-controls{position:fixed;top:18px;right:18px;display:flex;gap:8px;z-index:130}
 .sc-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:999px;font-family:var(--font);font-size:13px;font-weight:600;color:var(--ink);background:var(--p1);border:1px solid var(--line);cursor:pointer;transition:border-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out),color var(--dur-fast)}
@@ -321,7 +325,7 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .recon .rname .rst{font-family:var(--mono);font-size:10.5px;color:var(--ink-muted);display:block;margin-top:2px}
 .recon .rstate{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:none;padding:2px 7px;border-radius:var(--r);border:1px solid}
 .recon .rstate.stale{color:var(--danger);border-color:var(--danger-line)}
-.recon .rstate.truth{color:var(--good);border-color:rgba(155,180,229,.4)}
+.recon .rstate.truth{color:var(--good);border-color:rgba(21,192,122,.4)}
 
 /* voice outbox bubbles */
 .vbubble{border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;margin-bottom:10px}
@@ -330,7 +334,7 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .vbubble .vto{font-size:12px;font-weight:600;flex:1}
 .vbubble .vwhy{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:2px 6px}
 .vbubble .vmsg{font-family:var(--serif);font-size:13.5px;color:var(--ink);line-height:1.45;background:var(--p2);border-radius:var(--r);padding:9px 11px}
-.vbubble.confirmed{border-color:rgba(155,180,229,.4)}
+.vbubble.confirmed{border-color:rgba(21,192,122,.4)}
 .vbubble .vfoot{display:flex;align-items:center;gap:8px;margin-top:9px}
 
 /* paper read band */
@@ -637,7 +641,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    reduced-motion and touch guarded, no side-stripes, no gradient text.
    ============================================================ */
 /* primary action: the one glowing affordance, a premium periwinkle lift */
-.btn-amber{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 20px -10px rgba(21,192,122,.55)}
+.btn-amber{box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .btn-amber:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 26px -10px rgba(21,192,122,.72)}
 /* a faint top sheen on the smaller surfaces, a step below the lifted cards
    so the hierarchy (focus card, then queue, then rows) still reads clearly */
@@ -802,7 +806,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 /* 44px minimum hit area on the onboarding + tour controls */
 .ob-skip,.ob-next,.tc-skip,.tc-prev,.tc-next{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 /* tour spotlight: a soft periwinkle halo so the eye lands on the highlight, not just a dim edge */
-.tour-spot{box-shadow:0 0 24px 3px rgba(21,192,122,.42),0 0 0 9999px rgba(7,8,12,.72)}
+.tour-spot{box-shadow:0 0 0 9999px rgba(7,8,12,.72)}
 /* tour card: a gentle rise as the tour opens (once, on start) */
 .tour.show .tour-card{animation:tcRise .42s var(--ease-out)}
 @keyframes tcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -1695,7 +1699,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   if(regionview)regionview.querySelectorAll('.rv-region').forEach(b=>b.addEventListener('click',()=>rvSelect(b)));
 
   /* ---------- theme + spec ---------- */
-  {const _tt=$('#theme-toggle');if(_tt)_tt.addEventListener('click',()=>{const nx=root.dataset.theme==='light'?'dark':'light';root.dataset.theme=nx;_tt.setAttribute('aria-label',nx==='light'?'Switch to dark mode':'Switch to light mode');});}
+  {const _tt=$('#theme-toggle');if(_tt)_tt.addEventListener('click',()=>{const nx=root.dataset.theme==='light'?'dark':'light';root.dataset.theme=nx;_tt.setAttribute('aria-label',nx==='light'?'Switch to dark mode':'Switch to light mode');
+    var _gc=$('#globe'),_gf=$('.globe-stage .globe-fallback');if(_gc&&_gf){if(nx==='light'){_gc.style.display='none';_gf.style.display='block';}else{_gc.style.display='';_gf.style.display='none';}}});}
   {const _sp=$('#spec-seg');if(_sp)_sp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});}
 
   /* ---------- altitude ---------- */
@@ -1949,9 +1954,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       devicePixelRatio: 2, width: 600, height: 600,
       phi: 4.2, theta: 0.26, dark: 1, diffuse: 1.2,
       mapSamples: 17000, mapBrightness: 7.2,
-      baseColor: [0.17, 0.19, 0.24],
-      markerColor: [0.95, 0.97, 1.0],
-      glowColor: [0.55, 0.58, 0.66],
+      baseColor: [0.07, 0.13, 0.10],
+      markerColor: [0.08, 0.75, 0.48],
+      glowColor: [0.06, 0.13, 0.10],
       markers: [
         { location: [30.27, -97.74], size: 0.08 },
         { location: [29.42, -98.49], size: 0.06 },
