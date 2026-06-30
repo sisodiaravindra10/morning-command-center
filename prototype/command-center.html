@@ -1164,7 +1164,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
             <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Response-watch agent</div>
             <h3>A hot lead has waited <span style="color:var(--danger)">3h 12m</span> on Marcus.</h3>
             <p class="ctx">ICP 91% · $720K North Hills. Marcus is in a showing. Reassign or ping him?</p>
-            <div class="actions"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Sofia","sub":"Marcus notified · context handed over","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>
+            <div class="actions"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Priya","sub":"She replies fastest and is clear today · Marcus notified","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>
           </article>
 
           <article class="card tappable" data-sheet="roundrobin" style="position:relative">
@@ -1187,7 +1187,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
           </article>
 
           <!-- two-altitude: handling collapsed -->
-          <div class="handling" data-toast='{"msg":"Elena is handling 4 items","sub":"All within her band · nothing needs you"}'>
+          <div class="handling" data-sheet="tm-elena">
             <span class="hpic av-elena">E</span><span class="ht"><b>Elena</b> is handling 4, all within her band</span><span class="hgo">peek</span>
           </div>
 
@@ -1200,8 +1200,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
           <div class="section-label" style="margin-top:4px">By region <span class="mini act" data-go="team">full team →</span></div>
           <div class="region-rollup">
-            <div class="rrow"><span class="rn">North Hills</span><span class="rbar"><i style="width:18%;background:var(--danger)"></i><i style="width:82%;background:var(--good)"></i></span><span class="rstat">9 · 1 risk</span></div>
-            <div class="rrow"><span class="rn">Westlake</span><span class="rbar"><i style="width:40%;background:var(--signal)"></i><i style="width:60%;background:var(--good)"></i></span><span class="rstat">6 · 2 watch</span></div>
+            <div class="rrow"><span class="rn">North Hills</span><span class="rbar"><i style="width:14%;background:var(--danger)"></i><i style="width:86%;background:var(--good)"></i></span><span class="rstat">7 · 1 risk</span></div>
+            <div class="rrow"><span class="rn">Westlake</span><span class="rbar"><i style="width:40%;background:var(--signal)"></i><i style="width:60%;background:var(--good)"></i></span><span class="rstat">5 · 2 watch</span></div>
             <div class="rrow"><span class="rn">Downtown</span><span class="rbar"><i style="width:100%;background:var(--good)"></i></span><span class="rstat">4 · clear</span></div>
           </div>
           <button class="btn btn-ghost btn-full" data-sheet="report" style="margin-top:2px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg> Download team report</button>
@@ -1582,6 +1582,39 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       </div>
       <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Team report ready","sub":"PDF · this week · saved to Files"}'>Download PDF</button><button class="btn btn-ghost" data-toast='{"msg":"Scheduled","sub":"Every Monday 7 AM to your inbox"}'>Email it weekly</button></div>`},
 
+    'pipe-marcus':{ag:'Marcus · in a showing till 10:30',agc:'var(--danger)',title:'Marcus, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">Two open leads and a showing this morning. One thing is hot.</p>
+      <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d risk"></span><span><span class="t">A hot lead has waited 3h 12m, no reply.</span><span class="m">$720K · North Hills · ICP 91 · this is the SLA breach</span></span></div>
+      <div class="rv-dt-row"><span class="d watch"></span><span><span class="t">21 Marsh Bay, the buyer is hesitating.</span><span class="m">$540K · a follow-up is drafted, awaiting his nod</span></span></div>
+      <div class="rv-dt-row"><span class="d clear"></span><span><span class="t">Two more, quietly on track.</span><span class="m">agents covering the routine</span></span></div>
+      <div class="actions" style="margin-top:14px"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Priya","sub":"She replies fastest and is clear today · Marcus notified","undo":true}'>Reassign the hot lead</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>`},
+    'pipe-sofia':{ag:'Sofia · out till Monday',agc:'var(--good)',title:'Sofia, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">Out till Monday. Her five deals are auto-covered, nothing is dropping.</p>
+      <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d clear"></span><span><span class="t">5 deals, all auto-covered.</span><span class="m">cover-for-me active · agents holding the line</span></span></div>
+      <div class="rv-dt-row"><span class="d clear"></span><span><span class="t">Replies route to Priya while she is out.</span><span class="m">nothing needs you</span></span></div>`},
+    'pipe-jenna':{ag:'Team-coach agent · 06:20',agc:'var(--warn)',title:'Jenna, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">Healthy overall, but one lead is going cold and a nudge from you would help.</p>
+      <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d watch"></span><span><span class="t">The Lawson lead has gone quiet, 6 days.</span><span class="m">a supportive note is drafted in your voice</span></span></div>
+      <div class="rv-dt-row"><span class="d clear"></span><span><span class="t">The rest are on track.</span><span class="m">no action needed</span></span></div>
+      <div class="actions" style="margin-top:14px"><button class="btn btn-amber btn-full" data-sheet="coaching">Coach Jenna</button></div>`},
+    'pipe-priya':{ag:'Priya · replies fastest',agc:'var(--good)',title:'Priya, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">Three deals, all healthy. She has room, the natural place to route overflow.</p>
+      <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d clear"></span><span><span class="t">3 deals, all healthy.</span><span class="m">fastest first-response on the team</span></span></div>`},
+    'pipe-elena':{ag:'Elena · within her band',agc:'var(--good)',title:'Elena, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">Four deals, all within her band, one closing Monday. Nothing needs you.</p>
+      <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d clear"></span><span><span class="t">Closing Monday, paperwork ready.</span><span class="m">doc-prep done · e-sign queued</span></span></div>
+      <div class="rv-dt-row"><span class="d clear"></span><span><span class="t">Three more on track.</span><span class="m">agents covering the routine</span></span></div>`},
+    'pipe-diego':{ag:'Diego · new on the team',agc:'var(--signal)',title:'Diego, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">New this month. Two deals, with agents on full assist while he ramps.</p>
+      <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d clear"></span><span><span class="t">2 deals, agents on full assist.</span><span class="m">drafts reviewed before they send</span></span></div>
+      <div class="rv-dt-row"><span class="d watch"></span><span><span class="t">Worth a check-in this week.</span><span class="m">ramping, no fires</span></span></div>`},
+    leadreassign:{ag:'Lead-routing agent',title:'Reassign lead',body:`
+      <p class="ctx" id="lr-ctx" style="margin-bottom:13px">Pick who picks it up.</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="agent-row" data-assign="Priya" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-priya">P</span><div class="meta"><div class="nm">Priya</div><div class="ml">3 deals · replies fastest</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
+        <button class="agent-row" data-assign="Elena" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-elena">E</span><div class="meta"><div class="nm">Elena</div><div class="ml">4 deals · within her band</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
+        <button class="agent-row" data-assign="Diego" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-diego">D</span><div class="meta"><div class="nm">Diego</div><div class="ml">new · 2 deals · has room</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
+      </div>`},
     pause:{ag:'Orchestrator · all agents',title:'Pause all agents?',body:`
       <p class="ctx" style="margin-bottom:13px">While paused, the agents stop acting for you and nothing new goes out in your name. Here is exactly what changes, and what stays on for safety.</p>
       <div><div class="blast"><span class="bn held">14</span><div class="bt">In-flight actions held<span>drafts, comp pulls, doc prep, frozen mid-step</span></div></div>
@@ -1617,7 +1650,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
         <div class="tm-row"><span class="tm-rk">Open deals</span><span class="tm-rv">${t.deals}</span></div>
         <div class="tm-row tm-row-now"><span class="tm-rk">Right now</span><span class="tm-rv">${t.line}</span></div>
       </div>
-      <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-toast='{"msg":"Opened ${t.n}’s pipeline","sub":"${t.deals} deals · full view"}'>Open ${t.n}’s pipeline</button>${sec}</div>`};
+      <div class="actions" style="margin-top:0"><button class="btn btn-amber btn-full" data-sheet="pipe-${t.k}">Open ${t.n}’s pipeline</button>${sec}</div>`};
   });
 
   const host=$('#sheet-host'), scrim=$('#scrim');let openSheet=null;
@@ -1783,11 +1816,13 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
 
   /* ---------- global delegated clicks ---------- */
+  var _lrName='';
   document.addEventListener('click',e=>{
     // specific inner controls FIRST (they live inside data-sheet cards, must win over card-open)
     const pin=e.target.closest('.spec-pin'); if(pin){e.stopPropagation();openSpec(pin.dataset.specId);return;}
     if(e.target.closest('[data-spec-close]')){closeSpec();return;}
     if(e.target.closest('[data-close]')||e.target===scrim){sheetClose();return;}
+    const _as=e.target.closest('[data-assign]'); if(_as){toast({msg:'Reassigned '+(_lrName||'the lead')+' to '+_as.dataset.assign,sub:_as.dataset.assign+' notified, context handed over',undo:true});return;}
     const pd=e.target.closest('#pause-dur button'); if(pd){$$('#pause-dur button').forEach(x=>x.classList.toggle('on',x===pd));const _rn=$('#pause-resume');if(_rn)_rn.textContent=pd.dataset.note;const _pg=$('#pause-go');if(_pg)_pg.textContent=pd.dataset.btn;return;}
     const pgo=e.target.closest('#pause-go'); if(pgo){const _on=$('#pause-dur button.on');toast({msg:'All agents paused',sub:(_on?_on.dataset.toast:'14 held · 3 replies paused · resumes in 1 hour'),undo:true});return;}
     const rl=e.target.closest('.row-line'); if(rl){promote(rl.closest('.tcard'));return;}
@@ -1843,7 +1878,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   function refreshBulk(){const n=$$('.lead.sel').length;bc.textContent=n;bulk.classList.toggle('show',n>0);}
   $$('[data-lead]').forEach(l=>{let timer=null;const toggle=()=>{l.classList.toggle('sel');refreshBulk();};
     l.addEventListener('pointerdown',()=>{timer=setTimeout(()=>{toggle();timer=null;},360);});
-    l.addEventListener('pointerup',()=>{if(timer){clearTimeout(timer);timer=null;if($$('.lead.sel').length>0)toggle();else toast({msg:'Opened '+l.querySelector('.ln').textContent,sub:'Long-press to select for bulk move'});}});
+    l.addEventListener('pointerup',()=>{if(timer){clearTimeout(timer);timer=null;if($$('.lead.sel').length>0)toggle();else{_lrName=l.querySelector('.ln').textContent;sheetOpen('leadreassign');var _c=$('#lr-ctx');if(_c)_c.textContent='Reassign '+_lrName+' to:';}}});
     l.addEventListener('pointerleave',()=>{if(timer){clearTimeout(timer);timer=null;}});});
 
   /* ---------- spec popover ---------- */

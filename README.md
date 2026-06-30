@@ -15,7 +15,7 @@ Open `prototype/command-center.html` in any modern browser (best on a laptop; it
 2. The cards rise in. Anchored at the top is the trust ledger, which reads "47 handled overnight · 2 need you · 1 corrected." That is the first beat: proof the night was handled before anything asks for you.
 3. Below it, the triage. One focus card at a time, the rest collapsed, ranked by what is at stake across your own deals and your team's.
 4. The few things that need judgment, in order:
-   - **A deal-risk nudge on one of your own deals:** the Crestview deal has gone quiet four days. Leo is "62% sure" a soft nudge helps and offers two reads, send it or hold.
+   - **A deal-risk nudge on one of your own deals:** the Crestview deal has gone quiet four days. Leo is "leaning yes" on a soft nudge, in plain words rather than a fake percentage, and offers two reads, send it or hold.
    - **A voice-required outbox:** three messages drafted but needing your actual voice, including Leo's counter on Oak St ("hold at $612K with a 30-day close") that you review before it sends. Nothing leaves until you tap "Send as me."
    - **Your team's risk, ranked alongside:** an SLA breach (a hot lead has waited 3h 12m on Marcus, in a showing) with reassign or round-robin routing in one tap.
    - **The Fair-Housing tripwire:** Leo almost sent an outreach line that reads as steering, held it, and rewrote it. The responsible-AI moment, surfaced as its own card.
