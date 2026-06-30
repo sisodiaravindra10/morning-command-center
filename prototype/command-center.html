@@ -886,8 +886,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .rv-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:64px 18px 26px;-webkit-overflow-scrolling:touch}
 .rv-globe{width:160px;height:160px;margin:4px auto 16px;position:relative;opacity:0;border-radius:50%}
 .regionview.show .rv-globe{animation:rvGlobeIn .62s var(--ease-out) .08s both}
-@keyframes rvGlobeIn{from{opacity:0;transform:scale(.55)}to{opacity:.92;transform:none}}
-@keyframes globeFlip{from{transform:translate(var(--fx,0),var(--fy,0)) scale(var(--fs,1));opacity:.82}to{transform:none;opacity:.92}}
+@keyframes rvGlobeIn{from{opacity:0;transform:scale(.62)}to{opacity:.92;transform:none}}
 .rv-fb{position:absolute;inset:0}
 .rv-fb i{width:5px;height:5px}
 .rv-fb i:nth-child(1){top:30%;left:38%;background:var(--danger);box-shadow:0 0 9px var(--danger)}
@@ -926,8 +925,8 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .regionview.zoomed .rv-hint{display:none}
 .rv-globe{overflow:hidden}
 .rv-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:50%}
-.rv-fb,.rv-canvas{transition:transform .6s var(--ease-out)}
-.regionview.zoomed .rv-fb,.regionview.zoomed .rv-canvas{transform:scale(1.95)}
+.rv-fb,.rv-canvas{transform:scale(1.58);transition:transform .6s var(--ease-out)}
+.regionview.zoomed .rv-fb,.regionview.zoomed .rv-canvas{transform:scale(2.05)}
 .rv-fb i{transition:transform .4s var(--ease-out),opacity .4s var(--ease-out)}
 .regionview.zoomed .rv-fb i{opacity:.22}
 .regionview.zoomed .rv-fb i.sel{opacity:1;transform:scale(1.5);box-shadow:0 0 0 4px var(--signal-wash)}
@@ -938,10 +937,14 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 @keyframes rvSelIn{0%{transform:scale(.96);box-shadow:0 0 0 0 var(--signal-wash)}55%{box-shadow:0 0 0 5px var(--signal-wash)}100%{transform:none;box-shadow:0 0 0 1px var(--signal-line)}}
 #rv-detail{display:none}
 .regionview.zoomed #rv-detail{display:block;animation:rvRowIn .42s var(--ease-out) both}
-.rv-dt-back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--signal-hi);font-family:var(--mono);font-size:11px;letter-spacing:.04em;cursor:pointer;padding:4px 0 10px}
-.rv-dt-h{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
-.rv-dt-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--ink-subtle);margin:7px 0 16px}
+.rv-dt-back{display:none}
+.regionview.zoomed .rv-dt-back{display:inline-flex;align-items:center;gap:5px;background:none;border:0;color:var(--ink-muted);font-family:var(--mono);font-size:11px;letter-spacing:.04em;cursor:pointer;padding:2px 0 13px;transition:color var(--dur-fast)}
+.regionview.zoomed .rv-dt-back:hover{color:var(--ink)}
+.rv-dt-back .chev{color:var(--signal-hi);font-size:14px;line-height:1}
+.regionview.zoomed .rv-region.sel{margin-bottom:15px}
+.rv-dt-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-subtle);margin:0 0 7px}
 .rv-dt-row{display:flex;gap:13px;align-items:flex-start;padding:18px 0;border-top:1px solid var(--line)}
+.rv-dt-label + .rv-dt-row{border-top:0;padding-top:0}
 .rv-dt-row .d{flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:6px}
 .rv-dt-row .d.risk{background:var(--danger)}.rv-dt-row .d.watch{background:var(--warn)}.rv-dt-row .d.clear{background:var(--good)}
 .rv-dt-row .t{font-size:13.5px;color:var(--ink);line-height:1.5}
@@ -1358,6 +1361,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
         <div class="rv-big">$14.2M</div>
         <div class="rv-sub">22 live deals across 6 metros · 3 need a look</div>
         <div class="rv-hint">Tap a region to zoom in</div>
+        <button class="rv-dt-back" id="rv-dt-back" type="button" aria-label="Back to all regions"><span class="chev" aria-hidden="true">‹</span> all regions</button>
         <div class="rv-regions">
           <button class="rv-region" data-region="northhills" data-origin="38% 30%" data-dot="1"><span class="rv-dot risk"></span><span class="rv-rn">North Hills<span class="rv-rm">7 live · $4.9M</span></span><span class="rv-rtag risk">1 risk</span></button>
           <button class="rv-region" data-region="westlake" data-origin="28% 52%" data-dot="2"><span class="rv-dot watch"></span><span class="rv-rn">Westlake<span class="rv-rm">5 live · $3.2M</span></span><span class="rv-rtag watch">2 watch</span></button>
@@ -1776,21 +1780,10 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   /* #11 region / map view, opened from the globe banner */
   const regionview=$('#regionview');
   function openRegion(){if(typeof sheetClose==='function')sheetClose();if(!regionview)return;if(window.rvInitGlobe)window.rvInitGlobe();
-    var src=$('#globe-banner .globe-stage'),rvg=regionview.querySelector('.rv-globe');
-    regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');
-    /* #48: the region globe flies in from the banner globe's position, one continuous globe */
-    if(src&&rvg&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
-      rvg.style.animation='none';rvg.style.opacity='.92';void rvg.offsetWidth; /* kill the base entrance so T measures the natural size */
-      var B=src.getBoundingClientRect(),T=rvg.getBoundingClientRect();
-      if(T.width){
-        var dx=(B.left+B.width/2)-(T.left+T.width/2),dy=(B.top+B.height/2)-(T.top+T.height/2),sc=Math.max(.25,B.width/T.width);
-        rvg.style.setProperty('--fx',dx+'px');rvg.style.setProperty('--fy',dy+'px');rvg.style.setProperty('--fs',sc);
-        rvg.style.transformOrigin='center center';
-        rvg.style.animation='globeFlip .64s var(--ease-out) forwards';
-        /* guarantee the globe lands correct even if the animation never advances */
-        setTimeout(function(){rvg.style.animation='none';rvg.style.transform='none';rvg.style.opacity='.92';},720);
-      }
-    }}
+    /* clear any residual inline transform so the centered CSS scale-in (rvGlobeIn) runs clean and the globe lands dead-centre */
+    var rvg=regionview.querySelector('.rv-globe');
+    if(rvg){rvg.style.animation='';rvg.style.transform='';rvg.style.opacity='';rvg.style.transformOrigin='';}
+    regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');}
   function closeRegion(){if(!regionview)return;
     regionview.classList.remove('show','zoomed');regionview.setAttribute('aria-hidden','true');
     regionview.querySelectorAll('.rv-fb i.sel').forEach(function(d){d.classList.remove('sel');});
@@ -1825,12 +1818,13 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     if(rvFb)rvFb.style.transformOrigin=btn.dataset.origin;
     rvDots.forEach((d,i)=>d.classList.toggle('sel',String(i+1)===btn.dataset.dot));
     regionview.querySelectorAll('.rv-region').forEach(function(b){b.classList.toggle('sel',b===btn);});
-    rvDetail.innerHTML='<button class="rv-dt-back" id="rv-dt-back">‹ all regions</button><div class="rv-dt-h">'+r.name+'</div><div class="rv-dt-sub">'+r.sub+'</div>'+
+    const rvNeeds=r.rows.some(x=>x.s==='risk'||x.s==='watch');
+    rvDetail.innerHTML='<div class="rv-dt-label">'+(rvNeeds?'What needs you':'All quiet here')+'</div>'+
       r.rows.map(x=>'<div class="rv-dt-row"><span class="d '+x.s+'"></span><span><span class="t">'+x.t+'</span><span class="m">'+x.m+'</span></span></div>').join('');
     regionview.classList.add('zoomed');
-    if(window.rvGlobeFocus)window.rvGlobeFocus();
-    const bk=$('#rv-dt-back');if(bk)bk.addEventListener('click',rvUnzoom);}
-  if(regionview)regionview.querySelectorAll('.rv-region').forEach(b=>b.addEventListener('click',()=>rvSelect(b)));
+    if(window.rvGlobeFocus)window.rvGlobeFocus();}
+  if(regionview){regionview.querySelectorAll('.rv-region').forEach(b=>b.addEventListener('click',()=>rvSelect(b)));
+    const _bk=$('#rv-dt-back');if(_bk)_bk.addEventListener('click',rvUnzoom);}
 
   /* ---------- theme + spec ---------- */
   $$('.tabbar .tab').forEach(function(b){b.setAttribute('role','tab');});
@@ -2130,11 +2124,11 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     createGlobe(cv, {
       devicePixelRatio: 2, width: 600, height: 600,
-      phi: 4.2, theta: 0.26, dark: 0.06, diffuse: 0.5,
-      mapSamples: 17000, mapBrightness: 7.5,
-      baseColor: [0.07, 0.24, 0.16],
-      markerColor: [0.16, 0.95, 0.62],
-      glowColor: [0.13, 0.42, 0.28],
+      phi: 4.2, theta: 0.26, dark: 0, diffuse: 0.32,
+      mapSamples: 17000, mapBrightness: 6,
+      baseColor: [0.07, 0.18, 0.155],
+      markerColor: [0.18, 0.72, 0.52],
+      glowColor: [0.12, 0.32, 0.25],
       markers: [
         { location: [30.27, -97.74], size: 0.08 },
         { location: [29.42, -98.49], size: 0.06 },
@@ -2155,9 +2149,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       try{
         createGlobe(rcv, {
           devicePixelRatio: 2, width: 520, height: 520,
-          phi: rvPhi, theta: rvTheta, dark: 0.06, diffuse: 0.5,
-          mapSamples: 16000, mapBrightness: 7.5,
-          baseColor: [0.07,0.24,0.16], markerColor: [0.16,0.95,0.62], glowColor: [0.13,0.42,0.28],
+          phi: rvPhi, theta: rvTheta, dark: 0, diffuse: 0.32,
+          mapSamples: 16000, mapBrightness: 6,
+          baseColor: [0.07,0.18,0.155], markerColor: [0.18,0.72,0.52], glowColor: [0.12,0.32,0.25],
           markers: [
             { location: [30.27,-97.74], size: 0.11 },
             { location: [29.42,-98.49], size: 0.08 },
