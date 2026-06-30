@@ -78,25 +78,19 @@ html[data-theme="light"] .globe-fallback::before,html[data-theme="light"] .globe
 html[data-theme="light"] .globe-fallback i{background:var(--signal);box-shadow:0 0 8px rgba(10,124,80,.45)}
 html[data-theme="light"] .rv-fb i:nth-child(1){background:var(--danger)}
 /* light mode, Today only: an emerald hero (header + globe banner) so the light triage sheet pops as it rises over it. White content on the green; other tabs stay clean light. */
-/* deep emerald: white text clears WCAG AAA (>=7:1 even at the lightest top of the gradient; hierarchy comes from size/weight, not opacity) */
-html[data-theme="light"][data-screen="today"]:not([data-region]) .app{background:linear-gradient(168deg,#075c3b 0%,#06502f 55%,#05452b 100%)}
+html[data-theme="light"][data-screen="today"]:not([data-region]) .app{background:linear-gradient(168deg,#12895c 0%,#0b7149 60%,#0a6a45 100%)}
 html[data-theme="light"][data-screen="today"] .greet{color:#fff}
-html[data-theme="light"][data-screen="today"] .greet .sub{color:#fff}
+html[data-theme="light"][data-screen="today"] .greet .sub{color:rgba(255,255,255,.72)}
 html[data-theme="light"][data-screen="today"] .appbar-tools .iconbtn{color:#fff}
-html[data-theme="light"][data-screen="today"] .iconbtn .bdg{background:#fff;color:#064a30}
+html[data-theme="light"][data-screen="today"] .iconbtn .bdg{background:#fff;color:#0a7048}
 html[data-theme="light"][data-screen="today"] .avatar{border-color:rgba(255,255,255,.5)}
 html[data-theme="light"][data-screen="today"] .lkpi-need{background:#fff;border-color:rgba(143,90,11,.5)}
-/* KPI cards sit on white, but darken their text to AAA (>=7:1 on white) too */
-html[data-theme="light"][data-screen="today"] .lkpi span{color:var(--ink-muted)}
-html[data-theme="light"][data-screen="today"] .lkpi-good b{color:#14613f}
-html[data-theme="light"][data-screen="today"] .lkpi-ai b{color:#055a3a}
-html[data-theme="light"][data-screen="today"] .lkpi-need b,html[data-theme="light"][data-screen="today"] .lkpi-need span{color:#6e4708}
 html[data-theme="light"][data-screen="today"] .cover-chip{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3)}
 html[data-theme="light"][data-screen="today"] .cover-chip,html[data-theme="light"][data-screen="today"] .cover-chip b,html[data-theme="light"][data-screen="today"] .cover-chip .cgo{color:#fff}
-html[data-theme="light"][data-screen="today"] .bd-leo{color:#fff}
+html[data-theme="light"][data-screen="today"] .bd-leo{color:rgba(255,255,255,.85)}
 html[data-theme="light"][data-screen="today"] .bd-orb{background:#fff;box-shadow:0 0 9px rgba(255,255,255,.6)}
 html[data-theme="light"][data-screen="today"] .bd-big{color:#fff}
-html[data-theme="light"][data-screen="today"] .bd-line{color:#fff}
+html[data-theme="light"][data-screen="today"] .bd-line{color:rgba(255,255,255,.85)}
 html[data-theme="light"][data-screen="today"] .bd-explore{color:#fff}
 html[data-theme="light"] .today-sheet{box-shadow:0 -14px 30px -16px rgba(8,40,28,.42)}
 /* a soft white globe reads on the emerald (the pale fallback would vanish) */
