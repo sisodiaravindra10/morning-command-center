@@ -77,7 +77,8 @@ Git), so Vercel's own infra deploys the latest commit. Do not burn cycles retryi
 
 # ACTIVE REDESIGN BACKLOG (from 2026-06-30)
 
-## PROGRESS (updated 2026-06-30 — latest commit `d4abfb8`, all pushed)
+## PROGRESS (updated 2026-06-30, 6:15am auto-continue — latest commit `3736766`, all pushed)
+> This fire shipped the full **priority-1 trio**: light mode (`data-theme`) + top-right theme/tour toggles (#57) and the transparent status bar over full-bleed onboarding (#65). Both verified in the Claude preview, committed + pushed. **Next priority = the Today-only pivot (#71)** — large + strategic (relabel Day/Team/Leads tabs as "in progress", rebuild the landing as a design-thinking journey with a phone mockup, convert docs to readable HTML, re-record videos). Recommend doing that one WITH the user / in a focused session, not unattended, since it reshapes the landing + docs + films. Vercel deploy still blocked account-side (CLI builds return "Not authorized"); GitHub push is the reliable path.
 
 DONE + committed + verified in preview:
 - **#1 periwinkle monotony fixed.** `--good` is now sage-teal `#8FBAA4` (was near-periwinkle), so every good/done/clear/healthy state differs from the AI accent. The trust KPI cards differentiate by meaning: handled=teal, need-you=warm-sand (tinted, pops), corrected=periwinkle. The "Needs you" chip (`.chip.needs`) is now warm sand.
