@@ -2076,10 +2076,14 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   ];
   let tIdx=0;
   function tPosition(s){const dr=device.getBoundingClientRect();const el=s.sel?$(s.sel):null;
-    if(el){const r=el.getBoundingClientRect();tspot.style.opacity='1';
-      tspot.style.left=(r.left-dr.left-6)+'px';tspot.style.top=(r.top-dr.top-6)+'px';
-      tspot.style.width=(r.width+12)+'px';tspot.style.height=(r.height+12)+'px';
-      tcard.classList.toggle('at-top',(r.top-dr.top+r.height/2)>dr.height*0.52);
+    if(el){
+      /* scroll the target into the device viewport first, so a below-the-fold element is never spotlit off-screen */
+      var _sc=$('#scroll');if(_sc&&_sc.contains(el)){var er=el.getBoundingClientRect(),scr=_sc.getBoundingClientRect();if(er.top<scr.top+10||er.bottom>scr.bottom-10){_sc.scrollTop+=(er.top-scr.top)-scr.height*0.32;}}
+      /* the device is scaled to fit the viewport (fitDevice); the spotlight lives inside that scaled box, so convert the on-screen rect back into unscaled device-local coordinates */
+      const sc=(dr.width/device.offsetWidth)||1;const r=el.getBoundingClientRect();tspot.style.opacity='1';
+      tspot.style.left=((r.left-dr.left)/sc-6)+'px';tspot.style.top=((r.top-dr.top)/sc-6)+'px';
+      tspot.style.width=(r.width/sc+12)+'px';tspot.style.height=(r.height/sc+12)+'px';
+      tcard.classList.toggle('at-top',((r.top-dr.top)/sc+(r.height/sc)/2)>device.offsetHeight*0.52);
     }else{tspot.style.opacity='0';tspot.style.width='0';tspot.style.height='0';tcard.classList.remove('at-top');}}
   function tStep(i){tIdx=(i+TOUR.length)%TOUR.length;const s=TOUR[tIdx];if(s.before)s.before();
     $('#tc-step').textContent='Step '+(tIdx+1)+' of '+TOUR.length;
