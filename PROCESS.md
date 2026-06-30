@@ -30,7 +30,7 @@ A product manager's feedback was blunt: dark reads as AI slop. So I took the hon
 
 ## Phase 5: converging on a disciplined dark
 
-With that lesson in hand I brought the work back to dark, but earned rather than defaulted: a chosen periwinkle-on-near-black palette instead of a generic glow, no glow at all, a warm sand reserved strictly for the things that need a human, and later a distinct sage-teal for what is good and handled so the palette differentiates by meaning. Every hairline, gradient, and type weight has to justify itself because the glow that normally hides flaws is banned. Done this way the screen feels like a quiet, expensive instrument you open before dawn, which is the mood a morning command center wants. This is the call the whole surface rests on, and it is documented as the headline dead end in doc 06 precisely because the failure is worth diagnosing, not just reversing.
+With that lesson in hand I brought the work back to dark, but earned rather than defaulted: a chosen emerald-on-near-black palette instead of a generic glow, no glow at all, a warm sand reserved strictly for the things that need a human, and later a distinct a sage green for what is good and handled so the palette differentiates by meaning. Every hairline, gradient, and type weight has to justify itself because the glow that normally hides flaws is banned. Done this way the screen feels like a quiet, expensive instrument you open before dawn, which is the mood a morning command center wants. This is the call the whole surface rests on, and it is documented as the headline dead end in doc 06 precisely because the failure is worth diagnosing, not just reversing.
 
 ## Phase 6: building the prototype
 
@@ -46,9 +46,9 @@ An earlier reskin had left the prototype carrying placeholder names and another 
 
 The current stretch is a senior craft pass on the prototype, taken screen by screen. Done and verified so far: a two-second boot loader built as a curtain-lift reveal rather than a spinner; an image-led three-step onboarding with smooth photo parallax; a Today header that resolves the greeting to one line and turns the trust ledger into three small KPI cards that read by meaning; a featured cobe globe banner the triage scrolls up over; and a bottom navigation that rests as a compact icon-only pill and expands to labels on interaction.
 
-Then a deliberate fix to a real weakness, that the single periwinkle accent had spread until everything looked the same: I made color mean something again, sage-teal for good and handled, warm sand for what needs Dana, periwinkle reserved for Leo and interaction, hierarchy carried by weight and size and surface rather than hue. On the back of that I decluttered the focus card to lead with one headline and a distinct band for Leo's read, and standardized every triage card onto one pair of actions, Approve and Details, so the verb never changes under Dana.
+Then a deliberate fix to a real weakness, that the single emerald accent had spread until everything looked the same: I made color mean something again, a sage green for good and handled, warm sand for what needs Dana, emerald reserved for Leo and interaction, hierarchy carried by weight and size and surface rather than hue. On the back of that I decluttered the focus card to lead with one headline and a distinct band for Leo's read, and standardized every triage card onto one pair of actions, Approve and Details, so the verb never changes under Dana.
 
-What is still ahead, in order: a "Leo working" drawer that opens on Approve and shows Leo's steps as a live timeline with stop and undo, so a positive action feels like genuine machine work in progress and stays reversible; a swipe card stack for triage; a fix-or-cut pass on the dashboard glance; a single "view past actions" entry into history in place of the inline activity log; and the globe opening into a region-by-region detail view. The action-flow decision is already made: the working-drawer timeline is the centerpiece and a lighter see-details path folds in as a secondary tap, with Approve opening the drawer immediately so it is reversible by design rather than a blind commit on a high-stakes deal.
+Since then the centerpiece shipped: approving a card now runs Leo's steps live in the Dynamic Island, with a Stop mid-run and an 8-second Undo after, so a positive action feels like genuine machine work and stays reversible. The globe opens into a region-by-region detail view, the My-team altitude stacks like the deals triage with every teammate one tap from their pipeline, and the app gained a full light theme alongside the dark. A swipe card stack for triage is the one exploration still on the bench.
 
 ## How I used AI to build it
 
@@ -56,7 +56,7 @@ The build ran on the same shape the product sells. The product argues for an orc
 
 ## Where it stands
 
-The lead prototype and the seven required write-ups are complete and coherent, the films are rendered, and the process appendix preserves the search. The craft pass is mid-iteration: the visual-differentiation foundation and the focus-card rework are done and verified, and the working-drawer timeline, the swipe stack, and the remaining cleanups are the next builds. Deployment is the one step that is environment-blocked rather than design-blocked, and it is handed off as such. Everything is committed to one repository so the state survives, and [CONTINUATION.md](CONTINUATION.md) is the live tracker of exactly what is done and what is next.
+The lead prototype and the seven required write-ups are complete and coherent, the films are rendered, and the process appendix preserves the search. The craft pass has since landed: the Dynamic Island Approve flow, the light theme, the region-zoom map, the stacked team with teammate pipelines, and the lead routing are all built and verified; a swipe card stack is the one thing still on the bench. Deployment is the one step that is environment-blocked rather than design-blocked, and it is handed off as such. Everything is committed to one repository so the state survives.
 
 ## If I had an extra week
 
@@ -71,4 +71,3 @@ The single highest-value thing is still un-fakeable: put it in front of a real t
 - The honest AI-tool account: [doc 07](docs/07-ai-tool-annotation.md)
 - The full search, framed as process: [explorations/index.html](explorations/index.html)
 - The films: [films/](films/)
-- The live handoff and backlog tracker: [CONTINUATION.md](CONTINUATION.md)

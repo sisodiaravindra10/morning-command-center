@@ -2,10 +2,9 @@
 
 Three short product films in the "morning command center" dark-premium brand,
 built with [Remotion](https://www.remotion.dev) v4 (React + TypeScript). They
-render at 1920×1080, 30fps, h264. Copy and surfaces are faithful to the
+render at 1920×1080, 30fps, h264. These films were rendered in an earlier pass and still show the periwinkle palette; the shipped app has since moved to the emerald system in the
 prototype (`../prototype/command-center.html`) and the design system
-(`../docs/09-design-system.md`): near-black canvas, a periwinkle accent that
-glows on dark, and warm sand reserved for the few things that need a human.
+(`../docs/09-design-system.md`): near-black canvas, an accent color, and warm sand reserved for the few things that need a human.
 
 ## The films
 
@@ -48,12 +47,12 @@ To preview and scrub interactively: `npm start` (opens Remotion Studio).
   the type primitives, the raised `Card` and `Chip`, the AI-state visuals
   (breathing dot, draining undo ring, uncertain hand-up, silent dot), the
   calm `motion` helpers (fade / rise on the brand easing), and the `EndCard`
-  with the periwinkle Leo mark.
+  with the Leo mark.
 - `src/compositions/` — one file per film.
 - `src/Root.tsx` — registers the three compositions.
 
 Motion is calm and premium throughout: gentle fades and rises on
-`cubic-bezier(.16,1,.3,1)`, a soft periwinkle glow, no harsh flashes or fast
+`cubic-bezier(.16,1,.3,1)`, a soft accent wash, no harsh flashes or fast
 cuts. On-screen text is plain English, sentence case, no em-dashes.
 
 `node_modules/` can be gitignored (see `.gitignore`); run `npm install` to

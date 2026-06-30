@@ -71,7 +71,7 @@ Cool emerald = calm, handled, AI, interactive. Warm sand = it needs you. Used sp
 | `--signal-hi` | `#46DD9B` | the brighter emerald, for hover and the text that needs to lift off a tint |
 | `--signal-ink` | `#0B0C12` | the dark text that sits on a emerald fill |
 | `--info` | `#15C07A` | the thinking and learn emerald (the breathing chip, the learn panel); same hue as signal |
-| `--good` | `#9BB4E5` | handled, healthy, the all-clear and the sent tick |
+| `--good` | `#79B89C` | handled, healthy, the all-clear and the sent tick |
 | `--warn` | `#C9AC85` | attention, going quiet, past target |
 | `--danger` | `#E7C79C` | urgent, needs you now (the brighter warm sand) |
 
@@ -81,7 +81,7 @@ On the dark canvas these accents are already light enough to read as small text,
 | Wash (fill) | Line (border) |
 |---|---|
 | `--signal-wash` `rgba(21,192,122,0.12)` | `--signal-line` `rgba(21,192,122,0.32)` |
-| `--good-wash` `rgba(155,180,229,0.12)` | a one-off `rgba(155,180,229,0.4)` border on done chips |
+| `--good-wash` `rgba(121,184,156,0.12)` | a one-off `rgba(121,184,156,0.4)` border on done chips |
 | `--danger-wash` `rgba(231,199,156,0.14)` | `--danger-line` `rgba(231,199,156,0.42)` |
 | `--info-wash` `rgba(21,192,122,0.12)` | a one-off `rgba(21,192,122,0.3)` border on think and learn |
 

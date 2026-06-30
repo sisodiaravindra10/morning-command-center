@@ -33,9 +33,9 @@ A morning surface lives or dies on how the AI behaves when it is not sure. So th
 - **Wrong:** an undo window, then acknowledge-and-correct recovery, so a mistake is reversible and honest.
 - **Silent:** the ledger treats restraint as a designed signal. "Chose not to interrupt you on 6" is a decision, not a gap.
 
-## Why light
+## Why dark, done with discipline
 
-A dark canvas is the genre default for an AI product. Dark plus glow plus generic cards is what every AI demo ships, and it reads as slop. Light is the harder, more honest call for a once-a-day morning ritual: it reads as daylight, as calm, as a finished product rather than a tech demo. Trust is the scarce resource for a lead who has been burned by flaky tools, and a daylight screen that looks done earns more of it than atmosphere ever will.
+A dark canvas is the genre default for an AI product, and dark plus glow plus generic cards is what every AI demo ships, so it reads as slop. The honest answer was not to flee to light but to earn the dark: a chosen emerald on near-black instead of a default, no glow doing the work, and a warm sand reserved strictly for what needs a human. Done that way the screen reads as a quiet, expensive instrument you open before dawn, the mood a morning command center wants. A full light theme ships alongside it for daylight reading, the same tokens flipped, but the disciplined dark is the considered default, not a reflex.
 
 ## The cut list (and why each is cut)
 

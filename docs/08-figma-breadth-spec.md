@@ -4,9 +4,9 @@ The prototype (prototype/command-center.html) is the source of truth. It holds t
 
 Figma's job here is breadth. The prototype shows how one path feels in motion. Figma shows the whole product at once: every screen, every AI state, and every component variant on a single page, so a reviewer can read the morning command center as one system and an engineer or another designer can pick up any screen cold.
 
-A note on the live prototype. It is phone-only: just the mockup, a small "Real, morning command center" wordmark above it, and a single "Take the tour" button below. A guided tour does the walking through, a spotlight ring plus a step card that steps through the product one beat at a time and drives the app into each state as it explains it. Any earlier presenter scaffolding (theme and density toggles, demo buttons, a jump-to-screen nav) was a build aid for stepping through states by hand, not part of the product, and the guided tour replaces it. The frames below still cover the heavy morning and both density modes, because Figma's job is to show the full system at once even where the live prototype reveals a state through the tour rather than a toggle.
+A note on the live prototype. It is phone-only: just the mockup, a small "Real, morning command center" wordmark above it, and a theme toggle plus a "Tour" button in the top-right. A guided tour does the walking through, a spotlight ring plus a step card that steps through the product one beat at a time and drives the app into each state as it explains it. Any earlier presenter scaffolding (theme and density toggles, demo buttons, a jump-to-screen nav) was a build aid for stepping through states by hand, not part of the product, and the guided tour replaces it. The frames below still cover the heavy morning and both density modes, because Figma's job is to show the full system at once even where the live prototype reveals a state through the tour rather than a toggle.
 
-A note on theme. The genre default for an AI product is a generic dark canvas with glow, and that reads as slop. The system answers it not with light but with a disciplined dark: a chosen emerald-on-near-black palette, no glow, and a warm sand reserved for what needs a human. There is one theme, no color-mode toggle to build. Emerald means calm, handled, the AI, or interactive; warm sand means it needs you. Color always carries meaning, never decoration.
+A note on theme. The genre default for an AI product is a generic dark canvas with glow, and that reads as slop. The system answers it not with light but with a disciplined dark: a chosen emerald-on-near-black palette, no glow, and a warm sand reserved for what needs a human. It ships in dark by default with a full light theme as well, both built from the same emerald token set (a `data-theme` override), flipped by a sun/moon toggle. Emerald means calm, handled, the AI, or interactive; warm sand means it needs you. Color always carries meaning, never decoration.
 
 ---
 
@@ -44,7 +44,7 @@ Emerald is calm: handled, confident, the AI, anything interactive. Warm sand is 
 | `signal-hi` | `#46DD9B` | the brighter emerald, for hover and text that lifts off a tint |
 | `signal-ink` | `#0B0C12` | the dark text that sits on a emerald fill |
 | `info` | `#15C07A` | the thinking and learn emerald (same hue as signal) |
-| `good` | `#9BB4E5` | handled, healthy, the all-clear and the sent tick |
+| `good` | `#79B89C` | handled, healthy, the all-clear and the sent tick |
 | `warn` | `#C9AC85` | uncertain, going quiet |
 | `danger` | `#E7C79C` | urgent, a clock is on it (the brighter warm sand) |
 | silent | use `ink-subtle` | nothing needs you, so no color |
@@ -52,7 +52,7 @@ Emerald is calm: handled, confident, the AI, anything interactive. Warm sand is 
 There is no separate text variant: on dark the accents are already light enough to read as small text, and where text needs to lift further it uses `signal-hi #46DD9B`. Text on a emerald-filled element is `signal-ink #0B0C12`, not white.
 
 Washes and lines (the only fills and borders the accents are allowed):
-`signal-wash rgba(21,192,122,0.12)` with `signal-line rgba(21,192,122,0.32)`, `good-wash rgba(155,180,229,0.12)`, `danger-wash rgba(231,199,156,0.14)` with `danger-line rgba(231,199,156,0.42)`, `info-wash rgba(21,192,122,0.12)`.
+`signal-wash rgba(21,192,122,0.12)` with `signal-line rgba(21,192,122,0.32)`, `good-wash rgba(121,184,156,0.12)`, `danger-wash rgba(231,199,156,0.14)` with `danger-line rgba(231,199,156,0.42)`, `info-wash rgba(21,192,122,0.12)`.
 
 The choice to use coarse color states instead of a number is deliberate. Categorical confidence reads clearest for a non-technical user, and a fake "87% urgent" is usually misread. The prototype carries Leo's confidence as words on screen, the "fairly sure" and "leaning yes" lines the agent speaks, and surfaces them as a small wave glyph next to Leo's read, never as a precision percentage on a chip. The five AI states are thinking (a calm breathing dot), confident (the review activity and the ledger), uncertain (the deal-risk nudge and the reconciler, which say "leaning yes" or "fairly sure", offer two options, and name what they could not check), wrong or corrected (the Fair-Housing save and the undo window, acknowledge-and-correct recovery), and silent (the ledger: "47 handled overnight, 1 corrected"). There is a dedicated AI-states screen that names all five in Leo's voice.
 
@@ -263,7 +263,7 @@ Figma is static, so annotate the motion as redline notes rather than trying to f
 - The orchestration funnel: 100+ dots filter through the confidence × stakes × needs-your-voice gate down to the four surfaced chips.
 - Pause-all and blast-radius: the pause glyph opens what goes quiet (in-flight actions held, client replies paused) versus what stays on for safety (confirmed showings auto-confirm).
 
-Discipline to write on the handoff: CSS keyframes and transitions only (with a short timer driving the undo-ring drain and the reconciler write-back), content visible by default, no animation of layout properties, and `prefers-reduced-motion` honored (the breathing dots and waves go still, any ring holds its static state, the undo bar holds full). The idle motions are intentional and small: the thinking chip's dot breathes with a light sweep across the chip, the confidence wave bars rise and fall like an equalizer, the day-spine "now" node pulses a soft emerald ring, and the team-pulse waves animate while the one going quiet flattens to warm. Dana's avatar carries a static emerald glow rather than a breathing one, and there is no separate Leo orb element. Motion only orients, gives feedback, or encodes confidence. It is never decoration.
+Discipline to write on the handoff: CSS keyframes and transitions only (with a short timer driving the undo-ring drain and the reconciler write-back), content visible by default, no animation of layout properties, and `prefers-reduced-motion` honored (the breathing dots and waves go still, any ring holds its static state, the undo bar holds full). The idle motions are intentional and small: the thinking chip's dot breathes with a light sweep across the chip, the confidence wave bars rise and fall like an equalizer, the day-spine "now" node pulses a soft emerald ring, and the team-pulse waves animate while the one going quiet flattens to warm. Dana's avatar is a flat emerald disc rather than a glowing one, and there is no separate Leo orb element. Motion only orients, gives feedback, or encodes confidence. It is never decoration.
 
 ---
 
