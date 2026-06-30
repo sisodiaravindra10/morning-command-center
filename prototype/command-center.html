@@ -21,7 +21,7 @@ ul{list-style:none}
 :focus-visible{outline:2px solid var(--signal);outline-offset:2px;border-radius:2px}
 
 :root{
-  /* Re-skinned to our dark premium system: periwinkle (calm/AI/interactive) + warm sand (needs you). */
+  /* Re-skinned to our dark premium system: emerald (calm/AI/interactive) + warm sand (needs you). */
   --canvas:#0A0B10; --p1:#15171F; --p2:#1C1E29; --p3:#22242F; --p4:#282B37;
   --line:rgba(21,192,122,0.12); --line-soft:rgba(21,192,122,0.06);
   --ink:#F1F3FA; --ink-muted:#BCC1D2; --ink-subtle:#828AA0;
@@ -630,7 +630,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .card.alert{background:var(--p2);border-color:var(--danger-line)}
 /* greeting: display presence */
 .greet{font-size:19px;font-weight:600;letter-spacing:-.015em;white-space:nowrap;line-height:1.2}
-/* Leo's presence: a soft periwinkle glow on the orb-avatar */
+/* Leo's presence: a soft emerald glow on the orb-avatar */
 /* micro-interactions: lift on hover, settle on press */
 .tcard:not(.row):hover,.card.tappable:hover,.lead:hover,.agent-row:hover,.fyi:hover,.cover-chip:hover{border-color:rgba(21,192,122,.24)}
 .btn:active{transform:scale(.985)}
@@ -640,7 +640,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    Additive only: transform/opacity + subtle panel-step gradients,
    reduced-motion and touch guarded, no side-stripes, no gradient text.
    ============================================================ */
-/* primary action: the one glowing affordance, a premium periwinkle lift */
+/* primary action: the one glowing affordance, a premium emerald lift */
 .btn-amber{box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .btn-amber:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 26px -10px rgba(21,192,122,.72)}
 /* a faint top sheen on the smaller surfaces, a step below the lifted cards
@@ -653,7 +653,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .lg-txt>b:first-child{font-family:var(--mono);font-size:13.5px;letter-spacing:-.01em}
 .lg-need{border-bottom:1px solid var(--signal-line);padding-bottom:1px}
 .lg-need:hover{color:#E2EAFD;border-color:var(--signal-hi)}
-/* the day-rail "now" card: a soft periwinkle glow so the present reads at a glance */
+/* the day-rail "now" card: a soft emerald glow so the present reads at a glance */
 /* alive on hover, pointer devices only so touch never sticks */
 @media (hover:hover){
   .tcard,.card,.agent-row,.lead,.cover-chip{
@@ -805,7 +805,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    ============================================================ */
 /* 44px minimum hit area on the onboarding + tour controls */
 .ob-skip,.ob-next,.tc-skip,.tc-prev,.tc-next{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
-/* tour spotlight: a soft periwinkle halo so the eye lands on the highlight, not just a dim edge */
+/* tour spotlight: a soft emerald halo so the eye lands on the highlight, not just a dim edge */
 .tour-spot{box-shadow:0 0 0 9999px rgba(7,8,12,.72)}
 /* tour card: a gentle rise as the tour opens (once, on start) */
 .tour.show .tour-card{animation:tcRise .42s var(--ease-out)}
@@ -1384,7 +1384,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     <div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
   </div>
 
-  <!-- boot loader: a rising conveyor of periwinkle blocks; fades into onboarding after ~2s -->
+  <!-- boot loader: a rising conveyor of emerald blocks; fades into onboarding after ~2s -->
   <div id="boot-loader" role="status" aria-label="Loading">
     <span class="bl-bar"></span>
     <span class="bl-bar"></span>
@@ -1983,7 +1983,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   $('#tc-skip').addEventListener('click',tEnd);
 })();
 </script>
-<!-- Globe banner: a real WebGL globe (cobe), dark + periwinkle to match the system.
+<!-- Globe banner: a real WebGL globe (cobe), dark + emerald to match the system.
      Renders on a hosted browser; if WebGL or the module is unavailable, the static
      CSS globe behind it stays. Progressive enhancement, content never depends on it. -->
 <script type="module">
