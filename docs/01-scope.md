@@ -24,10 +24,11 @@ What the build is, the real screens and flows:
 
 Across these, the nine signature microinteractions carry the behavior: the uncertainty hand-up, the Fair-Housing tripwire, the source-of-truth reconciler, confident-but-reversible, silent-then-reveal, the voice-required outbox, the acted-then-uncertain anomaly, round-robin propose/dispose, and the agent-coaching nudge. Undo and quiet error states run throughout.
 
-## The four AI states the slice has to earn
+## The five AI states the slice has to earn
 
-A morning surface lives or dies on how the AI behaves when it is not sure. So the slice carries all four:
+A morning surface lives or dies on how the AI behaves when it is not sure. So the slice carries all five:
 
+- **Thinking:** the morning assembles in front of her, cards rising into place, a transient state that reads as the AI doing its work, not a spinner.
 - **Confident:** the trust ledger and the review-activity log state plainly what Leo handled.
 - **Uncertain:** the counter-offer in the voice outbox says "fairly sure," shows a value range ($605K to $618K against a $625K list and a $590K offer), and names what it could not check, then waits to send.
 - **Wrong:** an undo window, then acknowledge-and-correct recovery, so a mistake is reversible and honest.

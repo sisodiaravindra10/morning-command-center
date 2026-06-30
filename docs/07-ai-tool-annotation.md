@@ -26,7 +26,7 @@ This is the uncertain state, and it is the heart of the counter-offer in the voi
 
 ### From a generic spinner to a named wait
 
-This is the thinking moment, the seam between unsure and confident. When a Leo skill is still resolving, the model's default is a spinner: motion that says "wait" and nothing else. The override was a named skeleton that says what is being checked, for example "checking 14 comps" while the counter-offer resolves. A spinner is decorative motion, which the product forbids. A named wait does work a spinner cannot: it shows the reasoning mid-flight, so the human can see what is being checked before they ever see a result. The spinner hid the work. The named wait shows it, which is the whole trust thesis in one small detail.
+This is the thinking moment, the seam between unsure and confident. When a Leo skill is still resolving, the model's default is a spinner: motion that says "wait" and nothing else. The override was a named skeleton that says what is being checked, for example "Negotiation Prep, re-checking 14 comps for 142 Oak St" while the morning command center assembles. A spinner is decorative motion, which the product forbids. A named wait does work a spinner cannot: it shows the reasoning mid-flight, so the human can see what is being checked before they ever see a result. The spinner hid the work. The named wait shows it, which is the whole trust thesis in one small detail.
 
 ### Reset and replay, built so the demo can fail safely
 
@@ -34,7 +34,7 @@ This is the wrong state, and it is the one the model under-built. The five AI st
 
 ### Banning the slop register from the copy
 
-This runs under all four states, because the voice is how Leo sounds whether it is sure, unsure, wrong, or quiet. The model reaches for "elevate," "seamless," "synergize," "unleash," "delve" without being asked. That whole register was banned. The voice is what a sharp colleague would actually say to Dana at 7am: "47 handled overnight, chose not to interrupt you on 6." "A fair counter is $605K to $618K, I'd pick $612K." "Same area, replies fastest this week." This also tracks the research: people follow advice from a tool that reads as competent, not warm or performative. Plain English is the competent register. The buzzwords were the warm-but-empty one, and they say nothing about the actual deal in front of her.
+This runs under all five states, because the voice is how Leo sounds whether it is sure, unsure, wrong, or quiet. The model reaches for "elevate," "seamless," "synergize," "unleash," "delve" without being asked. That whole register was banned. The voice is what a sharp colleague would actually say to Dana at 7am: "47 handled overnight, chose not to interrupt you on 6." "A fair counter is $605K to $618K, I'd pick $612K." "Same area, replies fastest this week." This also tracks the research: people follow advice from a tool that reads as competent, not warm or performative. Plain English is the competent register. The buzzwords were the warm-but-empty one, and they say nothing about the actual deal in front of her.
 
 ## The honest line
 

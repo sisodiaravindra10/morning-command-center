@@ -2,7 +2,7 @@
 
 This is the build journal: the order things actually happened in, the decisions that turned the work, and the dead ends I kept because they earned their place. [Doc 06](docs/06-design-rationale-and-dead-ends.md) holds the design rationale and what got cut; [doc 07](docs/07-ai-tool-annotation.md) is the honest account of where AI helped. This is the chronology that connects them, and it carries through the most recent craft pass that those two snapshots predate.
 
-One person runs through all of it: Dana Reyes, a real-estate team lead who closes her own deals and carries a seven-person team at the same time, fronting Real's AI, Leo, and the 100-plus skills working behind him. Every decision below was judged by one question: does it help Dana decide the few things that need her this morning and then put the phone down, or does it just add a feature?
+One person runs through all of it: Dana Reyes, a real-estate team lead who closes her own deals and carries a six-agent team at the same time, fronting Real's AI, Leo, and the 100-plus skills working behind him. Every decision below was judged by one question: does it help Dana decide the few things that need her this morning and then put the phone down, or does it just add a feature?
 
 ## The short version
 

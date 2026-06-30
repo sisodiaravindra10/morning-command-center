@@ -2,7 +2,7 @@
 
 This is the honest version of how the morning command center got made: the decisions that carry a real cost on the other side, and the ideas that looked good and were killed. A walkthrough that only shows the wins is a sales pitch. The judgment is in the trade-offs and in what got cut.
 
-Throughout, the user is one person: Dana Reyes, a real-estate team lead who closes her own deals and carries a 7-person team at the same time, fronting Real's AI, Leo. Every call below is judged by one question: does it help Dana decide the few things that need her this morning and then put the phone down, or does it just add a feature?
+Throughout, the user is one person: Dana Reyes, a real-estate team lead who closes her own deals and carries a team of six agents at the same time, fronting Real's AI, Leo. Every call below is judged by one question: does it help Dana decide the few things that need her this morning and then put the phone down, or does it just add a feature?
 
 ---
 

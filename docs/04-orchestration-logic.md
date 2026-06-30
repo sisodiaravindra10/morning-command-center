@@ -47,7 +47,7 @@ It also matches what Real already has. Leo is three products today: CoPilot (the
                               +---------------+---------------+
                               |                               |
                          Needs you                      everything else
-                       (the few cards)             HANDLED / FYI / NOISE
+                       (the few cards)             Handled / FYI / Noise
                               |                               |
                         shown to Dana              folded into the ledger
                                                    ("47 handled overnight,
@@ -67,14 +67,14 @@ Every signal a skill produces lands in one of four tiers. The default is silence
 |---|---|---|---|
 | **Needs you** | High stake AND (Leo is uncertain OR the next step is irreversible) | A card at the top of Today | Yes, but rarely |
 | **FYI** | Material and worth knowing, already handled or no action today | The collapsed digest row, below the fold | No |
-| **HANDLED** | Leo did it, low risk, logged | The quiet ledger | No |
-| **NOISE** | Routine, resolved, spam, or after-hours static | Nowhere. Counted, not shown | No |
+| **Handled** | Leo did it, low risk, logged | The quiet ledger | No |
+| **Noise** | Routine, resolved, spam, or after-hours static | Nowhere. Counted, not shown | No |
 
 Suppress-by-default is not a style choice. It is the single most important orchestration rule. One wrong "urgent" flag poisons every flag after it, the cry-wolf effect: when most alerts are not worth acting on, people learn to ignore even the rare real one. So the system spends a small interruption budget on a few high-confidence items and routes everything else to a digest or the ledger. Precision is the headline metric, not coverage. The best alert is the one that arrives once, is right, and already has the next step attached.
 
 This is why the ledger line reads exactly: "47 handled overnight, chose not to interrupt you on 6." The absence of an interruption is itself a designed, trustworthy signal. Dana sees the work without reading it, and she learns that when Leo does speak, it is worth listening to.
 
-All of this is really one question: how Leo communicates across its four states.
+All of this is really one question: how Leo communicates across its five states.
 
 - When Leo is **confident**, it acts on the low-risk work and reports it in the ledger and the review-activity log.
 - When it is **uncertain**, it surfaces the item but shows a range and what it could not check, never a false precision. The counter-offer in the voice outbox is exactly this: "fairly sure," a value range, and a named list of what it could not verify.
@@ -143,32 +143,32 @@ Overnight, the skills run in parallel and produce a stream of raw signals. The o
 
 - **47 auto-handled**, rolled into the ledger (of which 6 were near-misses Leo could have pinged on and chose not to).
 - **12 FYI updates** worth knowing, collapsed into the digest row below the fold.
-- **3 escalate to Needs you**, the three cards.
+- **2 escalate to Needs you** on the Today altitude, the two judgment cards. A third Needs you item lives on the My-team altitude: a team SLA breach, surfaced where the team is read, not counted in Today's two.
 
-That arithmetic is the whole story in one line: 47 handled, 12 in the digest, 3 surfaced, and the rest (spam leads, duplicate inquiries, after-hours static) dropped to NOISE, counted but not shown. Only 3 of everything that happened cross the bar to interrupt her.
+That arithmetic is the whole story in one line: 47 handled, 12 in the digest, 2 surfaced on Today, and the rest (spam leads, duplicate inquiries, after-hours static) dropped to Noise, counted but not shown. Only 2 of everything that happened cross the bar to interrupt her on Today, with one more waiting on the team altitude.
 
 A sample of how individual signals sort:
 
 | Signal | Skill | Stake | Confidence | Reversible? | Tier |
 |---|---|---|---|---|---|
 | 142 Oak St buyer countered at $590K, response due today | Negotiation Prep | High | Medium (2 comps unverified) | No (a counter is a commitment) | **Needs you** |
-| A hot lead has waited 3h 12m on Marcus, who is in a showing | Pipeline Pulse + routing | High | High | Reaching out is reversible, losing the lead is not | **Needs you** |
+| A hot lead has waited 3h 12m on Marcus, who is in a showing | Pipeline Pulse + routing | High | High | Reaching out is reversible, losing the lead is not | **Needs you** (My-team altitude) |
 | Crestview deal has gone quiet 4 days, nudge or hold | Pipeline Pulse | High | Medium (leaning yes a soft nudge helps) | Reaching out is reversible | **Needs you** |
-| AiRM lead replies sent and logged overnight | Lead Qualification | Low | High | Yes | HANDLED |
-| 6 near-misses Leo could have pinged on, chose not to | various | Low | High | Yes | HANDLED |
-| Routine status updates, comps refreshed, a tour confirmed | various | Low | High | Yes | HANDLED |
+| AiRM lead replies sent and logged overnight | Lead Qualification | Low | High | Yes | Handled |
+| 6 near-misses Leo could have pinged on, chose not to | various | Low | High | Yes | Handled |
+| Routine status updates, comps refreshed, a tour confirmed | various | Low | High | Yes | Handled |
 | 12 deal and listing updates with no action today (7 Birch Ln, 14 Cedar, 3 Harlow and others) | various | Medium | Medium | n/a today | FYI (digest) |
-| Spam leads, duplicate inquiries, after-hours noise | triage | none | n/a | n/a | NOISE |
+| Spam leads, duplicate inquiries, after-hours noise | triage | none | n/a | n/a | Noise |
 
-**Leo synthesizes.** Three signals clear the NEEDS-YOU bar (high stake AND uncertain-or-irreversible). They become the three surfaced items, ranked by what is most pressing: the drafted counter-offer waiting in the voice outbox, the team SLA breach (a hot lead waiting on Marcus, who is in a showing), and the Crestview deal that has gone quiet four days. The 12 FYI items sit in the digest row, visible without shouting. Everything else, the 47 handled and the noise, rolls into the ledger and the count, which is what produces the line: "47 handled overnight, chose not to interrupt you on 6."
+**Leo synthesizes.** Three signals clear the Needs you bar (high stake AND uncertain-or-irreversible), and they land at two altitudes. Two are judgment calls for Dana on Today, ranked by what is most pressing: the drafted counter-offer waiting in the voice outbox, and the Crestview deal that has gone quiet four days. The third, the team SLA breach (a hot lead waiting on Marcus, who is in a showing), surfaces on the My-team altitude where the team is read, so it is not one of Today's two. The 12 FYI items sit in the digest row, visible without shouting. Everything else, the 47 handled and the noise, rolls into the ledger and the count, which is what produces the line: "47 handled overnight, chose not to interrupt you on 6."
 
-**Dana acts.** Three decisions, each at the right gate:
+**Dana acts.** Two judgment calls on Today, plus one on the team altitude, each at the right gate:
 
 - The counter-offer opens in the voice outbox (high stake): Leo drafted $612K, showed the $605K to $618K range and the unknowns, and sent nothing. She reviews it and taps "Send as me."
-- The SLA breach is a routing call (high stake, time-critical): a hot lead has waited 3h 12m on Marcus, who is in a showing. Leo proposes routing it to Priya, who is healthy and replies fastest, with the context attached. Dana confirms and keeps the take-it-back option.
 - The Crestview deal opens the deal-risk nudge (uncertain): the buyers went quiet four days after the inspection, and Leo is leaning yes a soft nudge helps, so it offers two options instead of guessing. Dana picks one.
+- On the My-team altitude, the SLA breach is a routing call (high stake, time-critical): a hot lead has waited 3h 12m on Marcus, who is in a showing. Leo proposes routing it to Priya, who is healthy and replies fastest, with the context attached. Dana confirms and keeps the take-it-back option.
 
-Then she puts the phone down. The screen did the triage. She made three calls and kept every irreversible one in her own hands.
+Then she puts the phone down. The screen did the triage. She made the two Today calls, cleared the one team card, and kept every irreversible one in her own hands.
 
 ## KPIs to watch
 
@@ -176,7 +176,7 @@ These measure the one thing that matters for this team lead: trust made measurab
 
 | KPI | What it tells us | Healthy direction |
 |---|---|---|
-| **Escalation rate** (share of overnight signals that become NEEDS-YOU cards) | Is suppression working, or is Leo crying wolf | A stable band of about **5 to 15 percent**. A handful of cards a day, not a feed. Spiking up means precision is slipping; near zero for days may mean the system is over-suppressing and hiding real work |
+| **Escalation rate** (share of overnight signals that become Needs you cards) | Is suppression working, or is Leo crying wolf | A stable band of about **5 to 15 percent**. A handful of cards a day, not a feed. Spiking up means precision is slipping; near zero for days may mean the system is over-suppressing and hiding real work |
 | **Accept-without-edit rate on drafts** | Are Leo's drafts good enough to trust at a glance | Rising over time. This is calibrated trust forming, Dana leaning on Leo for the easy work. Watch the inverse too: a sudden drop flags a quality regression |
 | **Undo and "not important" rate** | Are we sending or surfacing the wrong things | Low and falling, under about 5 percent. A rising undo rate on high-stakes sends is the loudest possible signal that gating is too loose |
 | **Setting churn on the autonomy threshold** | Has Dana settled on how much to let Leo do | Stabilizing. Constant fiddling means trust is not yet earned |
