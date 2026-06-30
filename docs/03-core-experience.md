@@ -51,7 +51,7 @@ On a calm morning, two items need her judgment, ranked by stake across both alti
 1. The Crestview deal has gone quiet, four days, no reply. It is $635K in Westlake, warm and then silent after the inspection report. Leo is "leaning yes" a soft nudge helps and offers two reads, send a low-pressure nudge or hold and keep watching, with the recommended option marked. Judgment returns to her.
 2. Three messages are drafted but need her actual voice. Leo routes them to her not by channel but because each one needs her tone: a counter-offer, a grieving seller, and one of Jenna's replies that came out off-brand. She can open the outbox to send each as herself, or approve all as drafted.
 
-Under the two judgment items sits the resting state of the guardrails, "Guardrails: all clear," naming the four that are watching: security, fair-housing, sync, and handoff. Below that a no-action FYI, "Bennett pack ready to sign," resolved overnight and surfaced as information, not a decision. Each card shows a small colored dot and one line of why. Tapping any item opens its sheet: which agent did the work, what it checked, the source. Every claim is reachable.
+Under the two judgment items sits the resting state of the guardrails, "Guardrails: all clear," naming the four that are watching: security, fair-housing, sync, and handoff. Below that a no-action FYI, "Bennett closing paperwork ready to sign," resolved overnight and surfaced as information, not a decision. Each card shows a small colored dot and one line of why. Tapping any item opens its sheet: which agent did the work, what it checked, the source. Every claim is reachable.
 
 On a heavy morning the same two items stay, and four exception-handler cards escalate in above them, each owned by a named guardrail:
 

@@ -34,6 +34,14 @@ tr:last-child td{border-bottom:0}
 .nav .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);display:block}
 .nav .t{color:var(--ink);font-size:14.5px;font-weight:500;margin-top:3px;display:block}
 .nav .next{text-align:right}
+code{overflow-wrap:anywhere}
+@media (max-width:600px){
+  main{padding:34px 18px 24px}
+  .bar .in{padding:0 16px}
+  h1{font-size:28px}
+  .nav{flex-direction:column;padding:0 18px}
+  th,td{padding:8px 10px}
+}
 </style></head><body><div class="bar"><div class="in"><a class="back" href="index.html">&larr; Morning command center</a><span class="sp"></span><span class="tag">build journal</span></div></div><main><h1>How I built this, end to end</h1>
 <p>This is the build journal: the order things actually happened in, the decisions that turned the work, and the dead ends I kept because they earned their place. <a href="docs/06-design-rationale-and-dead-ends.html">Doc 06</a> holds the design rationale and what got cut; <a href="docs/07-ai-tool-annotation.html">doc 07</a> is the honest account of where AI helped. This is the chronology that connects them, and it carries through the most recent craft pass that those two snapshots predate.</p>
 <p>One person runs through all of it: Dana Reyes, a real-estate team lead who closes her own deals and carries a seven-person team at the same time, fronting Real's AI, Leo, and the 100-plus skills working behind him. Every decision below was judged by one question: does it help Dana decide the few things that need her this morning and then put the phone down, or does it just add a feature?</p>
@@ -67,4 +75,4 @@ tr:last-child td{border-bottom:0}
 <h2>If I had an extra week</h2>
 <p>The single highest-value thing is still un-fakeable: put it in front of a real team lead and tune the interrupt threshold, the line between what reaches Dana and what Leo handles silently, so the ledger is calibrated on real behavior rather than hand-set. After that, wire the responsible-AI behavior onto one shared event log so Leo can audit itself, and build the desktop war room the mobile deliberately defers, to prove the altitude handoff from phone to wide screen with no context reload. Doc 06 carries the longer version.</p>
 <h2>A map of what is here</h2>
-<ul><li>The lead prototype: <a href="prototype/command-center.html">prototype/command-center.html</a></li><li>The showcase front door: <a href="index.html">index.html</a></li><li>The seven required deliverables and two supporting docs: <a href="docs/">docs/</a></li><li>The design rationale and dead ends: <a href="docs/06-design-rationale-and-dead-ends.html">doc 06</a></li><li>The honest AI-tool account: <a href="docs/07-ai-tool-annotation.html">doc 07</a></li><li>The full search, framed as process: <a href="explorations/index.html">explorations/index.html</a></li><li>The films: <a href="films/">films/</a></li></ul></main><nav class="nav"><a href="index.html"><span class="k">&larr; back</span><span class="t">Back to the showcase</span></a></nav></body></html>
+<ul><li>The lead prototype: <a href="prototype/command-center.html">prototype/command-center.html</a></li><li>The showcase front door: <a href="index.html">index.html</a></li><li>The seven required deliverables and two supporting docs: <a href="docs/01-scope.html">the write-ups, starting at doc 01</a></li><li>The design rationale and dead ends: <a href="docs/06-design-rationale-and-dead-ends.html">doc 06</a></li><li>The honest AI-tool account: <a href="docs/07-ai-tool-annotation.html">doc 07</a></li><li>The full search, framed as process: <a href="explorations/index.html">explorations/index.html</a></li><li>The films: <a href="index.html#films">the films, on the showcase</a></li></ul></main><nav class="nav"><a href="index.html"><span class="k">&larr; back</span><span class="t">Back to the showcase</span></a></nav></body></html>

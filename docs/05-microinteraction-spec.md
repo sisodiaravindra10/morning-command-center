@@ -104,7 +104,7 @@ If Leo handled something on its own, there is no notification at all. It shows u
 
 ### 5. Confident, but reversible (confident)
 
-- Trigger: the doc-prep agent finishes the Bennett closing pack overnight, all 11 documents assembled and cross-checked, two signature blocks fixed.
+- Trigger: the doc-prep agent finishes the Bennett closing paperwork overnight, all 11 documents assembled and cross-checked, two signature blocks fixed.
 - What it communicates: "done, here is exactly what changed, and you can take it back."
 - The motion: a calm confident state, in Leo's voice: "Done. Here is what changed." The send action carries a thin undo ring that drains on `transform` over an 8-second window, so Dana can see exactly how long she has to reverse it. The rest of any related batch holds while the window is open. If she taps undo, the card resolves to a caught-it state and nothing went out. Under reduced-motion, the draining ring is replaced by a plain 8-second countdown number, no sweep.
 - Why: confidence without an escape hatch reads as arrogance, and a user burned by flaky tools will not grant autonomy to a system she cannot reverse. The 8-second undo is what makes "act on my behalf" safe to trust. The same pattern carries every confident auto-action in the app, so reversibility is a rule, not a one-off. A generic "something went wrong" toast is rejected, and so is silent self-correction, because a hidden action forfeits the trust the undo ring is built to earn.

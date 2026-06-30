@@ -46,7 +46,7 @@ It also matches what Real already has. Leo is three products today: CoPilot (the
                                               |
                               +---------------+---------------+
                               |                               |
-                         NEEDS YOU                      everything else
+                         Needs you                      everything else
                        (the few cards)             HANDLED / FYI / NOISE
                               |                               |
                         shown to Dana              folded into the ledger
@@ -65,7 +65,7 @@ Every signal a skill produces lands in one of four tiers. The default is silence
 
 | Tier | What it means | Where it shows | Can it interrupt? |
 |---|---|---|---|
-| **NEEDS YOU** | High stake AND (Leo is uncertain OR the next step is irreversible) | A card at the top of Today | Yes, but rarely |
+| **Needs you** | High stake AND (Leo is uncertain OR the next step is irreversible) | A card at the top of Today | Yes, but rarely |
 | **FYI** | Material and worth knowing, already handled or no action today | The collapsed digest row, below the fold | No |
 | **HANDLED** | Leo did it, low risk, logged | The quiet ledger | No |
 | **NOISE** | Routine, resolved, spam, or after-hours static | Nowhere. Counted, not shown | No |
@@ -143,7 +143,7 @@ Overnight, the skills run in parallel and produce a stream of raw signals. The o
 
 - **47 auto-handled**, rolled into the ledger (of which 6 were near-misses Leo could have pinged on and chose not to).
 - **12 FYI updates** worth knowing, collapsed into the digest row below the fold.
-- **3 escalate to NEEDS YOU**, the three cards.
+- **3 escalate to Needs you**, the three cards.
 
 That arithmetic is the whole story in one line: 47 handled, 12 in the digest, 3 surfaced, and the rest (spam leads, duplicate inquiries, after-hours static) dropped to NOISE, counted but not shown. Only 3 of everything that happened cross the bar to interrupt her.
 
@@ -151,9 +151,9 @@ A sample of how individual signals sort:
 
 | Signal | Skill | Stake | Confidence | Reversible? | Tier |
 |---|---|---|---|---|---|
-| 142 Oak St buyer countered at $590K, response due today | Negotiation Prep | High | Medium (2 comps unverified) | No (a counter is a commitment) | **NEEDS YOU** |
-| A hot lead has waited 3h 12m on Marcus, who is in a showing | Pipeline Pulse + routing | High | High | Reaching out is reversible, losing the lead is not | **NEEDS YOU** |
-| Crestview deal has gone quiet 4 days, nudge or hold | Pipeline Pulse | High | Medium (leaning yes a soft nudge helps) | Reaching out is reversible | **NEEDS YOU** |
+| 142 Oak St buyer countered at $590K, response due today | Negotiation Prep | High | Medium (2 comps unverified) | No (a counter is a commitment) | **Needs you** |
+| A hot lead has waited 3h 12m on Marcus, who is in a showing | Pipeline Pulse + routing | High | High | Reaching out is reversible, losing the lead is not | **Needs you** |
+| Crestview deal has gone quiet 4 days, nudge or hold | Pipeline Pulse | High | Medium (leaning yes a soft nudge helps) | Reaching out is reversible | **Needs you** |
 | AiRM lead replies sent and logged overnight | Lead Qualification | Low | High | Yes | HANDLED |
 | 6 near-misses Leo could have pinged on, chose not to | various | Low | High | Yes | HANDLED |
 | Routine status updates, comps refreshed, a tour confirmed | various | Low | High | Yes | HANDLED |

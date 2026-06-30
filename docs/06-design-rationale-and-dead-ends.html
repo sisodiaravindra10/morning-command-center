@@ -34,6 +34,14 @@ tr:last-child td{border-bottom:0}
 .nav .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);display:block}
 .nav .t{color:var(--ink);font-size:14.5px;font-weight:500;margin-top:3px;display:block}
 .nav .next{text-align:right}
+code{overflow-wrap:anywhere}
+@media (max-width:600px){
+  main{padding:34px 18px 24px}
+  .bar .in{padding:0 16px}
+  h1{font-size:28px}
+  .nav{flex-direction:column;padding:0 18px}
+  th,td{padding:8px 10px}
+}
 </style></head><body><div class="bar"><div class="in"><a class="back" href="../index.html">&larr; Morning command center</a><span class="sp"></span><span class="tag">06 / 09</span></div></div><main><h1>Design rationale and the dead ends</h1>
 <p>This is the honest version of how the morning command center got made: the decisions that carry a real cost on the other side, and the ideas that looked good and were killed. A walkthrough that only shows the wins is a sales pitch. The judgment is in the trade-offs and in what got cut.</p>
 <p>Throughout, the user is one person: Dana Reyes, a real-estate team lead who closes her own deals and carries a 7-person team at the same time, fronting Real's AI, Leo. Every call below is judged by one question: does it help Dana decide the few things that need her this morning and then put the phone down, or does it just add a feature?</p>

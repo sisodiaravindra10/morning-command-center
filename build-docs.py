@@ -126,6 +126,14 @@ tr:last-child td{border-bottom:0}
 .nav .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);display:block}
 .nav .t{color:var(--ink);font-size:14.5px;font-weight:500;margin-top:3px;display:block}
 .nav .next{text-align:right}
+code{overflow-wrap:anywhere}
+@media (max-width:600px){
+  main{padding:34px 18px 24px}
+  .bar .in{padding:0 16px}
+  h1{font-size:28px}
+  .nav{flex-direction:column;padding:0 18px}
+  th,td{padding:8px 10px}
+}
 """
 
 def page(title, body, num, total, prev, nxt, base='../'):

@@ -66,8 +66,8 @@ The single highest-value thing is still un-fakeable: put it in front of a real t
 
 - The lead prototype: [prototype/command-center.html](prototype/command-center.html)
 - The showcase front door: [index.html](index.html)
-- The seven required deliverables and two supporting docs: [docs/](docs/)
+- The seven required deliverables and two supporting docs: [the write-ups, starting at doc 01](docs/01-scope.html)
 - The design rationale and dead ends: [doc 06](docs/06-design-rationale-and-dead-ends.md)
 - The honest AI-tool account: [doc 07](docs/07-ai-tool-annotation.md)
 - The full search, framed as process: [explorations/index.html](explorations/index.html)
-- The films: [films/](films/)
+- The films: [the films, on the showcase](index.html#films)

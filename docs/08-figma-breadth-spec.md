@@ -105,7 +105,7 @@ This is the front door and the whole argument, and the default calm morning. Bui
 5. The "Needs your judgment" section label (mono, sentence case) with a "one at a time" mini-note.
 6. The calm triage: one focus card plus a collapsed queue, ordered by severity. On a calm morning two items need judgment, the deal-risk nudge (the Crestview deal has gone quiet four days, $635K Westlake, the wave glyph reading "leaning yes, a soft nudge helps", with "Send the nudge" and "Change") and the voice-required outbox (three messages drafted but needing Dana's actual voice, "Open outbox" and "Approve all"). The list is built to about three to five items, not to fill the screen.
 7. The guardrails resting state, a calm all-clear button: a good-state dot, "Guardrails: all clear", and a mono sub "security · fair-housing · sync · handoff". This is the restraint made visible on a quiet morning.
-8. The FYI, a no-action item: a good-state tick, "Bennett pack ready to sign, no action needed", routing to the closing-pack sheet. Resolved, not a decision.
+8. The FYI, a no-action item: a good-state tick, "Bennett closing paperwork ready to sign, no action needed", routing to the closing-paperwork sheet. Resolved, not a decision.
 9. The dashboard glance (collapsed by default, expands on tap): the head reads "$14.2M pipeline · 22 live · on track"; expanded it shows the pipeline hero numeral ($14.2M, up 8% week), a KPI grid (2 need you, 8.5h AI saved overnight, 94% SLA met, 1 at risk), and a day rail (now, the 9:00 Oak St call, the 11:00 Lakeside showing, the 16:00 Bennett close). The early-warning context built into the home, not a separate feature.
 10. The "Review activity" section label, then the handled ledger: a `good` check tick, "47 handled overnight, 8.5h saved", a chevron that expands to four near-miss rows (fresh comps for 3 listings, 12 portal enquiries in SLA, 4 viewings booked, 6 documents chased) and "43 more, view full log". Each row carries a tappable "why" provenance stamp. Build both the collapsed and expanded states.
 
@@ -224,7 +224,7 @@ Variants: `kind` = primary (`btn-amber`, a emerald `signal` fill, `signal-ink` d
 - `edge-box` (the warn variant: a warm `danger-wash` box with a `danger` icon, serif body, a mono meta line, one recovery link).
 - `ledger-line` and `near-miss` row (the quiet-handled proof, collapsed and expanded, each near-miss carrying a tappable "why" provenance stamp).
 - `sheet` (the bottom-sheet template: a grabber, a head with agent meta and a title, a paper-card body, and an action row; reused for the reconciler, deal-risk, handoff, round-robin, and coaching sheets).
-- `orb` (a static component; in the prototype this maps to Dana's avatar, which carries a static emerald glow, not a breathing animation. The live idle motions are the thinking dot, the confidence waves, the day-spine "now" node, and the healthy deal-pulse lines).
+- `orb` (a static component; in the prototype this maps to Dana's avatar, which is a flat emerald disc, not a breathing animation. The live idle motions are the thinking dot, the confidence waves, the day-spine "now" node, and the healthy deal-pulse lines).
 
 ---
 

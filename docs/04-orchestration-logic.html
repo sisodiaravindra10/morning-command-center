@@ -34,6 +34,14 @@ tr:last-child td{border-bottom:0}
 .nav .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);display:block}
 .nav .t{color:var(--ink);font-size:14.5px;font-weight:500;margin-top:3px;display:block}
 .nav .next{text-align:right}
+code{overflow-wrap:anywhere}
+@media (max-width:600px){
+  main{padding:34px 18px 24px}
+  .bar .in{padding:0 16px}
+  h1{font-size:28px}
+  .nav{flex-direction:column;padding:0 18px}
+  th,td{padding:8px 10px}
+}
 </style></head><body><div class="bar"><div class="in"><a class="back" href="../index.html">&larr; Morning command center</a><span class="sp"></span><span class="tag">04 / 09</span></div></div><main><h1>Agent orchestration logic: how Leo decides what reaches Dana</h1>
 <p>This is the logic under the morning command center. The other documents describe what the morning looks like and how it feels. This one describes how the system gets from "many things happened overnight" to a handful of cards and one quiet line, and where the human stays in charge. It is the trust layer turned into rules.</p>
 <p>The whole design rests on one belief: Dana does not need more information. She needs less, ranked, and honest about its own confidence. Orchestration is how the system keeps that promise without lying to her.</p>
@@ -74,7 +82,7 @@ tr:last-child td{border-bottom:0}
                                               |
                               +---------------+---------------+
                               |                               |
-                         NEEDS YOU                      everything else
+                         Needs you                      everything else
                        (the few cards)             HANDLED / FYI / NOISE
                               |                               |
                         shown to Dana              folded into the ledger
@@ -88,7 +96,7 @@ tr:last-child td{border-bottom:0}
 <div class="tw"><table>
 <thead><tr><th>Tier</th><th>What it means</th><th>Where it shows</th><th>Can it interrupt?</th></tr></thead>
 <tbody>
-<tr><td><strong>NEEDS YOU</strong></td><td>High stake AND (Leo is uncertain OR the next step is irreversible)</td><td>A card at the top of Today</td><td>Yes, but rarely</td></tr>
+<tr><td><strong>Needs you</strong></td><td>High stake AND (Leo is uncertain OR the next step is irreversible)</td><td>A card at the top of Today</td><td>Yes, but rarely</td></tr>
 <tr><td><strong>FYI</strong></td><td>Material and worth knowing, already handled or no action today</td><td>The collapsed digest row, below the fold</td><td>No</td></tr>
 <tr><td><strong>HANDLED</strong></td><td>Leo did it, low risk, logged</td><td>The quiet ledger</td><td>No</td></tr>
 <tr><td><strong>NOISE</strong></td><td>Routine, resolved, spam, or after-hours static</td><td>Nowhere. Counted, not shown</td><td>No</td></tr>
@@ -133,15 +141,15 @@ tr:last-child td{border-bottom:0}
 <h2>A worked morning: many signals resolve to a few cards</h2>
 <p>This is Dana's morning in the prototype, traced through the logic above. The app opens directly on the Today command center: the cards assemble, the trust ledger reads "47 handled overnight · 2 need you · 1 corrected," and the focus card sits at the top. There is no lock screen and no notification to tap. A live new lead is not the way in; it surfaces inside the work, on the team altitude, as an SLA breach (a hot lead waiting on Marcus) and in the round-robin routing of overnight leads.</p>
 <p>Overnight, the skills run in parallel and produce a stream of raw signals. The orchestrator classifies their outputs into a clean split:</p>
-<ul><li><strong>47 auto-handled</strong>, rolled into the ledger (of which 6 were near-misses Leo could have pinged on and chose not to).</li><li><strong>12 FYI updates</strong> worth knowing, collapsed into the digest row below the fold.</li><li><strong>3 escalate to NEEDS YOU</strong>, the three cards.</li></ul>
+<ul><li><strong>47 auto-handled</strong>, rolled into the ledger (of which 6 were near-misses Leo could have pinged on and chose not to).</li><li><strong>12 FYI updates</strong> worth knowing, collapsed into the digest row below the fold.</li><li><strong>3 escalate to Needs you</strong>, the three cards.</li></ul>
 <p>That arithmetic is the whole story in one line: 47 handled, 12 in the digest, 3 surfaced, and the rest (spam leads, duplicate inquiries, after-hours static) dropped to NOISE, counted but not shown. Only 3 of everything that happened cross the bar to interrupt her.</p>
 <p>A sample of how individual signals sort:</p>
 <div class="tw"><table>
 <thead><tr><th>Signal</th><th>Skill</th><th>Stake</th><th>Confidence</th><th>Reversible?</th><th>Tier</th></tr></thead>
 <tbody>
-<tr><td>142 Oak St buyer countered at $590K, response due today</td><td>Negotiation Prep</td><td>High</td><td>Medium (2 comps unverified)</td><td>No (a counter is a commitment)</td><td><strong>NEEDS YOU</strong></td></tr>
-<tr><td>A hot lead has waited 3h 12m on Marcus, who is in a showing</td><td>Pipeline Pulse + routing</td><td>High</td><td>High</td><td>Reaching out is reversible, losing the lead is not</td><td><strong>NEEDS YOU</strong></td></tr>
-<tr><td>Crestview deal has gone quiet 4 days, nudge or hold</td><td>Pipeline Pulse</td><td>High</td><td>Medium (leaning yes a soft nudge helps)</td><td>Reaching out is reversible</td><td><strong>NEEDS YOU</strong></td></tr>
+<tr><td>142 Oak St buyer countered at $590K, response due today</td><td>Negotiation Prep</td><td>High</td><td>Medium (2 comps unverified)</td><td>No (a counter is a commitment)</td><td><strong>Needs you</strong></td></tr>
+<tr><td>A hot lead has waited 3h 12m on Marcus, who is in a showing</td><td>Pipeline Pulse + routing</td><td>High</td><td>High</td><td>Reaching out is reversible, losing the lead is not</td><td><strong>Needs you</strong></td></tr>
+<tr><td>Crestview deal has gone quiet 4 days, nudge or hold</td><td>Pipeline Pulse</td><td>High</td><td>Medium (leaning yes a soft nudge helps)</td><td>Reaching out is reversible</td><td><strong>Needs you</strong></td></tr>
 <tr><td>AiRM lead replies sent and logged overnight</td><td>Lead Qualification</td><td>Low</td><td>High</td><td>Yes</td><td>HANDLED</td></tr>
 <tr><td>6 near-misses Leo could have pinged on, chose not to</td><td>various</td><td>Low</td><td>High</td><td>Yes</td><td>HANDLED</td></tr>
 <tr><td>Routine status updates, comps refreshed, a tour confirmed</td><td>various</td><td>Low</td><td>High</td><td>Yes</td><td>HANDLED</td></tr>
