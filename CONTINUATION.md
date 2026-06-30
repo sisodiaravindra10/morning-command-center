@@ -1,5 +1,13 @@
 # Continuation brief — morning command center (Real take-home)
 
+## STATUS 2026-06-30 (latest `4267f65`): all 81 backlog tasks complete; audit P0/P1/P2 + most P3 applied.
+> This pass cleared the remaining pending work and the audit findings:
+>   - **#48 shared globe transition** done: the region-view globe FLIPs in from the banner globe's position (CSS keyframe via computed --fx/--fy/--fs, with a setTimeout force-settle so it lands correctly even when the preview throttles animation). #73 in-region zoom still works.
+>   - **Audit P2:** sheet focus-trap + focus-restore; bottom-nav role=tab (valid ARIA); ✕ close-button aria-labels; (the light-mode AA contrast, glows, globe colors, Sofia bug, region counts, deck re-skin, doc fixes were applied earlier this session).
+>   - **Audit P3:** removed AI-lavender #E2EAFD ledger hover, stage-top orb glow, dead tour-cta glow, em-dash CSS comment; prototype fills the viewport on <=430px (no overflow, controls stand down); doc-reader mobile media query + code wrap; landing footer "Confidential" off --subtle->--muted (AA); landing wrap padding tightened <=400px; docs Bennett "pack"->"paperwork"; doc 04 "NEEDS YOU"->"Needs you"; deck "3h"->"3h 12m"; PROCESS bare dir links -> real pages.
+> **Deliberately NOT done (with reason):** theme persistence / prefers-color-scheme — skipped because the dark default is the intended first impression AND localStorage would leak into the landing's embed iframe (same origin), risking a light hero. cobe CDN import — intentional progressive enhancement, not removed. **Blocked (need the user / a real environment):** Vercel deploy (account-side build auth) and re-recording the 3 films (still the periwinkle app; the films README now says so honestly).
+
+
 Internal working doc (not a deliverable). Hand-off so a fresh session/account can continue
 without losing context. Deeper history lives in the Claude project memory; this is the
 forward-looking state + the active redesign backlog.
