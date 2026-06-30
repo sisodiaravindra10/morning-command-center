@@ -90,9 +90,9 @@ html[data-theme="light"] #theme-toggle .ic-sun{display:none}
 html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 @media (max-width:480px){.stage-controls{top:10px;right:10px}.sc-btn{height:36px}}
 /* direct mobile viewing: the device fills the screen (no overflow, no bezel), presenter controls stand down */
-@media (max-width:430px){
+@media (max-width:440px){
   body{padding:0;gap:0;background:var(--canvas)}
-  .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none}
+  .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none}
   .device::after{display:none}
   .stage-controls{display:none}
 }
@@ -103,7 +103,7 @@ html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 .wip-note .wt b{display:block;font-weight:600;color:var(--ink);font-size:12.5px;margin-bottom:2px}
 /* ---- embed mode: when iframed (?embed=1), drop the stage so the host page frames the phone ---- */
 body.embed{padding:0;gap:0;min-height:0;background:transparent}
-body.embed .device{border-radius:0;box-shadow:none}
+body.embed .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none;margin:0}
 body.embed .device::after{display:none}
 body.embed .stage-controls{display:none}
 html,body{height:100%}
@@ -516,6 +516,8 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 .toast .sub{color:var(--ink-muted);font-size:11px;display:block;margin-top:1px}
 .toast .undo{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:6px 9px;flex:0 0 auto;pointer-events:auto}
 .toast .ring{--p:0;width:18px;height:18px;flex:0 0 auto;border-radius:50%;background:conic-gradient(var(--signal) calc(var(--p)*1%),var(--line) 0)}
+.toast .tx{flex:0 0 auto;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--ink-subtle);font-size:11px;border:1px solid var(--line);background:transparent;pointer-events:auto;transition:color var(--dur-fast),border-color var(--dur-fast)}
+.toast .tx:hover{color:var(--ink);border-color:var(--ink-subtle)}
 
 /* teach receipt (override-that-teaches) */
 .teach{position:absolute;left:14px;right:14px;bottom:84px;background:var(--p3);border:1px solid var(--info);border-radius:var(--r-md);padding:13px 14px;z-index:62;transform:translateY(150%);opacity:0;pointer-events:none;transition:transform var(--dur-med) var(--ease-out),opacity var(--dur-med);box-shadow:0 18px 40px -16px rgba(0,0,0,.85)}
@@ -620,7 +622,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 @keyframes kCloud{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.5)}}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
-@media (max-width:440px){body{padding:14px 0 40px}.device{transform:scale(.92);transform-origin:top center}}
+/* narrow viewports fill the screen via the max-width:440px rule above, so no scale-down is needed (a scale left a black band under bottom sheets) */
 
 /* ============================================================
    IMPECCABLE POLISH, dark premium craft pass (overrides above).
@@ -1207,7 +1209,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
           <!-- two-altitude: handling collapsed -->
           <div class="handling" data-sheet="tm-elena">
-            <span class="hpic av-elena">E</span><span class="ht"><b>Elena</b> is handling 4, all within her band</span><span class="hgo">peek</span>
+            <span class="hpic av-elena">E</span><span class="ht"><b>Elena</b> is handling 4, all healthy</span><span class="hgo">peek</span>
           </div>
 
           <div class="section-label" style="margin-top:4px">Team pulse <span class="mini">6 agents</span></div>
@@ -1258,7 +1260,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
           <div class="agent-row" data-sheet="tm-jenna"><span class="pic av-jenna">J</span><div class="meta"><div class="nm">Jenna</div><div class="ml flag">1 stalling · coaching suggested</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:9px"></span><span style="height:5px"></span><span style="height:7px"></span></span></div></div>
           <div class="agent-row" data-sheet="tm-priya"><span class="pic av-priya">P</span><div class="meta"><div class="nm">Priya</div><div class="ml">3 deals · healthy</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:6px"></span><span style="height:9px"></span><span style="height:12px"></span></span></div></div>
           <div class="agent-row" data-sheet="tm-elena"><span class="pic av-elena">E</span><div class="meta"><div class="nm">Elena</div><div class="ml">4 deals · 1 closing Mon</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:8px"></span><span style="height:11px"></span><span style="height:7px"></span></span></div></div>
-          <div class="agent-row" data-sheet="tm-diego"><span class="pic av-diego">D</span><div class="meta"><div class="nm">Diego <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· new</span></div><div class="ml">2 deals · agents full-assist</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:5px"></span><span style="height:7px"></span><span style="height:6px"></span></span></div></div>
+          <div class="agent-row" data-sheet="tm-diego"><span class="pic av-diego">D</span><div class="meta"><div class="nm">Diego <span style="font-family:var(--mono);font-size:9px;color:var(--ink-subtle)">· new</span></div><div class="ml">2 deals · healthy</div></div><div class="right"><span class="wave muted" aria-hidden="true"><span style="height:5px"></span><span style="height:7px"></span><span style="height:6px"></span></span></div></div>
         </div>
         <div class="section-label" style="margin-top:6px">By region</div>
         <div class="region-rollup">
@@ -1616,8 +1618,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     'pipe-priya':{ag:'Priya · replies fastest',agc:'var(--good)',title:'Priya, pipeline',body:`
       <p class="ctx" style="margin-bottom:12px">Three deals, all healthy. She has room, the natural place to route overflow.</p>
       <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d clear"></span><span><span class="t">3 deals, all healthy.</span><span class="m">fastest first-response on the team</span></span></div>`},
-    'pipe-elena':{ag:'Elena · within her band',agc:'var(--good)',title:'Elena, pipeline',body:`
-      <p class="ctx" style="margin-bottom:12px">Four deals, all within her band, one closing Monday. Nothing needs you.</p>
+    'pipe-elena':{ag:'Elena · healthy',agc:'var(--good)',title:'Elena, pipeline',body:`
+      <p class="ctx" style="margin-bottom:12px">Four deals, all healthy, one closing Monday. Nothing needs you.</p>
       <div class="rv-dt-row" style="border-top:0;padding-top:0"><span class="d clear"></span><span><span class="t">Closing Monday, paperwork ready.</span><span class="m">doc-prep done · e-sign queued</span></span></div>
       <div class="rv-dt-row"><span class="d clear"></span><span><span class="t">Three more on track.</span><span class="m">agents covering the routine</span></span></div>`},
     'pipe-diego':{ag:'Diego · new on the team',agc:'var(--signal)',title:'Diego, pipeline',body:`
@@ -1628,8 +1630,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       <p class="ctx" id="lr-ctx" style="margin-bottom:13px">Pick who picks it up.</p>
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="agent-row" data-assign="Priya" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-priya">P</span><div class="meta"><div class="nm">Priya</div><div class="ml">3 deals · replies fastest</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
-        <button class="agent-row" data-assign="Elena" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-elena">E</span><div class="meta"><div class="nm">Elena</div><div class="ml">4 deals · within her band</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
-        <button class="agent-row" data-assign="Diego" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-diego">D</span><div class="meta"><div class="nm">Diego</div><div class="ml">new · 2 deals · has room</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
+        <button class="agent-row" data-assign="Elena" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-elena">E</span><div class="meta"><div class="nm">Elena</div><div class="ml">4 deals · healthy</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
+        <button class="agent-row" data-assign="Diego" style="width:100%;border:1px solid var(--line);cursor:pointer;text-align:left"><span class="pic av-diego">D</span><div class="meta"><div class="nm">Diego</div><div class="ml">new · 2 deals · healthy</div></div><span class="right"><span class="rl-go">&rsaquo;</span></span></button>
       </div>`},
     pause:{ag:'Orchestrator · all agents',title:'Pause all agents?',body:`
       <p class="ctx" style="margin-bottom:13px">While paused, the agents stop acting for you and nothing new goes out in your name. Here is exactly what changes, and what stays on for safety.</p>
@@ -1653,7 +1655,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     {k:'sofia',n:'Sofia',deals:5,tone:'warn',short:'Out till Monday',line:'Her routine deals are rerouted. Two relationships are held for your call.'},
     {k:'jenna',n:'Jenna',deals:3,tone:'warn',short:'Coaching suggested',line:'The Lawson lead has gone quiet six days. A supportive note is drafted in your voice.'},
     {k:'priya',n:'Priya',deals:3,tone:'good',short:'Healthy',line:'All three deals are on track. Nothing here needs you.'},
-    {k:'elena',n:'Elena',deals:4,tone:'good',short:'On track',line:'Handling four within her band. One closes Monday and the paperwork is ready.'},
+    {k:'elena',n:'Elena',deals:4,tone:'good',short:'Healthy',line:'Handling four, all healthy. One closes Monday and the paperwork is ready.'},
     {k:'diego',n:'Diego',deals:2,tone:'good',short:'New, ramping',line:'Ramping up. The agents draft and prep everything for him to review.'}
   ];
   TEAM.forEach(function(t){
@@ -1943,7 +1945,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   /* ---------- toasts ---------- */
   const tw=$('#toast-wrap');
   function toast(o){sheetClose();const t=document.createElement('div');t.className='toast';
-    t.innerHTML=`<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.4" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span class="tm"><b>${o.msg}</b>${o.sub?`<span class="sub">${o.sub}</span>`:''}</span>${o.undo?'<span class="ring" aria-hidden="true"></span><button class="undo">Undo</button>':''}`;
+    t.innerHTML=`<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.4" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span class="tm"><b>${o.msg}</b>${o.sub?`<span class="sub">${o.sub}</span>`:''}</span>${o.undo?'<span class="ring" aria-hidden="true"></span><button class="undo">Undo</button>':''}<button class="tx" aria-label="Dismiss this">✕</button>`;
     tw.appendChild(t);requestAnimationFrame(()=>t.classList.add('show'));
     let done=false;const kill=()=>{if(done)return;done=true;t.classList.remove('show');setTimeout(()=>t.remove(),260);};
     const dur=o.undo?8000:3400;
@@ -1951,6 +1953,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       const tk=now=>{if(done)return;const p=Math.min(100,(now-start)/dur*100);if(ring)ring.style.setProperty('--p',p);p<100?requestAnimationFrame(tk):kill();};
       if(!rm)requestAnimationFrame(tk);else if(ring)ring.style.setProperty('--p',100);
       undo.addEventListener('click',()=>{kill();if(o.onUndo){o.onUndo();}else{toast({msg:'Undone',sub:'Nothing was sent.'});}});}
+    const _x=t.querySelector('.tx');if(_x)_x.addEventListener('click',kill);
     setTimeout(kill,dur+200);}
 
   /* ---------- teach receipt ---------- */
