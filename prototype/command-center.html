@@ -95,6 +95,11 @@ html[data-theme="light"] #theme-toggle .ic-moon{display:block}
   .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none;--safe-top:env(safe-area-inset-top,0px)}
   .device::after{display:none}
   .stage-controls{display:none}
+  /* a REAL phone (not the embedded landing mockup) is a web app, not a mockup: drop the simulated status bar (the OS provides one), keep a slim top zone for the live island */
+  body:not(.embed) .statusbar{display:none}
+  body:not(.embed) .app{padding-top:calc(42px + var(--safe-top,0px))}
+  body:not(.embed) .island{top:calc(9px + var(--safe-top,0px))}
+  body:not(.embed) .regionview{top:calc(42px + var(--safe-top,0px))}
 }
 /* ---- "exploration in progress" marker on the non-pitch tabs (Day / Team / Leads) ---- */
 .wip-note{display:flex;gap:10px;align-items:flex-start;margin:0 0 11px;padding:11px 13px;border:1px dashed var(--line);border-radius:var(--r-md);background:var(--p2)}

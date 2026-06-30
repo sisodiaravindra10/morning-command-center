@@ -69,7 +69,13 @@
   .hp-cap{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:7px; text-align:center}
   .hp-cap .dot{width:6px; height:6px; border-radius:50%; background:var(--accent)}
   @media(max-width:860px){ header.hero{grid-template-columns:1fr; gap:34px; padding:40px 0 30px} .hero-phone{order:2} }
-  @media(max-width:560px){ .hp-duo{transform:scale(.74); transform-origin:top center; height:470px} }
+  /* mobile: one phone in normal flow (the fixed-width overlapping duo overflowed the viewport) */
+  @media(max-width:560px){
+    .hp-duo{width:auto; max-width:100%; height:auto; transform:none; display:flex; justify-content:center}
+    .hp-duo .hp-back{display:none}
+    .hp-duo .hp-front{position:relative; left:auto; bottom:auto}
+    .hp-cap{max-width:100%}
+  }
   header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
     font-size:clamp(38px,6vw,64px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0; max-width:18ch}
   header.hero h1 em{font-style:normal; color:var(--accent)}
