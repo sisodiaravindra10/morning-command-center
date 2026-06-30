@@ -57,14 +57,19 @@
   /* ---- hero: copy on the left, a live phone mockup on the right ---- */
   header.hero{padding:58px 0 40px; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
   .hero-copy{position:relative; z-index:1; min-width:0}
-  .hero-phone{display:flex; flex-direction:column; align-items:center; gap:14px; justify-self:center}
-  .hp-frame{padding:11px; background:linear-gradient(#26282e,#15161b); border-radius:46px;
+  .hero-phone{display:flex; flex-direction:column; align-items:center; gap:18px; justify-self:center}
+  .hp-duo{position:relative; width:418px; height:600px; margin:0 auto}
+  .hp-frame{padding:9px; background:linear-gradient(#26282e,#15161b); border-radius:40px;
     box-shadow:0 0 0 2px #34373f, 0 34px 80px -30px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.06)}
-  .hp-screen{width:296px; height:640px; border-radius:36px; overflow:hidden; background:#0A0B10; position:relative}
-  .hp-screen iframe{width:390px; height:844px; border:0; display:block; transform:scale(.759); transform-origin:top left}
-  .hp-cap{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:7px}
+  .hp-duo .hp-frame{position:absolute}
+  .hp-screen{width:248px; height:536px; border-radius:30px; overflow:hidden; background:#0A0B10; position:relative}
+  .hp-screen iframe{width:390px; height:844px; border:0; display:block; transform:scale(.636); transform-origin:top left; pointer-events:none}
+  .hp-front{left:0; bottom:0; z-index:2}
+  .hp-back{right:0; top:0; transform:rotate(6deg); z-index:1}
+  .hp-cap{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:7px; text-align:center}
   .hp-cap .dot{width:6px; height:6px; border-radius:50%; background:var(--accent)}
   @media(max-width:860px){ header.hero{grid-template-columns:1fr; gap:34px; padding:40px 0 30px} .hero-phone{order:2} }
+  @media(max-width:560px){ .hp-duo{transform:scale(.74); transform-origin:top center; height:470px} }
   header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
     font-size:clamp(38px,6vw,64px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0; max-width:18ch}
   header.hero h1 em{font-style:normal; color:var(--accent)}
@@ -172,8 +177,11 @@
       </div>
     </div>
     <div class="hero-phone">
-      <div class="hp-frame"><div class="hp-screen"><iframe src="prototype/command-center.html?embed=1" title="The morning command center, live Today screen" loading="eager"></iframe></div></div>
-      <div class="hp-cap"><span class="dot"></span>Live prototype · tap to explore the Today tab</div>
+      <div class="hp-duo">
+        <div class="hp-frame hp-back"><div class="hp-screen"><iframe src="prototype/command-center.html?embed=1&screen=map" title="The live map screen" loading="eager" tabindex="-1" aria-hidden="true" scrolling="no"></iframe></div></div>
+        <div class="hp-frame hp-front"><div class="hp-screen"><iframe src="prototype/command-center.html?embed=1&screen=today" title="The Today command center" loading="eager" tabindex="-1" aria-hidden="true" scrolling="no"></iframe></div></div>
+      </div>
+      <div class="hp-cap"><span class="dot"></span>The Today command center and the live map · open the prototype to use it</div>
     </div>
   </header>
 

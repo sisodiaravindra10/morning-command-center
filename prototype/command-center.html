@@ -2003,6 +2003,18 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     var _eb=document.getElementById('boot-loader');if(_eb){_eb.classList.add('gone');_eb.style.display='none';}
     var _eo=document.getElementById('onboarding');if(_eo){_eo.classList.add('gone');_eo.style.display='none';}
     go('today');
+    /* ?screen=<today|day|team|leads|map> pins a single screen for a static landing mockup */
+    var _scr=new URLSearchParams(location.search).get('screen');
+    if(_scr==='team'){
+      root.dataset.altitude='team';
+      $$('#altitude button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.alt==='team');});
+      $$('[data-altblock]').forEach(function(x){x.style.display=(x.dataset.altblock==='team')?'flex':'none';});
+      if(typeof layoutTeam==='function')layoutTeam();
+    } else if(_scr==='map'){
+      if(regionview){regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');
+        var _rg=regionview.querySelector('.rv-globe');if(_rg)_rg.style.opacity='.92';
+        (function _try(){if(window.rvInitGlobe){window.rvInitGlobe();}else{setTimeout(_try,80);}})();}
+    } else if(_scr&&_scr!=='today'){ go(_scr); }
   } else {
     setTimeout(function(){var bl=document.getElementById('boot-loader');if(bl)bl.classList.add('gone');},2000);
   }
@@ -2080,7 +2092,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   try{
     var createGlobe = (await import('https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm')).default;
     var phi = 4.2;
-    var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches && location.search.indexOf('screen=')<0;
     createGlobe(cv, {
       devicePixelRatio: 2, width: 600, height: 600,
       phi: 4.2, theta: 0.26, dark: 1, diffuse: 1.2,
@@ -2102,7 +2114,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
     /* region-view globe: a second instance of the SAME globe, so the map detail reads as one continuous world. Lazily started, controllable for zoom-to-location (#11/#73). */
     var rvPhi=4.2, rvTheta=0.26, rvTargetPhi=4.2, rvTargetTheta=0.26, rvFocused=false, rvStarted=false;
-    var rvSpin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var rvSpin = !matchMedia('(prefers-reduced-motion: reduce)').matches && location.search.indexOf('screen=')<0;
     window.rvInitGlobe = function(){
       if(rvStarted) return; var rcv = document.getElementById('rv-globe-canvas'); if(!rcv) return; rvStarted = true;
       try{
