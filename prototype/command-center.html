@@ -509,12 +509,12 @@ html[data-screen="today"][data-morning="heavy"] #cover-chip{display:flex}
 
 /* toast */
 .toast-wrap{position:absolute;left:14px;right:14px;bottom:84px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:var(--p3);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;display:flex;align-items:center;gap:11px;transform:translateY(140%);opacity:0;transition:transform var(--dur-med) var(--ease-out),opacity var(--dur-med);box-shadow:0 18px 40px -16px rgba(0,0,0,.85);pointer-events:auto}
+.toast{background:var(--p3);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;display:flex;align-items:center;gap:11px;transform:translateY(140%);opacity:0;transition:transform var(--dur-med) var(--ease-out),opacity var(--dur-med);box-shadow:0 18px 40px -16px rgba(0,0,0,.85);pointer-events:none}
 .toast.show{transform:none;opacity:1}
 .toast .ti{width:20px;height:20px;flex:0 0 auto}
 .toast .tm{flex:1;font-size:12.5px;line-height:1.4}.toast .tm b{font-weight:600}
 .toast .sub{color:var(--ink-muted);font-size:11px;display:block;margin-top:1px}
-.toast .undo{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:6px 9px;flex:0 0 auto}
+.toast .undo{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:none;color:var(--signal-hi);border:1px solid var(--signal-line);border-radius:var(--r);padding:6px 9px;flex:0 0 auto;pointer-events:auto}
 .toast .ring{--p:0;width:18px;height:18px;flex:0 0 auto;border-radius:50%;background:conic-gradient(var(--signal) calc(var(--p)*1%),var(--line) 0)}
 
 /* teach receipt (override-that-teaches) */
@@ -1875,7 +1875,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   function restoreCard(card){if(!card)return;card.style.display='';card.classList.remove('gone');relayout(card.closest('.triage'));}
   function finishWork(card,res){const r=$('#work-result');if(r){r.hidden=false;r.innerHTML='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span>'+((res&&res.sub)||'Done')+'</span>';}
     const sb=$('#work-stop');if(sb)sb.textContent='Done';
-    workTimers.push(setTimeout(function(){closeWork();disposeCard(card);if(res&&res.msg){var o=Object.assign({},res,{undo:true});o.onUndo=function(){restoreCard(card);};toast(o);}},1000));}
+    workTimers.push(setTimeout(function(){closeWork();disposeCard(card);if(res&&res.msg){var o=Object.assign({},res,{undo:true});o.onUndo=function(){restoreCard(card);};toast(o);}},2400));}
   /* approve runs in the Dynamic Island: working pill -> ring/spin -> check -> collapse + dispose */
   function openWork(btn){const card=btn.closest('.tcard');
     var work={};try{work=JSON.parse(btn.dataset.work||'{}');}catch(_){}
@@ -1897,9 +1897,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     var els=[].slice.call(sl.querySelectorAll('.wstep')),i=0;
     function step(){if(cancelled)return;
       if(i>0){els[i-1].classList.remove('active');els[i-1].classList.add('done');var ds=els[i-1].querySelector('.wstat');if(ds)ds.textContent='done';}
-      if(i<els.length){els[i].classList.add('active');var as=els[i].querySelector('.wstat');if(as)as.textContent='now';i++;workTimers.push(setTimeout(step,1100));}
+      if(i<els.length){els[i].classList.add('active');var as=els[i].querySelector('.wstat');if(as)as.textContent='now';i++;workTimers.push(setTimeout(step,1900));}
       else{finishWork(card,res);}}
-    workTimers.push(setTimeout(step,460));}
+    workTimers.push(setTimeout(step,650));}
 
   /* ---------- morning scenario (calm default / heavy) ---------- */
   {const _ms=$('#morning-seg');if(_ms)_ms.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.morning=b.dataset.morning;
@@ -2092,10 +2092,10 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   try{
     var createGlobe = (await import('https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm')).default;
     var phi = 4.2;
-    var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches && location.search.indexOf('screen=')<0;
+    var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     createGlobe(cv, {
       devicePixelRatio: 2, width: 600, height: 600,
-      phi: 4.2, theta: 0.26, dark: 1, diffuse: 1.2,
+      phi: 4.2, theta: 0.26, dark: 0.62, diffuse: 1.5,
       mapSamples: 17000, mapBrightness: 7.2,
       baseColor: [0.07, 0.13, 0.10],
       markerColor: [0.08, 0.75, 0.48],
@@ -2114,13 +2114,13 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
     /* region-view globe: a second instance of the SAME globe, so the map detail reads as one continuous world. Lazily started, controllable for zoom-to-location (#11/#73). */
     var rvPhi=4.2, rvTheta=0.26, rvTargetPhi=4.2, rvTargetTheta=0.26, rvFocused=false, rvStarted=false;
-    var rvSpin = !matchMedia('(prefers-reduced-motion: reduce)').matches && location.search.indexOf('screen=')<0;
+    var rvSpin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.rvInitGlobe = function(){
       if(rvStarted) return; var rcv = document.getElementById('rv-globe-canvas'); if(!rcv) return; rvStarted = true;
       try{
         createGlobe(rcv, {
           devicePixelRatio: 2, width: 520, height: 520,
-          phi: rvPhi, theta: rvTheta, dark: 1, diffuse: 1.2,
+          phi: rvPhi, theta: rvTheta, dark: 0.62, diffuse: 1.5,
           mapSamples: 16000, mapBrightness: 7.4,
           baseColor: [0.07,0.13,0.10], markerColor: [0.08,0.75,0.48], glowColor: [0.06,0.13,0.10],
           markers: [
