@@ -89,6 +89,13 @@ html[data-theme="light"] .rv-fb i:nth-child(1){background:var(--danger)}
 html[data-theme="light"] #theme-toggle .ic-sun{display:none}
 html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 @media (max-width:480px){.stage-controls{top:10px;right:10px}.sc-btn{height:36px}}
+/* direct mobile viewing: the device fills the screen (no overflow, no bezel), presenter controls stand down */
+@media (max-width:430px){
+  body{padding:0;gap:0;background:var(--canvas)}
+  .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none}
+  .device::after{display:none}
+  .stage-controls{display:none}
+}
 /* ---- "exploration in progress" marker on the non-pitch tabs (Day / Team / Leads) ---- */
 .wip-note{display:flex;gap:10px;align-items:flex-start;margin:0 0 11px;padding:11px 13px;border:1px dashed var(--line);border-radius:var(--r-md);background:var(--p2)}
 .wip-note .wd{width:8px;height:8px;border-radius:50%;flex:0 0 auto;margin-top:4px;background:var(--warn)}
@@ -565,7 +572,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .btn-amber{background:var(--signal)}
 .btn-amber:hover{background:var(--signal-hi)}
 
-/* entrance choreography — staggered rise on screen activation */
+/* entrance choreography, staggered rise on screen activation */
 .screen.is-active>*{animation:kRise var(--dur-slow) var(--ease-out) backwards}
 .screen.is-active>*:nth-child(2){animation-delay:.05s}
 .screen.is-active>*:nth-child(3){animation-delay:.09s}
@@ -652,7 +659,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 /* the trust ledger count, the morning's first proof, gets a little machine-layer presence */
 .lg-txt>b:first-child{font-family:var(--mono);font-size:13.5px;letter-spacing:-.01em}
 .lg-need{border-bottom:1px solid var(--signal-line);padding-bottom:1px}
-.lg-need:hover{color:#E2EAFD;border-color:var(--signal-hi)}
+.lg-need:hover{color:var(--ink);border-color:var(--danger-line)}
 /* the day-rail "now" card: a soft emerald glow so the present reads at a glance */
 /* alive on hover, pointer devices only so touch never sticks */
 @media (hover:hover){
@@ -753,8 +760,8 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
    and the guided tour: a spotlight plus a one-step-at-a-time card.
    ============================================================ */
 .stage-top{display:flex;align-items:center;gap:9px;color:var(--ink-subtle);font-family:var(--mono);font-size:11px;letter-spacing:.12em}
-.stage-top .st-orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));box-shadow:0 0 14px -2px rgba(21,192,122,.6);flex:0 0 auto}
-.tour-cta{display:inline-flex;align-items:center;gap:9px;font-family:var(--font);font-size:13.5px;font-weight:600;color:var(--ink);background:linear-gradient(178deg,#1C1E29,#131420);border:1px solid var(--signal-line);border-radius:999px;padding:11px 21px;box-shadow:0 10px 26px -14px rgba(21,192,122,.5),inset 0 1px 0 rgba(255,255,255,.06);transition:transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast)}
+.stage-top .st-orb{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 34% 30%,var(--signal-hi),var(--signal));flex:0 0 auto}
+.tour-cta{display:inline-flex;align-items:center;gap:9px;font-family:var(--font);font-size:13.5px;font-weight:600;color:var(--ink);background:var(--p2);border:1px solid var(--signal-line);border-radius:999px;padding:11px 21px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast)}
 .tour-cta:hover{transform:translateY(-2px);border-color:var(--signal)}
 .tour-cta .tc-cta-dot{width:8px;height:8px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 3px var(--signal-wash);animation:breathe 1.9s var(--ease-io) infinite}
 /* tour overlay (inside the phone) */
@@ -1663,11 +1670,21 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     const el=document.createElement('div');el.className='sheet';el.id='sheet-'+id;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');
     el.innerHTML=`<span class="grab"></span><div class="sheet-head"><div class="sh-meta"><span class="sh-ag"><span class="d" style="background:${d.agc||'var(--ink-subtle)'}"></span>${d.ag}</span><h2>${d.title}</h2></div><button class="x" data-close aria-label="Close">✕</button></div><div class="sheet-body">${d.body}</div>`;
     host.appendChild(el);return el;}
+  var _sheetTrigger=null;
   function sheetOpen(id){let el=$('#sheet-'+id)||buildSheet(id);if(!el)return;
+    _sheetTrigger=document.activeElement;
     if(openSheet&&openSheet!==el){openSheet.classList.remove('show','mounted');}
     el.classList.add('mounted');el.querySelector('.sheet-body').scrollTop=0;openSheet=el;scrim.classList.add('show');
-    requestAnimationFrame(()=>el.classList.add('show'));}
-  function sheetClose(){if(typeof clearWork==='function')clearWork();if(openSheet){const el=openSheet;el.classList.remove('show');setTimeout(()=>el.classList.remove('mounted'),460);openSheet=null;}scrim.classList.remove('show');}
+    requestAnimationFrame(()=>{el.classList.add('show');var f=el.querySelector('.x')||el.querySelector('button,a[href],input');if(f)f.focus();});}
+  function sheetClose(){if(typeof clearWork==='function')clearWork();if(openSheet){const el=openSheet;el.classList.remove('show');setTimeout(()=>el.classList.remove('mounted'),460);openSheet=null;}scrim.classList.remove('show');if(_sheetTrigger&&_sheetTrigger.focus){try{_sheetTrigger.focus();}catch(e){}_sheetTrigger=null;}}
+  /* focus trap within an open sheet (a11y) */
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Tab'||!openSheet)return;
+    var f=[...openSheet.querySelectorAll('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(function(x){return x.offsetParent!==null;});
+    if(!f.length)return;var first=f[0],last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  });
 
   /* ---------- navigation ---------- */
   const scroll=$('#scroll');
@@ -1737,6 +1754,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   if(regionview)regionview.querySelectorAll('.rv-region').forEach(b=>b.addEventListener('click',()=>rvSelect(b)));
 
   /* ---------- theme + spec ---------- */
+  $$('.tabbar .tab').forEach(function(b){b.setAttribute('role','tab');});
   {const _tt=$('#theme-toggle');if(_tt)_tt.addEventListener('click',()=>{const nx=root.dataset.theme==='light'?'dark':'light';root.dataset.theme=nx;_tt.setAttribute('aria-label',nx==='light'?'Switch to dark mode':'Switch to light mode');
     var _gc=$('#globe'),_gf=$('.globe-stage .globe-fallback');if(_gc&&_gf){if(nx==='light'){_gc.style.display='none';_gf.style.display='block';}else{_gc.style.display='';_gf.style.display='none';}}});}
   {const _sp=$('#spec-seg');if(_sp)_sp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});}
