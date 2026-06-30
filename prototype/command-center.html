@@ -875,7 +875,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .rv-back svg{width:13px;height:13px}
 .rv-back:hover{border-color:var(--signal-line);color:var(--ink)}
 .rv-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:64px 18px 26px;-webkit-overflow-scrolling:touch}
-.rv-globe{width:148px;height:148px;margin:4px auto 16px;position:relative;opacity:0}
+.rv-globe{width:148px;height:148px;margin:4px auto 16px;position:relative;opacity:0;border-radius:50%}
 .regionview.show .rv-globe{animation:rvGlobeIn .62s var(--ease-out) .08s both}
 @keyframes rvGlobeIn{from{opacity:0;transform:scale(.55)}to{opacity:.92;transform:none}}
 @keyframes globeFlip{from{transform:translate(var(--fx,0),var(--fy,0)) scale(var(--fs,1));opacity:.82}to{transform:none;opacity:.92}}
@@ -916,8 +916,9 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .rv-hint{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--ink-subtle);text-align:center;margin:0 0 10px}
 .regionview.zoomed .rv-hint{display:none}
 .rv-globe{overflow:hidden}
-.rv-fb{transition:transform .55s var(--ease-out)}
-.regionview.zoomed .rv-fb{transform:scale(2.5)}
+.rv-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:50%}
+.rv-fb,.rv-canvas{transition:transform .6s var(--ease-out)}
+.regionview.zoomed .rv-fb,.regionview.zoomed .rv-canvas{transform:scale(1.62)}
 .rv-fb i{transition:transform .4s var(--ease-out),opacity .4s var(--ease-out)}
 .regionview.zoomed .rv-fb i{opacity:.22}
 .regionview.zoomed .rv-fb i.sel{opacity:1;transform:scale(1.5);box-shadow:0 0 0 4px var(--signal-wash)}
@@ -1175,7 +1176,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <div class="agent-tag"><span class="tdot"></span>Response-watch agent</div>
                 <h3>A hot lead has waited <span style="color:var(--danger)">3h 12m</span> on Marcus.</h3>
                 <p class="ctx">ICP 91% · $720K North Hills. Marcus is in a showing. Reassign or ping him?</p>
-                <div class="actions"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Priya","sub":"She replies fastest and is clear today · Marcus notified","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>
+                <div class="actions"><button class="btn btn-amber btn-full" data-dispose data-work='{"title":"Reassigning to Priya","steps":["Moving the lead to Priya","Notifying Marcus","Confirming she picked it up"]}' data-toast='{"msg":"Reassigned to Priya","sub":"She replies fastest and is clear today · Marcus notified","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>
               </div>
             </article>
             <article class="tcard row" data-card="tm-rr" data-sev="amber">
@@ -1186,7 +1187,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
                 <div class="agent-tag"><span class="tdot"></span>Lead-routing agent</div>
                 <h3>12 new leads overnight. I round-robined them across 6.</h3>
                 <p class="ctx">Balanced for load + ICP. <b>2 high-ICP</b> held for your call. Review?</p>
-                <div class="actions"><button class="btn btn-amber btn-full" data-sheet="roundrobin">Review &amp; adjust</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Round-robin approved","sub":"12 leads assigned · agents notified","undo":true}'>Approve all</button></div>
+                <div class="actions"><button class="btn btn-amber btn-full" data-sheet="roundrobin">Review &amp; adjust</button><button class="btn btn-ghost btn-sm" data-dispose data-work='{"title":"Approving the split","steps":["Assigning 12 leads","Holding 2 high-ICP for you","Notifying the agents"]}' data-toast='{"msg":"Round-robin approved","sub":"12 leads assigned · agents notified","undo":true}'>Approve all</button></div>
               </div>
             </article>
             <article class="tcard row" data-card="tm-coach" data-sev="amber">
@@ -1339,7 +1340,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     <div class="regionview" id="regionview" aria-hidden="true" role="dialog" aria-label="Pipeline by region">
       <button class="rv-back" id="rv-back" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg> Today</button>
       <div class="rv-scroll">
-        <div class="rv-globe"><div class="globe-fallback rv-fb"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="rv-globe"><div class="globe-fallback rv-fb"><i></i><i></i><i></i><i></i><i></i><i></i></div><canvas id="rv-globe-canvas" class="rv-canvas" width="520" height="520" aria-hidden="true"></canvas></div>
         <div class="rv-ey">live map · you + 6 agents</div>
         <div class="rv-big">$14.2M</div>
         <div class="rv-sub">22 live deals across 6 metros · 3 need a look</div>
@@ -1718,7 +1719,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
   /* #11 region / map view, opened from the globe banner */
   const regionview=$('#regionview');
-  function openRegion(){if(typeof sheetClose==='function')sheetClose();if(!regionview)return;
+  function openRegion(){if(typeof sheetClose==='function')sheetClose();if(!regionview)return;if(window.rvInitGlobe)window.rvInitGlobe();
     var src=$('#globe-banner .globe-stage'),rvg=regionview.querySelector('.rv-globe');
     regionview.classList.add('show');regionview.setAttribute('aria-hidden','false');
     /* #48: the region globe flies in from the banner globe's position, one continuous globe */
@@ -1763,13 +1764,14 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   };
   const rvFb=regionview?regionview.querySelector('.rv-fb'):null, rvDetail=$('#rv-detail');
   const rvDots=regionview?[...regionview.querySelectorAll('.rv-fb i')]:[];
-  function rvUnzoom(){if(!regionview)return;regionview.classList.remove('zoomed');if(rvFb)rvFb.style.transformOrigin='';rvDots.forEach(d=>d.classList.remove('sel'));}
+  function rvUnzoom(){if(!regionview)return;regionview.classList.remove('zoomed');if(rvFb)rvFb.style.transformOrigin='';rvDots.forEach(d=>d.classList.remove('sel'));if(window.rvGlobeReset)window.rvGlobeReset();}
   function rvSelect(btn){const r=REGIONS[btn.dataset.region];if(!r||!rvDetail)return;
     if(rvFb)rvFb.style.transformOrigin=btn.dataset.origin;
     rvDots.forEach((d,i)=>d.classList.toggle('sel',String(i+1)===btn.dataset.dot));
     rvDetail.innerHTML='<button class="rv-dt-back" id="rv-dt-back">‹ all regions</button><div class="rv-dt-h">'+r.name+'</div><div class="rv-dt-sub">'+r.sub+'</div>'+
       r.rows.map(x=>'<div class="rv-dt-row"><span class="d '+x.s+'"></span><span><span class="t">'+x.t+'</span><span class="m">'+x.m+'</span></span></div>').join('');
     regionview.classList.add('zoomed');
+    if(window.rvGlobeFocus)window.rvGlobeFocus();
     const bk=$('#rv-dt-back');if(bk)bk.addEventListener('click',rvUnzoom);}
   if(regionview)regionview.querySelectorAll('.rv-region').forEach(b=>b.addEventListener('click',()=>rvSelect(b)));
 
@@ -1789,22 +1791,28 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   /* ---------- altitude ---------- */
   $('#altitude').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.altitude=b.dataset.alt;
     $$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x===b));
-    $$('[data-altblock]').forEach(x=>x.style.display=(x.dataset.altblock===b.dataset.alt)?'flex':'none');scroll.scrollTop=0;});
+    $$('[data-altblock]').forEach(x=>x.style.display=(x.dataset.altblock===b.dataset.alt)?'flex':'none');if(b.dataset.alt==='team')layoutTeam();scroll.scrollTop=0;});
 
   /* ---------- ledger: only 'need you' is interactive (jump to queue) ---------- */
   $('#lg-need').addEventListener('click',()=>{root.dataset.altitude='me';$$('#altitude button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.alt==='me'));$$('[data-altblock]').forEach(x=>x.style.display=x.dataset.altblock==='me'?'flex':'none');const t=$('#triage');if(t)t.scrollIntoView({block:'start',behavior:'smooth'});});
 
   /* ---------- triage: one focus card + collapsed queue ---------- */
   const triage=$('#triage');
-  function visibleCards(){return $$('.tcard',triage).filter(c=>c.offsetParent!==null && !c.classList.contains('gone'));}
-  function layoutTriage(){$$('.tcard',triage).forEach(c=>c.classList.remove('focus','row','peek','peek1','peek2','stash'));const cards=visibleCards();var _te=$('#triage-empty');if(_te){var _liv=$$('.tcard',triage).filter(function(c){return !c.classList.contains('gone')&&c.style.display!=='none'&&!(c.classList.contains('exc')&&root.dataset.morning==='calm');}).length;_te.hidden=_liv>0;}cards.forEach((c,i)=>{if(i===0)c.classList.add('focus');else if(i===1)c.classList.add('peek','peek1');else if(i===2)c.classList.add('peek','peek2');else c.classList.add('peek','stash');});
+  const triageTeam=$('#triage-team');
+  function visibleIn(box){return $$('.tcard',box).filter(c=>c.offsetParent!==null && !c.classList.contains('gone'));}
+  function visibleCards(){return visibleIn(triage);}
+  /* one stacking model for both altitudes: a focus card with a 3D peek stack behind it */
+  function stackCards(box){if(!box)return [];$$('.tcard',box).forEach(c=>c.classList.remove('focus','row','peek','peek1','peek2','stash'));const cards=visibleIn(box);cards.forEach((c,i)=>{if(i===0)c.classList.add('focus');else if(i===1)c.classList.add('peek','peek1');else if(i===2)c.classList.add('peek','peek2');else c.classList.add('peek','stash');});return cards;}
+  function layoutTriage(){const cards=stackCards(triage);var _te=$('#triage-empty');if(_te){var _liv=$$('.tcard',triage).filter(function(c){return !c.classList.contains('gone')&&c.style.display!=='none'&&!(c.classList.contains('exc')&&root.dataset.morning==='calm');}).length;_te.hidden=_liv>0;}
     const n=cards.length;const nn=$('#need-n');if(nn)nn.textContent=n;const kn=$('#kpi-need');if(kn)kn.textContent=n;
     const nm=$('#needs-mini');if(nm)nm.textContent=n?(n+' to clear · one at a time'):'all clear';
     const ac=document.querySelector('#altitude button[data-alt="me"] .cnt');if(ac)ac.textContent='· '+n;
     const tb=document.querySelector('.tab[data-go="today"] .badge');if(tb)tb.textContent=n;}
+  /* #74: the My-team altitude stacks with the exact same focus + peek model as My deals */
+  function layoutTeam(){const cards=stackCards(triageTeam);const tc=document.querySelector('#altitude button[data-alt="team"] .cnt');if(tc)tc.textContent='· '+cards.length;return cards;}
+  function relayout(box){if(box&&box.id==='triage-team')layoutTeam();else layoutTriage();}
   function promote(card){if(!card)return;triage.insertBefore(card,triage.firstElementChild);layoutTriage();$('#scroll').scrollTo({top:0,behavior:'smooth'});}
-  /* #74: the My-team altitude stacks like deals (focus + a collapsed, tappable queue), self-contained */
-  function promoteTeam(card){var box=$('#triage-team');if(!box||!card)return;box.insertBefore(card,box.firstElementChild);$$('.tcard',box).forEach(function(c,i){c.classList.remove('focus','row','peek','peek1','peek2','stash');c.classList.add(i===0?'focus':'row');});}
+  function promoteTeam(card){if(!triageTeam||!card)return;triageTeam.insertBefore(card,triageTeam.firstElementChild);layoutTeam();$('#scroll').scrollTo({top:0,behavior:'smooth'});}
   /* swipe the front card sideways to set it aside (defer); Approve still runs the working drawer */
   (function(){let sx=0,sy=0,drag=false,decided=false,horiz=false,cur=null;
     function move(e){if(!drag||!cur)return;const dx=e.clientX-sx,dy=e.clientY-sy;
@@ -1818,24 +1826,26 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       if(horiz&&Math.abs(dx)>96){const dir=dx>0?1:-1;
         card.style.transition='transform .32s var(--ease-out),opacity .32s';
         card.style.transform='translateX('+(dir*460)+'px) rotate('+(dir*10)+'deg)';card.style.opacity='0';
-        const t=setTimeout(function(){card.style.display='none';card.style.transform='';card.style.opacity='';card.style.transition='';layoutTriage();},320);
-        toast({msg:'Set aside for later',sub:'I will bring it back when it needs you',undo:true,onUndo:function(){clearTimeout(t);card.style.display='';card.style.transform='';card.style.opacity='';card.style.transition='';layoutTriage();}});
+        const bx=card.closest('.triage');
+        const t=setTimeout(function(){card.style.display='none';card.style.transform='';card.style.opacity='';card.style.transition='';relayout(bx);},320);
+        toast({msg:'Set aside for later',sub:'I will bring it back when it needs you',undo:true,onUndo:function(){clearTimeout(t);card.style.display='';card.style.transform='';card.style.opacity='';card.style.transition='';relayout(bx);}});
       }else{card.style.transition='transform .26s var(--ease-out),opacity .26s';card.style.transform='';card.style.opacity='';
         setTimeout(function(){card.style.transition='';},300);}}
-    if(triage)triage.addEventListener('pointerdown',function(e){
+    function down(e){
       if(e.target.closest('button,a,[data-sheet],.change,.spec-pin'))return;
-      const card=e.target.closest('.tcard.focus');if(!card||!triage.contains(card))return;
+      const card=e.target.closest('.tcard.focus');if(!card||!e.currentTarget.contains(card))return;
       if(typeof rm!=='undefined'&&rm)return;
       cur=card;sx=e.clientX;sy=e.clientY;drag=true;decided=false;horiz=false;
-      window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);});
+      window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);}
+    [triage,triageTeam].forEach(function(bx){if(bx)bx.addEventListener('pointerdown',down);});
   })();
-  function disposeCard(card){if(!card)return;card.classList.add('gone');setTimeout(()=>{card.style.display='none';layoutTriage();},240);}
+  function disposeCard(card){if(!card)return;var box=card.closest('.triage');card.classList.add('gone');setTimeout(()=>{card.style.display='none';relayout(box);},240);}
 
   /* ---------- #7 Leo working drawer ---------- */
   const workdrawer=$('#workdrawer');let workTimers=[];
   function clearWork(){workTimers.forEach(clearTimeout);workTimers=[];}
   function closeWork(){clearWork();if(openSheet===workdrawer){workdrawer.classList.remove('show');setTimeout(()=>workdrawer.classList.remove('mounted'),460);openSheet=null;}scrim.classList.remove('show');}
-  function restoreCard(card){if(!card)return;card.style.display='';card.classList.remove('gone');layoutTriage();}
+  function restoreCard(card){if(!card)return;card.style.display='';card.classList.remove('gone');relayout(card.closest('.triage'));}
   function finishWork(card,res){const r=$('#work-result');if(r){r.hidden=false;r.innerHTML='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></svg><span>'+((res&&res.sub)||'Done')+'</span>';}
     const sb=$('#work-stop');if(sb)sb.textContent='Done';
     workTimers.push(setTimeout(function(){closeWork();disposeCard(card);if(res&&res.msg){var o=Object.assign({},res,{undo:true});o.onUndo=function(){restoreCard(card);};toast(o);}},1000));}
@@ -2062,6 +2072,42 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       onRender: function(state){ state.phi = phi; if(spin) phi += 0.0036; }
     });
     var fb = document.querySelector('.globe-fallback'); if(fb) fb.style.display = 'none'; /* real globe loaded, drop the static circle behind it */
+
+    /* region-view globe: a second instance of the SAME globe, so the map detail reads as one continuous world. Lazily started, controllable for zoom-to-location (#11/#73). */
+    var rvPhi=4.2, rvTheta=0.26, rvTargetPhi=4.2, rvTargetTheta=0.26, rvFocused=false, rvStarted=false;
+    var rvSpin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.rvInitGlobe = function(){
+      if(rvStarted) return; var rcv = document.getElementById('rv-globe-canvas'); if(!rcv) return; rvStarted = true;
+      try{
+        createGlobe(rcv, {
+          devicePixelRatio: 2, width: 520, height: 520,
+          phi: rvPhi, theta: rvTheta, dark: 1, diffuse: 1.2,
+          mapSamples: 16000, mapBrightness: 7.4,
+          baseColor: [0.07,0.13,0.10], markerColor: [0.08,0.75,0.48], glowColor: [0.06,0.13,0.10],
+          markers: [
+            { location: [30.27,-97.74], size: 0.11 },
+            { location: [29.42,-98.49], size: 0.08 },
+            { location: [29.76,-95.37], size: 0.07 },
+            { location: [32.78,-96.80], size: 0.08 },
+            { location: [40.71,-74.00], size: 0.06 },
+            { location: [34.05,-118.24], size: 0.06 }
+          ],
+          onRender: function(state){
+            if(rvFocused){ rvPhi += (rvTargetPhi - rvPhi)*0.09; rvTheta += (rvTargetTheta - rvTheta)*0.09; }
+            else if(rvSpin){ rvPhi += 0.0036; }
+            state.phi = rvPhi; state.theta = rvTheta;
+          }
+        });
+        var rfb = document.querySelector('#regionview .rv-fb'); if(rfb) rfb.style.opacity = '0';
+      }catch(e){}
+    };
+    /* turn the globe to face the metro (the short way around); the CSS scale then zooms into it */
+    window.rvGlobeFocus = function(){
+      var base = 3.30, twoPi = Math.PI*2;
+      rvTargetPhi = base + Math.round((rvPhi - base)/twoPi)*twoPi;
+      rvTargetTheta = 0.26; rvFocused = true;
+    };
+    window.rvGlobeReset = function(){ rvFocused = false; };
   }catch(e){
     cv.style.display = 'none'; /* keep the static CSS globe behind */
   }
