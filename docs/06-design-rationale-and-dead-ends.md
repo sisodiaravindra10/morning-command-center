@@ -26,7 +26,7 @@ Dana's own deals and her team's deals are ranked in one feed by what is at stake
 
 ### Dark premium, earned not defaulted
 
-The system is dark: a near-black canvas, light cool text, a single periwinkle accent that glows, and a warm sand reserved for the things that need a human.
+The system is dark: a near-black canvas, light cool text, a single emerald accent, and a warm sand reserved for the things that need a human.
 
 **Why.** This is the headline pivot and it has its own section below, because getting dark right is the most important problem in the project. The short version: the slop is not dark itself, it is thoughtless dark. The genre default, a dark canvas with a generic glow and generic cards, reads as every other AI demo. The answer is not to flee to light, it is to earn the dark: a chosen palette instead of a default, restraint instead of glow, and warmth used only where it means something. Done that way, dark reads as a quiet, expensive instrument you open before dawn, which is exactly the mood a morning command center wants.
 
@@ -72,7 +72,7 @@ In the "your deals" strip, healthy deal lines breathe softly and the one going q
 
 The genre default for an AI product is a dark canvas, a glow, and generic cards. It is the obvious place to start, and it is the wrong place to finish.
 
-**Why it was killed.** The failure is worth diagnosing, not just reversing. A dark canvas does not read as slop because dark is ugly. It reads as slop because dark plus glow plus generic cards is the genre default, so it lands as every other AI demo before any real design decision has been made. The test is simple: if you can guess the palette from the category alone ("AI product, so dark"), it is the training-data reflex, not a choice. The project tried the honest opposite for a while, a warm editorial light, precisely to dodge that reflex. The final system keeps what that taught, every hairline exposed and color only ever meaning a state, and brings it back to a dark done with discipline: a chosen periwinkle-on-near-black palette, no glow, a warm sand reserved for what needs a human. Same anti-slop rules, the atmosphere earned instead of defaulted.
+**Why it was killed.** The failure is worth diagnosing, not just reversing. A dark canvas does not read as slop because dark is ugly. It reads as slop because dark plus glow plus generic cards is the genre default, so it lands as every other AI demo before any real design decision has been made. The test is simple: if you can guess the palette from the category alone ("AI product, so dark"), it is the training-data reflex, not a choice. The project tried the honest opposite for a while, a warm editorial light, precisely to dodge that reflex. The final system keeps what that taught, every hairline exposed and color only ever meaning a state, and brings it back to a dark done with discipline: a chosen emerald-on-near-black palette, no glow, a warm sand reserved for what needs a human. Same anti-slop rules, the atmosphere earned instead of defaulted.
 
 ### 2. Colored side-stripe accents on cards
 
