@@ -1159,32 +1159,40 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
         <!-- TEAM ALTITUDE -->
         <div data-altblock="team" style="display:none;flex-direction:column;gap:13px">
 
-          <article class="card">
-            <div class="topline"><span class="chip risk"><span class="cd"></span>SLA breach</span><span class="ts">live</span></div>
-            <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Response-watch agent</div>
-            <h3>A hot lead has waited <span style="color:var(--danger)">3h 12m</span> on Marcus.</h3>
-            <p class="ctx">ICP 91% · $720K North Hills. Marcus is in a showing. Reassign or ping him?</p>
-            <div class="actions"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Priya","sub":"She replies fastest and is clear today · Marcus notified","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>
-          </article>
-
-          <article class="card tappable" data-sheet="roundrobin" style="position:relative">
-            <span class="spec-pin" data-spec-id="roundrobin" style="top:-7px;left:-7px">8</span>
-            <div class="topline"><span class="chip needs"><span class="cd"></span>Review split</span><span class="ts">06:02</span></div>
-            <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Lead-routing agent</div>
-            <h3>12 new leads overnight. I round-robined them across 6.</h3>
-            <p class="ctx">Balanced for load + ICP. <b>2 high-ICP</b> held for your call. Review?</p>
-            <div class="actions"><button class="btn btn-amber btn-full" data-sheet="roundrobin">Review &amp; adjust</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Round-robin approved","sub":"12 leads assigned · agents notified","undo":true}'>Approve all</button></div>
-          </article>
-
-          <!-- agent-coaching nudge -->
-          <article class="card tappable" data-sheet="coaching" style="position:relative">
-            <span class="spec-pin" data-spec-id="coaching" style="top:-7px;left:-7px">9</span>
-            <div class="topline"><span class="chip needs"><span class="cd"></span>Coaching</span><span class="ts">06:20</span></div>
-            <div class="agent-tag" style="margin-bottom:7px"><span class="tdot"></span>Team-coach agent</div>
-            <h3>Jenna's lead has stalled 6 days. Want to nudge her?</h3>
-            <p class="ctx">I drafted a short, supportive message in your voice. Soften or send.</p>
-            <div class="actions"><button class="btn btn-amber btn-full" data-sheet="coaching">Review message</button></div>
-          </article>
+          <div class="triage" id="triage-team">
+            <article class="tcard focus" data-card="tm-sla" data-sev="red">
+              <button class="row-line"><span class="sevdot red"></span><span class="rl-t">Hot lead waiting 3h 12m on Marcus</span><span class="rl-tag">team</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip risk"><span class="cd"></span>SLA breach</span><span class="ts">live</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Response-watch agent</div>
+                <h3>A hot lead has waited <span style="color:var(--danger)">3h 12m</span> on Marcus.</h3>
+                <p class="ctx">ICP 91% · $720K North Hills. Marcus is in a showing. Reassign or ping him?</p>
+                <div class="actions"><button class="btn btn-amber btn-full" data-toast='{"msg":"Reassigned to Priya","sub":"She replies fastest and is clear today · Marcus notified","undo":true}'>Reassign now</button><button class="btn btn-ghost btn-sm" data-sheet="nudge">Nudge Marcus</button></div>
+              </div>
+            </article>
+            <article class="tcard row" data-card="tm-rr" data-sev="amber">
+              <span class="spec-pin" data-spec-id="roundrobin" style="top:-7px;left:-7px">8</span>
+              <button class="row-line"><span class="sevdot amber"></span><span class="rl-t">12 new leads, round-robined across 6</span><span class="rl-tag">review</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip needs"><span class="cd"></span>Review split</span><span class="ts">06:02</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Lead-routing agent</div>
+                <h3>12 new leads overnight. I round-robined them across 6.</h3>
+                <p class="ctx">Balanced for load + ICP. <b>2 high-ICP</b> held for your call. Review?</p>
+                <div class="actions"><button class="btn btn-amber btn-full" data-sheet="roundrobin">Review &amp; adjust</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Round-robin approved","sub":"12 leads assigned · agents notified","undo":true}'>Approve all</button></div>
+              </div>
+            </article>
+            <article class="tcard row" data-card="tm-coach" data-sev="amber">
+              <span class="spec-pin" data-spec-id="coaching" style="top:-7px;left:-7px">9</span>
+              <button class="row-line"><span class="sevdot amber"></span><span class="rl-t">Jenna's lead stalled 6 days, nudge her?</span><span class="rl-tag">coaching</span><span class="rl-go">▸</span></button>
+              <div class="fbody">
+                <div class="topline"><span class="chip needs"><span class="cd"></span>Coaching</span><span class="ts">06:20</span></div>
+                <div class="agent-tag"><span class="tdot"></span>Team-coach agent</div>
+                <h3>Jenna's lead has stalled 6 days. Want to nudge her?</h3>
+                <p class="ctx">I drafted a short, supportive message in your voice. Soften or send.</p>
+                <div class="actions"><button class="btn btn-amber btn-full" data-sheet="coaching">Review message</button></div>
+              </div>
+            </article>
+          </div>
 
           <!-- two-altitude: handling collapsed -->
           <div class="handling" data-sheet="tm-elena">
@@ -1753,6 +1761,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     const ac=document.querySelector('#altitude button[data-alt="me"] .cnt');if(ac)ac.textContent='· '+n;
     const tb=document.querySelector('.tab[data-go="today"] .badge');if(tb)tb.textContent=n;}
   function promote(card){if(!card)return;triage.insertBefore(card,triage.firstElementChild);layoutTriage();$('#scroll').scrollTo({top:0,behavior:'smooth'});}
+  /* #74: the My-team altitude stacks like deals (focus + a collapsed, tappable queue), self-contained */
+  function promoteTeam(card){var box=$('#triage-team');if(!box||!card)return;box.insertBefore(card,box.firstElementChild);$$('.tcard',box).forEach(function(c,i){c.classList.remove('focus','row','peek','peek1','peek2','stash');c.classList.add(i===0?'focus':'row');});}
   /* swipe the front card sideways to set it aside (defer); Approve still runs the working drawer */
   (function(){let sx=0,sy=0,drag=false,decided=false,horiz=false,cur=null;
     function move(e){if(!drag||!cur)return;const dx=e.clientX-sx,dy=e.clientY-sy;
@@ -1825,6 +1835,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     const _as=e.target.closest('[data-assign]'); if(_as){toast({msg:'Reassigned '+(_lrName||'the lead')+' to '+_as.dataset.assign,sub:_as.dataset.assign+' notified, context handed over',undo:true});return;}
     const pd=e.target.closest('#pause-dur button'); if(pd){$$('#pause-dur button').forEach(x=>x.classList.toggle('on',x===pd));const _rn=$('#pause-resume');if(_rn)_rn.textContent=pd.dataset.note;const _pg=$('#pause-go');if(_pg)_pg.textContent=pd.dataset.btn;return;}
     const pgo=e.target.closest('#pause-go'); if(pgo){const _on=$('#pause-dur button.on');toast({msg:'All agents paused',sub:(_on?_on.dataset.toast:'14 held · 3 replies paused · resumes in 1 hour'),undo:true});return;}
+    const _trl=e.target.closest('#triage-team .row-line'); if(_trl){promoteTeam(_trl.closest('.tcard'));return;}
     const rl=e.target.closest('.row-line'); if(rl){promote(rl.closest('.tcard'));return;}
     const dp=e.target.closest('[data-dispose]'); if(dp){openWork(dp);return;}
     const ra=e.target.closest('#recon-accept'); if(ra){runReconcile();return;}
