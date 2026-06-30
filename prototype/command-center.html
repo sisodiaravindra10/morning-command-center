@@ -90,6 +90,11 @@ html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 .wip-note .wd{width:8px;height:8px;border-radius:50%;flex:0 0 auto;margin-top:4px;background:var(--warn)}
 .wip-note .wt{font-size:12px;line-height:1.45;color:var(--ink-muted)}
 .wip-note .wt b{display:block;font-weight:600;color:var(--ink);font-size:12.5px;margin-bottom:2px}
+/* ---- embed mode: when iframed (?embed=1), drop the stage so the host page frames the phone ---- */
+body.embed{padding:0;gap:0;min-height:0;background:transparent}
+body.embed .device{border-radius:0;box-shadow:none}
+body.embed .device::after{display:none}
+body.embed .stage-controls{display:none}
 html,body{height:100%}
 body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #17191F 0%, var(--canvas) 55%),var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:30px 16px 60px;gap:20px}
 
@@ -1789,8 +1794,16 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
   const fc=$('#f-cloud');if(fc){let h='';for(let i=0;i<60;i++){h+=(i%17===0)?'<i class="live"></i>':'<i></i>';}fc.innerHTML=h;}
   layoutTriage();syncNav();
 
-  /* ---------- boot loader: fade into onboarding after ~2s ---------- */
-  setTimeout(function(){var bl=document.getElementById('boot-loader');if(bl)bl.classList.add('gone');},2000);
+  /* ---------- boot loader: fade into onboarding after ~2s (skipped when embedded) ---------- */
+  var EMBED=location.search.indexOf('embed')>-1;
+  if(EMBED){
+    document.body.classList.add('embed');
+    var _eb=document.getElementById('boot-loader');if(_eb){_eb.classList.add('gone');_eb.style.display='none';}
+    var _eo=document.getElementById('onboarding');if(_eo){_eo.classList.add('gone');_eo.style.display='none';}
+    go('today');
+  } else {
+    setTimeout(function(){var bl=document.getElementById('boot-loader');if(bl)bl.classList.add('gone');},2000);
+  }
 
   /* ---------- onboarding (3-step, image-led opening) ---------- */
   const ob=$('#onboarding'),obNext=$('#ob-next');let obIdx=0;const OB_N=3;

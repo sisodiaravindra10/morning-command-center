@@ -53,19 +53,17 @@
   .topbar .lead:hover{transform:translateY(-1px)}
   @media(max-width:560px){ .topbar .mark{font-size:10.5px} }
 
-  /* ---- hero ---- */
-  header.hero{padding:78px 0 30px; position:relative}
-  header.hero .label, header.hero h1, header.hero .sub, header.hero .ctarow{position:relative; z-index:1}
-  /* hero globe: a faded world echoing the prototype's command center, behind the headline */
-  .hero-globe{position:absolute; top:24px; right:-140px; width:420px; height:420px; z-index:0; opacity:.5; pointer-events:none}
-  .hero-globe canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
-  .hg-fallback{position:absolute; inset:0; border-radius:50%;
-    background:radial-gradient(circle at 36% 30%, rgba(70,221,155,.26), transparent 50%), radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 80%);
-    box-shadow:inset -14px -18px 50px rgba(0,0,0,.7), inset 10px 12px 38px rgba(21,192,122,.10), 0 0 70px rgba(21,192,122,.07)}
-  .hg-fallback::before, .hg-fallback::after{content:""; position:absolute; inset:0; border-radius:50%; border:1px solid rgba(21,192,122,.12)}
-  .hg-fallback::before{transform:scaleX(.46)}
-  .hg-fallback::after{transform:scaleY(.9); border-color:rgba(21,192,122,.06)}
-  @media(max-width:760px){ .hero-globe{width:270px; height:270px; right:-104px; top:2px; opacity:.36} }
+  /* ---- hero: copy on the left, a live phone mockup on the right ---- */
+  header.hero{padding:58px 0 40px; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
+  .hero-copy{position:relative; z-index:1; min-width:0}
+  .hero-phone{display:flex; flex-direction:column; align-items:center; gap:14px; justify-self:center}
+  .hp-frame{padding:11px; background:linear-gradient(#26282e,#15161b); border-radius:46px;
+    box-shadow:0 0 0 2px #34373f, 0 34px 80px -30px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.06)}
+  .hp-screen{width:296px; height:640px; border-radius:36px; overflow:hidden; background:#0A0B10; position:relative}
+  .hp-screen iframe{width:390px; height:844px; border:0; display:block; transform:scale(.759); transform-origin:top left}
+  .hp-cap{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:7px}
+  .hp-cap .dot{width:6px; height:6px; border-radius:50%; background:var(--accent)}
+  @media(max-width:860px){ header.hero{grid-template-columns:1fr; gap:34px; padding:40px 0 30px} .hero-phone{order:2} }
   header.hero h1{font-family:var(--display); font-weight:600; color:var(--ink);
     font-size:clamp(38px,6vw,64px); line-height:1.02; letter-spacing:-.03em; margin:14px 0 0; max-width:18ch}
   header.hero h1 em{font-style:normal; color:var(--accent)}
@@ -162,14 +160,19 @@
 <div class="wrap">
 
   <header class="hero rise">
-    <div class="hero-globe" aria-hidden="true"><div class="hg-fallback"></div><canvas id="heroGlobe" width="560" height="560"></canvas></div>
-    <div class="label">Lead AI Product Designer · take-home</div>
-    <h1>The morning <em>command center</em> for a real-estate team lead.</h1>
-    <p class="sub">A calm surface that ranks a team lead's own deals and the team's together, shows its reasoning, reviews every message before it sends, and proves it handled the night. Less, ranked, and honest about its own confidence.</p>
-    <div class="ctarow">
-      <a class="btn primary" href="prototype/command-center.html">Open the lead prototype</a>
-      <a class="btn ghost" href="#films">Watch the films</a>
-      <a class="btn ghost" href="#deliverables">Read the thinking</a>
+    <div class="hero-copy">
+      <div class="label">Lead AI Product Designer · take-home</div>
+      <h1>The morning <em>command center</em> for a real-estate team lead.</h1>
+      <p class="sub">A calm surface that ranks a team lead's own deals and the team's together, shows its reasoning, reviews every message before it sends, and proves it handled the night. Less, ranked, and honest about its own confidence.</p>
+      <div class="ctarow">
+        <a class="btn primary" href="prototype/command-center.html">Open the lead prototype</a>
+        <a class="btn ghost" href="#films">Watch the films</a>
+        <a class="btn ghost" href="#deliverables">Read the thinking</a>
+      </div>
+    </div>
+    <div class="hero-phone">
+      <div class="hp-frame"><div class="hp-screen"><iframe src="prototype/command-center.html?embed=1" title="The morning command center, live Today screen" loading="eager"></iframe></div></div>
+      <div class="hp-cap"><span class="dot"></span>Live prototype · tap to explore the Today tab</div>
     </div>
   </header>
 
@@ -342,23 +345,7 @@
   <div class="conf">Confidential, for candidate use.</div>
 </div></footer>
 
-<!-- hero globe: a real WebGL globe (cobe), faded, echoing the prototype. Static CSS globe
-     behind it if WebGL or the module is unavailable; the page never depends on it. -->
-<script type="module">
-(async function(){
-  var cv = document.getElementById('heroGlobe'); if(!cv) return;
-  try{
-    var createGlobe = (await import('https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm')).default;
-    var phi = 4.0, spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-    createGlobe(cv, {
-      devicePixelRatio:2, width:560, height:560, phi:4.0, theta:0.28, dark:1, diffuse:1.2,
-      mapSamples:16000, mapBrightness:7.0,
-      baseColor:[0.17,0.19,0.24], markerColor:[0.95,0.97,1.0], glowColor:[0.55,0.58,0.66],
-      markers:[{location:[30.27,-97.74],size:0.07},{location:[29.76,-95.37],size:0.06},{location:[32.78,-96.80],size:0.06},{location:[40.71,-74.00],size:0.05},{location:[34.05,-118.24],size:0.05}],
-      onRender:function(s){ s.phi = phi; if(spin) phi += 0.003; }
-    });
-  }catch(e){ cv.style.display='none'; }
-})();
-</script>
+<!-- the hero now shows a live phone mockup (an embedded iframe of the prototype's Today tab),
+     so the old decorative cobe globe and its WebGL script were removed. -->
 </body>
 </html>
