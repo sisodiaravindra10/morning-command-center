@@ -85,6 +85,11 @@ html[data-theme="light"] .tabbar::before{background:linear-gradient(180deg,rgba(
 html[data-theme="light"] #theme-toggle .ic-sun{display:none}
 html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 @media (max-width:480px){.stage-controls{top:10px;right:10px}.sc-btn{height:36px}}
+/* ---- "exploration in progress" marker on the non-pitch tabs (Day / Team / Leads) ---- */
+.wip-note{display:flex;gap:10px;align-items:flex-start;margin:0 0 11px;padding:11px 13px;border:1px dashed var(--line);border-radius:var(--r-md);background:var(--p2)}
+.wip-note .wd{width:8px;height:8px;border-radius:50%;flex:0 0 auto;margin-top:4px;background:var(--warn)}
+.wip-note .wt{font-size:12px;line-height:1.45;color:var(--ink-muted)}
+.wip-note .wt b{display:block;font-weight:600;color:var(--ink);font-size:12.5px;margin-bottom:2px}
 html,body{height:100%}
 body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #17191F 0%, var(--canvas) 55%),var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:30px 16px 60px;gap:20px}
 
@@ -1172,6 +1177,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
       <!-- ================= DAY ================= -->
       <section class="screen" data-screen="day">
+        <div class="wip-note"><span class="wd"></span><div class="wt"><b>Exploration in progress</b>Today is the finished pitch. This tab is an early experiment, included to show where the design is heading.</div></div>
         <div class="section-label">Your day <span class="mini">agents prepped each stop</span></div>
         <div class="spine">
           <div class="tick past"><span class="node"></span><div class="tm">07:30 · done</div><div class="ev">School-run + inbox triage</div></div>
@@ -1188,6 +1194,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
       <!-- ================= TEAM (deep) ================= -->
       <section class="screen" data-screen="team">
+        <div class="wip-note"><span class="wd"></span><div class="wt"><b>Exploration in progress</b>Today is the finished pitch. This tab is an early experiment, included to show where the design is heading.</div></div>
         <div class="section-label">Team · this week <span class="mini">you + 6 agents</span></div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="kpi"><div class="n">22</div><div class="k">Live deals</div></div>
@@ -1213,6 +1220,7 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
       <!-- ================= LEADS ================= -->
       <section class="screen" data-screen="leads">
+        <div class="wip-note"><span class="wd"></span><div class="wt"><b>Exploration in progress</b>Today is the finished pitch. This tab is an early experiment, included to show where the design is heading.</div></div>
         <div class="lead-banner">
           <div class="agent-tag" style="margin-bottom:8px"><span class="tdot" style="background:var(--signal)"></span>Lead-routing agent</div>
           <h3 style="font-size:15px;font-weight:600;margin-bottom:4px">12 new leads, round-robined across 6.</h3>
