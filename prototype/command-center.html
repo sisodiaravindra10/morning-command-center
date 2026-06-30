@@ -1775,6 +1775,13 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
 
   /* ---------- theme + spec ---------- */
   $$('.tabbar .tab').forEach(function(b){b.setAttribute('role','tab');});
+  /* scale the phone down so the whole device fits the viewport in one view (skips embed + the mobile-fill breakpoint) */
+  function fitDevice(){var d=$('.device');if(!d)return;
+    if(document.body.classList.contains('embed')||window.innerWidth<=430){d.style.transform='';d.style.marginBottom='';return;}
+    var s=Math.min(1,(window.innerHeight-72)/844,(window.innerWidth-24)/390);
+    if(s>=0.999){d.style.transform='';d.style.marginBottom='';return;}
+    d.style.transformOrigin='top center';d.style.transform='scale('+s.toFixed(4)+')';d.style.marginBottom=Math.round(-844*(1-s))+'px';}
+  fitDevice();window.addEventListener('resize',fitDevice);
   {const _tt=$('#theme-toggle');if(_tt)_tt.addEventListener('click',()=>{const nx=root.dataset.theme==='light'?'dark':'light';root.dataset.theme=nx;_tt.setAttribute('aria-label',nx==='light'?'Switch to dark mode':'Switch to light mode');
     var _gc=$('#globe'),_gf=$('.globe-stage .globe-fallback');if(_gc&&_gf){if(nx==='light'){_gc.style.display='none';_gf.style.display='block';}else{_gc.style.display='';_gf.style.display='none';}}});}
   {const _sp=$('#spec-seg');if(_sp)_sp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.spec=b.dataset.spec;$$('#spec-seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(b.dataset.spec==='off')closeSpec();});}
@@ -1839,18 +1846,23 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     if(rm){if(res.msg){var ro=Object.assign({},res,{undo:true});ro.onUndo=function(){restoreCard(card);};toast(ro);}disposeCard(card);return;}
     var steps=(work.steps&&work.steps.length)?work.steps:['Working on it','Applying the change','Confirming and logging'];
     var title=work.title||res.msg||'Leo is working';
-    clearWork();islandReset();
-    islText.innerHTML='<b>'+title+'</b>';island.classList.add('work');
+    clearWork();
+    /* Approve opens the "Leo is working" drawer: a live step timeline you can Stop, then it confirms and disposes the card */
+    $('#work-title').textContent=title;$('#work-sub').textContent='Carrying out your approval, reversible';
+    var sl=$('#work-steps');sl.innerHTML=steps.map(function(s){return '<div class="wstep"><span class="wdot"></span><span class="wlabel">'+s+'</span><span class="wstat"></span></div>';}).join('');
+    var r=$('#work-result');if(r){r.hidden=true;r.innerHTML='';}
+    var sb=$('#work-stop');if(sb)sb.textContent='Stop';
+    if(openSheet&&openSheet!==workdrawer){openSheet.classList.remove('show','mounted');}
+    workdrawer.classList.add('mounted');openSheet=workdrawer;scrim.classList.add('show');
+    requestAnimationFrame(function(){workdrawer.classList.add('show');});
     var cancelled=false;
-    if(islStop)islStop.onclick=function(e){if(e)e.stopPropagation();if(cancelled)return;cancelled=true;clearWork();islandReset();toast({msg:'Stopped',sub:'Nothing was sent. The card is still here.'});};
-    var i=0;
+    if(sb)sb.onclick=function(){if(sb.textContent==='Done'){closeWork();return;}if(cancelled)return;cancelled=true;clearWork();closeWork();toast({msg:'Stopped',sub:'Nothing was sent. The card is still here.'});};
+    var els=[].slice.call(sl.querySelectorAll('.wstep')),i=0;
     function step(){if(cancelled)return;
-      if(i<steps.length){islText.innerHTML='<b>'+title+'</b> &middot; '+steps[i];i++;workTimers.push(setTimeout(step,1050));}
-      else{island.classList.remove('work');island.classList.add('done');
-        workTimers.push(setTimeout(function(){if(cancelled)return;island.classList.add('checked');
-          workTimers.push(setTimeout(function(){islandReset();disposeCard(card);if(res&&res.msg){var o=Object.assign({},res,{undo:true});o.onUndo=function(){restoreCard(card);};toast(o);}},950));
-        },1150));}}
-    workTimers.push(setTimeout(step,520));}
+      if(i>0){els[i-1].classList.remove('active');els[i-1].classList.add('done');var ds=els[i-1].querySelector('.wstat');if(ds)ds.textContent='done';}
+      if(i<els.length){els[i].classList.add('active');var as=els[i].querySelector('.wstat');if(as)as.textContent='now';i++;workTimers.push(setTimeout(step,1100));}
+      else{finishWork(card,res);}}
+    workTimers.push(setTimeout(step,460));}
 
   /* ---------- morning scenario (calm default / heavy) ---------- */
   {const _ms=$('#morning-seg');if(_ms)_ms.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;root.dataset.morning=b.dataset.morning;
