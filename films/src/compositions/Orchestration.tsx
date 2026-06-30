@@ -82,7 +82,7 @@ const Field: React.FC = () => {
           // non-passing dots dim and dissolve as they approach the gate
           const reach = interpolate(d.y0 + flowY, [GATE_Y - 120, GATE_Y - 10], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
           opacity = driftIn * (0.35 + 0.25 * Math.sin(frame / 30 + d.phase)) * reach;
-          // a few near the neck briefly glow periwinkle as "being considered"
+          // a few near the neck briefly glow emerald as "being considered"
           if (flow > 0.3 && random(`c${i}`) > 0.7) {
             color = C.accent;
             opacity *= 1.1;

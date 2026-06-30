@@ -33,7 +33,7 @@ export const Chip: React.FC<{
   const map = {
     accent: {color: C.accentHi, border: C.accentLine, bg: C.accentSoft, dot: C.accent},
     sand: {color: C.sandText, border: C.sandLine, bg: C.sandSoft, dot: C.sand},
-    good: {color: C.good, border: 'rgba(155,180,229,0.4)', bg: C.goodSoft, dot: C.good},
+    good: {color: C.good, border: 'rgba(121,184,156,0.4)', bg: C.goodSoft, dot: C.good},
     muted: {color: C.muted, border: C.hair, bg: 'transparent', dot: C.muted},
   }[tone];
   return (

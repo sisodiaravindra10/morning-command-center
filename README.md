@@ -11,7 +11,7 @@ The fastest way in is **[index.html](index.html)**, the visual front door that l
 
 Open `prototype/command-center.html` in any modern browser (best on a laptop; it renders a phone). A three-step welcome sets the morning (a hundred agents overnight, the noise sorted, only what needs you), then it opens into the Today command center. The status pill is a live Dynamic Island that morphs to carry Leo's notices, starting with the new lead the moment you arrive. The command center itself:
 
-1. A calm visual header opens it. The top of Today is a globe banner: a faded, slowly rotating periwinkle world (a real WebGL globe over a static fallback, so it reads either way) with Leo's live portfolio read alongside, "$14.2M pipeline, 22 live across 6 metros." The banner stays pinned as the triage scrolls up over it.
+1. A calm visual header opens it. The top of Today is a globe banner: a faded, slowly rotating emerald world (a real WebGL globe over a static fallback, so it reads either way) with Leo's live portfolio read alongside, "$14.2M pipeline, 22 live across 6 metros." The banner stays pinned as the triage scrolls up over it.
 2. The cards rise in. Anchored at the top is the trust ledger, which reads "47 handled overnight · 2 need you · 1 corrected." That is the first beat: proof the night was handled before anything asks for you.
 3. Below it, the triage. One focus card at a time, the rest collapsed, ranked by what is at stake across your own deals and your team's.
 4. The few things that need judgment, in order:

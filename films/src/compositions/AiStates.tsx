@@ -18,7 +18,7 @@ import {EndCard} from '../components/EndCard';
  * Film 2 · aiStates — "The five ways Leo speaks."
  * The heaviest evaluation axis, so the most refined. Five beats, each the
  * state named with its own motion and a line in Leo's voice (verbatim from
- * the prototype). Calm fades, periwinkle for the AI, warm sand for what
+ * the prototype). Calm fades, emerald for the AI, warm sand for what
  * needs a human. 840 frames @ 30fps = 28s.
  */
 

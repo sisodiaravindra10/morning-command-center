@@ -4,7 +4,7 @@ import {ATMOSPHERE, C} from '../theme';
 
 /**
  * The still, dark, top-lit canvas every film sits on. A single very slow
- * brightness drift on the periwinkle glow keeps it alive without ever
+ * brightness drift on the emerald glow keeps it alive without ever
  * reading as motion (the design system: the gradient is "still").
  */
 export const Atmosphere: React.FC<{children?: React.ReactNode}> = ({children}) => {

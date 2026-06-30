@@ -2,7 +2,7 @@ import React from 'react';
 import {interpolate, useCurrentFrame} from 'remotion';
 import {C, FONT, FPS} from '../theme';
 
-/** Thinking: a calm breathing periwinkle dot, never a blocking spinner. */
+/** Thinking: a calm breathing emerald dot, never a blocking spinner. */
 export const ThinkingDot: React.FC<{size?: number}> = ({size = 22}) => {
   const frame = useCurrentFrame();
   const t = Math.sin((frame / (FPS * 1.6)) * Math.PI * 2);
@@ -86,7 +86,7 @@ export const DoneTick: React.FC<{size?: number; drawAt?: number}> = ({size = 40,
   const frame = useCurrentFrame();
   const p = interpolate(frame, [drawAt, drawAt + 14], [26, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   return (
-    <div style={{width: size, height: size, borderRadius: '50%', background: C.goodSoft, display: 'grid', placeItems: 'center', border: `1px solid rgba(155,180,229,0.4)`}}>
+    <div style={{width: size, height: size, borderRadius: '50%', background: C.goodSoft, display: 'grid', placeItems: 'center', border: `1px solid rgba(121,184,156,0.4)`}}>
       <svg viewBox="0 0 24 24" width={size * 0.5} height={size * 0.5} fill="none" stroke={C.good} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
         <path d="M5 13l4 4L19 7" strokeDasharray={26} strokeDashoffset={p} />
       </svg>

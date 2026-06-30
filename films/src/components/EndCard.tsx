@@ -3,7 +3,7 @@ import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {C, FONT} from '../theme';
 import {fade, softSpring} from './motion';
 
-/** The Leo mark: a soft periwinkle orb with a gentle glow. The calm signature. */
+/** The Leo mark: a soft emerald orb with a gentle glow. The calm signature. */
 export const LeoMark: React.FC<{size?: number; pulseFrom?: number}> = ({size = 64, pulseFrom = 0}) => {
   const frame = useCurrentFrame();
   const s = softSpring(frame, pulseFrom);

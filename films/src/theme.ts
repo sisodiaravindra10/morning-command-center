@@ -1,6 +1,6 @@
 /**
  * Real · morning command center — brand tokens.
- * Dark premium. Near-black canvas, periwinkle accent that glows on dark,
+ * Dark premium. Near-black canvas, emerald accent that glows on dark,
  * warm sand reserved for what needs a human. Matched to the prototype
  * (command-center.html) and the design system (09-design-system.md).
  */
@@ -16,15 +16,15 @@ export const C = {
   subtle: '#5C6378',
   hair: 'rgba(255,255,255,0.07)',
   hairSoft: 'rgba(255,255,255,0.04)',
-  // periwinkle: the AI, the calm, the interactive
-  accent: '#AEC2F6',
-  accentHi: '#CBD6FB',
+  // emerald: the AI, the calm, the interactive
+  accent: '#15C07A',
+  accentHi: '#46DD9B',
   accentInk: '#0B0C12',
-  accentSoft: 'rgba(174,194,246,0.14)',
-  accentLine: 'rgba(174,194,246,0.32)',
-  accentTint: 'rgba(174,194,246,0.12)',
-  good: '#9BB4E5',
-  goodSoft: 'rgba(155,180,229,0.12)',
+  accentSoft: 'rgba(21,192,122,0.14)',
+  accentLine: 'rgba(21,192,122,0.32)',
+  accentTint: 'rgba(21,192,122,0.12)',
+  good: '#79B89C',
+  goodSoft: 'rgba(121,184,156,0.12)',
   // warm sand: what needs a human
   sand: '#E7C79C',
   sandText: '#ECCBA0',
@@ -50,7 +50,7 @@ export const HEIGHT = 1080;
 // The atmospheric background: a soft dark radial gradient like the explorations
 // page, top-lit and still. Never a blur, never behind running body text.
 export const ATMOSPHERE =
-  'radial-gradient(1400px 820px at 72% -10%, rgba(174,194,246,0.10), transparent 60%),' +
+  'radial-gradient(1400px 820px at 72% -10%, rgba(21,192,122,0.10), transparent 60%),' +
   'radial-gradient(1100px 640px at 6% 6%, rgba(231,199,156,0.045), transparent 55%),' +
   'radial-gradient(150% 95% at 50% -18%, #17191E 0%, #0B0C12 52%, #08090B 100%)';
 

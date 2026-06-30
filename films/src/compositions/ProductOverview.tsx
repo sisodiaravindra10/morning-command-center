@@ -16,7 +16,7 @@ import {ThinkingDot, DoneTick} from '../components/StateDots';
  * prototype (command-center.html).
  */
 
-// A confidence wave, frame-driven (equalizer that breathes). Periwinkle.
+// A confidence wave, frame-driven (equalizer that breathes). Emerald.
 const ConfWave: React.FC<{bars?: number[]; muted?: boolean}> = ({
   bars = [6, 10, 16, 9, 13],
   muted = false,
