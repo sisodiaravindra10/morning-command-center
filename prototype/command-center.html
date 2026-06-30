@@ -864,12 +864,12 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .globe-stage{position:absolute;z-index:1;top:48%;right:-82px;transform:translateY(-50%);width:288px;height:288px;opacity:.8;pointer-events:none;background:radial-gradient(circle at 46% 46%, rgba(255,255,255,.12), rgba(255,255,255,.04) 44%, transparent 66%)}
 .globe-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .globe-fallback{position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 36% 30%, rgba(255,255,255,.28), transparent 50%),radial-gradient(circle at 50% 52%, #1b1d2a 0%, #111320 56%, #0a0b12 79%);
-  box-shadow:inset -14px -18px 46px rgba(0,0,0,.7), inset 10px 12px 34px rgba(255,255,255,.1), 0 0 60px rgba(255,255,255,.1)}
-.globe-fallback::before,.globe-fallback::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.13)}
+  background:radial-gradient(circle at 38% 30%, rgba(70,221,155,.26), transparent 52%),radial-gradient(circle at 52% 54%, #16271d 0%, #0e1a14 56%, #0a100c 80%);
+  box-shadow:inset -14px -18px 46px rgba(0,0,0,.66), inset 10px 12px 34px rgba(70,221,155,.14), 0 0 60px rgba(21,192,122,.2)}
+.globe-fallback::before,.globe-fallback::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(70,221,155,.2)}
 .globe-fallback::before{transform:scaleX(.46)}
-.globe-fallback::after{transform:scaleY(.9);border-color:rgba(255,255,255,.07)}
-.globe-fallback i{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 9px rgba(255,255,255,.6)}
+.globe-fallback::after{transform:scaleY(.9);border-color:rgba(70,221,155,.12)}
+.globe-fallback i{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--signal-hi);box-shadow:0 0 9px rgba(70,221,155,.65)}
 .globe-fallback i:nth-child(1){top:33%;left:41%}
 .globe-fallback i:nth-child(2){top:53%;left:31%}
 .globe-fallback i:nth-child(3){top:46%;left:55%}
@@ -940,12 +940,12 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .regionview.zoomed #rv-detail{display:block;animation:rvRowIn .42s var(--ease-out) both}
 .rv-dt-back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--signal-hi);font-family:var(--mono);font-size:11px;letter-spacing:.04em;cursor:pointer;padding:4px 0 10px}
 .rv-dt-h{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
-.rv-dt-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--ink-subtle);margin:5px 0 10px}
-.rv-dt-row{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
-.rv-dt-row .d{flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:5px}
+.rv-dt-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--ink-subtle);margin:7px 0 16px}
+.rv-dt-row{display:flex;gap:13px;align-items:flex-start;padding:18px 0;border-top:1px solid var(--line)}
+.rv-dt-row .d{flex:0 0 auto;width:8px;height:8px;border-radius:50%;margin-top:6px}
 .rv-dt-row .d.risk{background:var(--danger)}.rv-dt-row .d.watch{background:var(--warn)}.rv-dt-row .d.clear{background:var(--good)}
-.rv-dt-row .t{font-size:13.5px;color:var(--ink);line-height:1.4}
-.rv-dt-row .m{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--ink-subtle);margin-top:3px}
+.rv-dt-row .t{font-size:13.5px;color:var(--ink);line-height:1.5}
+.rv-dt-row .m{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--ink-subtle);margin-top:6px}
 @media (prefers-reduced-motion:reduce){.regionview.show .rv-globe,.regionview.show .rv-region{animation:none}.rv-globe{opacity:.92}}
 /* fade the banner's lower edge into the canvas, behind the rising sheet */
 .banner-fade{position:absolute;z-index:2;left:0;right:0;bottom:0;height:74px;background:linear-gradient(to bottom, transparent, var(--canvas));pointer-events:none}
@@ -1166,8 +1166,8 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
             <button class="duo-card" data-sheet="khanna">
               <span class="spec-pin" data-spec-id="confident" style="top:-7px;left:-7px">4</span>
               <span class="duo-ic good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7z"/><path d="M14 3v4h4"/><path d="M9.4 13.6l1.8 1.8 3.4-3.6"/></svg></span>
-              <span class="duo-t">Bennett closing</span>
-              <span class="duo-s">paperwork prepped overnight</span>
+              <span class="duo-t">The Bennetts close today</span>
+              <span class="duo-s">their paperwork is ready to sign</span>
             </button>
             <button class="duo-card" data-sheet="history">
               <span class="spec-pin" data-spec-id="silent" style="top:-7px;left:-7px">5</span>
@@ -1530,12 +1530,30 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       <div class="vbubble" id="vb-2"><div class="vh"><span class="vch">♥</span><span class="vto">Bennett · condolences + close</span><span class="vwhy">emotional</span></div><div class="vmsg">"I know this week's been heavy. No rush at all, when you're ready, everything's set for the close. Thinking of you."</div><div class="vfoot"><button class="btn btn-amber btn-sm" data-vsend="vb-2">Send as me</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Opened to edit"}'>Edit</button></div></div>
       <div class="vbubble" id="vb-3"><div class="vh"><span class="vch">J</span><span class="vto">Jenna's reply · sounds off-brand</span><span class="vwhy">sub-agent</span></div><div class="vmsg">"Per my last email, the home's still available, please advise." <span style="color:var(--ink-subtle);font-style:italic">· too curt for your team's voice</span></div><div class="vfoot"><button class="btn btn-amber btn-sm" data-vsend="vb-3">Take it &amp; rewrite</button><button class="btn btn-ghost btn-sm" data-toast='{"msg":"Left it with Jenna","sub":"Flagged the tone for her"}'>Leave it</button></div></div>`},
 
-    khanna:{ag:'Doc-prep agent · 04:40 · done',agc:'var(--good)',title:'Bennett closing paperwork',body:`
+    khanna:{ag:'Doc-prep agent · 04:40 · done',agc:'var(--good)',title:'The Bennetts close today',body:`
       <p style="color:var(--ink-muted);font-size:13.5px;line-height:1.5;margin:0 0 13px">The Bennett sale closes at 4 PM today. Leo's doc-prep agent had the signing paperwork ready before you woke up, so there is nothing for you to chase.</p>
       <div class="paper"><div class="pey">◆ what i did while you slept</div>
         <p>Assembled all 11 closing documents, cross-checked every name and figure against the signed agreement, and fixed <b>2 signature blocks</b> that were on the wrong page.</p>
         <p class="cite">· Verified · ready whenever you want to send it for signing</p></div>
-      <button class="btn btn-amber btn-full" data-toast='{"msg":"Sent to the Bennetts for signing","sub":"3 signers · I’ll track it and tell you when it’s done","undo":true}'>Send the 11 documents for signing</button>`},
+      <div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0 0 13px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--p2);border-bottom:1px solid var(--line)">
+          <span style="font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--ink-subtle)">quick look · doc 1 of 11</span>
+          <span style="font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--good)">● ready</span>
+        </div>
+        <div style="background:#f4f3ee;color:#1b1a17;padding:15px 16px">
+          <div style="font-family:var(--serif);font-size:14px;font-weight:600;letter-spacing:-.01em">Closing Disclosure</div>
+          <div style="font-size:10.5px;color:#6b6862;margin-top:2px">Bennett sale &middot; closing today, 4:00 PM</div>
+          <div style="height:1px;background:#dcdad2;margin:11px 0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;margin:7px 0"><span style="color:#6b6862">Sale price</span><b>$548,000</b></div>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;margin:7px 0"><span style="color:#6b6862">Signers</span><b>3</b></div>
+          <div style="height:7px;background:#e7e5dd;border-radius:3px;margin:12px 0 6px"></div>
+          <div style="height:7px;background:#e7e5dd;border-radius:3px;width:68%;margin:6px 0"></div>
+          <div style="display:flex;align-items:flex-end;gap:9px;margin-top:18px"><span style="font-size:17px;color:#c0392b;line-height:1">&#10005;</span><span style="flex:1;border-bottom:1.5px solid #1b1a17;height:16px"></span></div>
+          <div style="font-family:var(--mono);font-size:9px;color:#8a877f;margin-top:5px;letter-spacing:.04em">sign here &middot; Dana Reyes, listing agent</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-full" data-toast='{"msg":"Opening all 11 documents","sub":"Cross-checked and ready for a final read"}' style="margin-bottom:9px">Look through all 11</button>
+      <button class="btn btn-amber btn-full" data-toast='{"msg":"Sent to the Bennetts for signing","sub":"3 signers · I’ll track it and tell you when it’s done","undo":true}'>Send for signing</button>`},
 
     roundrobin:{ag:'Lead-routing agent · 06:02',title:'12 leads · round-robin split',body:`
       <p class="ctx" style="margin-bottom:12px">Balanced for load + ICP. Tap a count to move, or auto-balance. <b>2 high-ICP held for you.</b></p>
@@ -1715,15 +1733,15 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     _sheetTrigger=document.activeElement;
     if(openSheet&&openSheet!==el){openSheet.classList.remove('show','mounted');}
     el.classList.add('mounted');el.querySelector('.sheet-body').scrollTop=0;openSheet=el;scrim.classList.add('show');
-    requestAnimationFrame(()=>{el.classList.add('show');var f=el.querySelector('.x')||el.querySelector('button,a[href],input');if(f)f.focus();});}
-  function sheetClose(){if(typeof clearWork==='function')clearWork();if(openSheet){const el=openSheet;el.classList.remove('show');setTimeout(()=>el.classList.remove('mounted'),460);openSheet=null;}scrim.classList.remove('show');if(_sheetTrigger&&_sheetTrigger.focus){try{_sheetTrigger.focus();}catch(e){}_sheetTrigger=null;}}
+    requestAnimationFrame(()=>{el.classList.add('show');var f=el.querySelector('.x')||el.querySelector('button,a[href],input');if(f)f.focus({preventScroll:true});});}
+  function sheetClose(){if(typeof clearWork==='function')clearWork();if(openSheet){const el=openSheet;el.classList.remove('show');setTimeout(()=>el.classList.remove('mounted'),460);openSheet=null;}scrim.classList.remove('show');if(_sheetTrigger&&_sheetTrigger.focus){try{_sheetTrigger.focus({preventScroll:true});}catch(e){}_sheetTrigger=null;}}
   /* focus trap within an open sheet (a11y) */
   document.addEventListener('keydown',function(e){
     if(e.key!=='Tab'||!openSheet)return;
     var f=[...openSheet.querySelectorAll('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(function(x){return x.offsetParent!==null;});
     if(!f.length)return;var first=f[0],last=f[f.length-1];
-    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus({preventScroll:true});}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus({preventScroll:true});}
   });
 
   /* ---------- navigation ---------- */
@@ -2112,11 +2130,11 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
     var spin = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     createGlobe(cv, {
       devicePixelRatio: 2, width: 600, height: 600,
-      phi: 4.2, theta: 0.26, dark: 0.12, diffuse: 1.25,
-      mapSamples: 17000, mapBrightness: 8,
-      baseColor: [0.1, 0.17, 0.13],
-      markerColor: [0.1, 0.85, 0.55],
-      glowColor: [0.06, 0.16, 0.11],
+      phi: 4.2, theta: 0.26, dark: 0.22, diffuse: 1.3,
+      mapSamples: 17000, mapBrightness: 9,
+      baseColor: [0.05, 0.2, 0.13],
+      markerColor: [0.13, 0.92, 0.58],
+      glowColor: [0.05, 0.2, 0.14],
       markers: [
         { location: [30.27, -97.74], size: 0.08 },
         { location: [29.42, -98.49], size: 0.06 },
@@ -2137,9 +2155,9 @@ html[data-altitude="team"] .alt-ind{transform:translateX(100%)}
       try{
         createGlobe(rcv, {
           devicePixelRatio: 2, width: 520, height: 520,
-          phi: rvPhi, theta: rvTheta, dark: 0.12, diffuse: 1.25,
-          mapSamples: 16000, mapBrightness: 8,
-          baseColor: [0.1,0.17,0.13], markerColor: [0.1,0.85,0.55], glowColor: [0.06,0.16,0.11],
+          phi: rvPhi, theta: rvTheta, dark: 0.22, diffuse: 1.3,
+          mapSamples: 16000, mapBrightness: 9,
+          baseColor: [0.05,0.2,0.13], markerColor: [0.13,0.92,0.58], glowColor: [0.05,0.2,0.14],
           markers: [
             { location: [30.27,-97.74], size: 0.11 },
             { location: [29.42,-98.49], size: 0.08 },
