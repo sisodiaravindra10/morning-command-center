@@ -92,7 +92,7 @@ html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 /* direct mobile viewing: the device fills the screen (no overflow, no bezel), presenter controls stand down */
 @media (max-width:440px){
   body{padding:0;gap:0;background:var(--canvas)}
-  .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none}
+  .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none;--safe-top:env(safe-area-inset-top,0px)}
   .device::after{display:none}
   .stage-controls{display:none}
 }
@@ -103,7 +103,7 @@ html[data-theme="light"] #theme-toggle .ic-moon{display:block}
 .wip-note .wt b{display:block;font-weight:600;color:var(--ink);font-size:12.5px;margin-bottom:2px}
 /* ---- embed mode: when iframed (?embed=1), drop the stage so the host page frames the phone ---- */
 body.embed{padding:0;gap:0;min-height:0;background:transparent}
-body.embed .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none;margin:0}
+body.embed .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none;margin:0;--safe-top:env(safe-area-inset-top,0px)}
 body.embed .device::after{display:none}
 body.embed .stage-controls{display:none}
 html,body{height:100%}
@@ -114,10 +114,10 @@ body{font-family:var(--font);background:radial-gradient(125% 80% at 50% -10%, #1
 /* ---- device ---- */
 .device{width:390px;height:844px;flex:0 0 auto;position:relative;background:var(--canvas);border-radius:46px;box-shadow:0 0 0 11px #1b1c20,0 0 0 13px #2a2c31,0 40px 90px -30px rgba(0,0,0,.9);overflow:hidden}
 .device::after{content:"";position:absolute;inset:0;border-radius:46px;pointer-events:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
-.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--canvas);padding-top:48px}
-.statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-family:var(--mono);font-size:13px;font-weight:500;position:absolute;top:0;left:0;right:0;z-index:110;background:transparent;pointer-events:none}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--canvas);padding-top:calc(48px + var(--safe-top,0px))}
+.statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-family:var(--mono);font-size:13px;font-weight:500;position:absolute;top:var(--safe-top,0px);left:0;right:0;z-index:110;background:transparent;pointer-events:none}
 .statusbar .right{display:flex;align-items:center;gap:6px}
-.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#000;border-radius:16px}
+.island{position:absolute;top:calc(11px + var(--safe-top,0px));left:50%;transform:translateX(-50%);width:96px;height:26px;background:#000;border-radius:16px}
 .batt{width:24px;height:12px;border:1px solid var(--ink-muted);border-radius:3px;position:relative;display:inline-block}
 .batt::before{content:"";position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:72%;background:var(--ink);border-radius:1px}
 .batt::after{content:"";position:absolute;right:-3px;top:3.5px;height:4px;width:2px;background:var(--ink-muted);border-radius:0 1px 1px 0}
@@ -873,7 +873,7 @@ body{background:radial-gradient(150% 95% at 50% -18%,#17191e 0%,#0b0c0e 50%,#080
 .bd-explore{display:inline-flex;align-items:center;gap:6px;margin-top:13px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--signal-hi)}
 .bd-explore span{transition:transform var(--dur-med)}
 #globe-banner:hover .bd-explore span{transform:translateX(3px)}
-.regionview{position:absolute;top:48px;left:0;right:0;bottom:0;z-index:70;background:var(--canvas);display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:scale(1.03);transition:opacity .4s var(--ease-out),transform .4s var(--ease-out),visibility 0s .4s}
+.regionview{position:absolute;top:calc(48px + var(--safe-top,0px));left:0;right:0;bottom:0;z-index:70;background:var(--canvas);display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:scale(1.03);transition:opacity .4s var(--ease-out),transform .4s var(--ease-out),visibility 0s .4s}
 .regionview.show{opacity:1;visibility:visible;transform:none;transition:opacity .4s var(--ease-out),transform .4s var(--ease-out)}
 .rv-back{position:absolute;top:14px;left:14px;z-index:3;display:flex;align-items:center;gap:5px;background:var(--p2);border:1px solid var(--line);color:var(--ink-muted);font-family:var(--mono);font-size:11px;letter-spacing:.03em;padding:7px 13px 7px 9px;border-radius:999px;cursor:pointer;transition:border-color var(--dur-fast),color var(--dur-fast)}
 .rv-back svg{width:13px;height:13px}
