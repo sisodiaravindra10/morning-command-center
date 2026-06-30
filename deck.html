@@ -13,8 +13,8 @@
   --paper: #0A0B10;
   --card: #15171F;
   --sunken: #0F1016;
-  --hair: rgba(174,194,246,0.12);
-  --hair-soft: rgba(174,194,246,0.07);
+  --hair: rgba(21,192,122,0.12);
+  --hair-soft: rgba(21,192,122,0.07);
   --shadow: 0 20px 44px -22px rgba(0,0,0,0.72);
   --shadow-lift: 0 34px 80px -38px rgba(0,0,0,0.8);
 
@@ -23,21 +23,21 @@
   --body: #BCC1D2;
   --muted: #828AA0;
 
-  /* two poles: periwinkle = calm, AI, interactive; warm sand = needs you */
-  --seaglass: #AEC2F6;
+  /* two poles: emerald = calm, AI, interactive; warm sand = needs you */
+  --seaglass: #15C07A;
   --amber: #C9AC85;
   --coral: #E7C79C;
-  --cobalt: #AEC2F6;
-  --accent: #AEC2F6;
+  --cobalt: #15C07A;
+  --accent: #15C07A;
 
-  --seaglass-text: #AEC2F6;
+  --seaglass-text: #15C07A;
   --amber-text: #D2B68C;
   --coral-text: #ECCBA0;
 
-  --seaglass-tint: rgba(174,194,246,0.14);
+  --seaglass-tint: rgba(21,192,122,0.14);
   --amber-tint: rgba(201,172,133,0.14);
   --coral-tint: rgba(231,199,156,0.14);
-  --cobalt-tint: rgba(174,194,246,0.16);
+  --cobalt-tint: rgba(21,192,122,0.16);
 
   --serif: 'Host Grotesk', 'Inter', system-ui, sans-serif;
   --sans: 'Inter', system-ui, sans-serif;
@@ -91,7 +91,7 @@ body{
   position:absolute; inset:0;
   pointer-events:none;
   background:
-    radial-gradient(140% 120% at 100% 0%, rgba(174,194,246,0) 55%, rgba(174,194,246,0.06) 100%);
+    radial-gradient(140% 120% at 100% 0%, rgba(21,192,122,0) 55%, rgba(21,192,122,0.06) 100%);
   mix-blend-mode:multiply;
   opacity:.5;
 }
@@ -214,7 +214,7 @@ em{ font-style:italic; color:var(--ink); }
   box-shadow:var(--shadow);
   transition:transform .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
 }
-.controls button:hover{ transform:translateY(-1px); color:var(--ink); border-color:rgba(174,194,246,0.22); }
+.controls button:hover{ transform:translateY(-1px); color:var(--ink); border-color:rgba(21,192,122,0.22); }
 .controls button:disabled{ opacity:.4; cursor:default; transform:none; }
 .controls .count{
   font-family:var(--mono);
@@ -271,7 +271,7 @@ em{ font-style:italic; color:var(--ink); }
 .chip.cor .d{ background:var(--coral); }
 .chip.cob{ background:var(--cobalt-tint); color:var(--cobalt); }
 .chip.cob .d{ background:var(--cobalt); }
-.chip.ghost{ background:rgba(174,194,246,0.06); color:var(--muted); }
+.chip.ghost{ background:rgba(21,192,122,0.06); color:var(--muted); }
 .chip.ghost .d{ background:var(--muted); }
 
 /* card (a triage item etc) */
@@ -458,7 +458,7 @@ em{ font-style:italic; color:var(--ink); }
 /* orb (idle breathing) */
 .orb{
   width:14px; height:14px; border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, oklch(0.78 0.09 280), var(--cobalt));
+  background:radial-gradient(circle at 35% 30%, oklch(0.8 0.13 155), var(--cobalt));
   box-shadow:0 0 0 0 var(--cobalt-tint);
   animation:breathe 3.4s var(--ease) infinite;
 }
@@ -631,7 +631,7 @@ em{ font-style:italic; color:var(--ink); }
             <div class="sub">A few things need you. I handled the rest.</div>
             <div class="mini cor"><span class="e"></span><div class="h">Held a line that reads as steering</div><div class="w">My draft was a Fair Housing risk. I held it and rewrote it.</div><div class="m">fair-housing // approve the safe version</div></div>
             <div class="mini cor"><span class="e"></span><div class="h">A hot lead has waited 3h on Marcus</div><div class="w">$720K, North Hills. Marcus is in a showing. Reassign?</div><div class="m">team SLA breach // your call</div></div>
-            <div class="mini amb"><span class="e"></span><div class="h">The Crestview deal has gone quiet</div><div class="w">$635K, Westlake. Four days, no reply. 62% sure a nudge helps.</div><div class="m">deal-risk // nudge or hold</div></div>
+            <div class="mini amb"><span class="e"></span><div class="h">The Crestview deal has gone quiet</div><div class="w">$635K, Westlake. Four days, no reply. leaning yes, a nudge helps.</div><div class="m">deal-risk // nudge or hold</div></div>
             <div class="quiet"><b>47 handled overnight,</b> 2 need you, 1 corrected.</div>
           </div>
         </div>
@@ -705,8 +705,8 @@ em{ font-style:italic; color:var(--ink); }
         <span class="sw" style="background:#0A0B10"></span>
         <span class="sw" style="background:#15171F"></span>
         <span class="sw" style="background:#1C1E29"></span>
-        <span class="sw" style="background:#AEC2F6"></span>
-        <span class="sw" style="background:#8A93C4"></span>
+        <span class="sw" style="background:#15C07A"></span>
+        <span class="sw" style="background:#0E9E66"></span>
         <span class="sw" style="background:#C9AC85"></span>
         <span class="sw" style="background:#E7C79C"></span>
         <span class="sw" style="background:#F1F3FA"></span>
@@ -727,7 +727,7 @@ em{ font-style:italic; color:var(--ink); }
         </div>
         <div class="skin">
           <div class="top" style="background:#0A0B10"></div>
-          <div class="cap"><b>Disciplined dark</b> the one chosen. The atmosphere generic dark reaches for, earned with a chosen periwinkle palette and no glow.</div>
+          <div class="cap"><b>Disciplined dark</b> the one chosen. The atmosphere generic dark reaches for, earned with a chosen emerald palette and no glow.</div>
         </div>
       </div>
       <p class="rise body" style="margin-top:clamp(10px,1.4vw,18px)">Range is not indecision. Exploring twenty kept the final honest: not the generic dark, not a retreat to light, but a disciplined dark that earns its atmosphere with a chosen palette and warmth reserved for what needs a human.</p>
@@ -748,7 +748,7 @@ em{ font-style:italic; color:var(--ink); }
         </div>
         <div class="de-card now">
           <div class="tag">the call</div>
-          <div class="line">The slop was never the color, it was reaching for the genre default. The call: a disciplined dark, a chosen periwinkle-on-near-black palette, no glow, warm sand reserved for what needs a human. Color always means a state, never decoration.</div>
+          <div class="line">The slop was never the color, it was reaching for the genre default. The call: a disciplined dark, a chosen emerald-on-near-black palette, no glow, warm sand reserved for what needs a human. Color always means a state, never decoration.</div>
           <div class="line">Also cut on purpose: a denser dashboard (the point is subtraction), auto-send (nothing irreversible without a tap), and a chatty AI persona (competence beats warmth in a task setting).</div>
         </div>
       </div>
